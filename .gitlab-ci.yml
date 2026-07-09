@@ -34,7 +34,7 @@ android_companion_validation:
       - .gradle/wrapper/
   before_script:
     - mkdir -p ~/.gradle
-    - echo "github_token=${META_WDAT_READ_TOKEN:-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}" > local.properties
+    - echo "github_token=${META_WDAT_READ_TOKEN}" > local.properties
     - chmod +x gradlew || true
   script:
     - ./gradlew lintDebug --no-daemon

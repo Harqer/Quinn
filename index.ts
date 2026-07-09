@@ -43,36 +43,38 @@ try {
     integrations.push((Sentry as any).browserTracingIntegration());
   }
   
-  Sentry.init({
-    dsn: (window as any).process?.env?.SENTRY_DSN || "https://a4cad24e9ec791b4987db15bf390d43f@o4511300849631232.ingest.us.sentry.io/4511703360339968",
-    integrations,
-    tracesSampleRate: 1.0,
-    ignoreErrors: [
-      "Script error.",
-      "Script error",
-      "ResizeObserver loop limit exceeded",
-      "ResizeObserver loop completed with undelivered notifications",
-      "chrome-extension://",
-      "moz-extension://",
-    ],
-    beforeSend(event) {
-      // Sanitize any PII (authorization headers, tokens, user info, keys)
-      if (event.request && event.request.headers) {
-        delete event.request.headers["Authorization"];
-        delete event.request.headers["authorization"];
-        delete event.request.headers["Cookie"];
-        delete event.request.headers["cookie"];
-      }
-      // Deep sanitize error messages & stack traces for API keys
-      const sanitizeStr = (str: string): string => {
-        return str.replace(/AQ\.[A-Za-z0-9_\-]+/g, "[REDACTED_API_KEY]")
-                  .replace(/AIzaSy[A-Za-z0-9_\-]+/g, "[REDACTED_API_KEY]");
-      };
-      if (event.exception && event.exception.values) {
-        event.exception.values.forEach((val) => {
-          if (val.value) val.value = sanitizeStr(val.value);
-          if (val.stacktrace && val.stacktrace.frames) {
-            val.stacktrace.frames.forEach((frame) => {
+  const dsn = (import.meta as any).env?.VITE_SENTRY_DSN || (window as any).process?.env?.SENTRY_DSN;
+  if (dsn) {
+    Sentry.init({
+      dsn,
+      integrations,
+      tracesSampleRate: 1.0,
+      ignoreErrors: [
+        "Script error.",
+        "Script error",
+        "ResizeObserver loop limit exceeded",
+        "ResizeObserver loop completed with undelivered notifications",
+        "chrome-extension://",
+        "moz-extension://",
+      ],
+      beforeSend(event) {
+        // Sanitize any PII (authorization headers, tokens, user info, keys)
+        if (event.request && event.request.headers) {
+          delete event.request.headers["Authorization"];
+          delete event.request.headers["authorization"];
+          delete event.request.headers["Cookie"];
+          delete event.request.headers["cookie"];
+        }
+        // Deep sanitize error messages & stack traces for API keys
+        const sanitizeStr = (str: string): string => {
+          return str.replace(/AQ\.[A-Za-z0-9_\-]+/g, "[REDACTED_API_KEY]")
+                    .replace(/AIzaSy[A-Za-z0-9_\-]+/g, "[REDACTED_API_KEY]");
+        };
+        if (event.exception && event.exception.values) {
+          event.exception.values.forEach((val) => {
+            if (val.value) val.value = sanitizeStr(val.value);
+            if (val.stacktrace && val.stacktrace.frames) {
+              val.stacktrace.frames.forEach((frame) => {
               if (frame.filename) frame.filename = sanitizeStr(frame.filename);
               if (frame.function) frame.function = sanitizeStr(frame.function);
             });
@@ -82,6 +84,7 @@ try {
       return event;
     },
   });
+  }
 } catch (e) {
   console.error("Failed to initialize Sentry safely:", e);
 }

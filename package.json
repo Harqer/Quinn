@@ -11,19 +11,24 @@
     "validate-deps": "node validate_dependencies.js"
   },
   "dependencies": {
+    "@google-cloud/secret-manager": "^6.2.0",
     "@google/genai": "^1.0.0",
     "@sentry/browser": "^10.64.0",
     "@sentry/node": "^10.64.0",
+    "compression": "^1.8.1",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
     "firebase": "^12.15.0",
     "firebase-admin": "^14.1.0",
+    "helmet": "^8.2.0",
     "lit": "^3.3.0",
     "pg": "^8.22.0",
     "urlargs": "^0.14.0"
   },
   "devDependencies": {
+    "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
     "@types/node": "^22.14.0",
     "@types/pg": "^8.20.0",

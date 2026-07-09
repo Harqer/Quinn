@@ -51,7 +51,7 @@ jobs:
         run: |
           mkdir -p ~/.gradle
           # Configure GitHub Package repository tokens for resolving Facebook WDAT SDK libraries securely
-          echo "github_token=${{ secrets.META_WDAT_READ_TOKEN || secrets.GITHUB_TOKEN || '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' }}" > local.properties
+          echo "github_token=${{ secrets.META_WDAT_READ_TOKEN || secrets.GITHUB_TOKEN }}" > local.properties
           
           # Verify integrity of plist configuration values
           if [ -f "MWDAT.plist" ]; then
