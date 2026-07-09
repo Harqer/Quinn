@@ -1,0 +1,48 @@
+stages:
+  - audit
+  - test
+  - build
+
+# Node.js Job for Web Applet Validation
+web_applet_validation:
+  stage: audit
+  image: node:20-slim
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+  before_script:
+    - npm ci --cache .npm --prefer-offline
+  script:
+    - npm run validate-deps
+    - npm run build
+
+# Android Job for Companion App Compilation, Testing and Packaging
+android_companion_validation:
+  stage: test
+  image: mobiledevops/android-sdk-image:34-jdk17
+  cache:
+    key:
+      files:
+        - app/build.gradle.kts
+        - build.gradle.kts
+        - gradle/libs.versions.toml
+    paths:
+      - .gradle/caches/
+      - .gradle/wrapper/
+  before_script:
+    - mkdir -p ~/.gradle
+    - echo "github_token=${META_WDAT_READ_TOKEN:-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}" > local.properties
+    - chmod +x gradlew || true
+  script:
+    - ./gradlew lintDebug --no-daemon
+    - ./gradlew compileDebugKotlin --no-daemon
+    - ./gradlew testDebugUnitTest --no-daemon
+    - ./gradlew assembleDebug --no-daemon
+  artifacts:
+    name: "android-companion-apk"
+    paths:
+      - app/build/outputs/apk/debug/app-debug.apk
+    expire_in: 1 week

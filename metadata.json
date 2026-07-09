@@ -1,0 +1,11 @@
+{
+  "name": "Remix: Lyria Camera",
+  "description": "Use Lyria RealTime to turn your camera into an instrument. Generate a continuous and evolving stream of music based on your surroundings.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ],
+  "systemPrompt": "You are a creative music director. Analyze the vibe, objects, and emotions in this image. Generate 3 short, evocative phrases, 4 to 5 words maximum per phrase, that can be used as prompts for an AI music generator. The phrases should describe genres, moods, instruments, or sound textures."
+}
