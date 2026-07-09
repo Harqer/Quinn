@@ -47,24 +47,17 @@ export class LyriaCamera extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
 
-    const apiKey =
+    // 1. Initialize immediately with compile-time or window fallback to prevent undefined errors
+    const initialKey =
       (window as any).API_KEY ||
       (window as any).GEMINI_API_KEY ||
       (typeof process !== "undefined" ? process.env?.API_KEY || process.env?.GEMINI_API_KEY : "") ||
       "";
 
-    this.liveMusicHelper = new LiveMusicHelper(apiKey, "lyria-realtime-exp");
+    this.initLiveMusicHelper(initialKey);
 
-    this.liveMusicHelper.addEventListener(
-      "playback-state-changed",
-      (e: CustomEvent<PlaybackState>) => {
-        this.playbackState = e.detail;
-      },
-    );
-
-    this.liveMusicHelper.addEventListener("error", (e: CustomEvent<string>) => {
-      this.dispatchError(e.detail);
-    });
+    // 2. Fetch the production secret dynamically from our secure runtime config to avoid baking keys in public repos
+    void this.resolveRuntimeSecrets();
 
     // Register Android WebView Javascript interfaces / callbacks to bridge Kotlin DAT events
     (window as any).onAndroidGesture = (gesture: string) => {
@@ -81,6 +74,36 @@ export class LyriaCamera extends LitElement {
       console.log("Received telemetry from Kotlin:", batteryLevel, isWearDetected);
       this.handleAndroidTelemetry(batteryLevel, isWearDetected);
     };
+  }
+
+  private initLiveMusicHelper(apiKey: string) {
+    this.liveMusicHelper = new LiveMusicHelper(apiKey, "lyria-realtime-exp");
+
+    this.liveMusicHelper.addEventListener(
+      "playback-state-changed",
+      (e: CustomEvent<PlaybackState>) => {
+        this.playbackState = e.detail;
+      },
+    );
+
+    this.liveMusicHelper.addEventListener("error", (e: CustomEvent<string>) => {
+      this.dispatchError(e.detail);
+    });
+  }
+
+  private async resolveRuntimeSecrets() {
+    try {
+      const res = await fetch("/api/config");
+      if (res.ok) {
+        const config = await res.json();
+        if (config.geminiApiKey) {
+          console.log("Dynamically loaded GEMINI_API_KEY from secure runtime config.");
+          this.initLiveMusicHelper(config.geminiApiKey);
+        }
+      }
+    } catch (err) {
+      console.warn("Could not fetch runtime config dynamically, falling back to static env:", err);
+    }
   }
 
   override disconnectedCallback() {

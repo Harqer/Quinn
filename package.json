@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@google-cloud/secret-manager": "^6.2.0",
-    "@google/genai": "^1.0.0",
+    "@google/genai": "^2.10.0",
     "@sentry/browser": "^10.64.0",
     "@sentry/node": "^10.64.0",
     "compression": "^1.8.1",
@@ -23,18 +23,18 @@
     "firebase": "^12.15.0",
     "firebase-admin": "^14.1.0",
     "helmet": "^8.2.0",
-    "lit": "^3.3.0",
+    "lit": "^3.3.3",
     "pg": "^8.22.0",
-    "urlargs": "^0.14.0"
+    "urlargs": "^1.14.0"
   },
   "devDependencies": {
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
-    "@types/node": "^22.14.0",
+    "@types/node": "^26.1.1",
     "@types/pg": "^8.20.0",
     "drizzle-kit": "^0.31.10",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.4",
     "vite-plugin-node-polyfills": "^0.28.0"
   }
 }
