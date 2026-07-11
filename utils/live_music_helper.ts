@@ -11,8 +11,8 @@ import type {
   LiveMusicSession,
   WeightedPrompt,
 } from "@google/genai";
-import { decode, decodeAudioData } from "@/utils/audio.ts";
-import { throttle } from "@/utils/throttle.ts";
+import { decode, decodeAudioData } from "@/utils/audio";
+import { throttle } from "@/utils/throttle";
 
 export type PlaybackState = "stopped" | "playing" | "loading" | "paused";
 

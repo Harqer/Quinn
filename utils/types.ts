@@ -27,4 +27,4 @@ export type IntervalPreset = {
 
 export type StreamSource = "camera" | "screen" | "none";
 
-export type Page = "splash" | "main" | "interval" | "download" | "processing";
+export type Page = "splash" | "main" | "interval" | "download" | "processing" | "security";

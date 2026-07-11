@@ -35,9 +35,43 @@ window.addEventListener("unhandledrejection", (event) => {
 });
 
 import * as Sentry from "@sentry/browser";
-import { LyriaCamera } from "@/components/lyria_camera.ts";
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
+import firebaseConfig from "@/firebase-applet-config.json";
+
+console.log("[STARTUP] index.ts loader triggered.");
+
+// Initialize Firebase Client SDK
+let appAuth: any = null;
+try {
+  console.log("[FIREBASE] Initializing Firebase Client SDK with project ID:", firebaseConfig.projectId);
+  const firebaseApp = initializeApp(firebaseConfig);
+  appAuth = getAuth(firebaseApp);
+  (window as any).firebaseAuth = appAuth;
+  (window as any).googleAuthProvider = new GoogleAuthProvider();
+  (window as any).signInWithPopup = signInWithPopup;
+  (window as any).signOut = signOut;
+  (window as any).onAuthStateChanged = onAuthStateChanged;
+  console.log("[FIREBASE] Firebase Client SDK successfully configured.");
+} catch (err) {
+  console.error("[FIREBASE] Error initializing client-side Firebase Auth:", err);
+}
+
+import { LyriaCamera } from "@/components/lyria_camera";
+import { ToastMessage } from "@/components/toast_message";
+
+if (!customElements.get("toast-message")) {
+  console.log("[LIFECYCLE] Defining 'toast-message' custom element manually...");
+  customElements.define("toast-message", ToastMessage);
+}
+
+if (!customElements.get("lyria-camera")) {
+  console.log("[LIFECYCLE] Defining 'lyria-camera' custom element manually...");
+  customElements.define("lyria-camera", LyriaCamera);
+}
 
 try {
+  console.log("[SENTRY] Configuring client-side Sentry...");
   const integrations: any[] = [];
   if (typeof (Sentry as any).browserTracingIntegration === "function") {
     integrations.push((Sentry as any).browserTracingIntegration());
@@ -75,35 +109,64 @@ try {
             if (val.value) val.value = sanitizeStr(val.value);
             if (val.stacktrace && val.stacktrace.frames) {
               val.stacktrace.frames.forEach((frame) => {
-              if (frame.filename) frame.filename = sanitizeStr(frame.filename);
-              if (frame.function) frame.function = sanitizeStr(frame.function);
-            });
-          }
-        });
-      }
-      return event;
-    },
-  });
+                if (frame.filename) frame.filename = sanitizeStr(frame.filename);
+                if (frame.function) frame.function = sanitizeStr(frame.function);
+              });
+            }
+          });
+        }
+        return event;
+      },
+    });
+    console.log("[SENTRY] Sentry client-side SDK successfully active.");
+  } else {
+    console.warn("[SENTRY] No SENTRY_DSN found. Client error reporting is inactive.");
   }
 } catch (e) {
-  console.error("Failed to initialize Sentry safely:", e);
+  console.error("[SENTRY] Failed to initialize Sentry safely:", e);
 }
 
-const init = () => {
+const init = async () => {
+  console.log("[LIFECYCLE] Lyria app bootstrap sequence initiated.");
   try {
-    const cameraEl = document.createElement("lyria-camera");
-    if (document.body) {
+    console.log("[LIFECYCLE] Checking custom elements registry status...");
+    const isDefinedInitially = !!customElements.get("lyria-camera");
+    console.log(`[LIFECYCLE] 'lyria-camera' defined in registry? ${isDefinedInitially}`);
+
+    if (!isDefinedInitially) {
+      console.log("[LIFECYCLE] 'lyria-camera' is not yet registered. Awaiting definition from component loader...");
+    }
+
+    // Await standard custom elements definition to ensure class registration complete before instantiation
+    await customElements.whenDefined("lyria-camera");
+    console.log("[LIFECYCLE] SUCCESS: 'lyria-camera' custom element class definition resolved in browser registry.");
+
+    const instantiateAndMount = () => {
+      console.log("[LIFECYCLE] Step 1: Instantiating '<lyria-camera>' DOM element via document.createElement...");
+      const cameraEl = document.createElement("lyria-camera");
+      console.log("[LIFECYCLE] Step 2: Instantiation successful. Ready to link custom element to active viewport DOM.");
+
+      console.log("[LIFECYCLE] Step 3: Appending '<lyria-camera>' to document.body...");
       document.body.appendChild(cameraEl);
+      console.log("[LIFECYCLE] Step 4: Custom element successfully appended. Element connected state:", cameraEl.isConnected);
+    };
+
+    if (document.body) {
+      console.log("[LIFECYCLE] Active viewport body element detected immediately.");
+      instantiateAndMount();
     } else {
+      console.warn("[LIFECYCLE] document.body not active. Scheduling mount after DOMContentLoaded trigger.");
       document.addEventListener("DOMContentLoaded", () => {
-        document.body.appendChild(cameraEl);
+        console.log("[LIFECYCLE] DOMContentLoaded event fired. Initiating deferred mounting sequence.");
+        instantiateAndMount();
       });
     }
   } catch (e) {
-    console.error("Failed to instantiate and append LyriaCamera component:", e);
+    console.error("[LIFECYCLE] CRITICAL ERROR during custom element definition and mounting sequence:", e);
   }
 };
 
 init();
+
 
 

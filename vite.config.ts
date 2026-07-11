@@ -1,6 +1,5 @@
 import path from 'path';
 import { defineConfig, loadEnv } from 'vite';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 
 export default defineConfig(({ mode }) => {
@@ -17,13 +16,6 @@ export default defineConfig(({ mode }) => {
         allowedHosts: true,
       },
       plugins: [
-        nodePolyfills({
-          globals: {
-            Buffer: true,
-            global: true,
-            process: true,
-          },
-        }),
         {
           name: 'inject-api-key',
           transformIndexHtml(html) {

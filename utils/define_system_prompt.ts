@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { SYSTEM_PROMPT } from "@/utils/utopia.ts";
-import { isLocal } from "@/utils/is_local.ts";
+import { SYSTEM_PROMPT } from "@/utils/utopia";
+import { isLocal } from "@/utils/is_local";
 
 declare global {
   interface Window {

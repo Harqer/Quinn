@@ -4,8 +4,8 @@
  */
 
 import metadata from "@/metadata.json";
-import type { IntervalPreset } from "@/utils/types.ts";
-import { urlargs } from "@/utils/urlargs.ts";
+import type { IntervalPreset } from "@/utils/types";
+import { urlargs } from "@/utils/urlargs";
 
 // Loading system prompt dynamically from the descriptor file (metadata.json)
 export const SYSTEM_PROMPT = metadata.systemPrompt || "You are a creative music director. Analyze the vibe, objects, and emotions in this image. Generate 3 short, evocative phrases, 4 to 5 words maximum per phrase, that can be used as prompts for an AI music generator. The phrases should describe genres, moods, instruments, or sound textures.";

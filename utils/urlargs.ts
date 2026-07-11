@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { $undefined, UrlArgs } from "urlargs";
-import { isLocal } from "@/utils/is_local.ts";
+import { u as $undefined, UrlArgs } from "urlargs";
+import { isLocal } from "@/utils/is_local";
 
 const args = new UrlArgs({
   debugPrompts: false,
