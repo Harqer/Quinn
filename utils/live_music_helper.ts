@@ -3,23 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GoogleGenAI } from "@google/genai";
-import type {
-  AudioChunk,
-  LiveMusicFilteredPrompt,
-  LiveMusicServerMessage,
-  LiveMusicSession,
-  WeightedPrompt,
-} from "@google/genai";
 import { decode, decodeAudioData } from "@/utils/audio";
 import { throttle } from "@/utils/throttle";
 
 export type PlaybackState = "stopped" | "playing" | "loading" | "paused";
 
+export interface WeightedPrompt {
+  text: string;
+  weight: number;
+}
+
 export class LiveMusicHelper extends EventTarget {
-  private session: LiveMusicSession | null = null;
-  private sessionPromise: Promise<LiveMusicSession> | null = null;
-  private readonly ai: GoogleGenAI;
+  private ws: WebSocket | null = null;
+  private wsPromise: Promise<WebSocket> | null = null;
 
   private filteredPrompts = new Set<string>();
   private nextStartTime = 0;
@@ -37,19 +33,10 @@ export class LiveMusicHelper extends EventTarget {
   private lastSentPrompts: WeightedPrompt[] = [];
 
   constructor(
-    apiKey: string,
+    apiKey: string | null,
     private readonly model: string,
   ) {
     super();
-    this.ai = new GoogleGenAI({
-      apiKey: apiKey,
-      apiVersion: "v1alpha",
-      httpOptions: {
-        headers: {
-          "User-Agent": "aistudio-build",
-        },
-      },
-    });
     this.prompts = [];
     const AudioContextClass = typeof window !== "undefined" ? (window.AudioContext || (window as any).webkitAudioContext) : null;
     if (AudioContextClass) {
@@ -81,44 +68,70 @@ export class LiveMusicHelper extends EventTarget {
     }
   }
 
-  private getSession(): Promise<LiveMusicSession> {
-    if (!this.sessionPromise) this.sessionPromise = this.connect();
-    return this.sessionPromise;
+  private getSession(): Promise<WebSocket> {
+    if (!this.wsPromise) this.wsPromise = this.connect();
+    return this.wsPromise;
   }
 
-  private async connect(): Promise<LiveMusicSession> {
-    this.sessionPromise = this.ai.live.music.connect({
-      model: this.model,
-      callbacks: {
-        onmessage: async (e: LiveMusicServerMessage) => {
-          if (e.filteredPrompt) {
-            this.filteredPrompts = new Set([
-              ...this.filteredPrompts,
-              e.filteredPrompt.text!,
-            ]);
-            this.dispatchEvent(
-              new CustomEvent<LiveMusicFilteredPrompt>("filtered-prompt", {
-                detail: e.filteredPrompt,
-              }),
-            );
+  private async connect(): Promise<WebSocket> {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/api/music/ws`;
+
+    return new Promise((resolve, reject) => {
+      console.log(`[WS_CLIENT] Connecting secure proxy stream to: ${wsUrl}`);
+      const ws = new WebSocket(wsUrl);
+      this.ws = ws;
+
+      ws.onopen = () => {
+        console.log("[WS_CLIENT] Secure proxy stream successfully connected.");
+        resolve(ws);
+      };
+
+      ws.onmessage = async (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          if (msg.type === "error") {
+            this.dispatchEvent(new CustomEvent("error", { detail: msg.error }));
+            return;
           }
-          if (e.serverContent?.audioChunks) {
-            await this.processAudioChunks(e.serverContent.audioChunks);
+          if (msg.type === "message") {
+            const e = msg.data;
+            if (e.filteredPrompt) {
+              this.filteredPrompts = new Set([
+                ...this.filteredPrompts,
+                e.filteredPrompt.text!,
+              ]);
+              this.dispatchEvent(
+                new CustomEvent("filtered-prompt", {
+                  detail: e.filteredPrompt,
+                }),
+              );
+            }
+            if (e.serverContent?.audioChunks) {
+              await this.processAudioChunks(e.serverContent.audioChunks);
+            }
           }
-        },
-        onclose: () => console.log("Lyria RealTime stream closed."),
-        onerror: (e: unknown) => {
-          this.stop();
-          this.dispatchEvent(
-            new CustomEvent("error", {
-              detail: "Connection error, please restart audio.",
-            }),
-          );
-          console.log("Lyria RealTime error", e);
-        },
-      },
+        } catch (err) {
+          console.error("[WS_CLIENT] Error handling server message:", err);
+        }
+      };
+
+      ws.onclose = () => {
+        console.log("[WS_CLIENT] Secure proxy stream closed.");
+        this.stop();
+      };
+
+      ws.onerror = (err) => {
+        console.error("[WS_CLIENT] Secure proxy stream error:", err);
+        this.stop();
+        this.dispatchEvent(
+          new CustomEvent("error", {
+            detail: "Connection error, please restart audio.",
+          }),
+        );
+        reject(err);
+      };
     });
-    return this.sessionPromise;
   }
 
   private setPlaybackState(state: PlaybackState) {
@@ -128,7 +141,7 @@ export class LiveMusicHelper extends EventTarget {
     );
   }
 
-  private async processAudioChunks(audioChunks: AudioChunk[]) {
+  private async processAudioChunks(audioChunks: any[]) {
     if (!this.audioContext || !this.outputNode) {
       console.warn("AudioContext or outputNode not available.");
       return;
@@ -167,13 +180,13 @@ export class LiveMusicHelper extends EventTarget {
     this.nextStartTime += audioBuffer.duration;
   }
 
-  private getChunkTexts(chunks: AudioChunk[]): string[] {
+  private getChunkTexts(chunks: any[]): string[] {
     const chunkPrompts =
       chunks[0].sourceMetadata?.clientContent?.weightedPrompts;
     if (!chunkPrompts) {
       return [];
     }
-    return chunkPrompts.map((p) => p.text);
+    return chunkPrompts.map((p: any) => p.text);
   }
 
   private checkPromptFreshness(texts: string[]) {
@@ -216,12 +229,13 @@ export class LiveMusicHelper extends EventTarget {
   }, 200);
 
   private async setWeightedPromptsImmediate() {
-    if (!this.session) return;
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
     try {
       this.lastSentPrompts = this.activePrompts;
-      await this.session.setWeightedPrompts({
-        weightedPrompts: this.activePrompts,
-      });
+      this.ws.send(JSON.stringify({
+        type: "setWeightedPrompts",
+        prompts: this.activePrompts,
+      }));
     } catch (e: unknown) {
       this.dispatchEvent(
         new CustomEvent("error", { detail: (e as Error).message }),
@@ -232,13 +246,13 @@ export class LiveMusicHelper extends EventTarget {
 
   public async play() {
     this.setPlaybackState("loading");
-    this.session = await this.getSession();
+    const ws = await this.getSession();
 
     void this.setWeightedPromptsImmediate();
 
     if (this.audioContext && this.outputNode && this.volumeNode) {
       await this.audioContext.resume();
-      this.session.play();
+      ws.send(JSON.stringify({ type: "play" }));
       this.outputNode.connect(this.volumeNode);
       if (this.extraDestination) this.outputNode.connect(this.extraDestination);
       this.outputNode.gain.setValueAtTime(0, this.audioContext.currentTime);
@@ -247,12 +261,14 @@ export class LiveMusicHelper extends EventTarget {
         this.audioContext.currentTime + 0.1,
       );
     } else {
-      this.session.play();
+      ws.send(JSON.stringify({ type: "play" }));
     }
   }
 
   public pause() {
-    if (this.session) this.session.pause();
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({ type: "pause" }));
+    }
     this.setPlaybackState("paused");
     if (this.audioContext && this.outputNode) {
       this.outputNode.gain.setValueAtTime(1, this.audioContext.currentTime);
@@ -271,7 +287,7 @@ export class LiveMusicHelper extends EventTarget {
     this.setPlaybackState("stopped");
     this.nextStartTime = 0;
 
-    if (this.session) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       const fadeDuration = 1;
       if (this.audioContext && this.outputNode) {
         this.outputNode.gain.cancelScheduledValues(this.audioContext.currentTime);
@@ -285,13 +301,18 @@ export class LiveMusicHelper extends EventTarget {
         );
       }
 
-      const sessionToStop = this.session;
+      const socketToStop = this.ws;
       setTimeout(() => {
-        sessionToStop.stop();
+        try {
+          if (socketToStop && socketToStop.readyState === WebSocket.OPEN) {
+            socketToStop.send(JSON.stringify({ type: "stop" }));
+            socketToStop.close();
+          }
+        } catch (e) {}
       }, fadeDuration * 1000);
     }
-    this.session = null;
-    this.sessionPromise = null;
+    this.ws = null;
+    this.wsPromise = null;
   }
 
   public async playPause() {

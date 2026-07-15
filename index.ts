@@ -36,7 +36,9 @@ window.addEventListener("unhandledrejection", (event) => {
 
 import * as Sentry from "@sentry/browser";
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
+import { getFirestore, doc, onSnapshot, setDoc, collection } from "firebase/firestore";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, getToken } from "firebase/app-check";
 import firebaseConfig from "@/firebase-applet-config.json";
 
 console.log("[STARTUP] index.ts loader triggered.");
@@ -52,9 +54,36 @@ try {
   (window as any).signInWithPopup = signInWithPopup;
   (window as any).signOut = signOut;
   (window as any).onAuthStateChanged = onAuthStateChanged;
-  console.log("[FIREBASE] Firebase Client SDK successfully configured.");
+  (window as any).onIdTokenChanged = onIdTokenChanged;
+
+  // Configure Firestore Client SDK functions for real-time bidirectional syncing
+  const db = getFirestore(firebaseApp);
+  (window as any).firebaseDb = db;
+  (window as any).firestoreDoc = doc;
+  (window as any).firestoreOnSnapshot = onSnapshot;
+  (window as any).firestoreSetDoc = setDoc;
+  (window as any).firestoreCollection = collection;
+
+  // Initialize App Check for client-side security
+  try {
+    const isDevelopment = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    if (isDevelopment) {
+      (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    }
+    const appCheck = initializeAppCheck(firebaseApp, {
+      provider: new ReCaptchaEnterpriseProvider("6Ld_placeholder_recaptcha_enterprise_key"),
+      isTokenAutoRefreshEnabled: true,
+    });
+    (window as any).firebaseAppCheck = appCheck;
+    (window as any).firebaseAppCheckGetToken = getToken;
+    console.log("[FIREBASE] App Check successfully configured.");
+  } catch (appCheckErr) {
+    console.warn("[FIREBASE] App Check skipped or inactive in this environment:", appCheckErr);
+  }
+
+  console.log("[FIREBASE] Firebase Client and Firestore SDK successfully configured.");
 } catch (err) {
-  console.error("[FIREBASE] Error initializing client-side Firebase Auth:", err);
+  console.error("[FIREBASE] Error initializing client-side Firebase Auth/Firestore:", err);
 }
 
 import { LyriaCamera } from "@/components/lyria_camera";
@@ -127,7 +156,7 @@ try {
 }
 
 const init = async () => {
-  console.log("[LIFECYCLE] Lyria app bootstrap sequence initiated.");
+  console.log("[LIFECYCLE] Quinn app bootstrap sequence initiated.");
   try {
     console.log("[LIFECYCLE] Checking custom elements registry status...");
     const isDefinedInitially = !!customElements.get("lyria-camera");

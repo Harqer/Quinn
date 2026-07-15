@@ -69,9 +69,5 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 dependencies {
-    implementation(libs.mwdat.core)
-    implementation(libs.mwdat.camera)
-    implementation(libs.mwdat.display)
-    implementation(libs.mwdat.mockdevice)
     testImplementation("junit:junit:4.13.2")
 }

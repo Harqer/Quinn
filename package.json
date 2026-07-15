@@ -25,13 +25,15 @@
     "helmet": "^8.2.0",
     "lit": "^3.3.3",
     "pg": "^8.22.0",
-    "urlargs": "^1.14.0"
+    "urlargs": "^1.14.0",
+    "ws": "^8.21.1"
   },
   "devDependencies": {
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
     "@types/node": "^26.1.1",
     "@types/pg": "^8.20.0",
+    "@types/ws": "^8.18.1",
     "drizzle-kit": "^0.31.10",
     "typescript": "^7.0.2",
     "vite": "^8.1.4"
