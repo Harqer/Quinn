@@ -73,6 +73,14 @@ jobs:
           javap -p classes_out/com/meta/wearable/dat/core/session/SessionKt.class || true
         continue-on-error: true
 
+      - name: Inspect Classes Before Build
+        run: |
+          javap -p classes_out/com/meta/wearable/dat/core/Wearables.class || true
+          javap -p classes_out/com/meta/wearable/dat/core/types/DatResult.class || true
+          javap -p classes_out/com/meta/wearable/dat/core/session/DeviceSession.class || true
+          javap -p classes_out/com/meta/wearable/dat/camera/Stream.class || true
+          javap -p classes_out/com/meta/wearable/dat/camera/StreamKt.class || true
+        continue-on-error: true
       - name: Compile Kotlin Companion Classes
         run: ./gradlew compileDebugKotlin --no-daemon
 
