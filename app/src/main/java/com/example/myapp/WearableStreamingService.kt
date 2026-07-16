@@ -12,7 +12,7 @@ import android.os.IBinder
 import android.util.Log
 
 import com.meta.wearable.dat.core.Wearables
-import com.meta.wearable.dat.core.Session
+import com.meta.wearable.dat.core.session.DeviceSession
 import com.meta.wearable.dat.core.selectors.AutoDeviceSelector
 import com.meta.wearable.dat.camera.Stream
 import com.meta.wearable.dat.camera.addStream
@@ -41,7 +41,7 @@ class WearableStreamingService : Service() {
     private val NOTIFICATION_ID = 1001
     private val CHANNEL_ID = "wearable_streaming_channel"
 
-    private var activeSession: Session? = null
+    private var activeSession: DeviceSession? = null
     private var activeStream: Stream? = null
     private var activeDisplay: Display? = null
 
@@ -144,10 +144,10 @@ class WearableStreamingService : Service() {
 
                     // Music Controls with fast callbacks
                     flexBox(direction = Direction.ROW, gap = 16, crossAlignment = Alignment.CENTER) {
-                        button(label = "Skip Back") { Log.d(TAG, "Skip Back pressed") }
-                        button(label = "Play") { Log.d(TAG, "Play pressed") }
-                        button(label = "Pause") { Log.d(TAG, "Pause pressed") }
-                        button(label = "Skip Forward") { Log.d(TAG, "Skip Forward pressed") }
+                        button(label = "Skip Back", onClick = { Log.d(TAG, "Skip Back pressed") })
+                        button(label = "Play", onClick = { Log.d(TAG, "Play pressed") })
+                        button(label = "Pause", onClick = { Log.d(TAG, "Pause pressed") })
+                        button(label = "Skip Forward", onClick = { Log.d(TAG, "Skip Forward pressed") })
                     }
                 }
             }.onFailure { error, _ ->
