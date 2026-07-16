@@ -1,3 +1,13 @@
+---
+title: AGENTS
+source: local
+author: AI Agent
+published: false
+created: 2026-07-16
+description: Coding guidelines and architectural rules.
+tags: [guidelines, architecture]
+---
+
 # Meta Wearables DAT SDK
 
 > Full API reference: https://wearables.developer.meta.com/llms.txt?full=true

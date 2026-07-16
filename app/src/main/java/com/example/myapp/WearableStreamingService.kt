@@ -16,16 +16,20 @@ import com.meta.wearable.dat.core.Session
 import com.meta.wearable.dat.core.selectors.AutoDeviceSelector
 import com.meta.wearable.dat.camera.Stream
 import com.meta.wearable.dat.camera.addStream
+import com.meta.wearable.dat.camera.removeStream
 import com.meta.wearable.dat.camera.types.StreamConfiguration
 import com.meta.wearable.dat.display.Display
 import com.meta.wearable.dat.display.addDisplay
+import com.meta.wearable.dat.display.removeDisplay
 import com.meta.wearable.dat.display.views.Direction
 import com.meta.wearable.dat.display.views.Alignment
 import com.meta.wearable.dat.display.views.TextStyle
 import com.meta.wearable.dat.display.views.IconStyle
+import com.meta.wearable.dat.display.views.IconName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
 
 /**
  * Production-ready Android Foreground Service for handling Wearable POV camera streaming and audio playback.
@@ -81,6 +85,7 @@ class WearableStreamingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         stopWearableSession()
+        serviceScope.cancel()
         Log.i(TAG, "Wearable Streaming Foreground Service stopped.")
     }
 
@@ -127,20 +132,22 @@ class WearableStreamingService : Service() {
     private fun renderMusicUI(display: Display) {
         serviceScope.launch {
             display.sendContent {
+                // Exactly one root view per sendContent (a flexBox)
                 flexBox(direction = Direction.COLUMN, gap = 8) {
                     text("Now Playing", style = TextStyle.HEADING)
                     
                     flexBox(direction = Direction.ROW, gap = 8, crossAlignment = Alignment.CENTER) {
-                        icon(name = "headphones", style = IconStyle.FILLED)
+                        // Use IconName enum
+                        icon(name = IconName.HEADPHONES, style = IconStyle.FILLED)
                         text("Vibe Curated Track", style = TextStyle.BODY)
                     }
 
-                    // Music Controls
+                    // Music Controls with fast callbacks
                     flexBox(direction = Direction.ROW, gap = 16, crossAlignment = Alignment.CENTER) {
-                        button(label = "Skip Back") { /* Handle skip back */ }
-                        button(label = "Play") { /* Handle play */ }
-                        button(label = "Pause") { /* Handle pause */ }
-                        button(label = "Skip Forward") { /* Handle skip forward */ }
+                        button(label = "Skip Back") { Log.d(TAG, "Skip Back pressed") }
+                        button(label = "Play") { Log.d(TAG, "Play pressed") }
+                        button(label = "Pause") { Log.d(TAG, "Pause pressed") }
+                        button(label = "Skip Forward") { Log.d(TAG, "Skip Forward pressed") }
                     }
                 }
             }.onFailure { error, _ ->
@@ -150,13 +157,19 @@ class WearableStreamingService : Service() {
     }
 
     private fun stopWearableSession() {
+        // Cleanup flow
         activeStream?.stop()
         activeStream = null
         
         activeDisplay?.stop()
         activeDisplay = null
         
-        activeSession?.stop()
+        activeSession?.let { session ->
+            // Remove capabilities before stopping session
+            session.removeDisplay()
+            session.removeStream()
+            session.stop()
+        }
         activeSession = null
     }
 

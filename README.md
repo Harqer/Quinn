@@ -1,3 +1,13 @@
+---
+title: README
+source: local
+author: AI Agent
+published: false
+created: 2026-07-16
+description: Documentation for README
+tags: [docs]
+---
+
 <div align="center">
 <img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
 </div>
