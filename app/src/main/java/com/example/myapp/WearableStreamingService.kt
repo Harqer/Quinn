@@ -100,14 +100,8 @@ class WearableStreamingService : Service() {
                     Log.e(TAG, "Failed to initialize DAT: ${error.description}")
                 }
             
-            val deviceSelector: DeviceSelector = AutoDeviceSelector()
-            val sessionResult = Wearables.createSession(deviceSelector)
-            val session = sessionResult.getOrNull()
-            
-            if (session == null) {
-                sessionResult.onFailure { error, _ ->
-                    Log.e(TAG, "Failed to create session: ${error.description}")
-                }
+            val session = Wearables.createSession(AutoDeviceSelector()).getOrElse { error ->
+                Log.e(TAG, "Failed to create session: ${error.description}")
                 return
             }
             
