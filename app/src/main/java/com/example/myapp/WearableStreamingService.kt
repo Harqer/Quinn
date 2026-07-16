@@ -15,6 +15,7 @@ import com.meta.wearable.dat.core.Wearables
 import com.meta.wearable.dat.core.session.DeviceSession
 import com.meta.wearable.dat.core.session.DeviceSessionState
 import com.meta.wearable.dat.core.selectors.AutoDeviceSelector
+import com.meta.wearable.dat.core.types.DatResult
 import com.meta.wearable.dat.camera.Stream
 import com.meta.wearable.dat.camera.addStream
 import com.meta.wearable.dat.camera.removeStream
@@ -98,8 +99,13 @@ class WearableStreamingService : Service() {
                     Log.e(TAG, "Failed to initialize DAT: ${error.description}")
                 }
             
-            val session = Wearables.createSession(AutoDeviceSelector()).getOrElse { error ->
-                Log.e(TAG, "Failed to create session: ${error.description}")
+            val sessionResult = Wearables.createSession(AutoDeviceSelector())
+            val session = sessionResult.getOrNull()
+            
+            if (session == null) {
+                sessionResult.onFailure { error, _ ->
+                    Log.e(TAG, "Failed to create session: ${error.description}")
+                }
                 return
             }
             
@@ -111,25 +117,29 @@ class WearableStreamingService : Service() {
                     if (state == DeviceSessionState.STARTED) {
                         // Add Stream
                         if (activeStream == null) {
-                            val stream = session.addStream(StreamConfiguration()).getOrElse { error ->
-                                Log.e(TAG, "Failed to add stream: ${error.description}")
-                                null
-                            }
+                            val streamResult = session.addStream(StreamConfiguration())
+                            val stream = streamResult.getOrNull()
                             if (stream != null) {
                                 activeStream = stream
                                 stream.start()
+                            } else {
+                                streamResult.onFailure { error, _ ->
+                                    Log.e(TAG, "Failed to add stream: ${error.description}")
+                                }
                             }
                         }
                             
                         // Add Display
                         if (activeDisplay == null) {
-                            val display = session.addDisplay().getOrElse { error ->
-                                Log.e(TAG, "Failed to add display: ${error.description}")
-                                null
-                            }
+                            val displayResult = session.addDisplay()
+                            val display = displayResult.getOrNull()
                             if (display != null) {
                                 activeDisplay = display
                                 renderMusicUI(display)
+                            } else {
+                                displayResult.onFailure { error, _ ->
+                                    Log.e(TAG, "Failed to add display: ${error.description}")
+                                }
                             }
                         }
                     }
