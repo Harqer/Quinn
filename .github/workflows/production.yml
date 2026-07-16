@@ -91,3 +91,7 @@ jobs:
         run: |
           javap -p classes_out/com/meta/wearable/dat/core/selectors/AutoDeviceSelector.class || true
         continue-on-error: true
+      - name: Inspect DatResult
+        run: |
+          javap -p classes_out/com/meta/wearable/dat/core/types/DatResult.class || true
+        continue-on-error: true
