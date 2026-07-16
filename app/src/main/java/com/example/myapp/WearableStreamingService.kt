@@ -15,6 +15,7 @@ import com.meta.wearable.dat.core.Wearables
 import com.meta.wearable.dat.core.session.DeviceSession
 import com.meta.wearable.dat.core.session.DeviceSessionState
 import com.meta.wearable.dat.core.selectors.AutoDeviceSelector
+import com.meta.wearable.dat.core.selectors.DeviceSelector
 import com.meta.wearable.dat.core.types.DatResult
 import com.meta.wearable.dat.camera.Stream
 import com.meta.wearable.dat.camera.addStream
@@ -99,7 +100,8 @@ class WearableStreamingService : Service() {
                     Log.e(TAG, "Failed to initialize DAT: ${error.description}")
                 }
             
-            val sessionResult = Wearables.createSession(AutoDeviceSelector())
+            val deviceSelector: DeviceSelector = AutoDeviceSelector()
+            val sessionResult = Wearables.createSession(deviceSelector)
             val session = sessionResult.getOrNull()
             
             if (session == null) {
