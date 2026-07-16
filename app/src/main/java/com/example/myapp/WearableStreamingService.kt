@@ -13,6 +13,7 @@ import android.util.Log
 
 import com.meta.wearable.dat.core.Wearables
 import com.meta.wearable.dat.core.session.DeviceSession
+import com.meta.wearable.dat.core.session.DeviceSessionState
 import com.meta.wearable.dat.core.selectors.AutoDeviceSelector
 import com.meta.wearable.dat.camera.Stream
 import com.meta.wearable.dat.camera.addStream
@@ -101,25 +102,35 @@ class WearableStreamingService : Service() {
                     activeSession = session
                     session.start()
                     
-                    // Add Stream
-                    session.addStream(StreamConfiguration())
-                        .onSuccess { stream ->
-                            activeStream = stream
-                            stream.start()
+                    serviceScope.launch {
+                        session.state.collect { state ->
+                            if (state == DeviceSessionState.STARTED) {
+                                // Add Stream
+                                if (activeStream == null) {
+                                    session.addStream(StreamConfiguration())
+                                        .onSuccess { stream ->
+                                            activeStream = stream
+                                            stream.start()
+                                        }
+                                        .onFailure { error, _ ->
+                                            Log.e(TAG, "Failed to add stream: ${error.description}")
+                                        }
+                                }
+                                    
+                                // Add Display
+                                if (activeDisplay == null) {
+                                    session.addDisplay()
+                                        .onSuccess { display ->
+                                            activeDisplay = display
+                                            renderMusicUI(display)
+                                        }
+                                        .onFailure { error, _ ->
+                                            Log.e(TAG, "Failed to add display: ${error.description}")
+                                        }
+                                }
+                            }
                         }
-                        .onFailure { error, _ ->
-                            Log.e(TAG, "Failed to add stream: ${error.description}")
-                        }
-                        
-                    // Add Display
-                    session.addDisplay()
-                        .onSuccess { display ->
-                            activeDisplay = display
-                            renderMusicUI(display)
-                        }
-                        .onFailure { error, _ ->
-                            Log.e(TAG, "Failed to add display: ${error.description}")
-                        }
+                    }
                 }
                 .onFailure { error, _ ->
                     Log.e(TAG, "Failed to create session: ${error.description}")
