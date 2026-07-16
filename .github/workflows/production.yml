@@ -78,3 +78,9 @@ jobs:
         with:
           name: companion-app-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Inspect Wearables Class
+        run: |
+          find ~/.gradle/caches/modules-2/files-2.1/com.meta.wearable -name "*.aar" -exec unzip -o {} classes.jar \; -exec unzip -o classes.jar -d classes_out \;
+          javap -p classes_out/com/meta/wearable/dat/core/Wearables.class || true
+          javap -p classes_out/com/meta/wearable/dat/core/WearablesKt.class || true
+          javap -p classes_out/com/meta/wearable/dat/core/session/SessionKt.class || true
