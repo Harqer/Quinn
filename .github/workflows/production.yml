@@ -61,6 +61,10 @@ jobs:
             exit 1
           fi
 
+      - name: Run Companion Android Linter
+        run: ./gradlew lintDebug --no-daemon
+        continue-on-error: true
+
       - name: Inspect Wearables Class
         run: |
           find ~/.gradle/caches/modules-2/files-2.1/com.meta.wearable -name "*.aar" -exec unzip -o {} classes.jar \; -exec unzip -o classes.jar -d classes_out \; || true
@@ -68,9 +72,6 @@ jobs:
           javap -p classes_out/com/meta/wearable/dat/core/WearablesKt.class || true
           javap -p classes_out/com/meta/wearable/dat/core/session/SessionKt.class || true
         continue-on-error: true
-
-      - name: Run Companion Android Linter
-        run: ./gradlew lintDebug --no-daemon
 
       - name: Compile Kotlin Companion Classes
         run: ./gradlew compileDebugKotlin --no-daemon
