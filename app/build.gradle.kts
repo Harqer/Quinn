@@ -70,4 +70,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 dependencies {
     testImplementation("junit:junit:4.13.2")
+    implementation("com.meta.wearable:mwdat-core:0.8.0")
+    implementation("com.meta.wearable:mwdat-camera:0.8.0")
+    implementation("com.meta.wearable:mwdat-display:0.8.0")
 }

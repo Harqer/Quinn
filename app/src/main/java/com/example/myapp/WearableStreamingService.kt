@@ -11,11 +11,25 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 
+import com.meta.wearable.dat.core.Wearables
+import com.meta.wearable.dat.core.Session
+import com.meta.wearable.dat.core.selectors.AutoDeviceSelector
+import com.meta.wearable.dat.camera.Stream
+import com.meta.wearable.dat.camera.addStream
+import com.meta.wearable.dat.camera.types.StreamConfiguration
+import com.meta.wearable.dat.display.Display
+import com.meta.wearable.dat.display.addDisplay
+import com.meta.wearable.dat.display.views.Direction
+import com.meta.wearable.dat.display.views.Alignment
+import com.meta.wearable.dat.display.views.TextStyle
+import com.meta.wearable.dat.display.views.IconStyle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 /**
  * Production-ready Android Foreground Service for handling Wearable POV camera streaming and audio playback.
- * Uses dynamic reflection to integrate Meta Wearables SDK (DAT) capabilities safely.
- * This ensures that the application compiles successfully in all environments (including local sandboxes)
- * and falls back gracefully at runtime if SDK libraries or wearable hardware are not present on the system.
+ * Integrates Meta Wearables SDK (DAT) capabilities safely.
  */
 class WearableStreamingService : Service() {
 
@@ -23,12 +37,11 @@ class WearableStreamingService : Service() {
     private val NOTIFICATION_ID = 1001
     private val CHANNEL_ID = "wearable_streaming_channel"
 
-    private var activeSession: Any? = null
-    private var activeStream: Any? = null
+    private var activeSession: Session? = null
+    private var activeStream: Stream? = null
+    private var activeDisplay: Display? = null
 
-    private val MIN_RECONNECT_DELAY_MS = 2000L
-    private val MAX_RECONNECT_DELAY_MS = 32000L
-    private var currentReconnectDelayMs = MIN_RECONNECT_DELAY_MS
+    private val serviceScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate() {
         super.onCreate()
@@ -72,70 +85,79 @@ class WearableStreamingService : Service() {
     }
 
     private fun startWearableSession() {
-        // Run asynchronously off the main thread to protect performance
-        Thread {
-            try {
-                Log.i(TAG, "Attempting dynamic Wearable SDK reflection handshake...")
-                
-                // Load class Wearables dynamically
-                val wearablesClass = try {
-                    Class.forName("com.meta.wearable.dat.core.Wearables")
-                } catch (e: ClassNotFoundException) {
-                    Log.w(TAG, "Meta Wearables Core SDK not present on classpath. Operating in companion-app simulation mode.")
-                    return@Thread
+        try {
+            Wearables.initialize(this)
+                .onFailure { error, _ ->
+                    Log.e(TAG, "Failed to initialize DAT: ${error.description}")
                 }
-
-                // Check and initialize Wearables if needed
-                val autoDeviceSelectorClass = Class.forName("com.meta.wearable.dat.core.selectors.AutoDeviceSelector")
-                val autoSelectorInstance = autoDeviceSelectorClass.getDeclaredConstructor().newInstance()
-
-                val createSessionMethod = wearablesClass.getMethod("createSession", autoDeviceSelectorClass.superclass ?: Any::class.java)
-                val sessionResult = createSessionMethod.invoke(null, autoSelectorInstance)
-
-                Log.i(TAG, "Wearables reflection session result retrieved: $sessionResult")
-                
-                // Complete session startup using reflection
-                currentReconnectDelayMs = MIN_RECONNECT_DELAY_MS
-            } catch (e: Exception) {
-                Log.e(TAG, "Reflection session setup failed: ${e.message}. Retrying via backoff...", e)
-                triggerReconnectBackoff()
-            }
-        }.start()
+            
+            Wearables.createSession(AutoDeviceSelector())
+                .onSuccess { session ->
+                    activeSession = session
+                    session.start()
+                    
+                    // Add Stream
+                    session.addStream(StreamConfiguration())
+                        .onSuccess { stream ->
+                            activeStream = stream
+                            stream.start()
+                        }
+                        .onFailure { error, _ ->
+                            Log.e(TAG, "Failed to add stream: ${error.description}")
+                        }
+                        
+                    // Add Display
+                    session.addDisplay()
+                        .onSuccess { display ->
+                            activeDisplay = display
+                            renderMusicUI(display)
+                        }
+                        .onFailure { error, _ ->
+                            Log.e(TAG, "Failed to add display: ${error.description}")
+                        }
+                }
+                .onFailure { error, _ ->
+                    Log.e(TAG, "Failed to create session: ${error.description}")
+                }
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception during session setup: ${e.message}", e)
+        }
     }
 
-    private fun triggerReconnectBackoff() {
-        Thread {
-            try {
-                Log.w(TAG, "Disconnection retry scheduled in ${currentReconnectDelayMs}ms (backoff)...")
-                Thread.sleep(currentReconnectDelayMs)
-                currentReconnectDelayMs = (currentReconnectDelayMs * 2).coerceAtMost(MAX_RECONNECT_DELAY_MS)
-                
-                stopWearableSession()
-                startWearableSession()
-            } catch (e: InterruptedException) {
-                Log.e(TAG, "Reconnection thread interrupted.")
+    private fun renderMusicUI(display: Display) {
+        serviceScope.launch {
+            display.sendContent {
+                flexBox(direction = Direction.COLUMN, gap = 8) {
+                    text("Now Playing", style = TextStyle.HEADING)
+                    
+                    flexBox(direction = Direction.ROW, gap = 8, crossAlignment = Alignment.CENTER) {
+                        icon(name = "headphones", style = IconStyle.FILLED)
+                        text("Vibe Curated Track", style = TextStyle.BODY)
+                    }
+
+                    // Music Controls
+                    flexBox(direction = Direction.ROW, gap = 16, crossAlignment = Alignment.CENTER) {
+                        button(label = "Skip Back") { /* Handle skip back */ }
+                        button(label = "Play") { /* Handle play */ }
+                        button(label = "Pause") { /* Handle pause */ }
+                        button(label = "Skip Forward") { /* Handle skip forward */ }
+                    }
+                }
+            }.onFailure { error, _ ->
+                Log.e(TAG, "Failed to send content to display: ${error.description}")
             }
-        }.start()
+        }
     }
 
     private fun stopWearableSession() {
-        try {
-            if (activeStream != null) {
-                activeStream?.javaClass?.getMethod("stop")?.invoke(activeStream)
-                activeStream = null
-            }
-        } catch (e: Exception) {
-            Log.w(TAG, "Failed to stop active stream via reflection: ${e.message}")
-        }
-
-        try {
-            if (activeSession != null) {
-                activeSession?.javaClass?.getMethod("stop")?.invoke(activeSession)
-                activeSession = null
-            }
-        } catch (e: Exception) {
-            Log.w(TAG, "Failed to stop active session via reflection: ${e.message}")
-        }
+        activeStream?.stop()
+        activeStream = null
+        
+        activeDisplay?.stop()
+        activeDisplay = null
+        
+        activeSession?.stop()
+        activeSession = null
     }
 
     private fun createNotificationChannel() {

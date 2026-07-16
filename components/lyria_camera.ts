@@ -76,7 +76,7 @@ export class LyriaCamera extends LitElement {
   @state() private liveStreamStats = { listeners: 142, likes: 328, duration: 0 };
   @state() private selectedPresetId: string | null = null;
   @state() private communityComments = [
-    { id: 1, user: "DJ_VibeMaster", text: "That synth transition is mind-blowing! 🔥", time: "Just now" },
+    { id: 1, user: "DJ_VibeMaster", text: "That synth transition is mind-blowing! <span class="material-icons-round">local_fire_department</span>", time: "Just now" },
     { id: 2, user: "Elena_R", text: "POV camera stream looks so crisp over BLE!", time: "1m ago" },
     { id: 3, user: "Nico_G", text: "Can you switch the vibe preset to Sunset Live?", time: "2m ago" },
     { id: 4, user: "Chloe_Studio", text: "Wired up with the wearables correctly, super low latency!", time: "3m ago" },
@@ -1435,7 +1435,7 @@ export class LyriaCamera extends LitElement {
         
         <!-- Interactive Control Deck explaining the integration -->
         <div class="android-explanation-deck">
-          <h3>📱 Spotify-Style Android Wearables Companion</h3>
+          <h3><span class="material-icons-round">smartphone</span> Spotify-Style Android Wearables Companion</h3>
           <p>
             Experience the complete user lifecycle flow requested for the <strong>Ray-Ban Meta Wearables</strong> integration, matching the production Spotify UI styling.
           </p>
