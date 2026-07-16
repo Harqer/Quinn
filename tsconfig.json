@@ -23,7 +23,6 @@
         "./*"
       ]
     },
-    "baseUrl": ".",
     "allowImportingTsExtensions": true,
     "noEmit": true
   }

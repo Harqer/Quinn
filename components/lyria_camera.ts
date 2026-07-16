@@ -76,7 +76,7 @@ export class LyriaCamera extends LitElement {
   @state() private liveStreamStats = { listeners: 142, likes: 328, duration: 0 };
   @state() private selectedPresetId: string | null = null;
   @state() private communityComments = [
-    { id: 1, user: "DJ_VibeMaster", text: "That synth transition is mind-blowing! <span class="material-icons-round">local_fire_department</span>", time: "Just now" },
+    { id: 1, user: "DJ_VibeMaster", text: 'That synth transition is mind-blowing! <span class="material-icons-round">local_fire_department</span>', time: "Just now" },
     { id: 2, user: "Elena_R", text: "POV camera stream looks so crisp over BLE!", time: "1m ago" },
     { id: 3, user: "Nico_G", text: "Can you switch the vibe preset to Sunset Live?", time: "2m ago" },
     { id: 4, user: "Chloe_Studio", text: "Wired up with the wearables correctly, super low latency!", time: "3m ago" },
@@ -4063,8 +4063,6 @@ export class LyriaCamera extends LitElement {
         console.warn("Error updating frequency:", e);
       }
     });
-  }
-
   }
 
   // Select preset and auto-configure wearables status and music vibe
