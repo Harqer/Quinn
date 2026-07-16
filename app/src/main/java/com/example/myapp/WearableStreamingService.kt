@@ -90,6 +90,7 @@ class WearableStreamingService : Service() {
         Log.i(TAG, "Wearable Streaming Foreground Service stopped.")
     }
 
+
     private fun startWearableSession() {
         try {
             Wearables.initialize(this)
@@ -97,49 +98,47 @@ class WearableStreamingService : Service() {
                     Log.e(TAG, "Failed to initialize DAT: ${error.description}")
                 }
             
-            Wearables.createSession(AutoDeviceSelector())
-                .onSuccess { session ->
-                    activeSession = session
-                    session.start()
-                    
-                    serviceScope.launch {
-                        session.state.collect { state ->
-                            if (state == DeviceSessionState.STARTED) {
-                                // Add Stream
-                                if (activeStream == null) {
-                                    session.addStream(StreamConfiguration())
-                                        .onSuccess { stream ->
-                                            activeStream = stream
-                                            stream.start()
-                                        }
-                                        .onFailure { error, _ ->
-                                            Log.e(TAG, "Failed to add stream: ${error.description}")
-                                        }
-                                }
-                                    
-                                // Add Display
-                                if (activeDisplay == null) {
-                                    session.addDisplay()
-                                        .onSuccess { display ->
-                                            activeDisplay = display
-                                            renderMusicUI(display)
-                                        }
-                                        .onFailure { error, _ ->
-                                            Log.e(TAG, "Failed to add display: ${error.description}")
-                                        }
-                                }
+            val session = Wearables.createSession(AutoDeviceSelector()).getOrElse { error ->
+                Log.e(TAG, "Failed to create session: ${error.description}")
+                return
+            }
+            
+            activeSession = session
+            session.start()
+            
+            serviceScope.launch {
+                session.state.collect { state ->
+                    if (state == DeviceSessionState.STARTED) {
+                        // Add Stream
+                        if (activeStream == null) {
+                            val stream = session.addStream(StreamConfiguration()).getOrElse { error ->
+                                Log.e(TAG, "Failed to add stream: ${error.description}")
+                                null
+                            }
+                            if (stream != null) {
+                                activeStream = stream
+                                stream.start()
+                            }
+                        }
+                            
+                        // Add Display
+                        if (activeDisplay == null) {
+                            val display = session.addDisplay().getOrElse { error ->
+                                Log.e(TAG, "Failed to add display: ${error.description}")
+                                null
+                            }
+                            if (display != null) {
+                                activeDisplay = display
+                                renderMusicUI(display)
                             }
                         }
                     }
                 }
-                .onFailure { error, _ ->
-                    Log.e(TAG, "Failed to create session: ${error.description}")
-                }
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Exception during session setup: ${e.message}", e)
         }
     }
-
     private fun renderMusicUI(display: Display) {
         serviceScope.launch {
             display.sendContent {
