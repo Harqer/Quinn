@@ -95,3 +95,7 @@ jobs:
         run: |
           javap -p classes_out/com/meta/wearable/dat/core/types/DatResult.class || true
         continue-on-error: true
+      - name: Inspect Wearables Class Verbose
+        run: |
+          javap -v -p classes_out/com/meta/wearable/dat/core/Wearables.class || true
+        continue-on-error: true
