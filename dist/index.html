@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head><script>
+                window.process = {
+                  env: {
+                    API_KEY: "",
+                    GEMINI_API_KEY: ""
+                  },
+                  versions: {
+                    node: '22.0.0'
+                  }
+                };
+                window.API_KEY = "";
+                window.GEMINI_API_KEY = "";
+              </script>
+    <script>
+      (function() {
+        const isMutedError = (msg, url) => {
+          const m = String(msg || "");
+          const u = String(url || "");
+          return m.includes("Script error") || 
+                 m.includes("ResizeObserver") ||
+                 u.includes("html2canvas") || 
+                 u.includes("jsdelivr") ||
+                 u.includes("sentry") ||
+                 (u && !u.includes(window.location.origin) && !u.startsWith("/"));
+        };
+
+        window.onerror = function(message, source, lineno, colno, error) {
+          if (isMutedError(message, source)) {
+            console.warn("Intercepted and silenced cross-origin error:", message, "at", source);
+            return true; // prevent default browser handling
+          }
+          return false; // let normal errors proceed
+        };
+
+        window.addEventListener("error", function(event) {
+          if (isMutedError(event.message, event.filename)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        }, { capture: true });
+
+        window.addEventListener("unhandledrejection", function(event) {
+          const reason = event.reason;
+          const reasonStr = reason ? String(reason.message || reason) : "";
+          if (
+            reasonStr.includes("Script error") || 
+            reasonStr.includes("html2canvas") || 
+            reasonStr.includes("jsdelivr") ||
+            reasonStr.includes("sentry")
+          ) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        }, { capture: true });
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="Musically is your personal AI musician and musical collaborator. Simply talk to compose music, orchestrate with your voice, and explore an endless stream of original music. Discover how to make your music go viral." />
+    <meta name="keywords" content="music apps, AI music assistant, musical collaborator, compose music by voice, AI composition, make your music go viral, viral music creator, how to make a song go viral, AI musician" />
+    <!-- Meta Ray-Ban Display (MRBD) Integration -->
+    <meta name="mrbd-compatible" content="true" />
+    <meta name="mrbd-app-id" content="0" />
+    <meta name="mrbd-client-token" content="0" />
+    <meta name="mwdat_application_id" content="0" />
+    <meta name="mwdat_client_token" content="0" />
+    <meta name="com.meta.wearable.mwdat.APPLICATION_ID" content="0" />
+    <meta name="com.meta.wearable.mwdat.CLIENT_TOKEN" content="0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>Musically Camera</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=block"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined&display=block"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Round&display=block"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="/assets/index-uBdgLrWj.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DTWLLbxZ.css">
+  </head>
+  <body>
+  </body>
+</html>

@@ -1,0 +1,162 @@
+[
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/navigation_nav_graph.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/navigation/nav_graph.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.musically.studio.app-debug-61:/layout_item_chat_message.xml.flat",
+        "source": "com.musically.studio.app-main-63:/layout/item_chat_message.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_album_radio.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/album_radio.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_album_view.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/album_view.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_scanning_fo.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/scanning_fo.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_track_view.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/track_view.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_signup_2.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/signup_2.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_choose_arti.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/choose_arti.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_signup_3.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/signup_3.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_listening_o.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/listening_o.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_search.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/search.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_activity_main.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/drawable_track_.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/drawable/track_.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_user_librar.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/user_librar.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_settings.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/settings.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_start.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/start.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_library.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/library.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_chose_podca.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/chose_podca.xml"
+    },
+    {
+        "merged": "com.musically.studio.app-debug-61:/layout_search.xml.flat",
+        "source": "com.musically.studio.app-main-63:/layout/search.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_playlist_se.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/playlist_se.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_item_chat_message.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/item_chat_message.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/xml_provider_paths.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/xml/provider_paths.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/drawable_album_view.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/drawable/album_view.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_signup_4.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/signup_4.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/menu_bottom_nav_menu.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/menu/bottom_nav_menu.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_song_share.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/song_share.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_item_spotify_track.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/item_spotify_track.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_signup_1.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/signup_1.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/layout_home_.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/layout/home_.xml"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-debug-61:/drawable_album_contr.xml.flat",
+        "source": "/home/shaolin/.gradle/daemon/8.7/com.musically.studio.app-main-63:/drawable/album_contr.xml"
+    }
+]
