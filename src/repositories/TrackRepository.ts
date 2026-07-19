@@ -1,13 +1,14 @@
-import { db } from "../config/firebase.js";
+import { db, FieldValue } from "../config/firebase.js";
 
 export interface Track {
   id: string;
   title: string;
   artist: string;
   vibe: string;
+  type: "music" | "podcast";
   imageUrl?: string;
   userId?: string;
-  createdAt: Date;
+  createdAt: any;
 }
 
 export class TrackRepository {
@@ -16,9 +17,19 @@ export class TrackRepository {
   async saveTrack(track: Omit<Track, "id" | "createdAt">): Promise<string> {
     const docRef = await this.collection.add({
       ...track,
-      createdAt: new Date(),
+      createdAt: FieldValue.serverTimestamp(),
     });
     return docRef.id;
+  }
+
+  async bookmarkTrack(uid: string, trackId: string): Promise<string> {
+    const bookmarkRef = db.collection("bookmarks").doc(`${uid}_${trackId}`);
+    await bookmarkRef.set({
+      userId: uid,
+      trackId: trackId,
+      timestamp: FieldValue.serverTimestamp(),
+    });
+    return bookmarkRef.id;
   }
 
   async getTrackById(id: string): Promise<Track | null> {

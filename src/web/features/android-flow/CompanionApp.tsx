@@ -90,22 +90,34 @@ const SearchView: React.FC = () => (
   </div>
 );
 
-const LibraryView: React.FC = () => (
-  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-    <h2 className="text-2xl font-black text-white italic">Library</h2>
-    <div className="space-y-2">
-      {[1, 2, 3].map(i => (
-        <div key={i} className="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 transition-all cursor-pointer group">
-          <div className="w-12 h-12 rounded-lg bg-gray-800 flex items-center justify-center">
-            <span className="material-icons-round text-gray-600">playlist_play</span>
+const LibraryView: React.FC = () => {
+  const [tracks, setTracks] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    fetch('/api/music/user/tracks')
+      .then(res => res.json())
+      .then(data => setTracks(data.tracks || []))
+      .catch(err => console.error("Failed to load user library", err));
+  }, []);
+
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+      <h2 className="text-2xl font-black text-white italic">Library</h2>
+      <div className="space-y-2">
+        {tracks.length === 0 && <p className="text-gray-500 text-[10px] italic">No bookmarked vibes yet.</p>}
+        {tracks.map(track => (
+          <div key={track.id} className="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 transition-all cursor-pointer group">
+            <div className="w-12 h-12 rounded-lg bg-gray-800 flex items-center justify-center overflow-hidden">
+              {track.imageUrl ? <img src={track.imageUrl} className="w-full h-full object-cover" /> : <span className="material-icons-round text-gray-600">music_note</span>}
+            </div>
+            <div className="flex-1">
+              <p className="text-xs font-bold text-white truncate">{track.title}</p>
+              <p className="text-[10px] text-gray-500">{track.artist || 'Unknown Artist'}</p>
+            </div>
+            <span className="material-icons-round text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
           </div>
-          <div className="flex-1">
-            <p className="text-xs font-bold text-white">Your Stage Playlist {i}</p>
-            <p className="text-[10px] text-gray-500">42 tracks • Creator</p>
-          </div>
-          <span className="material-icons-round text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};

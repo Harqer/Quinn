@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getAuth } from "firebase/auth";
-
 import { logger } from '@/web/lib/logger';
 
 interface PodcastSegment {
   id: string;
   text: string;
   type: 'quinn' | 'user';
+  trackUri?: string;
 }
 
 export const PodcastView: React.FC = () => {
@@ -31,7 +31,12 @@ export const PodcastView: React.FC = () => {
       ws.onmessage = (event) => {
         const msg = JSON.parse(event.data);
         if (msg.type === 'podcast_update') {
-          setSegments(prev => [...prev, { id: Date.now().toString(), text: msg.script, type: 'quinn' }]);
+          setSegments(prev => [...prev, {
+            id: Date.now().toString(),
+            text: msg.script,
+            type: 'quinn',
+            trackUri: msg.trackUri // Backend should provide this if saved
+          }]);
         } else if (msg.type === 'podcast_chunk') {
           // Play audio chunk logic
         }
@@ -50,12 +55,13 @@ export const PodcastView: React.FC = () => {
     setInputText("");
   };
 
-  const saveToSpotify = async (segmentId: string) => {
+  const saveToSpotify = async (segmentId: string, trackUri?: string) => {
+    if (!trackUri) return;
     try {
       await fetch('/api/spotify/podcast/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ trackUri: 'spotify:track:placeholder' })
+        body: JSON.stringify({ trackUri })
       });
       alert("Saved to your Musically Podcasts playlist!");
     } catch (err) {
@@ -92,8 +98,9 @@ export const PodcastView: React.FC = () => {
                   {segment.type === 'quinn' && (
                     <div className="mt-4 flex gap-4 border-t border-outline/10 pt-4">
                       <button
-                        onClick={() => saveToSpotify(segment.id)}
-                        className="text-xs font-bold flex items-center gap-1 hover:text-primary transition-colors"
+                        onClick={() => saveToSpotify(segment.id, segment.trackUri)}
+                        disabled={!segment.trackUri}
+                        className="text-xs font-bold flex items-center gap-1 hover:text-primary transition-colors disabled:opacity-30"
                       >
                         <span className="material-icons-round text-sm">library_add</span>
                         Save to Spotify

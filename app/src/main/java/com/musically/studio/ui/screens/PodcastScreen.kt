@@ -103,7 +103,10 @@ fun PodcastScreen(
                                     Spacer(Modifier.width(4.dp))
                                     Text("Share")
                                 }
-                                TextButton(onClick = { viewModel.savePodcastToSpotify("spotify:track:placeholder") }) {
+                                TextButton(
+                                    onClick = { message.trackId?.let { viewModel.savePodcastToSpotify(it) } },
+                                    enabled = message.trackId != null
+                                ) {
                                     Icon(Icons.Default.LibraryMusic, contentDescription = null, modifier = Modifier.size(18.dp))
                                     Spacer(Modifier.width(4.dp))
                                     Text("Save to Library")

@@ -18,8 +18,9 @@ if (window.location.hostname === "localhost" || window.location.hostname === "12
   (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
 }
 try {
+  const appCheckKey = (window as any).VITE_APP_CHECK_KEY || "6Ld_placeholder_recaptcha_enterprise_key";
   initializeAppCheck(firebaseApp, {
-    provider: new ReCaptchaEnterpriseProvider("6Ld_placeholder_recaptcha_enterprise_key"),
+    provider: new ReCaptchaEnterpriseProvider(appCheckKey),
     isTokenAutoRefreshEnabled: true,
   });
 } catch (e) {

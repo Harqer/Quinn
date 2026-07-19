@@ -13,7 +13,7 @@ export class PodcastService {
       // @ts-ignore
       session = await ai.live.connect({
         model: "gemini-2.0-flash-exp",
-        generationConfig: {
+        config: {
           responseModalities: ["audio"],
           speechConfig: { voice: "AOEDE" } // Musical/Expressive voice
         },

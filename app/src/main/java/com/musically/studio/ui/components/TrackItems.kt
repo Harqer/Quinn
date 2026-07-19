@@ -8,11 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LibraryMusic
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +57,10 @@ fun TrackItem(track: SpotifyTrack, onClick: () -> Unit = {}) {
 }
 
 @Composable
-fun ChatBubble(message: ChatMessage) {
+fun ChatBubble(
+    message: ChatMessage,
+    onSave: (() -> Unit)? = null
+) {
     val alignment = if (message.isUser) Alignment.End else Alignment.Start
     val containerColor = if (message.isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh
     val contentColor = if (message.isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
@@ -73,12 +74,33 @@ fun ChatBubble(message: ChatMessage) {
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier.widthIn(max = 280.dp)
         ) {
-            Text(
-                text = message.text,
-                modifier = Modifier.padding(12.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                color = contentColor
-            )
+            Column {
+                Text(
+                    text = message.text,
+                    modifier = Modifier.padding(12.dp),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = contentColor
+                )
+                if (onSave != null && !message.isUser) {
+                    TextButton(
+                        onClick = onSave,
+                        modifier = Modifier.align(Alignment.End).padding(end = 4.dp, bottom = 4.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.LibraryMusic,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = contentColor.copy(alpha = 0.7f)
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            "Save Vibe",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = contentColor.copy(alpha = 0.7f)
+                        )
+                    }
+                }
+            }
         }
     }
 }

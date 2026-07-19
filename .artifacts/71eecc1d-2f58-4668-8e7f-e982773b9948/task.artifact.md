@@ -1,14 +1,13 @@
-# Task: Conversational Podcast & Spotify Integration
+# Task: Codebase Upgrade & Dependency Hardening
 
-- `[/]` AI & Backend Evolution
-    - `[ ]` Update `quinn-graph.ts` for stateful podcast feedback
-    - `[ ]` Implement `POST /api/spotify/podcast/save` in backend
-- `[ ]` Android Conversational UI
-    - `[ ]` Refactor `PodcastScreen.kt` with bottom chat input and `LazyColumn`
-    - `[ ]` Wire "Save to Spotify" and "Share" actions to `MainViewModel`
-- `[ ]` Web Conversational UI
-    - `[ ]` Refactor `PodcastView.tsx` with bottom chat input and segment history
-    - `[ ]` Wire "Save to Spotify" and "Share" actions to real API calls
+- `[x]` AI Code Fixes
+    - `[x]` Fix `src/services/quinn-graph.ts` (modelName -> model)
+- `[/]` Dependency Upgrades
+    - `[ ]` Update `package.json` with latest stable versions
+    - `[ ]` Run `pnpm install` and verify `pnpm-lock.yaml`
 - `[ ]` Verification
-    - `[ ]` Verify Quinn correctly incorporates chat feedback into narration
-    - `[ ]` Confirm podcasts are successfully saved to Spotify library
+    - `[ ]` Run `pnpm exec tsc --noEmit`
+    - `[ ]` Run `pnpm test`
+    - `[ ]` Run Android linting and build
+- `[ ]` Final Cleanup & Push
+    - `[ ]` Commit and push to `origin main`

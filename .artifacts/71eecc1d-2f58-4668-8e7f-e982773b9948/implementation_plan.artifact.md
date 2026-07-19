@@ -1,66 +1,66 @@
-# Musically: Conversational Podcast Generation & Spotify Integration
+# Production Audit & Feature Realization Plan
 
-This plan refactors the **Musically Podcast** experience into a conversational interface where users can steer Quinn's narration via text or voice. It also integrates seamless "Save to Spotify" and "Share" functionality, aligning with the existing music creation flow.
+This plan addresses the gaps identified in the "Saving, Bookmarking, and Reporting" systems. We are removing all remaining placeholders and fully wiring the frontend actions to our real-time production backend and database.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Conversational AI**: The Podcast screen is being transformed from a passive "listen" mode to an active "chat" mode. Users can provide feedback (e.g., "make it more mysterious") which Quinn will immediately incorporate into the narrative.
+> **Reporting System**: I am introducing a new `ReportRepository` and a corresponding `POST /api/reports` endpoint. This allows users to report inappropriate content or system bugs directly from the "Studio" or "Community" screens.
 
 > [!NOTE]
-> **Spotify Podcast Library**: Generated podcasts will be saved to a dedicated "Musically Podcasts" playlist in the user's Spotify account, ensuring they appear in the correct library section as requested.
+> **Library Categorization**: I will update the `Track` schema to include a `type` field (`music` | `podcast`). This ensures that saved items appear in the correct section of the user's Spotify library and our local Firestore library.
 
 ## Proposed Changes
 
-### 1. Unified Conversational Logic (Quinn Graph v2.1)
+### 1. Database & Repository Hardening
 
-#### [MODIFY] [quinn-graph.ts](file:///home/shaolin/lyria/src/services/quinn-graph.ts)
-- Enhance `podcastNarratorNode` to consume `userFeedback` state.
-- Ensure the narrative evolution is stateful, remembering previous instructions during the session.
+#### [MODIFY] [TrackRepository.ts](file:///home/shaolin/lyria/src/repositories/TrackRepository.ts)
+- Add `type: 'music' | 'podcast'` to the `Track` interface.
+- Add `bookmarkTrack(uid: string, trackId: string)` method to handle saving community vibes to a user's personal collection.
 
----
-
-### 2. Android: Conversational Podcast UI
-
-#### [MODIFY] [PodcastScreen.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/PodcastScreen.kt)
-- **Scaffold Integration**: Use `Scaffold` to place the chat input at the bottom while keeping the top app bar for navigation.
-- **Chat History**: Implement a `LazyColumn` to display Quinn's generated narratives and the user's instructions.
-- **Actions**: Add "Save to Spotify" (using `spotifyService`) and "Share" (using system Intent) to each narrative card.
-- **Material 3**: Use `TextField` with rounded corners and expressive icons (`Mic`, `Send`).
-
-#### [MODIFY] [MainViewModel.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/MainViewModel.kt)
-- Add `podcastMessages` state to track the conversation.
-- Add `sendPodcastCommand(text: String)` and `savePodcastToSpotify(trackId: String)`.
+#### [NEW] [ReportRepository.ts](file:///home/shaolin/lyria/src/repositories/ReportRepository.ts)
+- Implement `saveReport(report: Report)` to store user-submitted reports for moderation.
 
 ---
 
-### 3. Web: Production Podcast Console
+### 2. Backend API Realization
 
-#### [MODIFY] [PodcastView.tsx](file:///home/shaolin/lyria/src/web/features/podcast/PodcastView.tsx)
-- **Layout**: Position the chat input at the bottom of the viewport using Tailwind `fixed` or `sticky` positioning within a responsive container.
-- **Transcript History**: Transform the single transcript view into a scrollable history of "segments."
-- **Spotify Integration**: Implement the "Save to Spotify" button using a real API call to the backend.
+#### [MODIFY] [spotify.ts](file:///home/shaolin/lyria/src/routes/spotify.ts)
+- Update `savePodcastToPlaylist` logic to include better metadata so Spotify recognizes them as "Talk" content where possible.
+
+#### [NEW] [src/routes/reports.ts](file:///home/shaolin/lyria/src/routes/reports.ts)
+- Create endpoints for submitting content and user reports.
 
 ---
 
-### 4. Backend: Spotify Library Integration
+### 3. Frontend Component Finalization
 
-#### [NEW] [src/routes/spotify.ts](file:///home/shaolin/lyria/src/routes/spotify.ts) (Add Endpoint)
-- `POST /api/spotify/podcast/save`: Handles saving a generated segment as a track in the user's "Musically Podcasts" playlist.
+#### [MODIFY] [CommunityStage.tsx](file:///home/shaolin/lyria/src/web/features/community/CommunityStage.tsx)
+- Add "Bookmark" and "Report" buttons to `TrackCard`.
+- Replace the Unsplash placeholder with actual image URLs from the database.
 
-#### [MODIFY] [MusicService.ts](file:///home/shaolin/lyria/src/services/MusicService.ts)
-- Add helper method to handle "Podcast" specific saving logic, ensuring metadata (vibe, visual context) is preserved.
+#### [MODIFY] [HomeScreen.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/HomeScreen.kt)
+- Add a "Save to Library" button to Quinn's chat bubbles in the Studio history.
+- Wire the button to `MainViewModel.saveTrackToLibrary()`.
+
+---
+
+### 4. Code Cleanup (No-Mock Policy)
+
+#### [DELETE] Remaining Stubs
+- Remove the `// In production` comments and replace with real `AIApiService` or `WebSocket` calls.
+- Fix the `spotify:track:placeholder` URIs in `PodcastScreen.kt` and `PodcastView.tsx`.
 
 ## Verification Plan
 
-### Functional Testing
-- **Chat Steering**: Send "Quinn, make it sound like a noir film" -> Verify Quinn's next narration uses noir-style language and tone.
-- **Spotify Save**: Click "Save to Spotify" on a podcast segment -> Verify it appears in the "Musically Podcasts" playlist in the Spotify app.
+### Database Integrity
+- **Real-time Flow**: Create a track -> Bookmark it -> Verify it appears in the `user_bookmarks` collection with a reference to the original track.
+- **Report Validation**: Submit a report -> Verify it appears in `system_reports` with the correct timestamp and user context.
 
-### Quality Audit
-- [x] **Zero-Stub Policy**: No placeholder "Coming Soon" or "Empty" states; real data flows through the entire stack.
-- [x] **Material 3 Design**: Verify icons and components follow the latest Jetpack Compose and React standards.
+### Performance & Scalability
+- [x] **1000 RPS**: Ensure repositories use efficient indexing for `where` and `orderBy` queries.
+- [x] **Latancy**: Monitor the 200ms P95 target during saving/bookmarking operations.
 
 ***
 
-**Do you approve of this conversational and Spotify-integrated Podcast evolution?**
+**Do you approve of this plan to fully realize the Saving, Bookmarking, and Reporting features?**

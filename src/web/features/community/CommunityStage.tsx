@@ -43,31 +43,59 @@ export const CommunityStage: React.FC = () => {
   );
 };
 
-const TrackCard: React.FC<{ track: any }> = ({ track }) => (
-  <div className="group relative aspect-square rounded-[2rem] overflow-hidden bg-surface-container border border-outline/10 hover:border-primary/50 transition-all duration-500 shadow-xl hover:shadow-primary/20">
-    <img
-      src={track.imageUrl || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=320'}
-      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-100"
-      alt={track.title}
-    />
+const TrackCard: React.FC<{ track: any }> = ({ track }) => {
+  const handleBookmark = async () => {
+    await fetch('/api/music/bookmark', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ trackId: track.id })
+    });
+    alert("Vibe bookmarked!");
+  };
 
-    <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent p-6 flex flex-col justify-end">
-      <div className="space-y-1 transform transition-transform duration-500 group-hover:-translate-y-2">
-        <h4 className="text-2xl font-bold leading-tight">{track.title}</h4>
-        <p className="text-primary font-bold text-sm tracking-wide uppercase">{track.artist}</p>
-        <p className="text-on-surface-variant text-xs line-clamp-2 mt-2 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-          {track.vibe}
-        </p>
+  const handleReport = async () => {
+    const reason = prompt("Enter reason for report:");
+    if (!reason) return;
+    await fetch('/api/reports', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ targetId: track.id, targetType: 'track', reason })
+    });
+    alert("Report submitted.");
+  };
+
+  return (
+    <div className="group relative aspect-square rounded-[2rem] overflow-hidden bg-surface-container border border-outline/10 hover:border-primary/50 transition-all duration-500 shadow-xl hover:shadow-primary/20">
+      <img
+        src={track.imageUrl || '/assets/default-track.jpg'}
+        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-100"
+        alt={track.title}
+      />
+
+      <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent p-6 flex flex-col justify-end">
+        <div className="space-y-1 transform transition-transform duration-500 group-hover:-translate-y-2">
+          <h4 className="text-2xl font-bold leading-tight">{track.title}</h4>
+          <div className="flex justify-between items-center">
+            <p className="text-primary font-bold text-sm tracking-wide uppercase">{track.artist}</p>
+            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button onClick={handleBookmark} className="p-1 hover:text-primary"><span className="material-icons-round text-sm">bookmark</span></button>
+              <button onClick={handleReport} className="p-1 hover:text-error"><span className="material-icons-round text-sm">report</span></button>
+            </div>
+          </div>
+          <p className="text-on-surface-variant text-xs line-clamp-2 mt-2 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+            {track.vibe}
+          </p>
+        </div>
+
+        <button className="mt-4 w-full py-3 bg-primary text-on-primary rounded-2xl font-black text-sm uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 hover:brightness-110">
+          Sync to Wearables
+        </button>
       </div>
 
-      <button className="mt-4 w-full py-3 bg-primary text-on-primary rounded-2xl font-black text-sm uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 hover:brightness-110">
-        Sync to Wearables
-      </button>
+      <div className="absolute top-4 right-4 px-3 py-1 bg-surface/60 backdrop-blur-md rounded-full border border-outline/10 flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-error animate-pulse" />
+        <span className="text-[10px] font-bold uppercase tracking-tighter">{track.type === 'podcast' ? 'Podcast' : 'Live POV'}</span>
+      </div>
     </div>
-
-    <div className="absolute top-4 right-4 px-3 py-1 bg-surface/60 backdrop-blur-md rounded-full border border-outline/10 flex items-center gap-2">
-      <span className="w-2 h-2 rounded-full bg-error animate-pulse" />
-      <span className="text-[10px] font-bold uppercase tracking-tighter">Live POV</span>
-    </div>
-  </div>
-);
+  );
+};

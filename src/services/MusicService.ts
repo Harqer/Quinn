@@ -76,7 +76,7 @@ export class MusicService {
     }
   }
 
-  async generateMusicDirectly(image: string) {
+  async generateMusicDirectly(image: string, type: 'music' | 'podcast' = 'music') {
     const ai = getAi() as any;
 
     const response = await ai.models.generateContent({
@@ -84,7 +84,7 @@ export class MusicService {
       contents: [{
         parts: [
           { inlineData: { mimeType: "image/jpeg", data: image } },
-          { text: "You are a creative music director. Generate 3 short music prompts based on this image. Use universal terminology." }
+          { text: `You are a creative music director. Generate 3 short ${type} prompts based on this image. Use universal terminology.` }
         ]
       }],
       config: {

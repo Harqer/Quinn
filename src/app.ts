@@ -7,6 +7,7 @@ import * as Sentry from "@sentry/node";
 import spotifyRouter from "./routes/spotify.js";
 import musicRouter from "./routes/music.js";
 import logsRouter from "./routes/logs.js";
+import reportsRouter from "./routes/reports.js";
 import logger from "./config/logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -21,6 +22,7 @@ app.use(compression());
 app.use("/api/spotify", spotifyRouter);
 app.use("/api/music", musicRouter);
 app.use("/api/logs", logsRouter);
+app.use("/api/reports", reportsRouter);
 
 // Serve frontend
 app.use(express.static(path.join(__dirname, "../../dist")));

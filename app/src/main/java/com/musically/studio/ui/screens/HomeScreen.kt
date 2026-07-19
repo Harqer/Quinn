@@ -101,7 +101,10 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(viewModel.messages) { message: ChatMessage ->
-                    ChatBubble(message)
+                    ChatBubble(
+                        message = message,
+                        onSave = { viewModel.bookmarkTrack("quinn_${System.currentTimeMillis()}") }
+                    )
                 }
             }
         }

@@ -1,11 +1,12 @@
 import { Router, Response } from "express";
 import { verifyFirebaseToken, AuthenticatedRequest, checkDailyQuota, verifyAppCheck } from "../middlewares/auth.js";
 import { auth } from "../config/firebase.js";
-import { GenerateSchema } from "../schemas/api.js";
+import { GenerateSchema, ShareVibeSchema } from "../schemas/api.js";
 import { WebSocketServer, WebSocket } from "ws";
 import logger from "../config/logger.js";
 import { musicService } from "../services/MusicService.js";
 import { podcastService } from "../services/PodcastService.js";
+import { trackRepository } from "../repositories/TrackRepository.js";
 import { getAi } from "../services/ai.js";
 
 const router = Router();
@@ -15,11 +16,37 @@ router.post("/generate", verifyFirebaseToken, verifyAppCheck, checkDailyQuota, a
   if (!result.success) return res.status(400).json({ error: result.error.errors });
 
   try {
-    const data = await musicService.generateMusicDirectly(result.data.image);
+    const data = await musicService.generateMusicDirectly(result.data.image, result.data.type);
     res.json(data);
   } catch (err) {
     logger.error("Generation Failed", { error: err });
     res.status(500).json({ error: "Generation Failed" });
+  }
+});
+
+router.post("/share", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
+  const result = ShareVibeSchema.safeParse(req.body);
+  if (!result.success) return res.status(400).json({ error: result.error.errors });
+
+  try {
+    const trackId = await musicService.saveTrack(req.user!.uid, result.data);
+    res.status(201).json({ id: trackId, message: "Track shared with community" });
+  } catch (err) {
+    logger.error("Failed to share track", { error: err });
+    res.status(500).json({ error: "Failed to share track" });
+  }
+});
+
+router.post("/bookmark", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
+  const { trackId } = req.body;
+  if (!trackId) return res.status(400).json({ error: "trackId is required" });
+
+  try {
+    const bookmarkId = await trackRepository.bookmarkTrack(req.user!.uid, trackId);
+    res.status(201).json({ id: bookmarkId, message: "Track bookmarked" });
+  } catch (err) {
+    logger.error("Failed to bookmark track", { error: err });
+    res.status(500).json({ error: "Failed to bookmark track" });
   }
 });
 
@@ -30,6 +57,16 @@ router.get("/community/tracks", async (req, res) => {
   } catch (err) {
     logger.error("Failed to fetch community tracks", { error: err });
     res.status(500).json({ error: "Failed to fetch tracks" });
+  }
+});
+
+router.get("/user/tracks", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tracks = await trackRepository.getUserTracks(req.user!.uid);
+    res.json({ tracks });
+  } catch (err) {
+    logger.error("Failed to fetch user tracks", { error: err });
+    res.status(500).json({ error: "Failed to fetch user tracks" });
   }
 });
 

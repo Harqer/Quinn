@@ -1,6 +1,6 @@
 import { StateGraph, Annotation, START, END } from "@langchain/langgraph";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { getRedis, cacheVisionResult, getCachedVisionResult } from "../config/redis.js";
+import { cacheVisionResult, getCachedVisionResult } from "../config/redis.js";
 import crypto from "crypto";
 import logger from "../config/logger.js";
 
@@ -16,7 +16,6 @@ const QuinnState = Annotation.Root({
 
 // Nodes
 const visualAnalyzerNode = async (state: typeof QuinnState.State) => {
-  // If no new image, but we have feedback, we might want to skip vision or use existing
   if (!state.image && state.visionDescription) {
     return { visionDescription: state.visionDescription };
   }
@@ -32,11 +31,11 @@ const visualAnalyzerNode = async (state: typeof QuinnState.State) => {
   }
 
   const model = new ChatGoogleGenerativeAI({
-    modelName: "lyria", // Using Lyria for visual analysis
+    model: "lyria",
     apiKey: process.env.GEMINI_API_KEY,
   });
 
-  const response = await model.invoke([
+  const response = await (model as any).invoke([
     ["system", "Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics."],
     ["human", state.image]
   ]);
@@ -51,17 +50,17 @@ const musicDirectorNode = async (state: typeof QuinnState.State) => {
   if (state.mode !== 'music') return {};
 
   const model = new ChatGoogleGenerativeAI({
-    modelName: "lyria-realtime-exp",
+    model: "lyria-realtime-exp",
     apiKey: process.env.GEMINI_API_KEY,
   });
 
   const feedbackContext = state.userFeedback ? `\nUser Feedback: ${state.userFeedback}` : "";
-  const response = await model.invoke([
+  const response = await (model as any).invoke([
     ["system", "You are Quinn, the Musically Director. Map the following visual vibe and user feedback into a set of 3-5 weighted musical prompts for the Lyria Real-Time engine. Focus on tempo, instrumentation, and atmospheric textures."],
     ["human", `Visual Vibe: ${state.visionDescription}${feedbackContext}`]
   ]);
 
-  const prompts = response.content.toString().split("\n").filter(l => l.trim().length > 0);
+  const prompts = (response.content.toString()).split("\n").filter((l: string) => l.trim().length > 0);
   return { musicalPrompts: prompts };
 };
 
@@ -69,12 +68,12 @@ const podcastNarratorNode = async (state: typeof QuinnState.State) => {
   if (state.mode !== 'podcast') return {};
 
   const model = new ChatGoogleGenerativeAI({
-    modelName: "gemini-2.0-flash-exp", // Standard Gemini for creative narrative
+    model: "gemini-2.0-flash-exp",
     apiKey: process.env.GEMINI_API_KEY,
   });
 
   const feedbackContext = state.userFeedback ? `\nUser Input/Feedback: ${state.userFeedback}` : "";
-  const response = await model.invoke([
+  const response = await (model as any).invoke([
     ["system", "You are Quinn, a podcast host. Based on the visual vibe and user instructions, generate a short, engaging narrative segment (2-4 sentences) for 'Musically POV'. If user gave feedback, acknowledge it naturally in your tone."],
     ["human", `Visual Vibe: ${state.visionDescription}${feedbackContext}`]
   ]);
