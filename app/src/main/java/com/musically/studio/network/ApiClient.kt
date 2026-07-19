@@ -35,13 +35,21 @@ class ApiClient(private val client: OkHttpClient) {
             client.newCall(request).execute().use { response ->
                 if (response.isSuccessful) {
                     val body = response.body?.string()
-                    // Parse SpotifyTrack list from JSON
-                    emptyList() // Placeholder for actual parsing
+                    if (!body.isNullOrEmpty()) {
+                        val gson = com.google.gson.Gson()
+                        val trackResponse = gson.fromJson(body, SpotifyTracksResponse::class.java)
+                        trackResponse?.items?.map { it.track } ?: emptyList()
+                    } else {
+                        emptyList()
+                    }
                 } else {
                     null
                 }
             }
         } catch (e: IOException) {
+            null
+        } catch (e: Exception) {
+            Timber.e(e, "Error parsing tracks")
             null
         }
     }

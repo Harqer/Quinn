@@ -1,5 +1,6 @@
 package com.musically.studio.ui
 
+import android.content.Intent
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,6 +26,12 @@ class MainViewModel : ViewModel() {
     private val _tracks = MutableStateFlow<List<SpotifyTrack>>(emptyList())
     val tracks: StateFlow<List<SpotifyTrack>> = _tracks.asStateFlow()
     
+    private val _currentPlayingTrack = MutableStateFlow<SpotifyTrack?>(null)
+    val currentPlayingTrack: StateFlow<SpotifyTrack?> = _currentPlayingTrack.asStateFlow()
+    
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
+
     private val _isWearableConnected = MutableStateFlow(false)
     val isWearableConnected: StateFlow<Boolean> = _isWearableConnected.asStateFlow()
 
@@ -129,8 +136,24 @@ class MainViewModel : ViewModel() {
 
     fun connectSpotify() {
         viewModelScope.launch {
-            _isSpotifyConnected.value = true
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                android.net.Uri.parse("https://accounts.spotify.com/authorize")
+            )
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            // Launch in activity
         }
+    }
+
+    fun playTrack(track: SpotifyTrack) {
+        _currentPlayingTrack.value = track
+        _isPlaying.value = true
+        // If we had a real player, we'd start playback here
+    }
+
+    fun togglePlayPause() {
+        _isPlaying.value = !_isPlaying.value
+        // Real playback toggle logic here
     }
 
     fun fetchUserTracks() {

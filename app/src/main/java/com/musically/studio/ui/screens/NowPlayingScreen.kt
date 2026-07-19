@@ -21,40 +21,22 @@ import com.musically.studio.network.SpotifyTrack
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.theme.SpotifyBlack
 import com.musically.studio.ui.theme.SpotifyGreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NowPlayingScreen(
-    trackId: String,
+    track: SpotifyTrack?,
     viewModel: MainViewModel,
-    onNavigateBack: () -> Unit
+    onCollapse: () -> Unit
 ) {
-    val tracks by viewModel.tracks.collectAsState()
-    val track = tracks.find { it.id == trackId }
-    var isPlaying by remember { mutableStateOf(false) }
+    val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
 
-    Scaffold(
-        containerColor = SpotifyBlack,
-        topBar = {
-            TopAppBar(
-                title = { 
-                    Text(
-                        "Now Playing from your Studio", 
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White
-                    ) 
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Close", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                )
-            )
-        }
-    ) { paddingValues ->
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(SpotifyBlack)
+    ) {
         if (track == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = SpotifyGreen)
@@ -63,10 +45,26 @@ fun NowPlayingScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
                     .padding(horizontal = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Top Bar equivalent
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onCollapse) {
+                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Close", tint = Color.White)
+                    }
+                    Text(
+                        "Now Playing from your Studio", 
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(48.dp)) // balance center
+                }
+                
                 Spacer(modifier = Modifier.height(32.dp))
                 
                 // Album Art
@@ -151,7 +149,7 @@ fun NowPlayingScreen(
                         modifier = Modifier
                             .size(64.dp)
                             .background(SpotifyGreen, CircleShape)
-                            .clickable { isPlaying = !isPlaying },
+                            .clickable { viewModel.togglePlayPause() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
