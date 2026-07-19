@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.musically.studio.app-mergeDebugResources-59:/values-w320dp-land-v13/values-w320dp-land-v13.xml",
+            "outputFile": "com.musically.studio.app-mergeDebugResources-78:/values-w320dp-land-v13/values-w320dp-land-v13.xml",
             "map": [
                 {
-                    "source": "/home/shaolin/.gradle/caches/transforms-4/5e614871c854d72ad4a3d338b036da57/transformed/material-1.11.0/res/values-w320dp-land-v13/values-w320dp-land-v13.xml",
+                    "source": "/home/shaolin/.gradle/caches/9.1.0/transforms/a1c8f1813b819f06f59ed5498c49cc28/transformed/material-1.12.0/res/values-w320dp-land-v13/values-w320dp-land-v13.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

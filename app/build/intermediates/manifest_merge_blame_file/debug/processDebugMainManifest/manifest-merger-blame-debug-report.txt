@@ -6,7 +6,7 @@
 6
 7    <uses-sdk
 8        android:minSdkVersion="29"
-9        android:targetSdkVersion="35" />
+9        android:targetSdkVersion="37" />
 10
 11    <uses-permission android:name="android.permission.BLUETOOTH" />
 11-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:4:5-68
@@ -50,361 +50,601 @@
 26-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:15:62-86
 27
 28    <queries>
-28-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/transforms-4/d23216615db47a8c39a7263d26db04f6/transformed/mwdat-core-0.8.0/AndroidManifest.xml:15:5-18:15
+28-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:17:5-32:15
 29        <package android:name="com.facebook.stella" />
-29-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/transforms-4/d23216615db47a8c39a7263d26db04f6/transformed/mwdat-core-0.8.0/AndroidManifest.xml:16:9-55
-29-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/transforms-4/d23216615db47a8c39a7263d26db04f6/transformed/mwdat-core-0.8.0/AndroidManifest.xml:16:18-52
+29-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:18:9-55
+29-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:18:18-52
 30        <package android:name="com.facebook.stella_debug" />
-30-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/transforms-4/d23216615db47a8c39a7263d26db04f6/transformed/mwdat-core-0.8.0/AndroidManifest.xml:17:9-61
-30-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/transforms-4/d23216615db47a8c39a7263d26db04f6/transformed/mwdat-core-0.8.0/AndroidManifest.xml:17:18-58
+30-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:19:9-61
+30-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:19:18-58
 31        <package android:name="com.spotify.music" />
-31-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:32:9-53
-31-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:32:18-50
+31-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:20:9-53
+31-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:20:18-50
 32        <package android:name="com.spotify.music.debug" />
-32-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:33:9-59
-32-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:33:18-56
+32-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:21:9-59
+32-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:21:18-56
 33        <package android:name="com.spotify.music.canary" />
-33-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:34:9-60
-33-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:34:18-57
+33-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:22:9-60
+33-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:22:18-57
 34        <package android:name="com.spotify.music.partners" />
-34-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:35:9-62
-34-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:35:18-59
+34-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:23:9-62
+34-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:23:18-59
 35
 36        <intent>
-36-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:37:9-41:18
+36-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:25:9-28:18
 37            <action android:name="com.spotify.sso.action.START_AUTH_FLOW" />
-37-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:38:13-77
-37-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:38:21-74
+37-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:26:13-77
+37-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:26:21-74
 38
 39            <data android:mimeType="text/plain" />
-39-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:53:17-54
+39-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:27:13-51
+39-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:27:19-48
 40        </intent>
 41        <intent>
-41-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:42:9-44:18
+41-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:29:9-31:18
 42            <action android:name="android.support.customtabs.action.CustomTabsService" />
-42-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:43:13-90
-42-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:43:21-87
+42-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:30:13-90
+42-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:30:21-87
 43        </intent>
-44    </queries> <!-- Although the *SdkVersion is captured in gradle build files, this is required for non gradle builds -->
-45    <!-- <uses-sdk android:minSdkVersion="21" /> -->
-46    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-46-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/transforms-4/7da13f39dfe01c4e39e66f9a6eb05e4f/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:10:5-79
-46-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/transforms-4/7da13f39dfe01c4e39e66f9a6eb05e4f/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:10:22-76
-47
-48    <permission
-48-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/transforms-4/c8f954a85339e307a5f05a2647da87b3/transformed/core-1.16.0/AndroidManifest.xml:22:5-24:47
-49        android:name="com.musically.studio.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-49-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/transforms-4/c8f954a85339e307a5f05a2647da87b3/transformed/core-1.16.0/AndroidManifest.xml:23:9-81
-50        android:protectionLevel="signature" />
-50-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/transforms-4/c8f954a85339e307a5f05a2647da87b3/transformed/core-1.16.0/AndroidManifest.xml:24:9-44
+44        <intent>
+44-->[androidx.camera:camera-extensions:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/06e30633f71910147ba91bd51e2b0789/transformed/camera-extensions-1.5.0-alpha01/AndroidManifest.xml:23:9-25:18
+45            <action android:name="androidx.camera.extensions.action.VENDOR_ACTION" />
+45-->[androidx.camera:camera-extensions:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/06e30633f71910147ba91bd51e2b0789/transformed/camera-extensions-1.5.0-alpha01/AndroidManifest.xml:24:13-86
+45-->[androidx.camera:camera-extensions:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/06e30633f71910147ba91bd51e2b0789/transformed/camera-extensions-1.5.0-alpha01/AndroidManifest.xml:24:21-83
+46        </intent>
+47    </queries>
+48
+49    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+49-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:26:5-79
+49-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:26:22-76
+50    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+50-->[com.google.android.recaptcha:recaptcha:18.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/735c3dbde5d92b5307686967198cf890/transformed/recaptcha-18.4.0/AndroidManifest.xml:9:5-98
+50-->[com.google.android.recaptcha:recaptcha:18.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/735c3dbde5d92b5307686967198cf890/transformed/recaptcha-18.4.0/AndroidManifest.xml:9:22-95
 51
-52    <uses-permission android:name="com.musically.studio.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-52-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/transforms-4/c8f954a85339e307a5f05a2647da87b3/transformed/core-1.16.0/AndroidManifest.xml:26:5-97
-52-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/transforms-4/c8f954a85339e307a5f05a2647da87b3/transformed/core-1.16.0/AndroidManifest.xml:26:22-94
-53
-54    <application
-54-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:17:5-66:19
-55        android:name="com.musically.studio.MyApplication"
-55-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:18:9-38
-56        android:allowBackup="false"
-56-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:19:9-36
-57        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-57-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/transforms-4/c8f954a85339e307a5f05a2647da87b3/transformed/core-1.16.0/AndroidManifest.xml:28:18-86
-58        android:debuggable="true"
-59        android:extractNativeLibs="true"
-60        android:icon="@mipmap/ic_launcher"
-60-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:20:9-43
-61        android:label="Musically"
-61-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:22:9-34
-62        android:roundIcon="@mipmap/ic_launcher_round"
-62-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:21:9-54
-63        android:supportsRtl="true"
-63-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:24:9-35
-64        android:theme="@style/Theme.Musically" >
-64-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:23:9-47
-65        <meta-data
-66            android:name="com.meta.wearable.mwdat.APPLICATION_ID"
-66-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:27:13-66
-67            android:value="com.musically.studio" />
-67-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:28:13-52
-68        <meta-data
-69            android:name="com.meta.wearable.mwdat.CLIENT_TOKEN"
-69-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:30:13-64
-70            android:value="dummy_token_abc" />
-70-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:31:13-50
-71        <meta-data
-71-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:32:9-34:36
-72            android:name="com.meta.wearable.mwdat.DAM_ENABLED"
-72-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:33:13-63
-73            android:value="true" />
-73-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:34:13-33
-74
-75        <service
-75-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:36:9-40:79
-76            android:name="com.musically.studio.WearableStreamingService"
-76-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:37:13-53
-77            android:enabled="true"
-77-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:38:13-35
-78            android:exported="false"
-78-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:39:13-37
-79            android:foregroundServiceType="camera|microphone|mediaPlayback" />
-79-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:40:13-76
-80
-81        <activity
-81-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:42:9-55:20
-82            android:name="com.musically.studio.MainActivity"
-82-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:43:13-41
-83            android:exported="true" >
-83-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:44:13-36
-84            <intent-filter>
-84-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:45:13-48:29
-85                <action android:name="android.intent.action.MAIN" />
-85-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:46:17-69
-85-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:46:25-66
-86
-87                <category android:name="android.intent.category.LAUNCHER" />
-87-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:47:17-77
-87-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:47:27-74
-88            </intent-filter>
-89            <intent-filter>
-89-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:49:13-54:29
-90                <action android:name="android.intent.action.VIEW" />
-90-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:50:17-69
-90-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:50:25-66
-91
-92                <category android:name="android.intent.category.DEFAULT" />
-92-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:51:17-76
-92-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:51:27-73
-93                <category android:name="android.intent.category.BROWSABLE" />
-93-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:52:17-78
-93-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:52:27-75
-94
-95                <data android:scheme="lyriacamera" />
-95-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:53:17-54
-95-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:53:23-51
-96            </intent-filter>
-97        </activity>
-98
-99        <provider
-100            android:name="androidx.core.content.FileProvider"
-100-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:57:13-62
-101            android:authorities="com.musically.studio.provider"
-101-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:58:13-60
-102            android:exported="false"
-102-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:59:13-37
-103            android:grantUriPermissions="true" >
-103-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:60:13-47
-104            <meta-data
-104-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:61:13-63:58
-105                android:name="android.support.FILE_PROVIDER_PATHS"
-105-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:62:17-67
-106                android:resource="@xml/provider_paths" />
-106-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:63:17-55
-107        </provider>
-108
-109        <service
-109-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/transforms-4/d23216615db47a8c39a7263d26db04f6/transformed/mwdat-core-0.8.0/AndroidManifest.xml:21:9-29:19
-110            android:name="com.meta.wearable.acdc.sdk.service.ACDCRegistrationService"
-110-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/transforms-4/d23216615db47a8c39a7263d26db04f6/transformed/mwdat-core-0.8.0/AndroidManifest.xml:22:13-86
-111            android:exported="true" >
-111-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/transforms-4/d23216615db47a8c39a7263d26db04f6/transformed/mwdat-core-0.8.0/AndroidManifest.xml:23:13-36
-112            <intent-filter>
-112-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/transforms-4/d23216615db47a8c39a7263d26db04f6/transformed/mwdat-core-0.8.0/AndroidManifest.xml:24:13-28:29
-113                <action android:name="com.meta.wearable.acdc.sdk.service.ACDCRegistrationService.BIND" />
-113-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/transforms-4/d23216615db47a8c39a7263d26db04f6/transformed/mwdat-core-0.8.0/AndroidManifest.xml:25:17-106
-113-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/transforms-4/d23216615db47a8c39a7263d26db04f6/transformed/mwdat-core-0.8.0/AndroidManifest.xml:25:25-103
+52    <permission
+52-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/9.1.0/transforms/40e103d61c0edb4f5a22ddaf3941db99/transformed/core-1.16.0/AndroidManifest.xml:22:5-24:47
+53        android:name="com.musically.studio.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+53-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/9.1.0/transforms/40e103d61c0edb4f5a22ddaf3941db99/transformed/core-1.16.0/AndroidManifest.xml:23:9-81
+54        android:protectionLevel="signature" />
+54-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/9.1.0/transforms/40e103d61c0edb4f5a22ddaf3941db99/transformed/core-1.16.0/AndroidManifest.xml:24:9-44
+55
+56    <uses-permission android:name="com.musically.studio.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+56-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/9.1.0/transforms/40e103d61c0edb4f5a22ddaf3941db99/transformed/core-1.16.0/AndroidManifest.xml:26:5-97
+56-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/9.1.0/transforms/40e103d61c0edb4f5a22ddaf3941db99/transformed/core-1.16.0/AndroidManifest.xml:26:22-94
+57
+58    <application
+58-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:34:5-81:19
+59        android:name="com.musically.studio.MyApplication"
+59-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:35:9-38
+60        android:allowBackup="false"
+60-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:36:9-36
+61        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+61-->[androidx.core:core:1.16.0] /home/shaolin/.gradle/caches/9.1.0/transforms/40e103d61c0edb4f5a22ddaf3941db99/transformed/core-1.16.0/AndroidManifest.xml:28:18-86
+62        android:debuggable="true"
+63        android:extractNativeLibs="true"
+64        android:label="Musically"
+64-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:37:9-34
+65        android:supportsRtl="true"
+65-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:38:9-35
+66        android:theme="@style/Theme.Musically" >
+66-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:39:9-47
+67        <meta-data
+68            android:name="com.meta.wearable.mwdat.APPLICATION_ID"
+68-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:42:13-66
+69            android:value="0" />
+69-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:43:13-52
+70        <meta-data
+71            android:name="com.meta.wearable.mwdat.CLIENT_TOKEN"
+71-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:45:13-64
+72            android:value="0" />
+72-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:46:13-50
+73        <meta-data
+73-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:47:9-49:36
+74            android:name="com.meta.wearable.mwdat.DAM_ENABLED"
+74-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:48:13-63
+75            android:value="true" />
+75-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:49:13-33
+76
+77        <service
+77-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:51:9-55:79
+78            android:name="com.musically.studio.WearableStreamingService"
+78-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:52:13-53
+79            android:enabled="true"
+79-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:53:13-35
+80            android:exported="false"
+80-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:54:13-37
+81            android:foregroundServiceType="camera|microphone|mediaPlayback" />
+81-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:55:13-76
+82
+83        <activity
+83-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:57:9-70:20
+84            android:name="com.musically.studio.MainActivity"
+84-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:58:13-41
+85            android:exported="true" >
+85-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:59:13-36
+86            <intent-filter>
+86-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:60:13-63:29
+87                <action android:name="android.intent.action.MAIN" />
+87-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:61:17-69
+87-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:61:25-66
+88
+89                <category android:name="android.intent.category.LAUNCHER" />
+89-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:62:17-77
+89-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:62:27-74
+90            </intent-filter>
+91            <intent-filter>
+91-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:64:13-69:29
+92                <action android:name="android.intent.action.VIEW" />
+92-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:65:17-69
+92-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:65:25-66
+93
+94                <category android:name="android.intent.category.DEFAULT" />
+94-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:66:17-76
+94-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:66:27-73
+95                <category android:name="android.intent.category.BROWSABLE" />
+95-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:67:17-78
+95-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:67:27-75
+96
+97                <data android:scheme="musically" />
+97-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:27:13-51
+97-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:68:23-49
+98            </intent-filter>
+99        </activity>
+100
+101        <provider
+101-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:72:9-80:20
+102            android:name="androidx.core.content.FileProvider"
+102-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:73:13-62
+103            android:authorities="com.musically.studio.provider"
+103-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:74:13-64
+104            android:exported="false"
+104-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:75:13-37
+105            android:grantUriPermissions="true" >
+105-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:76:13-47
+106            <meta-data
+106-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:77:13-79:58
+107                android:name="android.support.FILE_PROVIDER_PATHS"
+107-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:78:17-67
+108                android:resource="@xml/provider_paths" />
+108-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:79:17-55
+109        </provider>
+110
+111        <uses-library
+111-->[androidx.camera:camera-extensions:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/06e30633f71910147ba91bd51e2b0789/transformed/camera-extensions-1.5.0-alpha01/AndroidManifest.xml:29:9-31:40
+112            android:name="androidx.camera.extensions.impl"
+112-->[androidx.camera:camera-extensions:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/06e30633f71910147ba91bd51e2b0789/transformed/camera-extensions-1.5.0-alpha01/AndroidManifest.xml:30:13-59
+113            android:required="false" />
+113-->[androidx.camera:camera-extensions:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/06e30633f71910147ba91bd51e2b0789/transformed/camera-extensions-1.5.0-alpha01/AndroidManifest.xml:31:13-37
 114
-115                <category android:name="android.intent.category.DEFAULT" />
-115-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:51:17-76
-115-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:51:27-73
-116            </intent-filter>
-117        </service>
-118        <service
-118-->[com.google.firebase:firebase-firestore-ktx:25.0.0] /home/shaolin/.gradle/caches/transforms-4/0f23686fc77dfe23a09e84b5c5d58ca0/transformed/firebase-firestore-ktx-25.0.0/AndroidManifest.xml:9:9-15:19
-119            android:name="com.google.firebase.components.ComponentDiscoveryService"
-119-->[com.google.firebase:firebase-firestore-ktx:25.0.0] /home/shaolin/.gradle/caches/transforms-4/0f23686fc77dfe23a09e84b5c5d58ca0/transformed/firebase-firestore-ktx-25.0.0/AndroidManifest.xml:10:13-84
-120            android:directBootAware="true"
-120-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/transforms-4/12a2d3854552d2c98f16d6ac87ecdfde/transformed/firebase-common-21.0.0/AndroidManifest.xml:32:13-43
-121            android:exported="false" >
-121-->[com.google.firebase:firebase-firestore-ktx:25.0.0] /home/shaolin/.gradle/caches/transforms-4/0f23686fc77dfe23a09e84b5c5d58ca0/transformed/firebase-firestore-ktx-25.0.0/AndroidManifest.xml:11:13-37
-122            <meta-data
-122-->[com.google.firebase:firebase-firestore-ktx:25.0.0] /home/shaolin/.gradle/caches/transforms-4/0f23686fc77dfe23a09e84b5c5d58ca0/transformed/firebase-firestore-ktx-25.0.0/AndroidManifest.xml:12:13-14:85
-123                android:name="com.google.firebase.components:com.google.firebase.firestore.ktx.FirebaseFirestoreLegacyRegistrar"
-123-->[com.google.firebase:firebase-firestore-ktx:25.0.0] /home/shaolin/.gradle/caches/transforms-4/0f23686fc77dfe23a09e84b5c5d58ca0/transformed/firebase-firestore-ktx-25.0.0/AndroidManifest.xml:13:17-129
-124                android:value="com.google.firebase.components.ComponentRegistrar" />
-124-->[com.google.firebase:firebase-firestore-ktx:25.0.0] /home/shaolin/.gradle/caches/transforms-4/0f23686fc77dfe23a09e84b5c5d58ca0/transformed/firebase-firestore-ktx-25.0.0/AndroidManifest.xml:14:17-82
-125            <meta-data
-125-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/transforms-4/7da13f39dfe01c4e39e66f9a6eb05e4f/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:17:13-19:85
-126                android:name="com.google.firebase.components:com.google.firebase.firestore.FirebaseFirestoreKtxRegistrar"
-126-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/transforms-4/7da13f39dfe01c4e39e66f9a6eb05e4f/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:18:17-122
-127                android:value="com.google.firebase.components.ComponentRegistrar" />
-127-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/transforms-4/7da13f39dfe01c4e39e66f9a6eb05e4f/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:19:17-82
-128            <meta-data
-128-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/transforms-4/7da13f39dfe01c4e39e66f9a6eb05e4f/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:20:13-22:85
-129                android:name="com.google.firebase.components:com.google.firebase.firestore.FirestoreRegistrar"
-129-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/transforms-4/7da13f39dfe01c4e39e66f9a6eb05e4f/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:21:17-111
-130                android:value="com.google.firebase.components.ComponentRegistrar" />
-130-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/transforms-4/7da13f39dfe01c4e39e66f9a6eb05e4f/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:22:17-82
-131            <meta-data
-131-->[com.google.firebase:firebase-common-ktx:21.0.0] /home/shaolin/.gradle/caches/transforms-4/84c2489fd047dda4911e10c8f24e94c9/transformed/firebase-common-ktx-21.0.0/AndroidManifest.xml:12:13-14:85
-132                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar"
-132-->[com.google.firebase:firebase-common-ktx:21.0.0] /home/shaolin/.gradle/caches/transforms-4/84c2489fd047dda4911e10c8f24e94c9/transformed/firebase-common-ktx-21.0.0/AndroidManifest.xml:13:17-116
-133                android:value="com.google.firebase.components.ComponentRegistrar" />
-133-->[com.google.firebase:firebase-common-ktx:21.0.0] /home/shaolin/.gradle/caches/transforms-4/84c2489fd047dda4911e10c8f24e94c9/transformed/firebase-common-ktx-21.0.0/AndroidManifest.xml:14:17-82
-134            <meta-data
-134-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/transforms-4/12a2d3854552d2c98f16d6ac87ecdfde/transformed/firebase-common-21.0.0/AndroidManifest.xml:35:13-37:85
-135                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
-135-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/transforms-4/12a2d3854552d2c98f16d6ac87ecdfde/transformed/firebase-common-21.0.0/AndroidManifest.xml:36:17-109
-136                android:value="com.google.firebase.components.ComponentRegistrar" />
-136-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/transforms-4/12a2d3854552d2c98f16d6ac87ecdfde/transformed/firebase-common-21.0.0/AndroidManifest.xml:37:17-82
-137        </service>
-138
-139        <activity
-139-->[com.google.android.gms:play-services-base:18.0.1] /home/shaolin/.gradle/caches/transforms-4/5045dc1470ce246a3905c0d69c84ad27/transformed/play-services-base-18.0.1/AndroidManifest.xml:20:9-22:45
-140            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-140-->[com.google.android.gms:play-services-base:18.0.1] /home/shaolin/.gradle/caches/transforms-4/5045dc1470ce246a3905c0d69c84ad27/transformed/play-services-base-18.0.1/AndroidManifest.xml:20:19-85
-141            android:exported="false"
-141-->[com.google.android.gms:play-services-base:18.0.1] /home/shaolin/.gradle/caches/transforms-4/5045dc1470ce246a3905c0d69c84ad27/transformed/play-services-base-18.0.1/AndroidManifest.xml:22:19-43
-142            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-142-->[com.google.android.gms:play-services-base:18.0.1] /home/shaolin/.gradle/caches/transforms-4/5045dc1470ce246a3905c0d69c84ad27/transformed/play-services-base-18.0.1/AndroidManifest.xml:21:19-78
-143
-144        <provider
-144-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/transforms-4/12a2d3854552d2c98f16d6ac87ecdfde/transformed/firebase-common-21.0.0/AndroidManifest.xml:23:9-28:39
-145            android:name="com.google.firebase.provider.FirebaseInitProvider"
-145-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/transforms-4/12a2d3854552d2c98f16d6ac87ecdfde/transformed/firebase-common-21.0.0/AndroidManifest.xml:24:13-77
-146            android:authorities="com.musically.studio.firebaseinitprovider"
-146-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/transforms-4/12a2d3854552d2c98f16d6ac87ecdfde/transformed/firebase-common-21.0.0/AndroidManifest.xml:25:13-72
-147            android:directBootAware="true"
-147-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/transforms-4/12a2d3854552d2c98f16d6ac87ecdfde/transformed/firebase-common-21.0.0/AndroidManifest.xml:26:13-43
-148            android:exported="false"
-148-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/transforms-4/12a2d3854552d2c98f16d6ac87ecdfde/transformed/firebase-common-21.0.0/AndroidManifest.xml:27:13-37
-149            android:initOrder="100" />
-149-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/transforms-4/12a2d3854552d2c98f16d6ac87ecdfde/transformed/firebase-common-21.0.0/AndroidManifest.xml:28:13-36
+115        <service
+115-->[androidx.camera:camera-camera2:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/334e8f048af137e9313decad5d89d061/transformed/camera-camera2-1.5.0-alpha01/AndroidManifest.xml:24:9-33:19
+116            android:name="androidx.camera.core.impl.MetadataHolderService"
+116-->[androidx.camera:camera-camera2:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/334e8f048af137e9313decad5d89d061/transformed/camera-camera2-1.5.0-alpha01/AndroidManifest.xml:25:13-75
+117            android:enabled="false"
+117-->[androidx.camera:camera-camera2:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/334e8f048af137e9313decad5d89d061/transformed/camera-camera2-1.5.0-alpha01/AndroidManifest.xml:26:13-36
+118            android:exported="false" >
+118-->[androidx.camera:camera-camera2:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/334e8f048af137e9313decad5d89d061/transformed/camera-camera2-1.5.0-alpha01/AndroidManifest.xml:27:13-37
+119            <meta-data
+119-->[androidx.camera:camera-camera2:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/334e8f048af137e9313decad5d89d061/transformed/camera-camera2-1.5.0-alpha01/AndroidManifest.xml:30:13-32:89
+120                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+120-->[androidx.camera:camera-camera2:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/334e8f048af137e9313decad5d89d061/transformed/camera-camera2-1.5.0-alpha01/AndroidManifest.xml:31:17-103
+121                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+121-->[androidx.camera:camera-camera2:1.5.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/334e8f048af137e9313decad5d89d061/transformed/camera-camera2-1.5.0-alpha01/AndroidManifest.xml:32:17-86
+122        </service>
+123
+124        <activity
+124-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:29:9-46:20
+125            android:name="com.google.firebase.auth.internal.GenericIdpActivity"
+125-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:30:13-80
+126            android:excludeFromRecents="true"
+126-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:31:13-46
+127            android:exported="true"
+127-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:32:13-36
+128            android:launchMode="singleTask"
+128-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:33:13-44
+129            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+129-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:34:13-72
+130            <intent-filter>
+130-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:35:13-45:29
+131                <action android:name="android.intent.action.VIEW" />
+131-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:65:17-69
+131-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:65:25-66
+132
+133                <category android:name="android.intent.category.DEFAULT" />
+133-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:66:17-76
+133-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:66:27-73
+134                <category android:name="android.intent.category.BROWSABLE" />
+134-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:67:17-78
+134-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:67:27-75
+135
+136                <data
+136-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:27:13-51
+137                    android:host="firebase.auth"
+138                    android:path="/"
+139                    android:scheme="genericidp" />
+139-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:68:23-49
+140            </intent-filter>
+141        </activity>
+142        <activity
+142-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:47:9-64:20
+143            android:name="com.google.firebase.auth.internal.RecaptchaActivity"
+143-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:48:13-79
+144            android:excludeFromRecents="true"
+144-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:49:13-46
+145            android:exported="true"
+145-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:50:13-36
+146            android:launchMode="singleTask"
+146-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:51:13-44
+147            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+147-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:52:13-72
+148            <intent-filter>
+148-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:53:13-63:29
+149                <action android:name="android.intent.action.VIEW" />
+149-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:65:17-69
+149-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:65:25-66
 150
-151        <activity
-151-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:48:9-63:20
-152            android:name="com.spotify.sdk.android.auth.LoginActivity"
-152-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:49:13-70
-153            android:exported="true"
-153-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:50:13-36
-154            android:launchMode="singleTask"
-154-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:51:13-44
-155            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-155-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:52:13-72
-156            <intent-filter android:autoVerify="true" >
-156-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:53:13-62:29
-156-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/transforms-4/971f1d361a997f94823fa4f08bab8d32/transformed/auth-2.1.0/AndroidManifest.xml:53:28-53
-157                <action android:name="android.intent.action.VIEW" />
-157-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:50:17-69
-157-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:50:25-66
-158
-159                <category android:name="android.intent.category.DEFAULT" />
-159-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:51:17-76
-159-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:51:27-73
-160                <category android:name="android.intent.category.BROWSABLE" />
-160-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:52:17-78
-160-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:52:27-75
-161
-162                <data
-162-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:53:17-54
-163                    android:host="callback"
-164                    android:scheme="lyriacamera" />
-164-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:53:23-51
-165            </intent-filter>
-166        </activity>
-167
-168        <provider
-168-->[androidx.emoji2:emoji2:1.2.0] /home/shaolin/.gradle/caches/transforms-4/2459cbe5b6073e1b0c4b6224a4691f94/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
-169            android:name="androidx.startup.InitializationProvider"
-169-->[androidx.emoji2:emoji2:1.2.0] /home/shaolin/.gradle/caches/transforms-4/2459cbe5b6073e1b0c4b6224a4691f94/transformed/emoji2-1.2.0/AndroidManifest.xml:25:13-67
-170            android:authorities="com.musically.studio.androidx-startup"
-170-->[androidx.emoji2:emoji2:1.2.0] /home/shaolin/.gradle/caches/transforms-4/2459cbe5b6073e1b0c4b6224a4691f94/transformed/emoji2-1.2.0/AndroidManifest.xml:26:13-68
-171            android:exported="false" >
-171-->[androidx.emoji2:emoji2:1.2.0] /home/shaolin/.gradle/caches/transforms-4/2459cbe5b6073e1b0c4b6224a4691f94/transformed/emoji2-1.2.0/AndroidManifest.xml:27:13-37
-172            <meta-data
-172-->[androidx.emoji2:emoji2:1.2.0] /home/shaolin/.gradle/caches/transforms-4/2459cbe5b6073e1b0c4b6224a4691f94/transformed/emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
-173                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-173-->[androidx.emoji2:emoji2:1.2.0] /home/shaolin/.gradle/caches/transforms-4/2459cbe5b6073e1b0c4b6224a4691f94/transformed/emoji2-1.2.0/AndroidManifest.xml:30:17-75
-174                android:value="androidx.startup" />
-174-->[androidx.emoji2:emoji2:1.2.0] /home/shaolin/.gradle/caches/transforms-4/2459cbe5b6073e1b0c4b6224a4691f94/transformed/emoji2-1.2.0/AndroidManifest.xml:31:17-49
-175            <meta-data
-175-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/shaolin/.gradle/caches/transforms-4/3bb094c8dc1ccfbec856c80360497d6a/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:29:13-31:52
-176                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-176-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/shaolin/.gradle/caches/transforms-4/3bb094c8dc1ccfbec856c80360497d6a/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:30:17-78
-177                android:value="androidx.startup" />
-177-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/shaolin/.gradle/caches/transforms-4/3bb094c8dc1ccfbec856c80360497d6a/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:31:17-49
-178            <meta-data
-178-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
-179                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-179-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
-180                android:value="androidx.startup" />
-180-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
-181        </provider>
-182
-183        <uses-library
-183-->[androidx.window:window:1.0.0] /home/shaolin/.gradle/caches/transforms-4/990cfb7825a92272165fb5420c50b933/transformed/window-1.0.0/AndroidManifest.xml:25:9-27:40
-184            android:name="androidx.window.extensions"
-184-->[androidx.window:window:1.0.0] /home/shaolin/.gradle/caches/transforms-4/990cfb7825a92272165fb5420c50b933/transformed/window-1.0.0/AndroidManifest.xml:26:13-54
-185            android:required="false" />
-185-->[androidx.window:window:1.0.0] /home/shaolin/.gradle/caches/transforms-4/990cfb7825a92272165fb5420c50b933/transformed/window-1.0.0/AndroidManifest.xml:27:13-37
-186        <uses-library
-186-->[androidx.window:window:1.0.0] /home/shaolin/.gradle/caches/transforms-4/990cfb7825a92272165fb5420c50b933/transformed/window-1.0.0/AndroidManifest.xml:28:9-30:40
-187            android:name="androidx.window.sidecar"
-187-->[androidx.window:window:1.0.0] /home/shaolin/.gradle/caches/transforms-4/990cfb7825a92272165fb5420c50b933/transformed/window-1.0.0/AndroidManifest.xml:29:13-51
-188            android:required="false" />
-188-->[androidx.window:window:1.0.0] /home/shaolin/.gradle/caches/transforms-4/990cfb7825a92272165fb5420c50b933/transformed/window-1.0.0/AndroidManifest.xml:30:13-37
-189
-190        <meta-data
-190-->[com.google.android.gms:play-services-basement:18.3.0] /home/shaolin/.gradle/caches/transforms-4/717cb854660c6055644fa7b6b3995f9a/transformed/play-services-basement-18.3.0/AndroidManifest.xml:21:9-23:69
-191            android:name="com.google.android.gms.version"
-191-->[com.google.android.gms:play-services-basement:18.3.0] /home/shaolin/.gradle/caches/transforms-4/717cb854660c6055644fa7b6b3995f9a/transformed/play-services-basement-18.3.0/AndroidManifest.xml:22:13-58
-192            android:value="@integer/google_play_services_version" />
-192-->[com.google.android.gms:play-services-basement:18.3.0] /home/shaolin/.gradle/caches/transforms-4/717cb854660c6055644fa7b6b3995f9a/transformed/play-services-basement-18.3.0/AndroidManifest.xml:23:13-66
-193
-194        <receiver
-194-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
-195            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-195-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
-196            android:directBootAware="false"
-196-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
-197            android:enabled="true"
-197-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
-198            android:exported="true"
-198-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
-199            android:permission="android.permission.DUMP" >
-199-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
-200            <intent-filter>
-200-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
-201                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-201-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
-201-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
-202            </intent-filter>
-203            <intent-filter>
-203-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
-204                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-204-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
-204-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
-205            </intent-filter>
-206            <intent-filter>
-206-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
-207                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-207-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
-207-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
-208            </intent-filter>
-209            <intent-filter>
-209-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
-210                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-210-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
-210-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/transforms-4/15a26bf2277447347489959725071c52/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
-211            </intent-filter>
-212        </receiver>
-213
-214        <meta-data
-214-->[com.facebook.soloader:soloader:0.12.1] /home/shaolin/.gradle/caches/transforms-4/3786cb4fa8440129332edfde48b19096/transformed/soloader-0.12.1/AndroidManifest.xml:12:9-14:37
-215            android:name="com.facebook.soloader.enabled"
-215-->[com.facebook.soloader:soloader:0.12.1] /home/shaolin/.gradle/caches/transforms-4/3786cb4fa8440129332edfde48b19096/transformed/soloader-0.12.1/AndroidManifest.xml:13:13-57
-216            android:value="false" />
-216-->[com.facebook.soloader:soloader:0.12.1] /home/shaolin/.gradle/caches/transforms-4/3786cb4fa8440129332edfde48b19096/transformed/soloader-0.12.1/AndroidManifest.xml:14:13-34
-217    </application>
-218
-219</manifest>
+151                <category android:name="android.intent.category.DEFAULT" />
+151-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:66:17-76
+151-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:66:27-73
+152                <category android:name="android.intent.category.BROWSABLE" />
+152-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:67:17-78
+152-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:67:27-75
+153
+154                <data
+154-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:27:13-51
+155                    android:host="firebase.auth"
+156                    android:path="/"
+157                    android:scheme="recaptcha" />
+157-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:68:23-49
+158            </intent-filter>
+159        </activity>
+160
+161        <service
+161-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:66:9-72:19
+162            android:name="com.google.firebase.components.ComponentDiscoveryService"
+162-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:67:13-84
+163            android:directBootAware="true"
+163-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d0e9ae16bfdbba037cd866e45d6a2f51/transformed/firebase-common-21.0.0/AndroidManifest.xml:32:13-43
+164            android:exported="false" >
+164-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:68:13-37
+165            <meta-data
+165-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:69:13-71:85
+166                android:name="com.google.firebase.components:com.google.firebase.auth.FirebaseAuthRegistrar"
+166-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:70:17-109
+167                android:value="com.google.firebase.components.ComponentRegistrar" />
+167-->[com.google.firebase:firebase-auth:23.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/5424a647ae20e78911b94be9c9bf2181/transformed/firebase-auth-23.0.0/AndroidManifest.xml:71:17-82
+168            <meta-data
+168-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c6e555771531da957528d4ac749e5cc5/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:17:13-19:85
+169                android:name="com.google.firebase.components:com.google.firebase.firestore.FirebaseFirestoreKtxRegistrar"
+169-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c6e555771531da957528d4ac749e5cc5/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:18:17-122
+170                android:value="com.google.firebase.components.ComponentRegistrar" />
+170-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c6e555771531da957528d4ac749e5cc5/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:19:17-82
+171            <meta-data
+171-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c6e555771531da957528d4ac749e5cc5/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:20:13-22:85
+172                android:name="com.google.firebase.components:com.google.firebase.firestore.FirestoreRegistrar"
+172-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c6e555771531da957528d4ac749e5cc5/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:21:17-111
+173                android:value="com.google.firebase.components.ComponentRegistrar" />
+173-->[com.google.firebase:firebase-firestore:25.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c6e555771531da957528d4ac749e5cc5/transformed/firebase-firestore-25.0.0/AndroidManifest.xml:22:17-82
+174            <meta-data
+174-->[com.google.firebase:firebase-crashlytics:19.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/4ba3697add61334d6e10b9b888c55f05/transformed/firebase-crashlytics-19.0.3/AndroidManifest.xml:15:13-17:85
+175                android:name="com.google.firebase.components:com.google.firebase.crashlytics.FirebaseCrashlyticsKtxRegistrar"
+175-->[com.google.firebase:firebase-crashlytics:19.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/4ba3697add61334d6e10b9b888c55f05/transformed/firebase-crashlytics-19.0.3/AndroidManifest.xml:16:17-126
+176                android:value="com.google.firebase.components.ComponentRegistrar" />
+176-->[com.google.firebase:firebase-crashlytics:19.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/4ba3697add61334d6e10b9b888c55f05/transformed/firebase-crashlytics-19.0.3/AndroidManifest.xml:17:17-82
+177            <meta-data
+177-->[com.google.firebase:firebase-crashlytics:19.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/4ba3697add61334d6e10b9b888c55f05/transformed/firebase-crashlytics-19.0.3/AndroidManifest.xml:18:13-20:85
+178                android:name="com.google.firebase.components:com.google.firebase.crashlytics.CrashlyticsRegistrar"
+178-->[com.google.firebase:firebase-crashlytics:19.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/4ba3697add61334d6e10b9b888c55f05/transformed/firebase-crashlytics-19.0.3/AndroidManifest.xml:19:17-115
+179                android:value="com.google.firebase.components.ComponentRegistrar" />
+179-->[com.google.firebase:firebase-crashlytics:19.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/4ba3697add61334d6e10b9b888c55f05/transformed/firebase-crashlytics-19.0.3/AndroidManifest.xml:20:17-82
+180            <meta-data
+180-->[com.google.firebase:firebase-sessions:2.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/bacbfe91c08df37d7d18c649fd5721e7/transformed/firebase-sessions-2.0.3/AndroidManifest.xml:29:13-31:85
+181                android:name="com.google.firebase.components:com.google.firebase.sessions.FirebaseSessionsRegistrar"
+181-->[com.google.firebase:firebase-sessions:2.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/bacbfe91c08df37d7d18c649fd5721e7/transformed/firebase-sessions-2.0.3/AndroidManifest.xml:30:17-117
+182                android:value="com.google.firebase.components.ComponentRegistrar" />
+182-->[com.google.firebase:firebase-sessions:2.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/bacbfe91c08df37d7d18c649fd5721e7/transformed/firebase-sessions-2.0.3/AndroidManifest.xml:31:17-82
+183            <meta-data
+183-->[com.google.firebase:firebase-installations:18.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/336e21b6c548933cf57ad77faca5d23f/transformed/firebase-installations-18.0.0/AndroidManifest.xml:15:13-17:85
+184                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar"
+184-->[com.google.firebase:firebase-installations:18.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/336e21b6c548933cf57ad77faca5d23f/transformed/firebase-installations-18.0.0/AndroidManifest.xml:16:17-130
+185                android:value="com.google.firebase.components.ComponentRegistrar" />
+185-->[com.google.firebase:firebase-installations:18.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/336e21b6c548933cf57ad77faca5d23f/transformed/firebase-installations-18.0.0/AndroidManifest.xml:17:17-82
+186            <meta-data
+186-->[com.google.firebase:firebase-installations:18.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/336e21b6c548933cf57ad77faca5d23f/transformed/firebase-installations-18.0.0/AndroidManifest.xml:18:13-20:85
+187                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+187-->[com.google.firebase:firebase-installations:18.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/336e21b6c548933cf57ad77faca5d23f/transformed/firebase-installations-18.0.0/AndroidManifest.xml:19:17-127
+188                android:value="com.google.firebase.components.ComponentRegistrar" />
+188-->[com.google.firebase:firebase-installations:18.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/336e21b6c548933cf57ad77faca5d23f/transformed/firebase-installations-18.0.0/AndroidManifest.xml:20:17-82
+189            <meta-data
+189-->[com.google.firebase:firebase-common-ktx:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/f119f3744da32c24dca9c27a88e4a4bf/transformed/firebase-common-ktx-21.0.0/AndroidManifest.xml:12:13-14:85
+190                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar"
+190-->[com.google.firebase:firebase-common-ktx:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/f119f3744da32c24dca9c27a88e4a4bf/transformed/firebase-common-ktx-21.0.0/AndroidManifest.xml:13:17-116
+191                android:value="com.google.firebase.components.ComponentRegistrar" />
+191-->[com.google.firebase:firebase-common-ktx:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/f119f3744da32c24dca9c27a88e4a4bf/transformed/firebase-common-ktx-21.0.0/AndroidManifest.xml:14:17-82
+192            <meta-data
+192-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d0e9ae16bfdbba037cd866e45d6a2f51/transformed/firebase-common-21.0.0/AndroidManifest.xml:35:13-37:85
+193                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
+193-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d0e9ae16bfdbba037cd866e45d6a2f51/transformed/firebase-common-21.0.0/AndroidManifest.xml:36:17-109
+194                android:value="com.google.firebase.components.ComponentRegistrar" />
+194-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d0e9ae16bfdbba037cd866e45d6a2f51/transformed/firebase-common-21.0.0/AndroidManifest.xml:37:17-82
+195            <meta-data
+195-->[com.google.firebase:firebase-datatransport:19.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/3fe11a1b3a37bc0ef5f3858c4da32ab3/transformed/firebase-datatransport-19.0.0/AndroidManifest.xml:25:13-27:85
+196                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+196-->[com.google.firebase:firebase-datatransport:19.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/3fe11a1b3a37bc0ef5f3858c4da32ab3/transformed/firebase-datatransport-19.0.0/AndroidManifest.xml:26:17-115
+197                android:value="com.google.firebase.components.ComponentRegistrar" />
+197-->[com.google.firebase:firebase-datatransport:19.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/3fe11a1b3a37bc0ef5f3858c4da32ab3/transformed/firebase-datatransport-19.0.0/AndroidManifest.xml:27:17-82
+198        </service>
+199        <service
+199-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/9.1.0/transforms/f82a3dcd208301eaa605187c36402f07/transformed/mwdat-core-0.8.0/AndroidManifest.xml:21:9-29:19
+200            android:name="com.meta.wearable.acdc.sdk.service.ACDCRegistrationService"
+200-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/9.1.0/transforms/f82a3dcd208301eaa605187c36402f07/transformed/mwdat-core-0.8.0/AndroidManifest.xml:22:13-86
+201            android:exported="true" >
+201-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/9.1.0/transforms/f82a3dcd208301eaa605187c36402f07/transformed/mwdat-core-0.8.0/AndroidManifest.xml:23:13-36
+202            <intent-filter>
+202-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/9.1.0/transforms/f82a3dcd208301eaa605187c36402f07/transformed/mwdat-core-0.8.0/AndroidManifest.xml:24:13-28:29
+203                <action android:name="com.meta.wearable.acdc.sdk.service.ACDCRegistrationService.BIND" />
+203-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/9.1.0/transforms/f82a3dcd208301eaa605187c36402f07/transformed/mwdat-core-0.8.0/AndroidManifest.xml:25:17-106
+203-->[com.meta.wearable:mwdat-core:0.8.0] /home/shaolin/.gradle/caches/9.1.0/transforms/f82a3dcd208301eaa605187c36402f07/transformed/mwdat-core-0.8.0/AndroidManifest.xml:25:25-103
+204
+205                <category android:name="android.intent.category.DEFAULT" />
+205-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:66:17-76
+205-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:66:27-73
+206            </intent-filter>
+207        </service>
+208        <service
+208-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:24:9-32:19
+209            android:name="androidx.credentials.playservices.CredentialProviderMetadataHolder"
+209-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:25:13-94
+210            android:enabled="true"
+210-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:26:13-35
+211            android:exported="false" >
+211-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:27:13-37
+212            <meta-data
+212-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:29:13-31:104
+213                android:name="androidx.credentials.CREDENTIAL_PROVIDER_KEY"
+213-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:30:17-76
+214                android:value="androidx.credentials.playservices.CredentialProviderPlayServicesImpl" />
+214-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:31:17-101
+215        </service>
+216
+217        <activity
+217-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:34:9-41:20
+218            android:name="androidx.credentials.playservices.HiddenActivity"
+218-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:35:13-76
+219            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+219-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:36:13-87
+220            android:enabled="true"
+220-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:37:13-35
+221            android:exported="false"
+221-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:38:13-37
+222            android:fitsSystemWindows="true"
+222-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:39:13-45
+223            android:theme="@style/Theme.Hidden" >
+223-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/shaolin/.gradle/caches/9.1.0/transforms/94077d30e61b2847f7591e6c9e013420/transformed/credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:40:13-48
+224        </activity>
+225        <activity
+225-->[com.google.android.gms:play-services-auth:20.7.0] /home/shaolin/.gradle/caches/9.1.0/transforms/0a927223ba03177f47d467b5ea3c622f/transformed/play-services-auth-20.7.0/AndroidManifest.xml:23:9-27:75
+226            android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
+226-->[com.google.android.gms:play-services-auth:20.7.0] /home/shaolin/.gradle/caches/9.1.0/transforms/0a927223ba03177f47d467b5ea3c622f/transformed/play-services-auth-20.7.0/AndroidManifest.xml:24:13-93
+227            android:excludeFromRecents="true"
+227-->[com.google.android.gms:play-services-auth:20.7.0] /home/shaolin/.gradle/caches/9.1.0/transforms/0a927223ba03177f47d467b5ea3c622f/transformed/play-services-auth-20.7.0/AndroidManifest.xml:25:13-46
+228            android:exported="false"
+228-->[com.google.android.gms:play-services-auth:20.7.0] /home/shaolin/.gradle/caches/9.1.0/transforms/0a927223ba03177f47d467b5ea3c622f/transformed/play-services-auth-20.7.0/AndroidManifest.xml:26:13-37
+229            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+229-->[com.google.android.gms:play-services-auth:20.7.0] /home/shaolin/.gradle/caches/9.1.0/transforms/0a927223ba03177f47d467b5ea3c622f/transformed/play-services-auth-20.7.0/AndroidManifest.xml:27:13-72
+230        <!--
+231            Service handling Google Sign-In user revocation. For apps that do not integrate with
+232            Google Sign-In, this service will never be started.
+233        -->
+234        <service
+234-->[com.google.android.gms:play-services-auth:20.7.0] /home/shaolin/.gradle/caches/9.1.0/transforms/0a927223ba03177f47d467b5ea3c622f/transformed/play-services-auth-20.7.0/AndroidManifest.xml:33:9-37:51
+235            android:name="com.google.android.gms.auth.api.signin.RevocationBoundService"
+235-->[com.google.android.gms:play-services-auth:20.7.0] /home/shaolin/.gradle/caches/9.1.0/transforms/0a927223ba03177f47d467b5ea3c622f/transformed/play-services-auth-20.7.0/AndroidManifest.xml:34:13-89
+236            android:exported="true"
+236-->[com.google.android.gms:play-services-auth:20.7.0] /home/shaolin/.gradle/caches/9.1.0/transforms/0a927223ba03177f47d467b5ea3c622f/transformed/play-services-auth-20.7.0/AndroidManifest.xml:35:13-36
+237            android:permission="com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION"
+237-->[com.google.android.gms:play-services-auth:20.7.0] /home/shaolin/.gradle/caches/9.1.0/transforms/0a927223ba03177f47d467b5ea3c622f/transformed/play-services-auth-20.7.0/AndroidManifest.xml:36:13-107
+238            android:visibleToInstantApps="true" />
+238-->[com.google.android.gms:play-services-auth:20.7.0] /home/shaolin/.gradle/caches/9.1.0/transforms/0a927223ba03177f47d467b5ea3c622f/transformed/play-services-auth-20.7.0/AndroidManifest.xml:37:13-48
+239        <service
+239-->[com.google.firebase:firebase-sessions:2.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/bacbfe91c08df37d7d18c649fd5721e7/transformed/firebase-sessions-2.0.3/AndroidManifest.xml:22:9-25:40
+240            android:name="com.google.firebase.sessions.SessionLifecycleService"
+240-->[com.google.firebase:firebase-sessions:2.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/bacbfe91c08df37d7d18c649fd5721e7/transformed/firebase-sessions-2.0.3/AndroidManifest.xml:23:13-80
+241            android:enabled="true"
+241-->[com.google.firebase:firebase-sessions:2.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/bacbfe91c08df37d7d18c649fd5721e7/transformed/firebase-sessions-2.0.3/AndroidManifest.xml:24:13-35
+242            android:exported="false" />
+242-->[com.google.firebase:firebase-sessions:2.0.3] /home/shaolin/.gradle/caches/9.1.0/transforms/bacbfe91c08df37d7d18c649fd5721e7/transformed/firebase-sessions-2.0.3/AndroidManifest.xml:25:13-37
+243
+244        <provider
+244-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d0e9ae16bfdbba037cd866e45d6a2f51/transformed/firebase-common-21.0.0/AndroidManifest.xml:23:9-28:39
+245            android:name="com.google.firebase.provider.FirebaseInitProvider"
+245-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d0e9ae16bfdbba037cd866e45d6a2f51/transformed/firebase-common-21.0.0/AndroidManifest.xml:24:13-77
+246            android:authorities="com.musically.studio.firebaseinitprovider"
+246-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d0e9ae16bfdbba037cd866e45d6a2f51/transformed/firebase-common-21.0.0/AndroidManifest.xml:25:13-72
+247            android:directBootAware="true"
+247-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d0e9ae16bfdbba037cd866e45d6a2f51/transformed/firebase-common-21.0.0/AndroidManifest.xml:26:13-43
+248            android:exported="false"
+248-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d0e9ae16bfdbba037cd866e45d6a2f51/transformed/firebase-common-21.0.0/AndroidManifest.xml:27:13-37
+249            android:initOrder="100" />
+249-->[com.google.firebase:firebase-common:21.0.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d0e9ae16bfdbba037cd866e45d6a2f51/transformed/firebase-common-21.0.0/AndroidManifest.xml:28:13-36
+250
+251        <activity
+251-->[com.google.android.gms:play-services-base:18.0.1] /home/shaolin/.gradle/caches/9.1.0/transforms/6bde1f971e11bc9adaffa099b811026e/transformed/play-services-base-18.0.1/AndroidManifest.xml:20:9-22:45
+252            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+252-->[com.google.android.gms:play-services-base:18.0.1] /home/shaolin/.gradle/caches/9.1.0/transforms/6bde1f971e11bc9adaffa099b811026e/transformed/play-services-base-18.0.1/AndroidManifest.xml:20:19-85
+253            android:exported="false"
+253-->[com.google.android.gms:play-services-base:18.0.1] /home/shaolin/.gradle/caches/9.1.0/transforms/6bde1f971e11bc9adaffa099b811026e/transformed/play-services-base-18.0.1/AndroidManifest.xml:22:19-43
+254            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+254-->[com.google.android.gms:play-services-base:18.0.1] /home/shaolin/.gradle/caches/9.1.0/transforms/6bde1f971e11bc9adaffa099b811026e/transformed/play-services-base-18.0.1/AndroidManifest.xml:21:19-78
+255        <activity
+255-->[androidx.compose.ui:ui-test-manifest:1.12.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/9ed9370a976c0828e520e44de63fee5e/transformed/ui-test-manifest-1.12.0-alpha01/AndroidManifest.xml:23:9-26:79
+256            android:name="androidx.activity.ComponentActivity"
+256-->[androidx.compose.ui:ui-test-manifest:1.12.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/9ed9370a976c0828e520e44de63fee5e/transformed/ui-test-manifest-1.12.0-alpha01/AndroidManifest.xml:24:13-63
+257            android:exported="true"
+257-->[androidx.compose.ui:ui-test-manifest:1.12.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/9ed9370a976c0828e520e44de63fee5e/transformed/ui-test-manifest-1.12.0-alpha01/AndroidManifest.xml:25:13-36
+258            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+258-->[androidx.compose.ui:ui-test-manifest:1.12.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/9ed9370a976c0828e520e44de63fee5e/transformed/ui-test-manifest-1.12.0-alpha01/AndroidManifest.xml:26:13-76
+259
+260        <provider
+260-->[androidx.emoji2:emoji2:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/23cc08f501cdcff7c2cfbfe86be3c6f7/transformed/emoji2-1.4.0/AndroidManifest.xml:24:9-32:20
+261            android:name="androidx.startup.InitializationProvider"
+261-->[androidx.emoji2:emoji2:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/23cc08f501cdcff7c2cfbfe86be3c6f7/transformed/emoji2-1.4.0/AndroidManifest.xml:25:13-67
+262            android:authorities="com.musically.studio.androidx-startup"
+262-->[androidx.emoji2:emoji2:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/23cc08f501cdcff7c2cfbfe86be3c6f7/transformed/emoji2-1.4.0/AndroidManifest.xml:26:13-68
+263            android:exported="false" >
+263-->[androidx.emoji2:emoji2:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/23cc08f501cdcff7c2cfbfe86be3c6f7/transformed/emoji2-1.4.0/AndroidManifest.xml:27:13-37
+264            <meta-data
+264-->[androidx.emoji2:emoji2:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/23cc08f501cdcff7c2cfbfe86be3c6f7/transformed/emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
+265                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+265-->[androidx.emoji2:emoji2:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/23cc08f501cdcff7c2cfbfe86be3c6f7/transformed/emoji2-1.4.0/AndroidManifest.xml:30:17-75
+266                android:value="androidx.startup" />
+266-->[androidx.emoji2:emoji2:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/23cc08f501cdcff7c2cfbfe86be3c6f7/transformed/emoji2-1.4.0/AndroidManifest.xml:31:17-49
+267            <meta-data
+267-->[androidx.lifecycle:lifecycle-process:2.10.0] /home/shaolin/.gradle/caches/9.1.0/transforms/2b0487f6e56d795a9e2b2b177087874c/transformed/lifecycle-process-2.10.0/AndroidManifest.xml:29:13-31:52
+268                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+268-->[androidx.lifecycle:lifecycle-process:2.10.0] /home/shaolin/.gradle/caches/9.1.0/transforms/2b0487f6e56d795a9e2b2b177087874c/transformed/lifecycle-process-2.10.0/AndroidManifest.xml:30:17-78
+269                android:value="androidx.startup" />
+269-->[androidx.lifecycle:lifecycle-process:2.10.0] /home/shaolin/.gradle/caches/9.1.0/transforms/2b0487f6e56d795a9e2b2b177087874c/transformed/lifecycle-process-2.10.0/AndroidManifest.xml:31:17-49
+270            <meta-data
+270-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+271                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+271-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+272                android:value="androidx.startup" />
+272-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+273        </provider>
+274
+275        <uses-library
+275-->[androidx.window:window:1.5.0] /home/shaolin/.gradle/caches/9.1.0/transforms/30892e91a4683267bd3d9b449b10e941/transformed/window-1.5.0/AndroidManifest.xml:23:9-25:40
+276            android:name="androidx.window.extensions"
+276-->[androidx.window:window:1.5.0] /home/shaolin/.gradle/caches/9.1.0/transforms/30892e91a4683267bd3d9b449b10e941/transformed/window-1.5.0/AndroidManifest.xml:24:13-54
+277            android:required="false" />
+277-->[androidx.window:window:1.5.0] /home/shaolin/.gradle/caches/9.1.0/transforms/30892e91a4683267bd3d9b449b10e941/transformed/window-1.5.0/AndroidManifest.xml:25:13-37
+278        <uses-library
+278-->[androidx.window:window:1.5.0] /home/shaolin/.gradle/caches/9.1.0/transforms/30892e91a4683267bd3d9b449b10e941/transformed/window-1.5.0/AndroidManifest.xml:26:9-28:40
+279            android:name="androidx.window.sidecar"
+279-->[androidx.window:window:1.5.0] /home/shaolin/.gradle/caches/9.1.0/transforms/30892e91a4683267bd3d9b449b10e941/transformed/window-1.5.0/AndroidManifest.xml:27:13-51
+280            android:required="false" />
+280-->[androidx.window:window:1.5.0] /home/shaolin/.gradle/caches/9.1.0/transforms/30892e91a4683267bd3d9b449b10e941/transformed/window-1.5.0/AndroidManifest.xml:28:13-37
+281
+282        <meta-data
+282-->[com.google.android.gms:play-services-basement:18.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/b9722ab4a6357f338100bcad6d0de11c/transformed/play-services-basement-18.3.0/AndroidManifest.xml:21:9-23:69
+283            android:name="com.google.android.gms.version"
+283-->[com.google.android.gms:play-services-basement:18.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/b9722ab4a6357f338100bcad6d0de11c/transformed/play-services-basement-18.3.0/AndroidManifest.xml:22:13-58
+284            android:value="@integer/google_play_services_version" />
+284-->[com.google.android.gms:play-services-basement:18.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/b9722ab4a6357f338100bcad6d0de11c/transformed/play-services-basement-18.3.0/AndroidManifest.xml:23:13-66
+285
+286        <activity
+286-->[androidx.compose.ui:ui-tooling-android:1.12.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/c53a62853095c502dc11eecfd59ab095/transformed/ui-tooling/AndroidManifest.xml:23:9-25:39
+287            android:name="androidx.compose.ui.tooling.PreviewActivity"
+287-->[androidx.compose.ui:ui-tooling-android:1.12.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/c53a62853095c502dc11eecfd59ab095/transformed/ui-tooling/AndroidManifest.xml:24:13-71
+288            android:exported="true" />
+288-->[androidx.compose.ui:ui-tooling-android:1.12.0-alpha01] /home/shaolin/.gradle/caches/9.1.0/transforms/c53a62853095c502dc11eecfd59ab095/transformed/ui-tooling/AndroidManifest.xml:25:13-36
+289        <activity
+289-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d47c6b037294cc1e8d8ab1709a78efba/transformed/auth-2.1.0/AndroidManifest.xml:48:9-63:20
+290            android:name="com.spotify.sdk.android.auth.LoginActivity"
+290-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d47c6b037294cc1e8d8ab1709a78efba/transformed/auth-2.1.0/AndroidManifest.xml:49:13-70
+291            android:exported="true"
+291-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d47c6b037294cc1e8d8ab1709a78efba/transformed/auth-2.1.0/AndroidManifest.xml:50:13-36
+292            android:launchMode="singleTask"
+292-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d47c6b037294cc1e8d8ab1709a78efba/transformed/auth-2.1.0/AndroidManifest.xml:51:13-44
+293            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+293-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d47c6b037294cc1e8d8ab1709a78efba/transformed/auth-2.1.0/AndroidManifest.xml:52:13-72
+294            <intent-filter android:autoVerify="true" >
+294-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d47c6b037294cc1e8d8ab1709a78efba/transformed/auth-2.1.0/AndroidManifest.xml:53:13-62:29
+294-->[com.spotify.android:auth:2.1.0] /home/shaolin/.gradle/caches/9.1.0/transforms/d47c6b037294cc1e8d8ab1709a78efba/transformed/auth-2.1.0/AndroidManifest.xml:53:28-53
+295                <action android:name="android.intent.action.VIEW" />
+295-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:65:17-69
+295-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:65:25-66
+296
+297                <category android:name="android.intent.category.DEFAULT" />
+297-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:66:17-76
+297-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:66:27-73
+298                <category android:name="android.intent.category.BROWSABLE" />
+298-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:67:17-78
+298-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:67:27-75
+299
+300                <data
+300-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:27:13-51
+301                    android:host="callback"
+302                    android:scheme="musically" />
+302-->/home/shaolin/lyria/app/src/main/AndroidManifest.xml:68:23-49
+303            </intent-filter>
+304        </activity>
+305
+306        <receiver
+306-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+307            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+307-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+308            android:directBootAware="false"
+308-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+309            android:enabled="true"
+309-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+310            android:exported="true"
+310-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+311            android:permission="android.permission.DUMP" >
+311-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+312            <intent-filter>
+312-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+313                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+313-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+313-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+314            </intent-filter>
+315            <intent-filter>
+315-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+316                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+316-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+316-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+317            </intent-filter>
+318            <intent-filter>
+318-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+319                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+319-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+319-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+320            </intent-filter>
+321            <intent-filter>
+321-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+322                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+322-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+322-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/shaolin/.gradle/caches/9.1.0/transforms/1ca43186254dab46a175a598057dc15a/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
+323            </intent-filter>
+324        </receiver>
+325
+326        <service
+326-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/ac9c11f37314b998db0b4e8a7762fa83/transformed/transport-backend-cct-3.3.0/AndroidManifest.xml:26:9-32:19
+327            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+327-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/ac9c11f37314b998db0b4e8a7762fa83/transformed/transport-backend-cct-3.3.0/AndroidManifest.xml:27:13-103
+328            android:exported="false" >
+328-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/ac9c11f37314b998db0b4e8a7762fa83/transformed/transport-backend-cct-3.3.0/AndroidManifest.xml:28:13-37
+329            <meta-data
+329-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/ac9c11f37314b998db0b4e8a7762fa83/transformed/transport-backend-cct-3.3.0/AndroidManifest.xml:29:13-31:39
+330                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+330-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/ac9c11f37314b998db0b4e8a7762fa83/transformed/transport-backend-cct-3.3.0/AndroidManifest.xml:30:17-94
+331                android:value="cct" />
+331-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/ac9c11f37314b998db0b4e8a7762fa83/transformed/transport-backend-cct-3.3.0/AndroidManifest.xml:31:17-36
+332        </service>
+333        <service
+333-->[com.google.android.datatransport:transport-runtime:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c37d76bf3a850d31c1349993d317a6c6/transformed/transport-runtime-3.3.0/AndroidManifest.xml:24:9-28:19
+334            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+334-->[com.google.android.datatransport:transport-runtime:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c37d76bf3a850d31c1349993d317a6c6/transformed/transport-runtime-3.3.0/AndroidManifest.xml:25:13-117
+335            android:exported="false"
+335-->[com.google.android.datatransport:transport-runtime:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c37d76bf3a850d31c1349993d317a6c6/transformed/transport-runtime-3.3.0/AndroidManifest.xml:26:13-37
+336            android:permission="android.permission.BIND_JOB_SERVICE" >
+336-->[com.google.android.datatransport:transport-runtime:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c37d76bf3a850d31c1349993d317a6c6/transformed/transport-runtime-3.3.0/AndroidManifest.xml:27:13-69
+337        </service>
+338
+339        <receiver
+339-->[com.google.android.datatransport:transport-runtime:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c37d76bf3a850d31c1349993d317a6c6/transformed/transport-runtime-3.3.0/AndroidManifest.xml:30:9-32:40
+340            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+340-->[com.google.android.datatransport:transport-runtime:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c37d76bf3a850d31c1349993d317a6c6/transformed/transport-runtime-3.3.0/AndroidManifest.xml:31:13-132
+341            android:exported="false" />
+341-->[com.google.android.datatransport:transport-runtime:3.3.0] /home/shaolin/.gradle/caches/9.1.0/transforms/c37d76bf3a850d31c1349993d317a6c6/transformed/transport-runtime-3.3.0/AndroidManifest.xml:32:13-37
+342
+343        <meta-data
+343-->[com.facebook.soloader:soloader:0.12.1] /home/shaolin/.gradle/caches/9.1.0/transforms/b14eae8af0cbc4b76553a87a03ff4065/transformed/soloader-0.12.1/AndroidManifest.xml:12:9-14:37
+344            android:name="com.facebook.soloader.enabled"
+344-->[com.facebook.soloader:soloader:0.12.1] /home/shaolin/.gradle/caches/9.1.0/transforms/b14eae8af0cbc4b76553a87a03ff4065/transformed/soloader-0.12.1/AndroidManifest.xml:13:13-57
+345            android:value="false" />
+345-->[com.facebook.soloader:soloader:0.12.1] /home/shaolin/.gradle/caches/9.1.0/transforms/b14eae8af0cbc4b76553a87a03ff4065/transformed/soloader-0.12.1/AndroidManifest.xml:14:13-34
+346    </application>
+347
+348</manifest>

@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.musically.studio.app-mergeDebugResources-59:/values-xlarge-v4/values-xlarge-v4.xml",
+            "outputFile": "com.musically.studio.app-mergeDebugResources-78:/values-xlarge-v4/values-xlarge-v4.xml",
             "map": [
                 {
-                    "source": "/home/shaolin/.gradle/caches/transforms-4/2ff8dcb8dddcc4f2f7641c15df3e22a9/transformed/appcompat-1.6.1/res/values-xlarge-v4/values-xlarge-v4.xml",
+                    "source": "/home/shaolin/.gradle/caches/9.1.0/transforms/ee4c87719b02d45734753392e9db686a/transformed/appcompat-1.6.1/res/values-xlarge-v4/values-xlarge-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7",
                         "startColumns": "4,4,4,4,4,4",

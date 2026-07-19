@@ -1,29 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.musically.studio.app-mergeDebugResources-59:/values-v23/values-v23.xml",
+            "outputFile": "com.musically.studio.app-mergeDebugResources-78:/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "/home/shaolin/.gradle/caches/transforms-4/b8f4480201868ccaecc1f5c2cce548b3/transformed/cardview-1.0.0/res/values-v23/values-v23.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endLines": "4",
-                        "endColumns": "12",
-                        "endOffsets": "200"
-                    },
-                    "to": {
-                        "startLines": "50",
-                        "startColumns": "4",
-                        "startOffsets": "3232",
-                        "endLines": "52",
-                        "endColumns": "12",
-                        "endOffsets": "3377"
-                    }
-                },
-                {
-                    "source": "/home/shaolin/.gradle/caches/transforms-4/2ff8dcb8dddcc4f2f7641c15df3e22a9/transformed/appcompat-1.6.1/res/values-v23/values-v23.xml",
+                    "source": "/home/shaolin/.gradle/caches/9.1.0/transforms/ee4c87719b02d45734753392e9db686a/transformed/appcompat-1.6.1/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,20,34,35,36,39,43,44,45,46",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -34,7 +15,7 @@
                     }
                 },
                 {
-                    "source": "/home/shaolin/.gradle/caches/transforms-4/5e614871c854d72ad4a3d338b036da57/transformed/material-1.11.0/res/values-v23/values-v23.xml",
+                    "source": "/home/shaolin/.gradle/caches/9.1.0/transforms/a1c8f1813b819f06f59ed5498c49cc28/transformed/material-1.12.0/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2,5,9,13,16,19,22,25,28,32",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4",
@@ -50,6 +31,25 @@
                         "endLines": "55,59,63,66,69,72,75,78,82,86",
                         "endColumns": "10,10,10,10,10,10,10,10,10,10",
                         "endOffsets": "3593,3735,3896,4106,4313,4520,4723,4925,5190,5463"
+                    }
+                },
+                {
+                    "source": "/home/shaolin/.gradle/caches/9.1.0/transforms/001fab2bb85591f3fcbcf3b7d09e0ee6/transformed/cardview-1.0.0/res/values-v23/values-v23.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "200"
+                    },
+                    "to": {
+                        "startLines": "50",
+                        "startColumns": "4",
+                        "startOffsets": "3232",
+                        "endLines": "52",
+                        "endColumns": "12",
+                        "endOffsets": "3377"
                     }
                 }
             ]

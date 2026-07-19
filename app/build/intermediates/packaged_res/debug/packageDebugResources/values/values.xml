@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:ns1="http://schemas.android.com/tools">
     <color name="background">#121212</color>
     <color name="background_elevated">#181818</color>
     <color name="background_elevated_high">#282828</color>
@@ -13,6 +13,7 @@
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#B3B3B3</color>
     <string name="app_name">Musically</string>
+    <string name="com.google.firebase.crashlytics.mapping_file_id" ns1:ignore="UnusedResources,TypographyDashes" translatable="false">00000000000000000000000000000000</string>
     <string name="gcm_defaultSenderId" translatable="false">759854762539</string>
     <string name="google_api_key" translatable="false">YOUR_API_KEY</string>
     <string name="google_app_id" translatable="false">1:759854762539:android:e931c1265d228fa84cf86e</string>

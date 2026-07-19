@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@layer theme {
+  @theme {
+    /* Custom fonts */
+    --font-rounded: "SF Pro Rounded", sans-serif;
+
+    /* Material 3 Semantic Colors using light-dark() */
+    --color-primary: light-dark(#6750A4, #D0BCFF);
+    --color-on-primary: light-dark(#FFFFFF, #381E72);
+    --color-primary-container: light-dark(#EADDFF, #4F378B);
+    --color-on-primary-container: light-dark(#21005D, #EADDFF);
+
+    --color-secondary: light-dark(#625B71, #CCC2DC);
+    --color-on-secondary: light-dark(#FFFFFF, #332D41);
+    --color-secondary-container: light-dark(#E8DEF8, #4A4458);
+    --color-on-secondary-container: light-dark(#1D192B, #E8DEF8);
+
+    --color-surface: light-dark(#FEF7FF, #141218);
+    --color-on-surface: light-dark(#1D1B20, #E6E1E5);
+    --color-surface-container: light-dark(#F3EDF7, #211F26);
+    --color-on-surface-variant: light-dark(#49454F, #CAC4D0);
+
+    --color-outline: light-dark(#79747E, #938F99);
+    --color-error: light-dark(#B3261E, #F2B8B5);
+    --color-on-error: light-dark(#FFFFFF, #601410);
+  }
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+}

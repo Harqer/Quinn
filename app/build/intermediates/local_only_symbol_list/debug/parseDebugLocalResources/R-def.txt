@@ -17,7 +17,6 @@ drawable album_view
 drawable track_
 id album_radio
 id album_view
-id bottom_navigation
 id btn_capture_camera
 id btn_connect_spotify
 id btn_send_message
@@ -33,8 +32,6 @@ id image_user_attached
 id input_container
 id library
 id listening_o
-id nav_graph
-id nav_host_fragment
 id navigation_home
 id navigation_library
 id navigation_search
@@ -57,7 +54,6 @@ id track_image
 id track_name
 id track_view
 id user_librar
-layout activity_main
 layout album_radio
 layout album_view
 layout choose_arti
@@ -82,8 +78,8 @@ layout user_librar
 menu bottom_nav_menu
 mipmap ic_launcher
 mipmap ic_launcher_round
-navigation nav_graph
 string app_name
+string com.google.firebase.crashlytics.mapping_file_id
 string gcm_defaultSenderId
 string google_api_key
 string google_app_id
