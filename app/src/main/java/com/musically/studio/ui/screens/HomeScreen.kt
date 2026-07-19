@@ -17,6 +17,10 @@ import androidx.compose.material.icons.filled.Podcasts
 import androidx.compose.material.icons.filled.Devices
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.Manifest
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -40,6 +44,18 @@ fun HomeScreen(
     var inputText by remember { mutableStateOf("") }
     var isLivePovEnabled by remember { mutableStateOf(false) }
     val currentMode by viewModel.currentMode.collectAsStateWithLifecycle()
+    val isRecording by viewModel.isRecording.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
+        val audioGranted = permissions[Manifest.permission.RECORD_AUDIO] ?: false
+        if (cameraGranted && audioGranted) {
+            // Permissions granted, action handled by caller
+        }
+    }
 
     Scaffold(
         containerColor = SpotifyBlack,
@@ -47,15 +63,22 @@ fun HomeScreen(
             StudioChatInputBar(
                 text = inputText,
                 isLive = isLivePovEnabled,
+                isRecording = isRecording,
                 onTextChange = { inputText = it },
-                onToggleLive = { isLivePovEnabled = !isLivePovEnabled },
+                onToggleLive = { 
+                    permissionLauncher.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO))
+                    isLivePovEnabled = !isLivePovEnabled 
+                },
                 onSend = {
                     if (inputText.isNotBlank()) {
                         viewModel.sendTextCommand(inputText)
                         inputText = ""
                     }
                 },
-                onRecordVoice = { viewModel.recordVoice() }
+                onRecordVoice = { 
+                    permissionLauncher.launch(arrayOf(Manifest.permission.RECORD_AUDIO))
+                    viewModel.recordVoice() 
+                }
             )
         }
     ) { innerPadding ->
@@ -126,6 +149,13 @@ fun HomeScreen(
                             onBookmark = { viewModel.bookmarkTrack(message.trackId ?: "") }
                         )
                     }
+                    if (isLoading) {
+                        item {
+                            Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator(color = SpotifyGreen, modifier = Modifier.size(24.dp))
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -155,8 +185,8 @@ fun ConversationalBubble(
     onBookmark: () -> Unit
 ) {
     val alignment = if (message.isUser) Alignment.End else Alignment.Start
-    val containerColor = if (message.isUser) Color(0xFF2E2E2E) else SpotifyGreen
-    val contentColor = if (message.isUser) Color.White else Color.Black
+    val containerColor = if (message.isUser) MaterialTheme.colorScheme.surfaceVariant else SpotifyGreen
+    val contentColor = if (message.isUser) MaterialTheme.colorScheme.onSurfaceVariant else Color.Black
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -198,6 +228,7 @@ fun ConversationalBubble(
 private fun StudioChatInputBar(
     text: String,
     isLive: Boolean,
+    isRecording: Boolean,
     onTextChange: (String) -> Unit,
     onToggleLive: () -> Unit,
     onSend: () -> Unit,
@@ -222,7 +253,7 @@ private fun StudioChatInputBar(
                 )
             }
             IconButton(onClick = onRecordVoice) {
-                Icon(Icons.Default.Mic, contentDescription = "Voice", tint = Color.White)
+                Icon(Icons.Default.Mic, contentDescription = "Voice", tint = if (isRecording) Color.Red else Color.White)
             }
             TextField(
                 value = text,

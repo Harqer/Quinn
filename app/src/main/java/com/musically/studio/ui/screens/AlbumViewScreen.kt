@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
@@ -46,7 +46,7 @@ fun AlbumViewScreen(
                 title = { },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -98,7 +98,7 @@ fun AlbumViewScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row {
-                            IconButton(onClick = { /* Download */ }) {
+                            IconButton(onClick = { albumTracks.firstOrNull()?.let { viewModel.bookmarkTrack(it.id) } }) {
                                 Icon(Icons.Default.FavoriteBorder, contentDescription = "Like", tint = Color.White)
                             }
                             IconButton(onClick = { /* More */ }) {
@@ -166,7 +166,7 @@ fun AlbumTrackItem(
                 maxLines = 1
             )
         }
-        IconButton(onClick = { /* options */ }) {
+        IconButton(onClick = { /* More options menu to be implemented */ }) {
             Icon(Icons.Default.MoreVert, contentDescription = "More options", tint = Color.Gray)
         }
     }

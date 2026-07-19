@@ -7,6 +7,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -36,11 +38,11 @@ fun OnboardingScreen(onContinue: () -> Unit) {
                     .background(Color(0xFF2E2E2E), shape = RoundedCornerShape(24.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "M",
-                    style = MaterialTheme.typography.displayLarge,
-                    color = SpotifyGreen,
-                    fontWeight = FontWeight.Bold
+                Icon(
+                    imageVector = androidx.compose.material.icons.Icons.Default.MusicNote,
+                    contentDescription = "App Logo",
+                    tint = SpotifyGreen,
+                    modifier = Modifier.size(64.dp)
                 )
             }
             

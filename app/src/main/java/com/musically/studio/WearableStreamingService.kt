@@ -110,7 +110,7 @@ class WearableStreamingService : Service() {
     private suspend fun attachCapabilities(session: DeviceSession) {
         session.addDisplay(DisplayConfiguration()).onSuccess { display ->
             activeDisplay = display
-            updateWearableUi("Welcome to Musically!")
+            updateWearableUi("Musically", "Welcome to Musically!")
             
             val config = StreamConfiguration(VideoQuality.MEDIUM, 24, false)
             session.addStream(config).onSuccess { stream ->
@@ -128,15 +128,18 @@ class WearableStreamingService : Service() {
         }
     }
 
-    fun updateWearableUi(geminiResponse: String) {
+    fun updateWearableUi(songTitle: String, geminiResponse: String) {
         scope.launch {
             activeDisplay?.sendContent(
                 WearableUi.mainDashboard(
+                    songTitle = songTitle,
                     geminiResponse = geminiResponse,
                     onSpeak = { Log.d("WearableUi", "Speak pressed") },
                     onCreateMusic = { Log.d("WearableUi", "Create Music pressed") },
                     onPlay = { Log.d("WearableUi", "Play pressed") },
                     onPause = { Log.d("WearableUi", "Pause pressed") },
+                    onSkipNext = { Log.d("WearableUi", "Skip Next pressed") },
+                    onSkipPrevious = { Log.d("WearableUi", "Skip Previous pressed") },
                     onBack = { Log.d("WearableUi", "Back pressed") }
                 )
             )

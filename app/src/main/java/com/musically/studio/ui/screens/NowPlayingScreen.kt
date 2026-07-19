@@ -22,6 +22,8 @@ import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.theme.SpotifyBlack
 import com.musically.studio.ui.theme.SpotifyGreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.painterResource
+import com.musically.studio.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +33,9 @@ fun NowPlayingScreen(
     onCollapse: () -> Unit
 ) {
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
+    val trackProgress by viewModel.trackProgress.collectAsStateWithLifecycle()
+    val isShuffleEnabled by viewModel.isShuffleEnabled.collectAsStateWithLifecycle()
+    val isRepeatEnabled by viewModel.isRepeatEnabled.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier
@@ -69,9 +74,12 @@ fun NowPlayingScreen(
                 
                 // Album Art
                 AsyncImage(
-                    model = track.album?.images?.firstOrNull()?.url ?: "https://via.placeholder.com/400",
+                    model = track.album?.images?.firstOrNull()?.url,
                     contentDescription = "Album Art",
                     contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.album_view),
+                    error = painterResource(id = R.drawable.album_view),
+                    fallback = painterResource(id = R.drawable.album_view),
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f)
@@ -110,9 +118,9 @@ fun NowPlayingScreen(
                 
                 Spacer(modifier = Modifier.height(32.dp))
                 
-                // Progress Bar Placeholder
+                // Progress Bar
                 Slider(
-                    value = 0.3f,
+                    value = trackProgress,
                     onValueChange = {},
                     colors = SliderDefaults.colors(
                         thumbColor = Color.White,
@@ -126,8 +134,8 @@ fun NowPlayingScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("1:04", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-                    Text("3:42", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                    Text("0:00", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                    Text("3:00", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
                 }
                 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -138,10 +146,10 @@ fun NowPlayingScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { /* Shuffle */ }) {
-                        Icon(Icons.Default.Shuffle, contentDescription = "Shuffle", tint = Color.White)
+                    IconButton(onClick = { viewModel.toggleShuffle() }) {
+                        Icon(Icons.Default.Shuffle, contentDescription = "Shuffle", tint = if (isShuffleEnabled) SpotifyGreen else Color.White)
                     }
-                    IconButton(onClick = { /* Skip Previous */ }) {
+                    IconButton(onClick = { viewModel.skipPrevious() }) {
                         Icon(Icons.Default.SkipPrevious, contentDescription = "Previous", tint = Color.White, modifier = Modifier.size(36.dp))
                     }
                     
@@ -160,11 +168,11 @@ fun NowPlayingScreen(
                         )
                     }
                     
-                    IconButton(onClick = { /* Skip Next */ }) {
+                    IconButton(onClick = { viewModel.skipNext() }) {
                         Icon(Icons.Default.SkipNext, contentDescription = "Next", tint = Color.White, modifier = Modifier.size(36.dp))
                     }
-                    IconButton(onClick = { /* Repeat */ }) {
-                        Icon(Icons.Default.Repeat, contentDescription = "Repeat", tint = Color.White)
+                    IconButton(onClick = { viewModel.toggleRepeat() }) {
+                        Icon(Icons.Default.Repeat, contentDescription = "Repeat", tint = if (isRepeatEnabled) SpotifyGreen else Color.White)
                     }
                 }
             }

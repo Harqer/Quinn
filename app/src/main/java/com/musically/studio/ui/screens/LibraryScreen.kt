@@ -24,6 +24,7 @@ fun LibraryScreen(
     onNavigateToAlbum: (String) -> Unit
 ) {
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.fetchUserTracks()
@@ -41,7 +42,11 @@ fun LibraryScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        if (tracks.isEmpty()) {
+        if (isLoading && tracks.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = com.musically.studio.ui.theme.SpotifyGreen)
+            }
+        } else if (tracks.isEmpty()) {
             EmptyLibraryState()
         } else {
             LazyVerticalGrid(

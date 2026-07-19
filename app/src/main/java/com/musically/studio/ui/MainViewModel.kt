@@ -32,6 +32,15 @@ class MainViewModel : ViewModel() {
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
 
+    private val _trackProgress = MutableStateFlow(0f)
+    val trackProgress: StateFlow<Float> = _trackProgress.asStateFlow()
+
+    private val _isShuffleEnabled = MutableStateFlow(false)
+    val isShuffleEnabled: StateFlow<Boolean> = _isShuffleEnabled.asStateFlow()
+
+    private val _isRepeatEnabled = MutableStateFlow(false)
+    val isRepeatEnabled: StateFlow<Boolean> = _isRepeatEnabled.asStateFlow()
+
     private val _isWearableConnected = MutableStateFlow(false)
     val isWearableConnected: StateFlow<Boolean> = _isWearableConnected.asStateFlow()
 
@@ -39,6 +48,12 @@ class MainViewModel : ViewModel() {
     
     private val _currentMode = MutableStateFlow("music")
     val currentMode: StateFlow<String> = _currentMode.asStateFlow()
+
+    private val _isRecording = MutableStateFlow(false)
+    val isRecording: StateFlow<Boolean> = _isRecording.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private val okHttpClient = OkHttpClient()
     private val quinnSessionManager = QuinnSessionManager(okHttpClient)
@@ -49,6 +64,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             quinnSessionManager.events.collect { event ->
                 try {
+                    _isLoading.value = false
                     val json = JSONObject(event)
                     when (json.optString("type")) {
                         "agent_update" -> {
@@ -114,11 +130,13 @@ class MainViewModel : ViewModel() {
 
     fun sendTextCommand(text: String) {
         messages.add(ChatMessage(text, true))
+        _isLoading.value = true
         val type = if (_currentMode.value == "podcast") "text_command" else "feedback"
         quinnSessionManager.sendEvent(type, mapOf("text" to text))
     }
 
     fun recordVoice() {
+        _isRecording.value = !_isRecording.value
         // Implementation for voice capture and streaming
     }
 
@@ -154,6 +172,22 @@ class MainViewModel : ViewModel() {
     fun togglePlayPause() {
         _isPlaying.value = !_isPlaying.value
         // Real playback toggle logic here
+    }
+
+    fun skipNext() {
+        // Implement real skip logic here
+    }
+
+    fun skipPrevious() {
+        // Implement real skip back logic here
+    }
+
+    fun toggleShuffle() {
+        _isShuffleEnabled.value = !_isShuffleEnabled.value
+    }
+
+    fun toggleRepeat() {
+        _isRepeatEnabled.value = !_isRepeatEnabled.value
     }
 
     fun fetchUserTracks() {
