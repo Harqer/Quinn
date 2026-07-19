@@ -5,6 +5,7 @@ import { GenerateSchema } from "../schemas/api.js";
 import { WebSocketServer, WebSocket } from "ws";
 import logger from "../config/logger.js";
 import { musicService } from "../services/MusicService.js";
+import { podcastService } from "../services/PodcastService.js";
 import { getAi } from "../services/ai.js";
 
 const router = Router();
@@ -32,7 +33,7 @@ router.get("/community/tracks", async (req, res) => {
   }
 });
 
-// WebSocket Server for Music Proxy
+// WebSocket Server for Musically Proxy (Music & Podcast)
 export const setupMusicWebSocket = (wss: WebSocketServer) => {
   wss.on("connection", async (ws: WebSocket, request) => {
     const url = new URL(request.url || "", `http://${request.headers.host}`);
@@ -43,60 +44,77 @@ export const setupMusicWebSocket = (wss: WebSocketServer) => {
       return;
     }
 
+    let uid = "";
     try {
       const decodedToken = await auth.verifyIdToken(token);
-      logger.info(`[WS_PROXY] User connected for secure Quinn Live proxying.`, { uid: decodedToken.uid });
+      uid = decodedToken.uid;
+      logger.info(`[WS_PROXY] User connected for secure Quinn session.`, { uid });
     } catch (err) {
       ws.close(4001, "Unauthorized: Invalid token");
       return;
     }
 
-    const ai = getAi();
-    let session: any = null;
+    let musicSession: any = null;
+    let podcastSession: any = null;
+    let currentMode: 'music' | 'podcast' = 'music';
 
-    try {
-      // establishes a basic session for standard playback commands
+    const initMusic = async () => {
+      const ai = getAi();
       // @ts-ignore
-      session = await ai.live.music.connect({
+      musicSession = await ai.live.music.connect({
         model: "lyria-realtime-exp",
         callbacks: {
-          onmessage: (e: any) => {
-            if (ws.readyState === WebSocket.OPEN) {
-              ws.send(JSON.stringify({ type: "message", data: e }));
-            }
-          },
+          onmessage: (e: any) => ws.readyState === WebSocket.OPEN && ws.send(JSON.stringify({ type: "message", data: e })),
           onclose: () => ws.close(),
-          onerror: (err: any) => {
-            if (ws.readyState === WebSocket.OPEN) {
-              ws.send(JSON.stringify({ type: "error", error: "Gemini connection error" }));
-            }
-          },
+          onerror: (err: any) => logger.error("[MUSIC_SESSION] error", { error: err }),
         },
       });
+    };
 
-      ws.on("message", async (data) => {
-        try {
-          const msg = JSON.parse(data.toString());
+    ws.on("message", async (data) => {
+      try {
+        const msg = JSON.parse(data.toString());
 
-          if (msg.type === "vision") {
-            await musicService.processVisionEvent(ws, session, msg.image);
-          } else if (msg.type === "setWeightedPrompts") {
-            await session.setWeightedPrompts({ weightedPrompts: msg.prompts });
-          } else if (["play", "pause", "stop"].includes(msg.type)) {
-            session[msg.type]();
+        if (msg.type === "switch_mode") {
+          currentMode = msg.mode;
+          if (currentMode === 'podcast' && !podcastSession) {
+            podcastSession = await podcastService.startPodcastSession(ws, uid);
+          } else if (currentMode === 'music' && !musicSession) {
+            await initMusic();
           }
-        } catch (msgErr) {
-          logger.error("[WS_MESSAGE_ERR]", { error: msgErr });
+          logger.info(`[WS_PROXY] User switched to ${currentMode} mode.`, { uid });
+          return;
         }
-      });
 
-      ws.on("close", () => {
-        if (session) session.stop();
-      });
+        if (currentMode === 'music') {
+          if (!musicSession) await initMusic();
+          if (msg.type === "vision") {
+            await musicService.processVisionEvent(ws, musicSession, msg.image, uid);
+          } else if (msg.type === "feedback") {
+            await musicService.handleUserFeedback(ws, musicSession, msg.text, uid);
+          } else if (msg.type === "setWeightedPrompts") {
+            await musicSession.setWeightedPrompts({ weightedPrompts: msg.prompts });
+          } else if (["play", "pause", "stop"].includes(msg.type)) {
+            musicSession[msg.type]();
+          }
+        } else {
+          // Podcast Mode
+          if (!podcastSession) podcastSession = await podcastService.startPodcastSession(ws, uid);
+          if (msg.type === "vision") {
+            await podcastService.processVisionForPodcast(ws, podcastSession, msg.image);
+          } else if (msg.type === "text_command") {
+            await podcastSession.send({ text: msg.text });
+          }
+        }
+      } catch (msgErr) {
+        logger.error("[WS_MESSAGE_ERR]", { error: msgErr });
+      }
+    });
 
-    } catch (err: any) {
-      ws.close();
-    }
+    ws.on("close", () => {
+      if (musicSession) musicSession.stop();
+      if (podcastSession) podcastSession.stop();
+    });
   });
 };
 

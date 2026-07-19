@@ -1,35 +1,43 @@
 import { StateGraph, Annotation, START, END } from "@langchain/langgraph";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { getAi } from "./ai.js";
 import { getRedis, cacheVisionResult, getCachedVisionResult } from "../config/redis.js";
 import crypto from "crypto";
+import logger from "../config/logger.js";
 
 // Define the state schema
 const QuinnState = Annotation.Root({
   image: Annotation<string>(),
   visionDescription: Annotation<string>(),
-  lyrics: Annotation<string>(),
   musicalPrompts: Annotation<string[]>(),
-  mood: Annotation<string>(),
+  podcastScript: Annotation<string>(),
+  userFeedback: Annotation<string>(),
+  mode: Annotation<'music' | 'podcast'>(),
 });
 
 // Nodes
-const visionAnalyzerNode = async (state: typeof QuinnState.State) => {
+const visualAnalyzerNode = async (state: typeof QuinnState.State) => {
+  // If no new image, but we have feedback, we might want to skip vision or use existing
+  if (!state.image && state.visionDescription) {
+    return { visionDescription: state.visionDescription };
+  }
+
+  if (!state.image) return {};
+
   const imageHash = crypto.createHash("md5").update(state.image).digest("hex");
   const cached = await getCachedVisionResult(imageHash);
 
   if (cached) {
+    logger.info("[QUINN_GRAPH] Cache hit for vision analysis", { hash: imageHash });
     return { visionDescription: cached };
   }
 
   const model = new ChatGoogleGenerativeAI({
-    modelName: "gemini-1.5-flash",
+    modelName: "lyria", // Using Lyria for visual analysis
     apiKey: process.env.GEMINI_API_KEY,
   });
 
-  // Multimodal call (conceptually)
   const response = await model.invoke([
-    ["system", "Analyze the visual elements, mood, and objects in this scene. Be descriptive for a music producer."],
+    ["system", "Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics."],
     ["human", state.image]
   ]);
 
@@ -39,45 +47,50 @@ const visionAnalyzerNode = async (state: typeof QuinnState.State) => {
   return { visionDescription: description };
 };
 
-const lyricistNode = async (state: typeof QuinnState.State) => {
+const musicDirectorNode = async (state: typeof QuinnState.State) => {
+  if (state.mode !== 'music') return {};
+
   const model = new ChatGoogleGenerativeAI({
-    modelName: "gemini-1.5-flash",
+    modelName: "lyria-realtime-exp",
     apiKey: process.env.GEMINI_API_KEY,
   });
 
+  const feedbackContext = state.userFeedback ? `\nUser Feedback: ${state.userFeedback}` : "";
   const response = await model.invoke([
-    ["system", "You are Quinn's Lyricist Agent. Based on the scene description, generate 4 lines of evocative lyrics."],
-    ["human", state.visionDescription]
+    ["system", "You are Quinn, the Musically Director. Map the following visual vibe and user feedback into a set of 3-5 weighted musical prompts for the Lyria Real-Time engine. Focus on tempo, instrumentation, and atmospheric textures."],
+    ["human", `Visual Vibe: ${state.visionDescription}${feedbackContext}`]
   ]);
 
-  return { lyrics: response.content.toString() };
+  const prompts = response.content.toString().split("\n").filter(l => l.trim().length > 0);
+  return { musicalPrompts: prompts };
 };
 
-const composerNode = async (state: typeof QuinnState.State) => {
+const podcastNarratorNode = async (state: typeof QuinnState.State) => {
+  if (state.mode !== 'podcast') return {};
+
   const model = new ChatGoogleGenerativeAI({
-    modelName: "gemini-1.5-flash",
+    modelName: "gemini-2.0-flash-exp", // Standard Gemini for creative narrative
     apiKey: process.env.GEMINI_API_KEY,
   });
 
+  const feedbackContext = state.userFeedback ? `\nUser Input/Feedback: ${state.userFeedback}` : "";
   const response = await model.invoke([
-    ["system", "You are Quinn's Composer Agent. Map these lyrics and scene description into 3 weighted musical prompts for the Lyria engine."],
-    ["human", `Description: ${state.visionDescription}\nLyrics: ${state.lyrics}`]
+    ["system", "You are Quinn, a podcast host. Based on the visual vibe and user instructions, generate a short, engaging narrative segment (2-4 sentences) for 'Musically POV'. If user gave feedback, acknowledge it naturally in your tone."],
+    ["human", `Visual Vibe: ${state.visionDescription}${feedbackContext}`]
   ]);
 
-  // For production, we'd parse this into a structured array
-  const prompts = response.content.toString().split("\n").filter(l => l.trim().length > 0);
-
-  return { musicalPrompts: prompts };
+  return { podcastScript: response.content.toString() };
 };
 
 // Build the graph
 const workflow = new StateGraph(QuinnState)
-  .addNode("visionAnalyzer", visionAnalyzerNode)
-  .addNode("lyricist", lyricistNode)
-  .addNode("composer", composerNode)
-  .addEdge(START, "visionAnalyzer")
-  .addEdge("visionAnalyzer", "lyricist")
-  .addEdge("lyricist", "composer")
-  .addEdge("composer", END);
+  .addNode("visualAnalyzer", visualAnalyzerNode)
+  .addNode("musicDirector", musicDirectorNode)
+  .addNode("podcastNarrator", podcastNarratorNode)
+  .addEdge(START, "visualAnalyzer")
+  .addEdge("visualAnalyzer", "musicDirector")
+  .addEdge("visualAnalyzer", "podcastNarrator")
+  .addEdge("musicDirector", END)
+  .addEdge("podcastNarrator", END);
 
 export const quinnGraph = workflow.compile();

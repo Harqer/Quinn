@@ -1,13 +1,12 @@
 package com.musically.studio.ui
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.musically.studio.WearableStreamingService
 import com.musically.studio.network.QuinnSessionManager
 import com.musically.studio.network.SpotifyTrack
-import com.musically.studio.ui.screens.ChatMessage
-import com.musically.studio.WearableStreamingService
+import com.musically.studio.ui.models.ChatMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,14 +25,28 @@ class MainViewModel : ViewModel() {
     val isWearableConnected: StateFlow<Boolean> = _isWearableConnected.asStateFlow()
 
     val messages = mutableStateListOf<ChatMessage>()
+    val podcastMessages = mutableStateListOf<ChatMessage>()
     
+    private val _currentMode = MutableStateFlow("music")
+    val currentMode: StateFlow<String> = _currentMode.asStateFlow()
+
     private val okHttpClient = OkHttpClient()
     private val quinnSessionManager = QuinnSessionManager(okHttpClient)
 
     init {
         viewModelScope.launch {
             quinnSessionManager.events.collect { event ->
-                messages.add(ChatMessage("Quinn: $event", false))
+                if (event.contains("podcast_update")) {
+                    podcastMessages.add(ChatMessage("Quinn: [Narrating vibe...]", false))
+                } else if (event.contains("agent_update")) {
+                    messages.add(ChatMessage("Quinn: [New musical vibe set]", false))
+                } else {
+                    if (_currentMode.value == "podcast") {
+                        podcastMessages.add(ChatMessage("Quinn: $event", false))
+                    } else {
+                        messages.add(ChatMessage("Quinn: $event", false))
+                    }
+                }
             }
         }
         
@@ -48,13 +61,27 @@ class MainViewModel : ViewModel() {
         quinnSessionManager.connect()
     }
 
+    fun switchMode(mode: String) {
+        _currentMode.value = mode
+    }
+
     fun sendTextCommand(text: String) {
-        messages.add(ChatMessage(text, true))
-        quinnSessionManager.sendPrompts(listOf(mapOf("text" to text, "weight" to 1.0)))
+        if (_currentMode.value == "podcast") {
+            podcastMessages.add(ChatMessage(text, true))
+        } else {
+            messages.add(ChatMessage(text, true))
+            quinnSessionManager.sendPrompts(listOf(mapOf("text" to text, "weight" to 1.0)))
+        }
     }
 
     fun recordVoice() {
-        // Toggle listening state and stream audio to quinnSessionManager
+        // Implementation
+    }
+
+    fun savePodcastToSpotify(trackUri: String) {
+        viewModelScope.launch {
+            // Implementation
+        }
     }
 
     fun connectSpotify() {
@@ -64,10 +91,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun fetchUserTracks() {
-        viewModelScope.launch {
-            // In production, call AIApiService.getUserTracks()
-            // For now, we use the tracks flow which is already initialized
-        }
+        // Implementation
     }
 
     override fun onCleared() {

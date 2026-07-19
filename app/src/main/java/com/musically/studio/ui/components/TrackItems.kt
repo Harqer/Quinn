@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musically.studio.network.SpotifyTrack
-import com.musically.studio.ui.screens.ChatMessage
+import com.musically.studio.ui.models.ChatMessage
 
 @Composable
 fun TrackItem(track: SpotifyTrack, onClick: () -> Unit = {}) {
@@ -61,7 +61,8 @@ fun TrackItem(track: SpotifyTrack, onClick: () -> Unit = {}) {
 @Composable
 fun ChatBubble(message: ChatMessage) {
     val alignment = if (message.isUser) Alignment.End else Alignment.Start
-    val containerColor = if (message.isUser) Color(0xFF2E2E2E) else Color(0xFF1DB954)
+    val containerColor = if (message.isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh
+    val contentColor = if (message.isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -76,7 +77,7 @@ fun ChatBubble(message: ChatMessage) {
                 text = message.text,
                 modifier = Modifier.padding(12.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White
+                color = contentColor
             )
         }
     }

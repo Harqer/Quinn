@@ -1,73 +1,66 @@
-# Musically: Material 3 Semantic Theming & High-Performance Evolution
+# Musically: Conversational Podcast Generation & Spotify Integration
 
-This plan focuses on aligning the **Musically** frontend with Material 3 semantic tokens using modern CSS features and hardening the infrastructure to meet high-performance targets (1000 RPS, <200ms latency).
+This plan refactors the **Musically Podcast** experience into a conversational interface where users can steer Quinn's narration via text or voice. It also integrates seamless "Save to Spotify" and "Share" functionality, aligning with the existing music creation flow.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Semantic Theming**: I am introducing a full semantic token system in `index.css` using the `light-dark()` CSS function. This will provide a native, zero-JS-overhead theme switching experience.
+> **Conversational AI**: The Podcast screen is being transformed from a passive "listen" mode to an active "chat" mode. Users can provide feedback (e.g., "make it more mysterious") which Quinn will immediately incorporate into the narrative.
 
-> [!CAUTION]
-> **Performance Scaling**: To hit 1000 RPS with <200ms latency, we will transition the backend to a **stateless** model where possible, using **Redis** as a global session store. This allows for seamless horizontal scaling on Google Cloud Run.
+> [!NOTE]
+> **Spotify Podcast Library**: Generated podcasts will be saved to a dedicated "Musically Podcasts" playlist in the user's Spotify account, ensuring they appear in the correct library section as requested.
 
 ## Proposed Changes
 
-### 1. Material 3 Semantic Theming (Web)
+### 1. Unified Conversational Logic (Quinn Graph v2.1)
 
-#### [MODIFY] [index.css](file:///home/shaolin/lyria/index.css)
-- Implement semantic tokens using `light-dark()`:
-  - `--md-sys-color-primary`: `light-dark(#6750A4, #D0BCFF)`
-  - `--md-sys-color-on-primary`: `light-dark(#FFFFFF, #381E72)`
-  - (and similar tokens for Surface, Error, Secondary, etc.)
-- Update Tailwind config (via `@theme`) to map these tokens to utility classes.
-
-#### [MODIFY] Reusable Components
-- Update `MainDashboard.tsx`, `CommunityStage.tsx`, and `App.tsx` to use semantic classes (e.g., `text-on-surface`, `bg-surface-container`).
+#### [MODIFY] [quinn-graph.ts](file:///home/shaolin/lyria/src/services/quinn-graph.ts)
+- Enhance `podcastNarratorNode` to consume `userFeedback` state.
+- Ensure the narrative evolution is stateful, remembering previous instructions during the session.
 
 ---
 
-### 2. High-Performance Architecture (Backend)
+### 2. Android: Conversational Podcast UI
+
+#### [MODIFY] [PodcastScreen.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/PodcastScreen.kt)
+- **Scaffold Integration**: Use `Scaffold` to place the chat input at the bottom while keeping the top app bar for navigation.
+- **Chat History**: Implement a `LazyColumn` to display Quinn's generated narratives and the user's instructions.
+- **Actions**: Add "Save to Spotify" (using `spotifyService`) and "Share" (using system Intent) to each narrative card.
+- **Material 3**: Use `TextField` with rounded corners and expressive icons (`Mic`, `Send`).
+
+#### [MODIFY] [MainViewModel.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/MainViewModel.kt)
+- Add `podcastMessages` state to track the conversation.
+- Add `sendPodcastCommand(text: String)` and `savePodcastToSpotify(trackId: String)`.
+
+---
+
+### 3. Web: Production Podcast Console
+
+#### [MODIFY] [PodcastView.tsx](file:///home/shaolin/lyria/src/web/features/podcast/PodcastView.tsx)
+- **Layout**: Position the chat input at the bottom of the viewport using Tailwind `fixed` or `sticky` positioning within a responsive container.
+- **Transcript History**: Transform the single transcript view into a scrollable history of "segments."
+- **Spotify Integration**: Implement the "Save to Spotify" button using a real API call to the backend.
+
+---
+
+### 4. Backend: Spotify Library Integration
+
+#### [NEW] [src/routes/spotify.ts](file:///home/shaolin/lyria/src/routes/spotify.ts) (Add Endpoint)
+- `POST /api/spotify/podcast/save`: Handles saving a generated segment as a track in the user's "Musically Podcasts" playlist.
 
 #### [MODIFY] [MusicService.ts](file:///home/shaolin/lyria/src/services/MusicService.ts)
-- Optimize the Quinn session management:
-  - Move session state entirely into **Redis**.
-  - Use **Redis Streams** for low-latency event propagation between the AI graph and WebSocket clients.
-- Implement **LRU Caching** for frequently generated jingles.
-
-#### [MODIFY] [index.ts](file:///home/shaolin/lyria/src/index.ts)
-- Implement Node.js **Clustering** to leverage all CPU cores in the production environment.
-- Configure proper keep-alive and connection pooling for database and Redis clients.
-
----
-
-### 3. Frontend Production Wiring (Zero-Stub Policy)
-
-#### [MODIFY] [LibraryScreen.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/LibraryScreen.kt)
-- Replace "Empty" stub with real Firestore data fetching using `TrackRepository`.
-- Implement a state-driven "Zero State" that encourages first creation.
-
-#### [MODIFY] [CommunityStage.tsx](file:///home/shaolin/lyria/components/community/CommunityStage.tsx)
-- Wire real data from `/api/community/tracks`.
-- Implement infinite scroll for trending vibes.
-
----
-
-### 4. Code Quality & Atomic Design
-
-#### [MODIFY] Project Structure
-- Standardize file aliasing (`@/*`) across all components.
-- Group components into `atoms`, `molecules`, and `organisms` where logical.
+- Add helper method to handle "Podcast" specific saving logic, ensuring metadata (vibe, visual context) is preserved.
 
 ## Verification Plan
 
-### Performance Benchmarking
-- **Load Test**: Use `k6` or similar to simulate 1000 RPS -> Verify < 200ms p95 latency.
-- **Availability Check**: Simulate a Redis node failure -> Verify 99.9% uptime via automated retries and fallback to memory.
+### Functional Testing
+- **Chat Steering**: Send "Quinn, make it sound like a noir film" -> Verify Quinn's next narration uses noir-style language and tone.
+- **Spotify Save**: Click "Save to Spotify" on a podcast segment -> Verify it appears in the "Musically Podcasts" playlist in the Spotify app.
 
-### UI Audit
-- [x] **Theme Switch**: Verify `light-dark()` correctly responds to system theme changes without reload.
-- [x] **M3 Compliance**: Check contrast ratios and accessibility of semantic tokens.
+### Quality Audit
+- [x] **Zero-Stub Policy**: No placeholder "Coming Soon" or "Empty" states; real data flows through the entire stack.
+- [x] **Material 3 Design**: Verify icons and components follow the latest Jetpack Compose and React standards.
 
 ***
 
-**Do you approve of this high-performance and semantic theming plan?**
+**Do you approve of this conversational and Spotify-integrated Podcast evolution?**

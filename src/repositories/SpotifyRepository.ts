@@ -4,6 +4,7 @@ export interface SpotifyTokenData {
   accessToken: string;
   refreshToken: string;
   expiresAt: number;
+  podcastPlaylistId?: string;
 }
 
 export class SpotifyRepository {

@@ -18,13 +18,12 @@
     "moduleDetection": "force",
     "allowJs": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/web/*": ["src/web/*"],
-      "@/ui/*": ["src/web/components/ui/*"],
-      "@/layout/*": ["src/web/components/layout/*"],
-      "@/features/*": ["src/web/features/*"]
+      "@/*": ["./src/*"],
+      "@/web/*": ["./src/web/*"],
+      "@/ui/*": ["./src/web/components/ui/*"],
+      "@/layout/*": ["./src/web/components/layout/*"],
+      "@/features/*": ["./src/web/features/*"]
     },
     "allowImportingTsExtensions": true,
     "noEmit": true,

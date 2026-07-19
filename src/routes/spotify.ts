@@ -125,4 +125,14 @@ router.get("/playlists", verifyFirebaseToken, async (req: AuthenticatedRequest, 
   else res.status(response.status).json({ error: "Failed to fetch playlists" });
 });
 
+router.post("/podcast/save", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
+  const uid = req.user?.uid || "local-dev-user";
+  const { trackUri } = req.body;
+  if (!trackUri) return res.status(400).json({ error: "trackUri is required" });
+
+  const success = await spotifyService.savePodcastToPlaylist(uid, trackUri);
+  if (success) res.json({ success: true });
+  else res.status(500).json({ error: "Failed to save podcast" });
+});
+
 export default router;

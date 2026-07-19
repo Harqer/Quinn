@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LibraryMusic
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -23,15 +24,15 @@ import androidx.navigation3.ui.NavDisplay
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.screens.HomeScreen
 import com.musically.studio.ui.screens.LibraryScreen
-import com.musically.studio.ui.screens.SearchScreen
+import com.musically.studio.ui.screens.PodcastScreen
 import com.musically.studio.ui.theme.MusicallyAppTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface Route {
     @Serializable data object Home : Route
-    @Serializable data object Search : Route
     @Serializable data object Library : Route
+    @Serializable data object Podcast : Route
 }
 
 data class TopLevelRoute<T : Any>(val name: String, val route: T, val icon: ImageVector)
@@ -96,8 +97,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MusicallyApp(viewModel: MainViewModel = viewModel()) {
     val topLevelRoutes = listOf(
-        TopLevelRoute("Home", Route.Home, Icons.Default.Home),
-        TopLevelRoute("Search", Route.Search, Icons.Default.Search),
+        TopLevelRoute("Studio", Route.Home, Icons.Default.Home),
+        TopLevelRoute("Podcast", Route.Podcast, Icons.Default.Mic),
         TopLevelRoute("Library", Route.Library, Icons.Default.LibraryMusic)
     )
 
@@ -125,14 +126,11 @@ fun MusicallyApp(viewModel: MainViewModel = viewModel()) {
             androidx.navigation3.runtime.NavEntry<Route>(key) {
                 when (key) {
                     Route.Home -> HomeScreen(
-                        isSpotifyConnected = isSpotifyConnected,
-                        tracks = tracks,
-                        onConnectSpotify = { viewModel.connectSpotify() }
+                        viewModel = viewModel,
+                        isWearableConnected = isWearableConnected
                     )
-                    Route.Search -> SearchScreen(
-                        messages = viewModel.messages,
-                        onSendText = { viewModel.sendTextCommand(it) },
-                        onRecordVoice = { viewModel.recordVoice() },
+                    Route.Podcast -> PodcastScreen(
+                        viewModel = viewModel,
                         isWearableConnected = isWearableConnected
                     )
                     Route.Library -> LibraryScreen()
