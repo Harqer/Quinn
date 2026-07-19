@@ -1,13 +1,14 @@
-# Task: Codebase Upgrade & Dependency Hardening
+# Task: Codebase Upgrade & CI Hardening
 
-- `[x]` AI Code Fixes
-    - `[x]` Fix `src/services/quinn-graph.ts` (modelName -> model)
 - `[/]` Dependency Upgrades
     - `[ ]` Update `package.json` with latest stable versions
-    - `[ ]` Run `pnpm install` and verify `pnpm-lock.yaml`
-- `[ ]` Verification
+    - `[ ]` Update GitHub Actions to use `pnpm`
+- `[ ]` Code Hardening (Zero-Stub)
+    - `[ ]` Replace `spotify:track:placeholder` in `PodcastView.tsx`
+- `[ ]` Verification & Lockfile sync
+    - `[ ]` Run `pnpm install`
     - `[ ]` Run `pnpm exec tsc --noEmit`
     - `[ ]` Run `pnpm test`
-    - `[ ]` Run Android linting and build
+    - `[ ]` Run `./gradlew :app:lintDebug`
 - `[ ]` Final Cleanup & Push
     - `[ ]` Commit and push to `origin main`

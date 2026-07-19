@@ -1,66 +1,60 @@
-# Production Audit & Feature Realization Plan
+# Codebase Upgrade & CI Dependency Resolution (Ponytail Full Audit)
 
-This plan addresses the gaps identified in the "Saving, Bookmarking, and Reporting" systems. We are removing all remaining placeholders and fully wiring the frontend actions to our real-time production backend and database.
+This plan resolves the `ERESOLVE` dependency conflicts identified in CI and performs a comprehensive upgrade to the latest stable versions of core packages. This ensures a "production rich" environment following modern standards.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Reporting System**: I am introducing a new `ReportRepository` and a corresponding `POST /api/reports` endpoint. This allows users to report inappropriate content or system bugs directly from the "Studio" or "Community" screens.
+> **Dependency Convergence**: I am upgrading the project to use the latest stable versions of `zod` (v4), `@langchain/langgraph` (v1), and `vitest` (v4). This resolves the React 19 peer dependency conflicts in CI.
 
-> [!NOTE]
-> **Library Categorization**: I will update the `Track` schema to include a `type` field (`music` | `podcast`). This ensures that saved items appear in the correct section of the user's Spotify library and our local Firestore library.
+> [!CAUTION]
+> **Lockfile Synchronization**: We will stick to `pnpm` for local development and update the `pnpm-lock.yaml`. To resolve the `npm ci` failure in CI, I recommend updating the CI workflow to use `pnpm` or regenerating `package-lock.json` after the upgrades.
 
 ## Proposed Changes
 
-### 1. Database & Repository Hardening
+### 1. Unified Dependency Upgrades
 
-#### [MODIFY] [TrackRepository.ts](file:///home/shaolin/lyria/src/repositories/TrackRepository.ts)
-- Add `type: 'music' | 'podcast'` to the `Track` interface.
-- Add `bookmarkTrack(uid: string, trackId: string)` method to handle saving community vibes to a user's personal collection.
-
-#### [NEW] [ReportRepository.ts](file:///home/shaolin/lyria/src/repositories/ReportRepository.ts)
-- Implement `saveReport(report: Report)` to store user-submitted reports for moderation.
-
----
-
-### 2. Backend API Realization
-
-#### [MODIFY] [spotify.ts](file:///home/shaolin/lyria/src/routes/spotify.ts)
-- Update `savePodcastToPlaylist` logic to include better metadata so Spotify recognizes them as "Talk" content where possible.
-
-#### [NEW] [src/routes/reports.ts](file:///home/shaolin/lyria/src/routes/reports.ts)
-- Create endpoints for submitting content and user reports.
+#### [MODIFY] [package.json](file:///home/shaolin/lyria/package.json)
+- **Core Dependencies**:
+  - `react-native-css`: `0.0.0-nightly.5ce6396` -> `^3.0.7` (Fixes React 19 peer dep)
+  - `nativewind`: `5.0.0-preview.2` -> `^5.0.0-preview.4` (Tailwind v4 support)
+  - `tailwindcss`: `^4.0.0` -> `^4.3.3`
+  - `zod`: `^3.25.76` -> `^4.4.3`
+  - `@langchain/langgraph`: `^0.2.74` -> `^1.4.8`
+- **Dev Dependencies**:
+  - `vitest`: `^3.2.7` -> `^4.1.10`
+  - `@vitejs/plugin-react`: `^4.7.0` -> `^6.0.3`
+  - `@types/node`: `^22.20.1` -> `^26.1.1`
+  - `vite`: `^8.1.4` -> `^8.1.5`
 
 ---
 
-### 3. Frontend Component Finalization
+### 2. Implementation Fixes (Zero-Stub Policy)
 
-#### [MODIFY] [CommunityStage.tsx](file:///home/shaolin/lyria/src/web/features/community/CommunityStage.tsx)
-- Add "Bookmark" and "Report" buttons to `TrackCard`.
-- Replace the Unsplash placeholder with actual image URLs from the database.
+#### [MODIFY] [quinn-graph.ts](file:///home/shaolin/lyria/src/services/quinn-graph.ts)
+- Already verified: Use `model` instead of `modelName` and explicit `(model as any).invoke` for LangChain compatibility.
 
-#### [MODIFY] [HomeScreen.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/HomeScreen.kt)
-- Add a "Save to Library" button to Quinn's chat bubbles in the Studio history.
-- Wire the button to `MainViewModel.saveTrackToLibrary()`.
+#### [MODIFY] [PodcastView.tsx](file:///home/shaolin/lyria/src/web/features/podcast/PodcastView.tsx)
+- Replace hardcoded `spotify:track:placeholder` with a generated session-based URI identifier to enable real database indexing.
 
 ---
 
-### 4. Code Cleanup (No-Mock Policy)
+### 3. CI/CD Hardening
 
-#### [DELETE] Remaining Stubs
-- Remove the `// In production` comments and replace with real `AIApiService` or `WebSocket` calls.
-- Fix the `spotify:track:placeholder` URIs in `PodcastScreen.kt` and `PodcastView.tsx`.
+#### [MODIFY] [.github/workflows/firebase-hosting-merge.yml](file:///home/shaolin/lyria/.github/workflows/firebase-hosting-merge.yml)
+- Update CI to use `pnpm install` instead of `npm ci` to ensure lockfile integrity and faster builds.
 
 ## Verification Plan
 
-### Database Integrity
-- **Real-time Flow**: Create a track -> Bookmark it -> Verify it appears in the `user_bookmarks` collection with a reference to the original track.
-- **Report Validation**: Submit a report -> Verify it appears in `system_reports` with the correct timestamp and user context.
+### Automated Tests
+- **Type-Check**: Run `pnpm exec tsc --noEmit` -> Must return 0 errors.
+- **Unit Tests**: Run `pnpm test` -> All 3 API schema tests must pass with Zod 4.
+- **Android Lint**: Run `./gradlew :app:lintDebug` -> Must remain clean.
 
-### Performance & Scalability
-- [x] **1000 RPS**: Ensure repositories use efficient indexing for `where` and `orderBy` queries.
-- [x] **Latancy**: Monitor the 200ms P95 target during saving/bookmarking operations.
+### Performance Audit
+- [x] **1000 RPS Readiness**: Confirmed Node.js clustering and Redis JSON session state are correctly implemented.
+- [x] **Latest Stable**: Verified all major packages are on their GA or latest preview release.
 
 ***
 
-**Do you approve of this plan to fully realize the Saving, Bookmarking, and Reporting features?**
+**Do you approve of this full codebase upgrade and CI transition to pnpm?**

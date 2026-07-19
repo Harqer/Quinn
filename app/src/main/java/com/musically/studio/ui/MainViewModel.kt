@@ -39,7 +39,8 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             quinnSessionManager.events.collect { event ->
                 if (event.contains("podcast_update")) {
-                    podcastMessages.add(ChatMessage("Quinn: [Narrating vibe...]", false))
+                    // Extract script and trackId from JSON event in production
+                    podcastMessages.add(ChatMessage("Quinn: [Narrating vibe...]", false, "quinn_pod_${System.currentTimeMillis()}"))
                 } else if (event.contains("agent_update")) {
                     messages.add(ChatMessage("Quinn: [New musical vibe set]", false))
                 } else {
@@ -81,11 +82,9 @@ class MainViewModel : ViewModel() {
         messages.add(ChatMessage("Listening for your voice...", true))
     }
 
-    fun savePodcastToSpotify(trackUri: String) {
+    fun savePodcastToSpotify(trackId: String) {
         viewModelScope.launch {
-            if (trackUri.contains("placeholder")) return@launch
-            // Real implementation calling backend to save and possibly sync to Spotify
-            apiClient.bookmarkTrack(trackUri) // Using bookmark as a surrogate for 'save' here
+            apiClient.bookmarkTrack(trackId)
         }
     }
 

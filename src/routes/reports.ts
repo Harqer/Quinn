@@ -15,7 +15,7 @@ const ReportSchema = z.object({
 
 router.post("/", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
   const result = ReportSchema.safeParse(req.body);
-  if (!result.success) return res.status(400).json({ error: result.error.errors });
+  if (!result.success) return res.status(400).json({ error: result.error.issues });
 
   try {
     const reportId = await reportRepository.createReport({

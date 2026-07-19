@@ -8,7 +8,7 @@ const router = Router();
 
 router.post("/gesture", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
   const result = LogGestureSchema.safeParse(req.body);
-  if (!result.success) return res.status(400).json({ error: result.error.errors });
+  if (!result.success) return res.status(400).json({ error: result.error.issues });
 
   try {
     const id = await logRepository.logGesture(xss(result.data.gesture));
@@ -20,7 +20,7 @@ router.post("/gesture", verifyFirebaseToken, async (req: AuthenticatedRequest, r
 
 router.post("/battery", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
   const result = LogBatterySchema.safeParse(req.body);
-  if (!result.success) return res.status(400).json({ error: result.error.errors });
+  if (!result.success) return res.status(400).json({ error: result.error.issues });
 
   try {
     const id = await logRepository.logBattery(result.data.batteryLevel, String(result.data.isWearDetected));

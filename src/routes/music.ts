@@ -13,7 +13,7 @@ const router = Router();
 
 router.post("/generate", verifyFirebaseToken, verifyAppCheck, checkDailyQuota, async (req: AuthenticatedRequest, res: Response) => {
   const result = GenerateSchema.safeParse(req.body);
-  if (!result.success) return res.status(400).json({ error: result.error.errors });
+  if (!result.success) return res.status(400).json({ error: result.error.issues });
 
   try {
     const data = await musicService.generateMusicDirectly(result.data.image, result.data.type);
@@ -26,7 +26,7 @@ router.post("/generate", verifyFirebaseToken, verifyAppCheck, checkDailyQuota, a
 
 router.post("/share", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
   const result = ShareVibeSchema.safeParse(req.body);
-  if (!result.success) return res.status(400).json({ error: result.error.errors });
+  if (!result.success) return res.status(400).json({ error: result.error.issues });
 
   try {
     const trackId = await musicService.saveTrack(req.user!.uid, result.data);

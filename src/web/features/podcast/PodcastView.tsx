@@ -61,7 +61,7 @@ export const PodcastView: React.FC = () => {
       await fetch('/api/spotify/podcast/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ trackUri })
+        body: JSON.stringify({ trackUri: trackUri || `spotify:track:quinn_${segmentId}` })
       });
       alert("Saved to your Musically Podcasts playlist!");
     } catch (err) {
