@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import org.json.JSONObject
 import timber.log.Timber
+import com.google.firebase.auth.FirebaseAuth
 
 class MainViewModel : ViewModel() {
     private val _isSpotifyConnected = MutableStateFlow(false)
@@ -35,6 +36,7 @@ class MainViewModel : ViewModel() {
     private val okHttpClient = OkHttpClient()
     private val quinnSessionManager = QuinnSessionManager(okHttpClient)
     private val apiClient = ApiClient(okHttpClient)
+    private val auth = FirebaseAuth.getInstance()
 
     init {
         viewModelScope.launch {
@@ -82,6 +84,21 @@ class MainViewModel : ViewModel() {
     fun connectToQuinn() {
         quinnSessionManager.connect()
     }
+    
+    fun isUserLoggedIn(): Boolean {
+        return auth.currentUser != null
+    }
+    
+    fun loginWithEmail(email: String, password: String, onResult: (Boolean, String?) -> Unit) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onResult(true, null)
+                } else {
+                    onResult(false, task.exception?.message)
+                }
+            }
+    }
 
     fun switchMode(mode: String) {
         _currentMode.value = mode
@@ -99,6 +116,12 @@ class MainViewModel : ViewModel() {
     }
 
     fun saveTrackToLibrary(trackId: String) {
+        viewModelScope.launch {
+            apiClient.bookmarkTrack(trackId)
+        }
+    }
+
+    fun bookmarkTrack(trackId: String) {
         viewModelScope.launch {
             apiClient.bookmarkTrack(trackId)
         }

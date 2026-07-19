@@ -1,63 +1,59 @@
 import React, { useState, useEffect } from 'react';
-import { MainDashboard } from '@/features/dashboard/MainDashboard';
-import { SplashView } from '@/features/splash/SplashView';
-import { CommunityStage } from '@/features/community/CommunityStage';
-import { SecurityHub } from '@/features/security/SecurityHub';
-import { CompanionApp } from '@/features/android-flow/CompanionApp';
-import { ToastMessage } from '@/ui/ToastMessage';
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 
-type Page = 'splash' | 'main' | 'community' | 'android_flow' | 'security';
+import { LoginScreen } from './features/auth/LoginScreen';
+import { HomeScreen } from './features/home/HomeScreen';
+import { SearchScreen } from './features/search/SearchScreen';
+import { LibraryScreen } from './features/library/LibraryScreen';
+import { AlbumView } from './features/album/AlbumView';
+
+import { BottomNav } from './components/organisms/BottomNav';
+import { PlayerBar } from './components/organisms/PlayerBar';
+
+type Route = 'login' | 'home' | 'search' | 'library' | 'album';
 
 export const App: React.FC = () => {
-  const [page, setPage] = useState<Page>('splash');
+  const [route, setRoute] = useState<Route>('login');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
     const auth = getAuth();
     return onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      if (user && route === 'login') {
+        setRoute('home');
+      }
     });
-  }, []);
+  }, [route]);
+
+  const handleLogin = () => {
+    setRoute('home');
+  };
+
+  const showBottomNav = ['home', 'search', 'library'].includes(route);
+  const showPlayerBar = ['home', 'search', 'library', 'album'].includes(route);
 
   return (
-    <div className="flex flex-col h-screen bg-surface text-on-surface font-sans">
-      <nav className="flex items-center justify-between p-4 border-b border-outline/10 bg-surface-container/50 backdrop-blur-md">
-        <div className="flex items-center gap-2">
-          <span className="text-primary material-icons-round">video_camera_front</span>
-          <span className="text-xl font-bold tracking-tight">Musically</span>
-        </div>
-
-        <div className="flex gap-4">
-          <NavTab active={page === 'splash'} onClick={() => setPage('splash')} icon="home" label="Welcome" />
-          <NavTab active={page === 'main'} onClick={() => setPage('main')} icon="settings_overscan" label="Console" />
-          <NavTab active={page === 'community'} onClick={() => setPage('community')} icon="public" label="Stage" />
-          <NavTab active={page === 'android_flow'} onClick={() => setPage('android_flow')} icon="phone_android" label="Companion" />
-          <NavTab active={page === 'security'} onClick={() => setPage('security')} icon="security" label="Hub" />
-        </div>
-      </nav>
-
-      <main className="flex-1 overflow-hidden relative">
-        {page === 'splash' && <SplashView onLaunch={() => setPage('main')} />}
-        {page === 'main' && <MainDashboard />}
-        {page === 'community' && <CommunityStage />}
-        {page === 'android_flow' && <CompanionApp />}
-        {page === 'security' && <SecurityHub />}
+    <div className="flex flex-col h-screen w-full bg-background text-text-primary font-sans overflow-hidden select-none">
+      <main className="flex-1 overflow-hidden relative w-full max-w-[600px] mx-auto border-x border-outline/30">
+        {route === 'login' && <LoginScreen onLogin={handleLogin} />}
+        {route === 'home' && <HomeScreen />}
+        {route === 'search' && <SearchScreen />}
+        {route === 'library' && <LibraryScreen />}
+        {route === 'album' && <AlbumView onBack={() => setRoute('home')} />}
+        
+        {showPlayerBar && (
+          <div onClick={() => setRoute('album')} className="w-full">
+            <PlayerBar />
+          </div>
+        )}
+        
+        {showBottomNav && (
+          <div className="w-full">
+            <BottomNav currentRoute={route} onNavigate={(r: any) => setRoute(r)} />
+          </div>
+        )}
       </main>
-
-      <ToastMessage />
     </div>
   );
 };
-
-const NavTab: React.FC<{ active: boolean; onClick: () => void; icon: string; label: string }> = ({ active, onClick, icon, label }) => (
-  <button
-    onClick={onClick}
-    className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${
-      active ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'
-    }`}
-  >
-    <span className="material-icons-round text-sm">{icon}</span>
-    <span className="text-sm font-medium">{label}</span>
-  </button>
-);

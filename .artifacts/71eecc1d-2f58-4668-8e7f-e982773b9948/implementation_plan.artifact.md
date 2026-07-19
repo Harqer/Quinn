@@ -1,49 +1,70 @@
-# Final CI/CD Hardening & Alias Resolution Plan
+# UI/UX Alignment: Spotify Aesthetic & Functional Hardening
 
-This plan resolves the persistent "Unloadable Dependency" error in CI and ensures the **Musically** production pipeline is robust and fully synchronized with the repository's modular architecture.
+This plan addresses the unacceptable UI discrepancies in the Android app, ensuring it strictly follows the Spotify design language, color palette, and includes all requested "Like" and "Bookmark" functionality.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Alias Resolution**: I am switching the Vite configuration to use `vite-tsconfig-paths`. This ensures that the `@/*` aliases in `tsconfig.json` are perfectly mirrored in the build process, resolving the `No such file or directory` error found in the GitHub Action logs.
+> **Theme Overhaul**: I am replacing the default Material 3 colors with the Spotify palette: Pure Black (`#121212`), Spotify Green (`#1DB954`), and Deep Gray (`#212121`). This will apply globally to all screens.
 
-> [!NOTE]
-> **CI Consistency**: The workflows are now locked to `pnpm install` and the established `pnpm-lock.yaml`, ensuring that the CI environment exactly matches the local development environment.
+> [!WARNING]
+> **Studio Hub Redesign**: I am removing the "large camera box" and "dumb text" from the `HomeScreen`. The POV will be integrated as a background immersive layer or a subtle circular preview in the chat bar, keeping the focus on the conversational creation.
 
 ## Proposed Changes
 
-### 1. Build Orchestration (Vite)
+### 1. Visual Foundation (Theme & Colors)
 
-#### [MODIFY] [vite.config.ts](file:///home/shaolin/lyria/vite.config.ts)
-- Integrate `vite-tsconfig-paths` as the primary resolution engine.
-- Remove manual `resolve.alias` blocks to prevent "split-brain" configuration where Vite and TypeScript disagree on pathing.
+#### [MODIFY] [Color.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/Color.kt)
+- Define Spotify-accurate colors:
+  - `SpotifyGreen`: `#1DB954`
+  - `SpotifyBlack`: `#121212`
+  - `SpotifyDarkGray`: `#212121`
+  - `SpotifyLightGray`: `#535353`
+
+#### [MODIFY] [Theme.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/Theme.kt)
+- Update `DarkColorScheme` to use `SpotifyBlack` as background and `SpotifyGreen` as primary.
+- Disable dynamic colors by default to ensure the Spotify aesthetic is preserved on all devices.
 
 ---
 
-### 2. Dependency Hardening
+### 2. Conversational Hub (Studio/Home)
 
-#### [MODIFY] [package.json](file:///home/shaolin/lyria/package.json)
-- Ensure `vite-tsconfig-paths` is present in `devDependencies`.
-- Confirm all peer dependencies for `react-native-css` and `nativewind` are satisfied by the latest stable versions.
+#### [MODIFY] [HomeScreen.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/HomeScreen.kt)
+- **Remove** the 300dp camera box and "Enable POV" placeholders.
+- **Background POV**: Implement the camera preview as a subtle, darkened background layer or a floating "Now Playing" style circular preview.
+- **Spotify Chat Bar**: Refactor the input bar to match Spotify's "Search" bar style but with creation actions (Mic, Camera toggle).
+
+#### [MODIFY] [TrackItems.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/TrackItems.kt)
+- **Chat Hub Actions**: Add two distinct icon buttons to Quinn's bubbles:
+  - **Heart (Like)**: `Icons.Default.FavoriteBorder` -> Wired to Spotify Like.
+  - **Bookmark (Save)**: `Icons.Default.BookmarkBorder` -> Wired to Musically Collection.
 
 ---
 
-### 3. Production Environment Sync
+### 3. Personal Collection (Library)
 
-#### [VERIFY] GitHub Actions
-- Ensure `firebase-hosting-merge.yml` and `firebase-hosting-pull-request.yml` are using `pnpm/action-setup@v4`.
-- Confirm the `pnpm install` and `pnpm run build` sequence is clean.
+#### [MODIFY] [LibraryScreen.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/LibraryScreen.kt)
+- Redesign to mirror Spotify's "Your Library" layout (Grid/List of rounded rectangles).
+- Add "Liked Vibes" and "My Podcasts" default categories.
+
+---
+
+### 4. Logic & Metadata
+
+#### [MODIFY] [ChatMessage.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/models/ChatMessage.kt)
+- Ensure the model carries `isLiked` and `isBookmarked` states to update UI instantly.
 
 ## Verification Plan
 
-### Automated Build Verification
-- **Local Production Build**: Run `pnpm run build` -> Verify `dist/` is generated correctly with zero resolution warnings.
-- **Path Resolution**: Confirm `@/web/App` resolves correctly during the transformation phase.
+### UI Audit
+- **Visual Comparison**: Run the app and compare side-by-side with Spotify.
+- **Theme Check**: Verify that `#121212` and `#1DB954` are the dominant colors.
 
-### Quality Audit
-- [x] **No Loops**: This is a single, deterministic fix using established plugins rather than ad-hoc scripts.
-- [x] **Zero-Stub**: Confirmed no mocks remain in the creation logic.
+### Functional Verification
+- [ ] **Like Vibe**: Click Heart -> Verify icon fills and API is called.
+- [ ] **Bookmark Vibe**: Click Bookmark -> Verify item appears in Library.
+- [ ] **Mode Sync**: Toggle Music/Podcast -> Verify chat bar hints and Quinn's responses update.
 
 ***
 
-**Do you approve of this final resolution to fix the CI build and synchronize path aliases?**
+**Do you approve of this strict realignment with the Spotify aesthetic?**

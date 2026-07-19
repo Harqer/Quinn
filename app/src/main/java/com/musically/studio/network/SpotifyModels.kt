@@ -16,6 +16,7 @@ data class SpotifyImage(
 data class SpotifyAlbum(
     @SerializedName("id") val id: String,
     @SerializedName("name") val name: String,
+    @SerializedName("artists") val artists: List<SpotifyArtist>? = null,
     @SerializedName("images") val images: List<SpotifyImage>
 )
 

@@ -7,6 +7,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import com.meta.wearable.dat.camera.Stream
 import com.meta.wearable.dat.camera.addStream
 import com.meta.wearable.dat.camera.removeStream
@@ -15,6 +16,7 @@ import com.meta.wearable.dat.camera.types.VideoQuality
 import com.meta.wearable.dat.core.Wearables
 import com.meta.wearable.dat.core.selectors.AutoDeviceSelector
 import com.meta.wearable.dat.core.session.DeviceSession
+import com.meta.wearable.dat.core.session.DeviceSessionState
 import com.meta.wearable.dat.display.Display
 import com.meta.wearable.dat.display.addDisplay
 import com.meta.wearable.dat.display.removeDisplay
@@ -88,6 +90,17 @@ class WearableStreamingService : Service() {
             val result = Wearables.createSession(AutoDeviceSelector())
             result.onSuccess { session ->
                 activeSession = session
+                
+                // Monitor session state for proper lifecycle handling
+                scope.launch {
+                    session.state.collect { state ->
+                        Log.d("WearableSession", "Session state changed: $state")
+                        if (state == DeviceSessionState.IDLE || state == DeviceSessionState.STOPPED) {
+                            stopSelf()
+                        }
+                    }
+                }
+
                 session.start()
                 attachCapabilities(session)
             }
@@ -97,7 +110,7 @@ class WearableStreamingService : Service() {
     private suspend fun attachCapabilities(session: DeviceSession) {
         session.addDisplay(DisplayConfiguration()).onSuccess { display ->
             activeDisplay = display
-            updateWearableUi("Cinematic Synthwave")
+            updateWearableUi("Welcome to Musically!")
             
             val config = StreamConfiguration(VideoQuality.MEDIUM, 24, false)
             session.addStream(config).onSuccess { stream ->
@@ -115,13 +128,16 @@ class WearableStreamingService : Service() {
         }
     }
 
-    fun updateWearableUi(vibeTitle: String) {
+    fun updateWearableUi(geminiResponse: String) {
         scope.launch {
             activeDisplay?.sendContent(
                 WearableUi.mainDashboard(
-                    vibeTitle = vibeTitle,
-                    onPlay = { /* Handle Play */ },
-                    onPause = { /* Handle Pause */ }
+                    geminiResponse = geminiResponse,
+                    onSpeak = { Log.d("WearableUi", "Speak pressed") },
+                    onCreateMusic = { Log.d("WearableUi", "Create Music pressed") },
+                    onPlay = { Log.d("WearableUi", "Play pressed") },
+                    onPause = { Log.d("WearableUi", "Pause pressed") },
+                    onBack = { Log.d("WearableUi", "Back pressed") }
                 )
             )
         }
@@ -130,6 +146,7 @@ class WearableStreamingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         instance = null
+        _isServiceActive.value = false
         scope.cancel()
         activeSession?.let { session ->
             session.removeStream()

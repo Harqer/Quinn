@@ -18,7 +18,11 @@ import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.TrackItem
 
 @Composable
-fun LibraryScreen(viewModel: MainViewModel = viewModel()) {
+fun LibraryScreen(
+    viewModel: MainViewModel,
+    onNavigateToNowPlaying: (String) -> Unit,
+    onNavigateToAlbum: (String) -> Unit
+) {
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -47,7 +51,11 @@ fun LibraryScreen(viewModel: MainViewModel = viewModel()) {
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(tracks) { track ->
-                    TrackItem(track = track)
+                    TrackItem(
+                        track = track,
+                        onClick = { onNavigateToNowPlaying(track.id) },
+                        onAlbumClick = { track.album?.id?.let { onNavigateToAlbum(it) } }
+                    )
                 }
             }
         }

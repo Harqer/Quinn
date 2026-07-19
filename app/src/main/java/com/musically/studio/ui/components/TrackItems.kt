@@ -1,15 +1,9 @@
 package com.musically.studio.ui.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LibraryMusic
+import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,9 +13,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musically.studio.network.SpotifyTrack
 import com.musically.studio.ui.models.ChatMessage
+import com.musically.studio.ui.theme.SpotifyGreen
 
 @Composable
-fun TrackItem(track: SpotifyTrack, onClick: () -> Unit = {}) {
+fun TrackItem(
+    track: SpotifyTrack, 
+    onClick: () -> Unit = {},
+    onAlbumClick: () -> Unit = {}
+) {
     Card(
         onClick = onClick,
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
@@ -33,7 +32,7 @@ fun TrackItem(track: SpotifyTrack, onClick: () -> Unit = {}) {
         ) {
             Surface(
                 modifier = Modifier.size(64.dp),
-                color = Color.DarkGray,
+                color = Color(0xFF282828),
                 shape = MaterialTheme.shapes.small
             ) {}
             
@@ -47,9 +46,9 @@ fun TrackItem(track: SpotifyTrack, onClick: () -> Unit = {}) {
                     color = Color.White
                 )
                 Text(
-                    text = track.artists.joinToString { it.name },
+                    text = track.artists?.joinToString { it.name } ?: "Unknown Artist",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = Color.Gray
                 )
             }
         }
@@ -59,11 +58,12 @@ fun TrackItem(track: SpotifyTrack, onClick: () -> Unit = {}) {
 @Composable
 fun ChatBubble(
     message: ChatMessage,
-    onSave: (() -> Unit)? = null
+    onLike: () -> Unit = {},
+    onBookmark: () -> Unit = {}
 ) {
     val alignment = if (message.isUser) Alignment.End else Alignment.Start
-    val containerColor = if (message.isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh
-    val contentColor = if (message.isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+    val containerColor = if (message.isUser) Color(0xFF2E2E2E) else SpotifyGreen
+    val contentColor = if (message.isUser) Color.White else Color.Black
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -71,33 +71,30 @@ fun ChatBubble(
     ) {
         Surface(
             color = containerColor,
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.widthIn(max = 280.dp)
+            shape = MaterialTheme.shapes.large,
+            modifier = Modifier.widthIn(max = 300.dp)
         ) {
-            Column {
+            Column(modifier = Modifier.padding(12.dp)) {
                 Text(
                     text = message.text,
-                    modifier = Modifier.padding(12.dp),
                     style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
                     color = contentColor
                 )
-                if (onSave != null && !message.isUser) {
-                    TextButton(
-                        onClick = onSave,
-                        modifier = Modifier.align(Alignment.End).padding(end = 4.dp, bottom = 4.dp)
+                
+                if (!message.isUser && message.trackId != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    HorizontalDivider(color = contentColor.copy(alpha = 0.2f))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        Icon(
-                            Icons.Default.LibraryMusic,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                            tint = contentColor.copy(alpha = 0.7f)
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text(
-                            "Save Vibe",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = contentColor.copy(alpha = 0.7f)
-                        )
+                        IconButton(onClick = onLike) {
+                            Icon(Icons.Default.FavoriteBorder, contentDescription = "Like", tint = contentColor, modifier = Modifier.size(20.dp))
+                        }
+                        IconButton(onClick = onBookmark) {
+                            Icon(Icons.Default.BookmarkBorder, contentDescription = "Bookmark", tint = contentColor, modifier = Modifier.size(20.dp))
+                        }
                     }
                 }
             }
