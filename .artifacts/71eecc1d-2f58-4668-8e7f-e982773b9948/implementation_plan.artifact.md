@@ -1,57 +1,49 @@
-# Ponytail Full: Production Hardening & Latency Optimization
+# Final CI/CD Hardening & Alias Resolution Plan
 
-This plan addresses the last remaining performance and security gaps identified during the "Ponytail Full" audit. We are optimizing for <200ms latency and 1000 RPS throughput.
+This plan resolves the persistent "Unloadable Dependency" error in CI and ensures the **Musically** production pipeline is robust and fully synchronized with the repository's modular architecture.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Rate Limiting**: I am enabling `express-rate-limit` globally in the backend. This is essential to prevent system exhaustion at 1000 RPS. I will use the **Upstash Redis** store to ensure rate limits are synchronized across all clustered workers.
+> **Alias Resolution**: I am switching the Vite configuration to use `vite-tsconfig-paths`. This ensures that the `@/*` aliases in `tsconfig.json` are perfectly mirrored in the build process, resolving the `No such file or directory` error found in the GitHub Action logs.
 
 > [!NOTE]
-> **Graph Concurrency**: I am refactoring Quinn's LangGraph to execute the Music and Podcast nodes in **parallel**. This reduces total response time by ~30%, moving us closer to the 200ms target.
+> **CI Consistency**: The workflows are now locked to `pnpm install` and the established `pnpm-lock.yaml`, ensuring that the CI environment exactly matches the local development environment.
 
 ## Proposed Changes
 
-### 1. API Security & Rate Limiting
+### 1. Build Orchestration (Vite)
 
-#### [MODIFY] [src/app.ts](file:///home/shaolin/lyria/src/app.ts)
-- Integrate `express-rate-limit` using `rate-limit-redis`.
-- Configure a standard tier (e.g., 100 requests per minute per IP) to protect the Gemini/Lyria quota.
-
----
-
-### 2. High-Performance Graph (Quinn v2.2)
-
-#### [MODIFY] [quinn-graph.ts](file:///home/shaolin/lyria/src/services/quinn-graph.ts)
-- refactor nodes to use **Parallel Execution** for Music and Narrative generation.
-- Implement `temperature: 0.1` for the visual analyzer to ensure caching efficiency, while keeping `0.8` for the musical director for creative novelty.
+#### [MODIFY] [vite.config.ts](file:///home/shaolin/lyria/vite.config.ts)
+- Integrate `vite-tsconfig-paths` as the primary resolution engine.
+- Remove manual `resolve.alias` blocks to prevent "split-brain" configuration where Vite and TypeScript disagree on pathing.
 
 ---
 
-### 3. Type Safety & Reliability
+### 2. Dependency Hardening
 
-#### [MODIFY] [MusicService.ts](file:///home/shaolin/lyria/src/services/MusicService.ts)
-- Replace remaining `any` types with strict `QuinnEvent` and `SessionState` interfaces.
-- Add a **Circuit Breaker** for the Redis connection to ensure the app stays alive (in "Local Mode") even if the cache layer is partitioned.
+#### [MODIFY] [package.json](file:///home/shaolin/lyria/package.json)
+- Ensure `vite-tsconfig-paths` is present in `devDependencies`.
+- Confirm all peer dependencies for `react-native-css` and `nativewind` are satisfied by the latest stable versions.
 
 ---
 
-### 4. Android: Production Build Hardening
+### 3. Production Environment Sync
 
-#### [MODIFY] [app/build.gradle.kts](file:///home/shaolin/lyria/app/build.gradle.kts)
-- Enable full R8 optimizations for the release build.
-- Ensure the Meta Wearables SDK symbols are correctly preserved via `proguard-rules.pro`.
+#### [VERIFY] GitHub Actions
+- Ensure `firebase-hosting-merge.yml` and `firebase-hosting-pull-request.yml` are using `pnpm/action-setup@v4`.
+- Confirm the `pnpm install` and `pnpm run build` sequence is clean.
 
 ## Verification Plan
 
-### Performance
-- **Latency Sweep**: Verify P95 < 200ms for cached vision hits.
-- **Throughput Test**: Confirm the cluster handles 1000 concurrent WebSocket handshakes.
+### Automated Build Verification
+- **Local Production Build**: Run `pnpm run build` -> Verify `dist/` is generated correctly with zero resolution warnings.
+- **Path Resolution**: Confirm `@/web/App` resolves correctly during the transformation phase.
 
 ### Quality Audit
-- [x] **Latest Stable**: Confirmed all packages are at the bleeding-edge stable versions.
-- [x] **Zero-Stub**: No mocks or placeholders remain in the creation or logic paths.
+- [x] **No Loops**: This is a single, deterministic fix using established plugins rather than ad-hoc scripts.
+- [x] **Zero-Stub**: Confirmed no mocks remain in the creation logic.
 
 ***
 
-**Do you approve of these final Ponytail hardening steps?**
+**Do you approve of this final resolution to fix the CI build and synchronize path aliases?**
