@@ -33,6 +33,7 @@ const visualAnalyzerNode = async (state: typeof QuinnState.State) => {
   const model = new ChatGoogleGenerativeAI({
     model: "lyria",
     apiKey: process.env.GEMINI_API_KEY,
+    temperature: 0.1, // Deterministic for visual consistency
   });
 
   const response = await (model as any).invoke([
@@ -52,6 +53,7 @@ const musicDirectorNode = async (state: typeof QuinnState.State) => {
   const model = new ChatGoogleGenerativeAI({
     model: "lyria-realtime-exp",
     apiKey: process.env.GEMINI_API_KEY,
+    temperature: 0.8, // High entropy for creative music
   });
 
   const feedbackContext = state.userFeedback ? `\nUser Feedback: ${state.userFeedback}` : "";
@@ -70,6 +72,7 @@ const podcastNarratorNode = async (state: typeof QuinnState.State) => {
   const model = new ChatGoogleGenerativeAI({
     model: "gemini-2.0-flash-exp",
     apiKey: process.env.GEMINI_API_KEY,
+    temperature: 0.7,
   });
 
   const feedbackContext = state.userFeedback ? `\nUser Input/Feedback: ${state.userFeedback}` : "";
@@ -81,12 +84,16 @@ const podcastNarratorNode = async (state: typeof QuinnState.State) => {
   return { podcastScript: response.content.toString() };
 };
 
-// Build the graph
+/**
+ * Orchestrator Graph (Quinn v2.2)
+ * Parallelizes Music and Narrative generation nodes to hit < 200ms latency targets.
+ */
 const workflow = new StateGraph(QuinnState)
   .addNode("visualAnalyzer", visualAnalyzerNode)
   .addNode("musicDirector", musicDirectorNode)
   .addNode("podcastNarrator", podcastNarratorNode)
   .addEdge(START, "visualAnalyzer")
+  // Run both director nodes in parallel branching from visual analyzer
   .addEdge("visualAnalyzer", "musicDirector")
   .addEdge("visualAnalyzer", "podcastNarrator")
   .addEdge("musicDirector", END)
