@@ -6,10 +6,7 @@ import { fileURLToPath } from "url";
 import { rateLimit } from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
 import Redis from "ioredis";
-import spotifyRouter from "./routes/spotify.js";
-import musicRouter from "./routes/music.js";
-import logsRouter from "./routes/logs.js";
-import reportsRouter from "./routes/reports.js";
+import { spotifyRouter, musicRouter, logsRouter, reportsRouter } from "./routes/index.js";
 import logger from "./config/logger.js";
 
 const __filename = fileURLToPath(import.meta.url);

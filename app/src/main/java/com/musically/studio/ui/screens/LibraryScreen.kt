@@ -21,7 +21,8 @@ import com.musically.studio.ui.components.TrackItem
 fun LibraryScreen(
     viewModel: MainViewModel,
     onNavigateToNowPlaying: (String) -> Unit,
-    onNavigateToAlbum: (String) -> Unit
+    onNavigateToAlbum: (String) -> Unit,
+    onNavigateToHome: () -> Unit
 ) {
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
@@ -47,7 +48,7 @@ fun LibraryScreen(
                 CircularProgressIndicator(color = com.musically.studio.ui.theme.SpotifyGreen)
             }
         } else if (tracks.isEmpty()) {
-            EmptyLibraryState()
+            EmptyLibraryState(onNavigateToHome = onNavigateToHome)
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 300.dp),
@@ -68,7 +69,7 @@ fun LibraryScreen(
 }
 
 @Composable
-private fun EmptyLibraryState() {
+private fun EmptyLibraryState(onNavigateToHome: () -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -80,7 +81,7 @@ private fun EmptyLibraryState() {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { /* Navigate to Search */ }) {
+            Button(onClick = onNavigateToHome) {
                 Text("Start Creating")
             }
         }

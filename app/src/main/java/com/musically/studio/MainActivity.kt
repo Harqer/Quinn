@@ -215,7 +215,8 @@ fun MusicallyApp(
                                         coroutineScope.launch { scaffoldState.bottomSheetState.expand() }
                                     }
                                 },
-                                onNavigateToAlbum = { albumId -> currentRoute = Route.AlbumView(albumId) }
+                                onNavigateToAlbum = { albumId -> currentRoute = Route.AlbumView(albumId) },
+                                onNavigateToHome = { currentRoute = Route.Home }
                             )
                             is Route.AlbumView -> AlbumViewScreen(
                                 albumId = key.albumId,

@@ -4,7 +4,7 @@ import { WebSocketServer } from "ws";
 import { auth, firebaseConfig } from "./config/firebase.js";
 import app from "./app.js";
 import { initAi } from "./services/ai.js";
-import { setupMusicWebSocket } from "./routes/music.js";
+import { setupMusicWebSocket } from "./routes/index.js";
 import { startBackupCron } from "./services/backup.js";
 import logger from "./config/logger.js";
 import cluster from "cluster";

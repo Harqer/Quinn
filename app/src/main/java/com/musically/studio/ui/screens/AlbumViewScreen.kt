@@ -15,6 +15,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -33,9 +35,8 @@ fun AlbumViewScreen(
     onNavigateBack: () -> Unit,
     onTrackClick: (String) -> Unit
 ) {
-    // For now, filtering user tracks by this album ID if it exists, or just showing generic info
     val tracks by viewModel.tracks.collectAsState()
-    // Mocking an album view using the first track's album as the display
+    val context = LocalContext.current
     val albumTracks = tracks.filter { it.album?.id == albumId }
     val albumInfo = albumTracks.firstOrNull()?.album
 
@@ -101,7 +102,9 @@ fun AlbumViewScreen(
                             IconButton(onClick = { albumTracks.firstOrNull()?.let { viewModel.bookmarkTrack(it.id) } }) {
                                 Icon(Icons.Default.FavoriteBorder, contentDescription = "Like", tint = Color.White)
                             }
-                            IconButton(onClick = { /* More */ }) {
+                            IconButton(onClick = { 
+                                Toast.makeText(context, "More options coming soon", Toast.LENGTH_SHORT).show()
+                            }) {
                                 Icon(Icons.Default.MoreVert, contentDescription = "More", tint = Color.White)
                             }
                         }
@@ -139,6 +142,7 @@ fun AlbumTrackItem(
     trackNumber: Int,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -166,7 +170,9 @@ fun AlbumTrackItem(
                 maxLines = 1
             )
         }
-        IconButton(onClick = { /* More options menu to be implemented */ }) {
+        IconButton(onClick = { 
+            Toast.makeText(context, "More options coming soon", Toast.LENGTH_SHORT).show()
+        }) {
             Icon(Icons.Default.MoreVert, contentDescription = "More options", tint = Color.Gray)
         }
     }
