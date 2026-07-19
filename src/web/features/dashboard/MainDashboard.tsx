@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { logger } from '@/web/lib/logger';
 import { MusicVisualizer } from './MusicVisualizer';
 import { GesturePad } from './GesturePad';
 import { getAuth } from "firebase/auth";
@@ -33,7 +34,7 @@ export const MainDashboard: React.FC = () => {
         };
         wsRef.current = ws;
       } catch (err) {
-        console.error("WS Connection failed", err);
+        logger.error("WS Connection failed", err);
       }
     };
 
@@ -62,7 +63,7 @@ export const MainDashboard: React.FC = () => {
             }
           }, 1000);
         })
-        .catch(err => console.error("Camera access failed", err));
+        .catch(err => logger.error("Camera access failed", err));
     }
     return () => clearInterval(interval);
   }, [videoActive]);

@@ -1,6 +1,6 @@
 package com.musically.studio.ui.components
 
-import android.util.Log
+import timber.log.Timber
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -63,7 +63,7 @@ fun CameraPreview(
                         imageAnalysis
                     )
                 } catch (e: Exception) {
-                    Log.e("CameraPreview", "Use case binding failed", e)
+                    Timber.e(e, "Use case binding failed")
                 }
             }, ContextCompat.getMainExecutor(context))
         }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from '@/web/lib/logger';
 
 export const CommunityStage: React.FC = () => {
   const [tracks, setTracks] = useState<any[]>([]);
@@ -11,7 +12,7 @@ export const CommunityStage: React.FC = () => {
         setTracks(data.tracks || []);
         setLoading(false);
       })
-      .catch(err => console.error("Failed to load community vibes", err));
+      .catch(err => logger.error("Failed to load community vibes", err));
   }, []);
 
   return (

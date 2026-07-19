@@ -77,7 +77,7 @@ class WearableStreamingService : Service() {
             Notification.Builder(this)
         }
         return builder
-            .setContentTitle("Musically Wearable Active")
+            .setContentTitle("Musically Wearable")
             .setContentText("Streaming POV from your Meta glasses...")
             .setSmallIcon(android.R.drawable.ic_menu_camera)
             .build()

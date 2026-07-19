@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getAuth } from "firebase/auth";
 
+import { logger } from '@/web/lib/logger';
+
 interface PodcastSegment {
   id: string;
   text: string;
@@ -57,7 +59,7 @@ export const PodcastView: React.FC = () => {
       });
       alert("Saved to your Musically Podcasts playlist!");
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to save podcast to Spotify", err);
     }
   };
 

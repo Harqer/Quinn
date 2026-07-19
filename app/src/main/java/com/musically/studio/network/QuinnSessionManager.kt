@@ -1,6 +1,6 @@
 package com.musically.studio.network
 
-import android.util.Log
+import timber.log.Timber
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -26,7 +26,7 @@ class QuinnSessionManager(
 
             webSocket = client.newWebSocket(request, object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket, response: Response) {
-                    Log.d("QuinnSession", "Connected to Quinn Live")
+                    Timber.d("Connected to Quinn Live")
                 }
 
                 override fun onMessage(webSocket: WebSocket, text: String) {
@@ -34,11 +34,11 @@ class QuinnSessionManager(
                 }
 
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                    Log.d("QuinnSession", "Session Closed: $reason")
+                    Timber.d("Session Closed: $reason")
                 }
 
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                    Log.e("QuinnSession", "Session Failure", t)
+                    Timber.e(t, "Session Failure")
                     // Implement reconnection logic here
                 }
             })
