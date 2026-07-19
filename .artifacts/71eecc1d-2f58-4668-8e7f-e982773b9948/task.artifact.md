@@ -1,14 +1,16 @@
-# Task: Codebase Upgrade & CI Hardening
+# Task: Final Wiring & UI Unification (Spotify Aesthetic)
 
-- `[/]` Dependency Upgrades
-    - `[ ]` Update `package.json` with latest stable versions
-    - `[ ]` Update GitHub Actions to use `pnpm`
-- `[ ]` Code Hardening (Zero-Stub)
-    - `[ ]` Replace `spotify:track:placeholder` in `PodcastView.tsx`
-- `[ ]` Verification & Lockfile sync
-    - `[ ]` Run `pnpm install`
+- `[/]` UI Cleanup & Unification
+    - `[ ]` Remove Instrument Tabs from `MainDashboard.tsx`
+    - `[ ]` Ensure `HomeScreen.kt` matches the Spotify-like design
+    - `[ ]` Unify chat bar logic across Web and Mobile
+- `[ ]` API & Session Logic
+    - `[ ]` Implement real `sendTextCommand` in `MainViewModel.kt`
+    - `[ ]` Wire `fetchUserTracks` to `ApiClient.kt`
+    - `[ ]` Ensure all `.catch()` blocks use production `logger`
+- `[ ]` Performance & Build (CLI Skills)
+    - `[ ]` Run `android layout` audit
+    - `[ ]` Verify R8 minification in `proguard-rules.pro`
     - `[ ]` Run `pnpm exec tsc --noEmit`
-    - `[ ]` Run `pnpm test`
-    - `[ ]` Run `./gradlew :app:lintDebug`
 - `[ ]` Final Cleanup & Push
     - `[ ]` Commit and push to `origin main`

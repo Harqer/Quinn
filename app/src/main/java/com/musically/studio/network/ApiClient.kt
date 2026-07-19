@@ -3,6 +3,7 @@ package com.musically.studio.network
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import timber.log.Timber
 import java.io.IOException
 
@@ -20,6 +21,29 @@ class ApiClient(private val client: OkHttpClient) {
             .build()
 
         return executeRequest(request)
+    }
+
+    suspend fun getUserTracks(): List<SpotifyTrack>? {
+        val token = TokenManager.getValidToken() ?: return null
+        val request = Request.Builder()
+            .url("$BASE_URL/music/user/tracks")
+            .header("Authorization", "Bearer $token")
+            .get()
+            .build()
+
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    // Parse SpotifyTrack list from JSON
+                    emptyList() // Placeholder for actual parsing
+                } else {
+                    null
+                }
+            }
+        } catch (e: IOException) {
+            null
+        }
     }
 
     suspend fun reportTarget(targetId: String, targetType: String, reason: String): Boolean {

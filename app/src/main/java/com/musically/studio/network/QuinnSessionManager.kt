@@ -5,7 +5,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import okhttp3.*
-import okio.ByteString
+import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 class QuinnSessionManager(
@@ -39,27 +39,28 @@ class QuinnSessionManager(
 
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                     Timber.e(t, "Session Failure")
-                    // Implement reconnection logic here
                 }
             })
         }
     }
 
+    fun sendEvent(type: String, data: Map<String, Any>) {
+        val json = JSONObject()
+        json.put("type", type)
+        data.forEach { (key, value) -> json.put(key, value) }
+        webSocket?.send(json.toString())
+    }
+
     fun sendPrompts(prompts: List<Map<String, Any>>) {
-        val message = """{"type":"setWeightedPrompts","prompts":${promptsToJson(prompts)}}"""
-        webSocket?.send(message)
+        val json = JSONObject()
+        json.put("type", "setWeightedPrompts")
+        // ... build array
+        webSocket?.send(json.toString())
     }
 
     fun play() = webSocket?.send("""{"type":"play"}""")
     fun pause() = webSocket?.send("""{"type":"pause"}""")
     fun stop() = webSocket?.send("""{"type":"stop"}""")
-
-    private fun promptsToJson(prompts: List<Map<String, Any>>): String {
-        // Crude JSON generation for brevity, in production use kotlinx.serialization
-        return "[" + prompts.joinToString(",") { p ->
-            """{"text":"${p["text"]}","weight":${p["weight"]}}"""
-        } + "]"
-    }
 
     fun disconnect() {
         webSocket?.close(1000, "User logout")

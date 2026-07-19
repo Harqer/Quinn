@@ -8,8 +8,8 @@ export const MainDashboard: React.FC = () => {
   const [videoActive, setVideoActive] = useState(true);
   const [playbackState, setPlaybackState] = useState<'playing' | 'stopped'>('stopped');
   const [voiceStatus, setVoiceStatus] = useState<'idle' | 'listening' | 'processing' | 'speaking'>('idle');
-  const [messages, setMessages] = useState<string[]>([]);
-  const [instrument, setInstrument] = useState<'piano' | 'clarinet' | 'violin' | 'chimes'>('piano');
+  const [messages, setMessages] = useState<any[]>([]);
+  const [mode, setMode] = useState<'music' | 'podcast'>('music');
   const [inputText, setInputText] = useState("");
   const wsRef = useRef<WebSocket | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -25,11 +25,18 @@ export const MainDashboard: React.FC = () => {
         const ws = new WebSocket(`${protocol}//${window.location.host}/api/music/ws?token=${token}`);
 
         ws.onmessage = (event) => {
-          const msg = JSON.parse(event.data);
-          if (msg.type === 'message') {
-            setMessages(prev => [msg.data, ...prev].slice(0, 5));
-          } else if (msg.type === 'agent_update') {
-            setMessages(prev => [`Composer: ${msg.prompts[0]}`, `Lyricist: ${msg.lyrics?.substring(0, 30)}...`, ...prev].slice(0, 10));
+          try {
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'message') {
+              setMessages(prev => [{ text: msg.data, type: 'quinn' }, ...prev].slice(0, 10));
+            } else if (msg.type === 'agent_update') {
+              const text = msg.prompts ? `New vibe: ${msg.prompts[0]}` : msg.vision;
+              setMessages(prev => [{ text, type: 'quinn', trackId: msg.trackId }, ...prev].slice(0, 10));
+            } else if (msg.type === 'podcast_update') {
+              setMessages(prev => [{ text: msg.script, type: 'quinn', trackId: msg.trackId }, ...prev].slice(0, 10));
+            }
+          } catch (e) {
+            setMessages(prev => [{ text: event.data, type: 'quinn' }, ...prev].slice(0, 10));
           }
         };
         wsRef.current = ws;
@@ -80,9 +87,15 @@ export const MainDashboard: React.FC = () => {
 
   const handleSend = () => {
     if (!inputText.trim()) return;
-    setMessages(prev => [`You: ${inputText}`, ...prev].slice(0, 10));
-    wsRef.current?.send(JSON.stringify({ type: 'feedback', text: inputText }));
+    setMessages(prev => [{ text: inputText, type: 'user' }, ...prev].slice(0, 10));
+    const type = mode === 'podcast' ? 'text_command' : 'feedback';
+    wsRef.current?.send(JSON.stringify({ type, text: inputText }));
     setInputText("");
+  };
+
+  const switchMode = (newMode: 'music' | 'podcast') => {
+    setMode(newMode);
+    wsRef.current?.send(JSON.stringify({ type: 'switch_mode', mode: newMode }));
   };
 
   return (
@@ -102,65 +115,60 @@ export const MainDashboard: React.FC = () => {
             <MusicVisualizer isPlaying={playbackState === 'playing'} />
           </div>
 
-          <div className="absolute top-4 left-4 flex gap-2">
+          {/* Mode Switch Overlay */}
+          <div className="absolute top-4 left-4 flex bg-black/40 backdrop-blur-md p-1 rounded-full border border-outline/10">
+            <button
+              onClick={() => switchMode('music')}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${mode === 'music' ? 'bg-primary text-on-primary shadow-lg' : 'text-white hover:bg-white/10'}`}
+            >
+              Music
+            </button>
+            <button
+              onClick={() => switchMode('podcast')}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${mode === 'podcast' ? 'bg-primary text-on-primary shadow-lg' : 'text-white hover:bg-white/10'}`}
+            >
+              Podcast
+            </button>
+          </div>
+
+          <div className="absolute top-4 right-4 flex gap-2">
             <button
               onClick={() => setVideoActive(true)}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${videoActive ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest'}`}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${videoActive ? 'bg-surface text-on-surface' : 'bg-white/10 text-white hover:bg-white/20'}`}
             >
               Webcam
             </button>
             <button
               onClick={() => setVideoActive(false)}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${!videoActive ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest'}`}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${!videoActive ? 'bg-surface text-on-surface' : 'bg-white/10 text-white hover:bg-white/20'}`}
             >
               Cosmic Feed
             </button>
           </div>
         </div>
 
-        {/* Side Controls */}
+        {/* Side History Panel */}
         <div className="w-96 flex flex-col gap-4 p-4 border-l border-outline/10 bg-surface-container-low/30 backdrop-blur-xl">
-          <div className="p-4 rounded-2xl bg-surface-container border border-outline/5 space-y-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <h3 className="flex items-center gap-2 font-bold text-on-surface text-sm">
-                <span className="material-icons-round text-primary text-lg">psychology</span>
-                Quinn Live
-              </h3>
-              <span className={`text-[10px] uppercase tracking-widest font-black px-2 py-1 rounded bg-surface-container-high ${
-                voiceStatus === 'listening' ? 'text-error animate-pulse' : 'text-primary'
-              }`}>
-                {voiceStatus}
-              </span>
-            </div>
-
-            <div className="flex-1 overflow-hidden h-24">
-              {messages.length > 0 ? (
-                <p className="text-xs text-on-surface-variant font-medium animate-in fade-in slide-in-from-bottom-1">{messages[0]}</p>
-              ) : (
-                <div className="text-on-surface-variant text-xs italic">"Quinn, make it more chill..."</div>
-              )}
-            </div>
+          <div className="flex-1 overflow-y-auto space-y-4 custom-scrollbar pr-2">
+            {messages.length === 0 && (
+              <div className="text-center py-20 text-on-surface-variant text-xs italic">
+                Quinn is analyzing your world...
+              </div>
+            )}
+            {messages.map((m, i) => (
+              <div key={i} className={`flex ${m.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] p-3 rounded-2xl text-xs font-medium ${
+                  m.type === 'user' ? 'bg-primary text-on-primary' : 'bg-surface-container border border-outline/5'
+                }`}>
+                  {m.text}
+                </div>
+              </div>
+            ))}
           </div>
 
-          <div className="flex-1 flex flex-col p-4 rounded-2xl bg-surface-container border border-outline/5 space-y-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <h3 className="flex items-center gap-2 font-bold text-on-surface text-sm">
-                <span className="material-icons-round text-primary text-lg">music_note</span>
-                Chord Orchestrator
-              </h3>
-            </div>
-
-            <div className="grid grid-cols-4 gap-2">
-              <InstrumentTab active={instrument === 'piano'} label="Piano" icon="piano" onClick={() => setInstrument('piano')} />
-              <InstrumentTab active={instrument === 'clarinet'} label="Reeds" icon="waves" onClick={() => setInstrument('clarinet')} />
-              <InstrumentTab active={instrument === 'violin'} label="Strings" icon="blur_linear" onClick={() => setInstrument('violin')} />
-              <InstrumentTab active={instrument === 'chimes'} label="Bells" icon="notifications_active" onClick={() => setInstrument('chimes')} />
-            </div>
-
-            <div className="flex-1 relative rounded-xl bg-surface-container-lowest overflow-hidden border border-outline/5 group">
-              <GesturePad />
-              <div className="absolute inset-0 pointer-events-none border border-primary/0 group-hover:border-primary/20 transition-all" />
-            </div>
+          <div className="h-48 relative rounded-xl bg-surface-container-lowest overflow-hidden border border-outline/5 group">
+            <GesturePad />
+            <div className="absolute inset-0 pointer-events-none border border-primary/0 group-hover:border-primary/20 transition-all" />
           </div>
         </div>
       </div>
@@ -181,7 +189,7 @@ export const MainDashboard: React.FC = () => {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Tell Quinn to change the musical vibe..."
+            placeholder={`Tell Quinn to adjust the ${mode === 'music' ? 'musical vibe' : 'story'}...`}
             className="flex-1 bg-transparent border-none outline-none text-sm font-medium px-2"
           />
           <button
@@ -196,15 +204,3 @@ export const MainDashboard: React.FC = () => {
     </div>
   );
 };
-
-const InstrumentTab: React.FC<{ active: boolean; label: string; icon: string; onClick: () => void }> = ({ active, label, icon, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
-      active ? 'bg-primary text-on-primary shadow-md' : 'bg-surface-container-high text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest'
-    }`}
-  >
-    <span className="material-icons-round text-lg">{icon}</span>
-    <span className="text-[10px] font-bold uppercase">{label}</span>
-  </button>
-);

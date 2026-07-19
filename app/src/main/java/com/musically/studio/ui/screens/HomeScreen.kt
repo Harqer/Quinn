@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.Podcasts
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.ChatBubble
 import com.musically.studio.ui.components.POVView
@@ -27,6 +30,7 @@ fun HomeScreen(
 ) {
     var inputText by remember { mutableStateOf("") }
     var isLivePovEnabled by remember { mutableStateOf(false) }
+    val currentMode by viewModel.currentMode.collectAsStateWithLifecycle()
 
     Scaffold(
         bottomBar = {
@@ -51,10 +55,11 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .background(MaterialTheme.colorScheme.surface)
         ) {
+            // Immersive POV Section
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp)
+                    .height(280.dp)
                     .background(MaterialTheme.colorScheme.surfaceContainerHigh),
                 contentAlignment = Alignment.Center
             ) {
@@ -65,9 +70,35 @@ fun HomeScreen(
                         CameraPreview(modifier = Modifier.fillMaxSize())
                     }
                     
+                    // Mode Selector in POV
+                    Surface(
+                        color = Color.Black.copy(alpha = 0.5f),
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier.align(Alignment.TopStart).padding(16.dp)
+                    ) {
+                        Row(modifier = Modifier.padding(4.dp)) {
+                            IconButton(
+                                onClick = { viewModel.switchMode("music") },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    contentColor = if (currentMode == "music") MaterialTheme.colorScheme.primary else Color.White
+                                )
+                            ) {
+                                Icon(Icons.Default.MusicNote, contentDescription = "Music Mode")
+                            }
+                            IconButton(
+                                onClick = { viewModel.switchMode("podcast") },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    contentColor = if (currentMode == "podcast") MaterialTheme.colorScheme.primary else Color.White
+                                )
+                            ) {
+                                Icon(Icons.Default.Podcasts, contentDescription = "Podcast Mode")
+                            }
+                        }
+                    }
+
                     Surface(
                         color = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
                     ) {
                         Text(
@@ -87,7 +118,7 @@ fun HomeScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            "Enable POV to generate music from your surroundings",
+                            "Enable POV to start creating",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -95,6 +126,7 @@ fun HomeScreen(
                 }
             }
 
+            // Chat History / Director Log
             LazyColumn(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 contentPadding = PaddingValues(16.dp),
@@ -103,7 +135,7 @@ fun HomeScreen(
                 items(viewModel.messages) { message: ChatMessage ->
                     ChatBubble(
                         message = message,
-                        onSave = { viewModel.bookmarkTrack("quinn_${System.currentTimeMillis()}") }
+                        onSave = { message.trackId?.let { viewModel.saveTrackToLibrary(it) } }
                     )
                 }
             }
@@ -149,7 +181,7 @@ private fun HomeChatInputBar(
             TextField(
                 value = text,
                 onValueChange = onTextChange,
-                placeholder = { Text("Ask Quinn to change the vibe...") },
+                placeholder = { Text("Tell Quinn your vibe...") },
                 modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
                 shape = MaterialTheme.shapes.extraLarge,
                 colors = TextFieldDefaults.colors(

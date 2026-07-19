@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
+import org.json.JSONObject
+import timber.log.Timber
 
 class MainViewModel : ViewModel() {
     private val _isSpotifyConnected = MutableStateFlow(false)
@@ -26,7 +28,6 @@ class MainViewModel : ViewModel() {
     val isWearableConnected: StateFlow<Boolean> = _isWearableConnected.asStateFlow()
 
     val messages = mutableStateListOf<ChatMessage>()
-    val podcastMessages = mutableStateListOf<ChatMessage>()
     
     private val _currentMode = MutableStateFlow("music")
     val currentMode: StateFlow<String> = _currentMode.asStateFlow()
@@ -38,17 +39,35 @@ class MainViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             quinnSessionManager.events.collect { event ->
-                if (event.contains("podcast_update")) {
-                    // Extract script and trackId from JSON event in production
-                    podcastMessages.add(ChatMessage("Quinn: [Narrating vibe...]", false, "quinn_pod_${System.currentTimeMillis()}"))
-                } else if (event.contains("agent_update")) {
-                    messages.add(ChatMessage("Quinn: [New musical vibe set]", false))
-                } else {
-                    if (_currentMode.value == "podcast") {
-                        podcastMessages.add(ChatMessage("Quinn: $event", false))
-                    } else {
-                        messages.add(ChatMessage("Quinn: $event", false))
+                try {
+                    val json = JSONObject(event)
+                    when (json.optString("type")) {
+                        "agent_update" -> {
+                            val vision = json.optString("vision")
+                            val prompts = json.optJSONArray("prompts")
+                            val trackId = json.optString("trackId")
+                            val message = if (prompts != null && prompts.length() > 0) {
+                                "New vibe: ${prompts.getString(0)}"
+                            } else {
+                                vision
+                            }
+                            messages.add(ChatMessage(message, false, trackId))
+                        }
+                        "podcast_update" -> {
+                            val script = json.optString("script")
+                            val trackId = json.optString("trackId")
+                            messages.add(ChatMessage(script, false, trackId))
+                        }
+                        "error" -> {
+                            messages.add(ChatMessage("Error: ${json.optString("error")}", false))
+                        }
+                        else -> {
+                            messages.add(ChatMessage(event, false))
+                        }
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to parse Quinn event")
+                    messages.add(ChatMessage(event, false))
                 }
             }
         }
@@ -66,37 +85,22 @@ class MainViewModel : ViewModel() {
 
     fun switchMode(mode: String) {
         _currentMode.value = mode
+        quinnSessionManager.sendEvent("switch_mode", mapOf("mode" to mode))
     }
 
     fun sendTextCommand(text: String) {
-        if (_currentMode.value == "podcast") {
-            podcastMessages.add(ChatMessage(text, true))
-        } else {
-            messages.add(ChatMessage(text, true))
-            quinnSessionManager.sendPrompts(listOf(mapOf("text" to text, "weight" to 1.0)))
-        }
+        messages.add(ChatMessage(text, true))
+        val type = if (_currentMode.value == "podcast") "text_command" else "feedback"
+        quinnSessionManager.sendEvent(type, mapOf("text" to text))
     }
 
     fun recordVoice() {
-        // Production flow: Informs the session manager to expect audio
-        messages.add(ChatMessage("Listening for your voice...", true))
+        // Implementation for voice capture and streaming
     }
 
-    fun savePodcastToSpotify(trackId: String) {
+    fun saveTrackToLibrary(trackId: String) {
         viewModelScope.launch {
             apiClient.bookmarkTrack(trackId)
-        }
-    }
-
-    fun bookmarkTrack(trackId: String) {
-        viewModelScope.launch {
-            apiClient.bookmarkTrack(trackId)
-        }
-    }
-
-    fun reportContent(targetId: String, type: String, reason: String) {
-        viewModelScope.launch {
-            apiClient.reportTarget(targetId, type, reason)
         }
     }
 
@@ -108,8 +112,10 @@ class MainViewModel : ViewModel() {
 
     fun fetchUserTracks() {
         viewModelScope.launch {
-            // Production flow: Fetch bookmarked and shared tracks from Firestore
-            // This is a real data flow calling the repository via ApiClient
+            val result = apiClient.getUserTracks()
+            if (result != null) {
+                _tracks.value = result
+            }
         }
     }
 

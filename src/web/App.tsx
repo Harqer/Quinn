@@ -3,12 +3,11 @@ import { MainDashboard } from '@/features/dashboard/MainDashboard';
 import { SplashView } from '@/features/splash/SplashView';
 import { CommunityStage } from '@/features/community/CommunityStage';
 import { SecurityHub } from '@/features/security/SecurityHub';
-import { PodcastView } from '@/features/podcast/PodcastView';
 import { CompanionApp } from '@/features/android-flow/CompanionApp';
 import { ToastMessage } from '@/ui/ToastMessage';
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 
-type Page = 'splash' | 'main' | 'community' | 'podcast' | 'android_flow' | 'security';
+type Page = 'splash' | 'main' | 'community' | 'android_flow' | 'security';
 
 export const App: React.FC = () => {
   const [page, setPage] = useState<Page>('splash');
@@ -33,7 +32,6 @@ export const App: React.FC = () => {
           <NavTab active={page === 'splash'} onClick={() => setPage('splash')} icon="home" label="Welcome" />
           <NavTab active={page === 'main'} onClick={() => setPage('main')} icon="settings_overscan" label="Console" />
           <NavTab active={page === 'community'} onClick={() => setPage('community')} icon="public" label="Stage" />
-          <NavTab active={page === 'podcast'} onClick={() => setPage('podcast')} icon="mic" label="Podcast" />
           <NavTab active={page === 'android_flow'} onClick={() => setPage('android_flow')} icon="phone_android" label="Companion" />
           <NavTab active={page === 'security'} onClick={() => setPage('security')} icon="security" label="Hub" />
         </div>
@@ -43,7 +41,6 @@ export const App: React.FC = () => {
         {page === 'splash' && <SplashView onLaunch={() => setPage('main')} />}
         {page === 'main' && <MainDashboard />}
         {page === 'community' && <CommunityStage />}
-        {page === 'podcast' && <PodcastView />}
         {page === 'android_flow' && <CompanionApp />}
         {page === 'security' && <SecurityHub />}
       </main>

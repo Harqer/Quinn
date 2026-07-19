@@ -24,7 +24,6 @@ import androidx.navigation3.ui.NavDisplay
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.screens.HomeScreen
 import com.musically.studio.ui.screens.LibraryScreen
-import com.musically.studio.ui.screens.PodcastScreen
 import com.musically.studio.ui.theme.MusicallyAppTheme
 import kotlinx.serialization.Serializable
 
@@ -32,7 +31,6 @@ import kotlinx.serialization.Serializable
 sealed interface Route {
     @Serializable data object Home : Route
     @Serializable data object Library : Route
-    @Serializable data object Podcast : Route
 }
 
 data class TopLevelRoute<T : Any>(val name: String, val route: T, val icon: ImageVector)
@@ -98,7 +96,6 @@ class MainActivity : ComponentActivity() {
 fun MusicallyApp(viewModel: MainViewModel = viewModel()) {
     val topLevelRoutes = listOf(
         TopLevelRoute("Studio", Route.Home, Icons.Default.Home),
-        TopLevelRoute("Podcast", Route.Podcast, Icons.Default.Mic),
         TopLevelRoute("Library", Route.Library, Icons.Default.LibraryMusic)
     )
 
@@ -126,10 +123,6 @@ fun MusicallyApp(viewModel: MainViewModel = viewModel()) {
             androidx.navigation3.runtime.NavEntry<Route>(key) {
                 when (key) {
                     Route.Home -> HomeScreen(
-                        viewModel = viewModel,
-                        isWearableConnected = isWearableConnected
-                    )
-                    Route.Podcast -> PodcastScreen(
                         viewModel = viewModel,
                         isWearableConnected = isWearableConnected
                     )
