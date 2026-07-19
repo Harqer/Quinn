@@ -10,10 +10,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.musically.studio.R
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.TrackItem
 
@@ -37,7 +40,7 @@ fun LibraryScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Your Library",
+            text = stringResource(id = R.string.title_library),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -74,15 +77,33 @@ private fun EmptyLibraryState(onNavigateToHome: () -> Unit) {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(32.dp)
+        ) {
             Text(
-                text = "No saved vibes yet",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = stringResource(id = R.string.empty_library_title),
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = onNavigateToHome) {
-                Text("Start Creating")
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(id = R.string.empty_library_message),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                onClick = onNavigateToHome,
+                colors = ButtonDefaults.buttonColors(containerColor = com.musically.studio.ui.theme.SpotifyGreen)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.start_creating),
+                    color = com.musically.studio.ui.theme.SpotifyBlack,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

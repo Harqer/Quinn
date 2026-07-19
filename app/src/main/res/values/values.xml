@@ -22,6 +22,31 @@
     <string name="title_home">Home</string>
     <string name="title_library">Your Library</string>
     <string name="title_search">Search</string>
+    <!-- Album View Screen -->
+    <string name="back">Back</string>
+    <string name="more_options">More options coming soon</string>
+    <string name="unknown_album">Unknown Album</string>
+    <string name="unknown_artist">Unknown Artist</string>
+    <string name="album_bullet">Album • %s</string>
+    <string name="like_content_desc">Like</string>
+    <string name="more_content_desc">More</string>
+    <string name="play_content_desc">Play</string>
+    
+    <!-- Library Screen -->
+    <string name="empty_library_title">No saved vibes yet</string>
+    <string name="empty_library_message">Tap the + button or use your camera to generate your first vibe and build out your catalog.</string>
+    <string name="start_creating">Start Creating</string>
+    
+    <!-- Devices Screen -->
+    <string name="connect_to_a_device">Connect to a device</string>
+    <string name="current_device">Current Device</string>
+    <string name="glasses_content_desc">Glasses</string>
+    <string name="ray_ban_meta_smart_glasses">Ray-Ban Meta Smart Glasses</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="other_devices">Other Devices</string>
+    <string name="bluetooth_content_desc">Bluetooth</string>
+    <string name="bluetooth_or_airplay">Bluetooth or Airplay</string>
     <style name="Theme.Musically" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorSecondary">@color/secondary</item>

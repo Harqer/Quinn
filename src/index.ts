@@ -41,7 +41,7 @@ async function resolveSecrets() {
 
 async function startWorker() {
   await resolveSecrets();
-  initAi();
+  await initAi();
 
   const server = app.listen(PORT, () => {
     logger.info(`[WORKER ${process.pid}] Listening on port ${PORT}`);

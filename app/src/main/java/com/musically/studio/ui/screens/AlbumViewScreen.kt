@@ -19,9 +19,11 @@ import androidx.compose.ui.platform.LocalContext
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.musically.studio.R
 import com.musically.studio.network.SpotifyTrack
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.theme.SpotifyBlack
@@ -39,6 +41,7 @@ fun AlbumViewScreen(
     val context = LocalContext.current
     val albumTracks = tracks.filter { it.album?.id == albumId }
     val albumInfo = albumTracks.firstOrNull()?.album
+    val moreOptionsText = stringResource(id = R.string.more_options)
 
     Scaffold(
         containerColor = SpotifyBlack,
@@ -47,7 +50,7 @@ fun AlbumViewScreen(
                 title = { },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back), tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -69,8 +72,8 @@ fun AlbumViewScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AsyncImage(
-                        model = albumInfo?.images?.firstOrNull()?.url ?: "https://via.placeholder.com/200",
-                        contentDescription = "Album Art",
+                        model = albumInfo?.images?.firstOrNull()?.url,
+                        contentDescription = stringResource(id = R.string.album_art_content_desc),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(200.dp)
@@ -80,13 +83,13 @@ fun AlbumViewScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     Text(
-                        text = albumInfo?.name ?: "Unknown Album",
+                        text = albumInfo?.name ?: stringResource(id = R.string.unknown_album),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                     Text(
-                        text = "Album • ${albumInfo?.artists?.joinToString { it.name } ?: "Unknown Artist"}",
+                        text = stringResource(id = R.string.album_bullet, albumInfo?.artists?.joinToString { it.name } ?: stringResource(id = R.string.unknown_artist)),
                         style = MaterialTheme.typography.bodyLarge,
                         color = Color.LightGray
                     )
@@ -100,12 +103,12 @@ fun AlbumViewScreen(
                     ) {
                         Row {
                             IconButton(onClick = { albumTracks.firstOrNull()?.let { viewModel.bookmarkTrack(it.id) } }) {
-                                Icon(Icons.Default.FavoriteBorder, contentDescription = "Like", tint = Color.White)
+                                Icon(Icons.Default.FavoriteBorder, contentDescription = stringResource(id = R.string.like_content_desc), tint = Color.White)
                             }
                             IconButton(onClick = { 
-                                Toast.makeText(context, "More options coming soon", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, moreOptionsText, Toast.LENGTH_SHORT).show()
                             }) {
-                                Icon(Icons.Default.MoreVert, contentDescription = "More", tint = Color.White)
+                                Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_content_desc), tint = Color.White)
                             }
                         }
                         Box(
@@ -117,7 +120,7 @@ fun AlbumViewScreen(
                                 },
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.PlayArrow, contentDescription = "Play", tint = SpotifyBlack, modifier = Modifier.size(32.dp))
+                            Icon(Icons.Default.PlayArrow, contentDescription = stringResource(id = R.string.play_content_desc), tint = SpotifyBlack, modifier = Modifier.size(32.dp))
                         }
                     }
                     
@@ -129,7 +132,8 @@ fun AlbumViewScreen(
                 AlbumTrackItem(
                     track = track,
                     trackNumber = index + 1,
-                    onClick = { onTrackClick(track.id) }
+                    onClick = { onTrackClick(track.id) },
+                    moreOptionsText = moreOptionsText
                 )
             }
         }
@@ -140,7 +144,8 @@ fun AlbumViewScreen(
 fun AlbumTrackItem(
     track: SpotifyTrack,
     trackNumber: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    moreOptionsText: String
 ) {
     val context = LocalContext.current
     Row(
@@ -164,16 +169,16 @@ fun AlbumTrackItem(
                 maxLines = 1
             )
             Text(
-                text = track.artists?.joinToString { it.name } ?: "Unknown",
+                text = track.artists?.joinToString { it.name } ?: stringResource(id = R.string.unknown),
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray,
                 maxLines = 1
             )
         }
         IconButton(onClick = { 
-            Toast.makeText(context, "More options coming soon", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, moreOptionsText, Toast.LENGTH_SHORT).show()
         }) {
-            Icon(Icons.Default.MoreVert, contentDescription = "More options", tint = Color.Gray)
+            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_content_desc), tint = Color.Gray)
         }
     }
 }

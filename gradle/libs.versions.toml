@@ -1,6 +1,6 @@
 [versions]
 mwdat = "0.8.0"
-androidGradlePlugin = "9.0.1"
+androidGradlePlugin = "9.3.0"
 androidxComposeBom = "2026.06.01"
 androidxFoundation = "1.12.0-alpha01"
 androidxAdaptive = "1.1.0-alpha01"
@@ -13,7 +13,7 @@ androidxTestRunner = "1.7.0"
 androidxTestEspresso = "3.7.0"
 coroutines = "1.10.2"
 junit = "4.13.2"
-kotlin = "2.1.0"
+kotlin = "2.2.10"
 nav3Core = "1.0.1"
 lifecycleViewmodelNav3 = "2.10.0"
 
