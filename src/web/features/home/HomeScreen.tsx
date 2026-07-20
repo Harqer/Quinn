@@ -11,7 +11,7 @@ export const HomeScreen: React.FC = () => {
   return (
     <div className="flex flex-col h-full w-full bg-background overflow-y-auto pb-32">
       <div className="flex justify-between items-center px-4 pt-12 pb-4 sticky top-0 bg-background/90 backdrop-blur-md z-10">
-        <Typography variant="headline" className="font-bold">Recently played</Typography>
+        <Typography variant="headline" className="font-bold tracking-tight">Recently played</Typography>
         <div className="flex gap-4 text-white">
           <Icon name="notifications_none" />
           <Icon name="history" />
@@ -21,7 +21,7 @@ export const HomeScreen: React.FC = () => {
       
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
-           <Typography variant="body-lg">Loading...</Typography>
+           <Typography variant="body-lg">Loading Studio...</Typography>
         </div>
       ) : (
         <>
@@ -37,10 +37,10 @@ export const HomeScreen: React.FC = () => {
               <div className="w-6 h-6 bg-white rounded-sm flex items-center justify-center text-[10px] font-bold text-black">#</div>
               <div className="flex flex-col">
                 <Typography variant="label-sm" color="secondary" className="tracking-wider font-bold">
-                  #SPOTIFYWRAPPED
+                  #MAVEPULSE
                 </Typography>
                 <Typography variant="title-lg" className="font-bold">
-                  Your 2021 in review
+                  Your Studio highlights
                 </Typography>
               </div>
             </div>
@@ -48,17 +48,17 @@ export const HomeScreen: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="aspect-square bg-gradient-to-br from-green-300 to-yellow-200 rounded-md p-4 flex flex-col justify-between shadow-lg">
                  <div>
-                   <Typography variant="title-lg" className="text-black font-bold leading-tight">Your Top<br/>Songs</Typography>
-                   <Typography variant="display" className="text-black font-bold">2021</Typography>
+                   <Typography variant="title-lg" className="text-black font-bold leading-tight">Your Top<br/>Vibes</Typography>
+                   <Typography variant="display" className="text-black font-bold">2026</Typography>
                  </div>
-                 <Typography variant="label-md" className="text-black font-bold">Your Top Songs 2021</Typography>
+                 <Typography variant="label-md" className="text-black font-bold">Daily Mave Mix</Typography>
               </div>
               <div className="aspect-square bg-gradient-to-br from-purple-400 to-purple-600 rounded-md p-4 flex flex-col justify-between shadow-lg relative overflow-hidden">
                  <div>
-                   <Typography variant="title-lg" className="font-bold leading-tight">Your Artists<br/>Revealed</Typography>
+                   <Typography variant="title-lg" className="font-bold leading-tight">Mave AI<br/>Insights</Typography>
                  </div>
                  <div className="absolute -bottom-4 -right-4 w-24 h-24 border-4 border-white/20 rounded-full"></div>
-                 <Typography variant="label-md" className="font-bold z-10 relative">Your Artists Revealed</Typography>
+                 <Typography variant="label-md" className="font-bold z-10 relative">Personal Orchestra</Typography>
               </div>
             </div>
           </div>

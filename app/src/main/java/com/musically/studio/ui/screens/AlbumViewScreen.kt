@@ -8,15 +8,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -28,6 +25,7 @@ import com.musically.studio.network.SpotifyTrack
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.theme.SpotifyBlack
 import com.musically.studio.ui.theme.SpotifyGreen
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,10 +36,48 @@ fun AlbumViewScreen(
     onTrackClick: (String) -> Unit
 ) {
     val tracks by viewModel.tracks.collectAsState()
-    val context = LocalContext.current
-    val albumTracks = tracks.filter { it.album?.id == albumId }
+    val albumTracks = tracks.filter { it.album.id == albumId }
     val albumInfo = albumTracks.firstOrNull()?.album
-    val moreOptionsText = stringResource(id = R.string.more_options)
+    
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showSheet by remember { mutableStateOf(false) }
+    var selectedTrackForSheet by remember { mutableStateOf<SpotifyTrack?>(null) }
+
+    if (showSheet && selectedTrackForSheet != null) {
+        ModalBottomSheet(
+            onDismissRequest = { showSheet = false },
+            sheetState = sheetState,
+            containerColor = Color(0xFF282828)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp).navigationBarsPadding()) {
+                Text(
+                    text = selectedTrackForSheet!!.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                ListItem(
+                    headlineContent = { Text("Add to playlist", color = Color.White) },
+                    leadingContent = { Icon(Icons.Default.Add, contentDescription = null, tint = Color.Gray) },
+                    modifier = Modifier.clickable { /* logic */ }
+                )
+                ListItem(
+                    headlineContent = { Text("View artist", color = Color.White) },
+                    leadingContent = { Icon(Icons.Default.Person, contentDescription = null, tint = Color.Gray) },
+                    modifier = Modifier.clickable { /* logic */ }
+                )
+                ListItem(
+                    headlineContent = { Text("Share vibe", color = Color.White) },
+                    leadingContent = { Icon(Icons.Default.Share, contentDescription = null, tint = Color.Gray) },
+                    modifier = Modifier.clickable { /* logic */ }
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+    }
 
     Scaffold(
         containerColor = SpotifyBlack,
@@ -73,7 +109,7 @@ fun AlbumViewScreen(
                 ) {
                     AsyncImage(
                         model = albumInfo?.images?.firstOrNull()?.url,
-                        contentDescription = stringResource(id = R.string.album_art_content_desc),
+                        contentDescription = "Album Art",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(200.dp)
@@ -89,7 +125,7 @@ fun AlbumViewScreen(
                         color = Color.White
                     )
                     Text(
-                        text = stringResource(id = R.string.album_bullet, albumInfo?.artists?.joinToString { it.name } ?: stringResource(id = R.string.unknown_artist)),
+                        text = albumInfo?.artists?.joinToString { it.name } ?: stringResource(id = R.string.unknown_artist),
                         style = MaterialTheme.typography.bodyLarge,
                         color = Color.LightGray
                     )
@@ -103,12 +139,13 @@ fun AlbumViewScreen(
                     ) {
                         Row {
                             IconButton(onClick = { albumTracks.firstOrNull()?.let { viewModel.bookmarkTrack(it.id) } }) {
-                                Icon(Icons.Default.FavoriteBorder, contentDescription = stringResource(id = R.string.like_content_desc), tint = Color.White)
+                                Icon(Icons.Default.FavoriteBorder, contentDescription = "Like", tint = Color.White)
                             }
                             IconButton(onClick = { 
-                                Toast.makeText(context, moreOptionsText, Toast.LENGTH_SHORT).show()
+                                selectedTrackForSheet = albumTracks.firstOrNull()
+                                showSheet = true
                             }) {
-                                Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_content_desc), tint = Color.White)
+                                Icon(Icons.Default.MoreVert, contentDescription = "More", tint = Color.White)
                             }
                         }
                         Box(
@@ -120,7 +157,7 @@ fun AlbumViewScreen(
                                 },
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.PlayArrow, contentDescription = stringResource(id = R.string.play_content_desc), tint = SpotifyBlack, modifier = Modifier.size(32.dp))
+                            Icon(Icons.Default.PlayArrow, contentDescription = "Play", tint = SpotifyBlack, modifier = Modifier.size(32.dp))
                         }
                     }
                     
@@ -133,7 +170,10 @@ fun AlbumViewScreen(
                     track = track,
                     trackNumber = index + 1,
                     onClick = { onTrackClick(track.id) },
-                    moreOptionsText = moreOptionsText
+                    onMoreClick = {
+                        selectedTrackForSheet = track
+                        showSheet = true
+                    }
                 )
             }
         }
@@ -145,9 +185,8 @@ fun AlbumTrackItem(
     track: SpotifyTrack,
     trackNumber: Int,
     onClick: () -> Unit,
-    moreOptionsText: String
+    onMoreClick: () -> Unit
 ) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -169,16 +208,14 @@ fun AlbumTrackItem(
                 maxLines = 1
             )
             Text(
-                text = track.artists?.joinToString { it.name } ?: stringResource(id = R.string.unknown),
+                text = track.artists.joinToString { it.name },
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray,
                 maxLines = 1
             )
         }
-        IconButton(onClick = { 
-            Toast.makeText(context, moreOptionsText, Toast.LENGTH_SHORT).show()
-        }) {
-            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_content_desc), tint = Color.Gray)
+        IconButton(onClick = onMoreClick) {
+            Icon(Icons.Default.MoreVert, contentDescription = "More", tint = Color.Gray)
         }
     }
 }

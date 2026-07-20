@@ -1,6 +1,6 @@
 [versions]
 mwdat = "0.8.0"
-androidGradlePlugin = "9.3.0"
+androidGradlePlugin = "8.7.3"
 androidxComposeBom = "2026.06.01"
 androidxFoundation = "1.12.0-alpha01"
 androidxAdaptive = "1.1.0-alpha01"

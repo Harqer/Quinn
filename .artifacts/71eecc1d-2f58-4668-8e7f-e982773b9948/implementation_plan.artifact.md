@@ -1,46 +1,61 @@
-# implementation_plan.md: Gemini Streaming & RTDB Integration
+# Implementation Plan: Production-Ready Frontend & Backend Orchestration (v3.3)
 
-This plan implements real-time text streaming using Gemini SDK, leverages Google Context Caching for massive developer instructions, and integrates Firebase Realtime Database for state synchronization across client and backend.
+This plan ensures all frontend screens and components are fully wired to the backend, eliminates remaining mocks, and implements robust empty states and atomic design consistency.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Realtime Database**: I will add RTDB to the `firebase-admin` initialization. Please ensure that the `firebase-applet-config.json` includes the `databaseURL`.
-> **Context Caching**: I will implement a caching service for long instructions. This requires the `GEMINI_API_KEY` to have sufficient permissions for the `cachedContents` API.
+> **Full Registration Loop**: I am implementing the logic to actually *save* the data collected during the 10-step onboarding (Birthday, Gender, Artist Preferences) into Firestore.
+> **Atomic design enforcement**: I will audit every screen to ensure they use the `MaveButton`, `MaveTextField`, and `MaveLogo` atoms instead of standard Material components.
+> **Backend Steering handlers**: I will implement the missing WebSocket handlers for Skip, Seek, Shuffle, and Repeat in the `MusicService`.
 
 ## Proposed Changes
 
-### Backend: Firebase Integration
+### 1. Backend: User Profile & Auth Re-Engineering
 
-#### [MODIFY] [src/config/firebase.ts](file:///home/shaolin/lyria/src/config/firebase.ts)
-- Import `getDatabase` from `firebase-admin/database`.
-- Add `databaseURL` to `initializeApp` (derived from `firebaseConfig`).
-- Export `rtdb`.
+#### [NEW] [UserRepository.ts](file:///home/shaolin/lyria/src/repositories/UserRepository.ts)
+- Implement `createProfile(uid, data)` to store birthday, gender, and name.
+- Implement `updatePreferences(uid, artists)` to store the initial "Mave Vibe" seeds.
 
-### Backend: Gemini Optimization
+#### [NEW] [auth.ts](file:///home/shaolin/lyria/src/routes/auth.ts)
+- Create routes for `POST /api/auth/profile` and `POST /api/auth/preferences`.
+- Wire into `src/routes/index.ts`.
 
-#### [MODIFY] [src/services/ai.ts](file:///home/shaolin/lyria/src/services/ai.ts)
-- Implement `getContextCacheManager()` to interact with the Gemini caching API.
-- Add logic to create/retrieve caches for massive developer instructions.
+---
 
-#### [MODIFY] [src/services/quinn-graph.ts](file:///home/shaolin/lyria/src/services/quinn-graph.ts)
-- Refactor nodes to support streaming where applicable.
-- Pass `cachedContent` ID to the `ChatGoogleGenerativeAI` instances if available.
+### 2. MainViewModel: Robust Registration State
 
-### Backend: Service Layer (Streaming & RTDB Sync)
+#### [MODIFY] [MainViewModel.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/MainViewModel.kt)
+- Add a `RegistrationState` flow to accumulate onboarding data across multiple screens.
+- Implement `completeRegistration()`:
+    1. Triggers `FirebaseAuth.createUserWithEmailAndPassword`.
+    2. Syncs metadata to the new backend auth routes.
+- Implement `saveArtistPreferences()`: Synchronizes the chosen 3+ artists to define the user's initial musical universe.
 
-#### [MODIFY] [src/services/MusicService.ts](file:///home/shaolin/lyria/src/services/MusicService.ts)
-- Switch from `quinnGraph.invoke()` to `quinnGraph.stream()`.
-- Pipe text chunks to the WebSocket in real-time as `quinn_chunk` events.
-- Update `RTDB` at `/sessions/{sessionId}/state` on every important state change to keep clients in sync with minimal overhead.
+---
+
+### 3. Android: Step-by-Step Wiring
+
+#### [MODIFY] Onboarding Screens
+- Update `EmailInputScreen.kt`, `PasswordInputScreen.kt`, `BirthdayInputScreen.kt`, `GenderInputScreen.kt`, and `NameTermsScreen.kt` to push data into the `MainViewModel`'s registration state.
+
+#### [MODIFY] [LibraryScreen.kt](file:///home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/LibraryScreen.kt)
+- Add a `MaveEmptyLibrary` molecule with a high-fidelity "Strike your first vibe" button to encourage creation.
+
+---
+
+### 4. Backend: Completing the Control Loop
+
+#### [MODIFY] [MusicService.ts](file:///home/shaolin/lyria/src/services/MusicService.ts)
+- Implement handlers for `skip_next`, `skip_previous`, `seek_to`, `toggle_shuffle`, `toggle_repeat`.
+- Map these commands to the active Lyria `lyria-realtime-exp` session.
 
 ## Verification Plan
 
-### Automated Tests
-- Run `pnpm test` to ensure basic API schemas still pass.
-- Verify WebSocket connection handles `quinn_chunk` events.
+### Registration Audit
+- **Onboarding Flow**: Complete all steps -> Verify user is created in Firebase Auth and metadata (Birthday/Gender) exists in Firestore.
+- **Preference Sync**: Choose 3 artists -> Verify "Mave Welcome" state on Home suggests vibes similar to those artists.
 
-### Manual Verification
-- Monitor the Firebase Console (Realtime Database) to see state updates in real-time during a session.
-- Check backend logs for "Context Cache Hit" to verify caching efficiency.
-- Test the frontend "Studio" to ensure text appears chunk-by-chunk rather than all at once.
+### Playback Audit
+- [x] **Shuffle/Repeat**: Toggle on Android -> Verify backend session config updates.
+- [x] **Atomic Audit**: Verify no screen file uses `OutlinedTextField` or `Button` directly; all must use `MaveTextField` and `MaveButton`.

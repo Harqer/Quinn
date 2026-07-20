@@ -24,6 +24,7 @@ import com.musically.studio.ui.theme.SpotifyGreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.painterResource
 import com.musically.studio.R
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,7 +54,7 @@ fun NowPlayingScreen(
                     .padding(horizontal = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Top Bar equivalent
+                // Top Bar
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -63,23 +64,23 @@ fun NowPlayingScreen(
                         Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Close", tint = Color.White)
                     }
                     Text(
-                        "Now Playing from your Studio", 
+                        "Now Playing from Studio", 
                         style = MaterialTheme.typography.titleMedium,
-                        color = Color.White
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.width(48.dp)) // balance center
+                    Spacer(modifier = Modifier.width(48.dp))
                 }
                 
                 Spacer(modifier = Modifier.height(32.dp))
                 
                 // Album Art
                 AsyncImage(
-                    model = track.album?.images?.firstOrNull()?.url,
+                    model = track.album.images.firstOrNull()?.url,
                     contentDescription = "Album Art",
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(id = R.drawable.album_view),
                     error = painterResource(id = R.drawable.album_view),
-                    fallback = painterResource(id = R.drawable.album_view),
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f)
@@ -105,7 +106,7 @@ fun NowPlayingScreen(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = track.artists?.joinToString { it.name } ?: "Unknown Artist",
+                            text = track.artists.joinToString { it.name },
                             style = MaterialTheme.typography.bodyLarge,
                             color = Color.LightGray,
                             maxLines = 1
@@ -121,7 +122,7 @@ fun NowPlayingScreen(
                 // Progress Bar
                 Slider(
                     value = trackProgress,
-                    onValueChange = {},
+                    onValueChange = { viewModel.seekTo(it) },
                     colors = SliderDefaults.colors(
                         thumbColor = Color.White,
                         activeTrackColor = Color.White,
@@ -134,7 +135,8 @@ fun NowPlayingScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("0:00", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                    val currentLabel = formatDuration((trackProgress * 180000).toLong()) // Assume 3 min for now
+                    Text(currentLabel, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
                     Text("3:00", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
                 }
                 
@@ -178,4 +180,11 @@ fun NowPlayingScreen(
             }
         }
     }
+}
+
+private fun formatDuration(millis: Long): String {
+    val totalSeconds = millis / 1000
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return String.format(Locale.US, "%d:%02d", minutes, seconds)
 }

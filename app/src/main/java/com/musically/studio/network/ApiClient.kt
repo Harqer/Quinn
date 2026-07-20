@@ -23,6 +23,41 @@ class ApiClient(private val client: OkHttpClient) {
         return executeRequest(request)
     }
 
+    suspend fun saveProfile(name: String, birthday: String, gender: String): Boolean {
+        val token = TokenManager.getValidToken() ?: return false
+        val json = JSONObject().apply {
+            put("name", name)
+            put("birthday", birthday)
+            put("gender", gender)
+        }
+        val body = json.toString().toRequestBody(JSON)
+        val request = Request.Builder()
+            .url("$BASE_URL/auth/profile")
+            .header("Authorization", "Bearer $token")
+            .post(body)
+            .build()
+        return executeRequest(request)
+    }
+
+    suspend fun savePreferences(artists: List<String>): Boolean {
+        val token = TokenManager.getValidToken() ?: return false
+        val json = JSONObject().apply {
+            put("artists", com.google.gson.JsonArray().apply {
+                artists.forEach { add(it) }
+            })
+        }
+        // Gson approach is easier for arrays
+        val gson = com.google.gson.Gson()
+        val body = gson.toJson(mapOf("artists" to artists)).toRequestBody(JSON)
+        
+        val request = Request.Builder()
+            .url("$BASE_URL/auth/preferences")
+            .header("Authorization", "Bearer $token")
+            .post(body)
+            .build()
+        return executeRequest(request)
+    }
+
     suspend fun getUserTracks(): List<SpotifyTrack>? {
         val token = TokenManager.getValidToken() ?: return null
         val request = Request.Builder()

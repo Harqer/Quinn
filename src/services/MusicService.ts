@@ -1,12 +1,12 @@
-import { quinnGraph } from "./quinn-graph.js";
+import { maveGraph } from "./mave-graph.js";
 import { getAi } from "./ai.js";
 import { WebSocket } from "ws";
 import logger from "../config/logger.js";
 import { trackRepository } from "../repositories/TrackRepository.js";
-import { getRedis, saveQuinnSession, getQuinnSession } from "../config/redis.js";
+import { getRedis, saveMaveSession, getMaveSession } from "../config/redis.js";
 import { rtdb } from "../config/firebase.js";
 
-export interface QuinnEvent {
+export interface MaveEvent {
   type: string;
   vision?: string;
   prompts?: string[];
@@ -15,22 +15,40 @@ export interface QuinnEvent {
   error?: string;
   trackId?: string;
   chunk?: string;
+  isThinking?: boolean;
 }
 
 export class MusicService {
+  /**
+   * Processes vision event with Gemini Thinking SDK streaming and RTDB state sync.
+   * Professional Grade: Interleaves WebSocket delivery with RTDB source-of-truth updates.
+   */
   async processVisionEvent(ws: WebSocket, session: any, image: string, sessionId: string) {
     try {
       const previousState = await this.safeGetSession(sessionId) || {};
 
+      // Real-time piping of chunks from the graph nodes
       const config = {
         configurable: {
           onChunk: (chunk: { type: string; text: string }) => {
-            this.safeSend(ws, { type: "quinn_chunk", chunk: chunk.text });
+            const isThinking = chunk.type === "vision_thinking";
+            const eventType = isThinking ? "mave_thinking" : "mave_chunk";
+
+            // 1. Direct pipe to active WebSocket for absolute minimal latency
+            this.safeSend(ws, {
+              type: eventType,
+              chunk: chunk.text,
+              isThinking
+            });
+
+            // 2. Synchronize to RTDB for multi-surface consistency and state persistence
+            this.syncToRtdb(sessionId, { chunk: chunk.text, isThinking });
           }
         }
       };
 
-      const stream = await quinnGraph.stream({
+      // Execute graph as a stream to handle node-level parallelism
+      const stream = await maveGraph.stream({
         ...previousState,
         image
       }, config);
@@ -41,14 +59,14 @@ export class MusicService {
         if (update.visualAnalyzer) {
           const vision = update.visualAnalyzer.visionDescription;
           this.safeSend(ws, { type: "agent_update", vision });
-          await this.syncToRtdb(sessionId, { vision });
+          await this.syncToRtdb(sessionId, { vision, isThinking: false });
           finalState.visionDescription = vision;
         }
 
         if (update.musicDirector) {
           const prompts = update.musicDirector.musicalPrompts;
           this.safeSend(ws, { type: "agent_update", prompts });
-          await this.syncToRtdb(sessionId, { prompts });
+          await this.syncToRtdb(sessionId, { prompts, isThinking: false });
           finalState.musicalPrompts = prompts;
 
           if (session?.setWeightedPrompts) {
@@ -59,7 +77,7 @@ export class MusicService {
         if (update.podcastNarrator) {
           const script = update.podcastNarrator.podcastScript;
           this.safeSend(ws, { type: "agent_update", script });
-          await this.syncToRtdb(sessionId, { script });
+          await this.syncToRtdb(sessionId, { script, isThinking: false });
           finalState.podcastScript = script;
         }
       }
@@ -67,9 +85,91 @@ export class MusicService {
       await this.safeSaveSession(sessionId, finalState);
       return finalState;
     } catch (err) {
-      logger.error("[MUSIC_SERVICE] Failed to process vision event", { error: err });
-      this.safeSend(ws, { type: "error", error: "Visual analysis failed" });
+      logger.error("[MAVE_SERVICE] Failed to process vision event", { error: err });
+      this.safeSend(ws, { type: "error", error: "AI Orchestration failed" });
       throw err;
+    }
+  }
+
+  /**
+   * Handles real-time audio chunks for intent detection.
+   */
+  async handleRealTimeAudio(ws: WebSocket, session: any, base64Audio: string, sessionId: string) {
+    try {
+      if (!session) return;
+      logger.info("[MAVE_SERVICE] Streaming audio chunk to Gemini", { sessionId, size: base64Audio.length });
+
+      // Production: Pipe multimodal audio chunks directly to the Gemini Live session
+      if (session.send) {
+        await session.send({
+          audio: base64Audio
+        });
+      }
+    } catch (err) {
+      logger.error("[MAVE_SERVICE] Audio processing failed", { error: err });
+    }
+  }
+
+  /**
+   * Handles specific playback commands (Skip, Shuffle, Repeat).
+   */
+  async handlePlaybackCommand(type: string, data: any, session: any, sessionId: string) {
+    try {
+      if (!session) return;
+      logger.info("[MAVE_SERVICE] Playback command", { sessionId, type, data });
+
+      switch (type) {
+        case "skip_next":
+          // Logic to generate next variation
+          break;
+        case "toggle_shuffle":
+          await session.setMusicGenerationConfig({ musicGenerationConfig: { shuffle: data.enabled } });
+          break;
+        case "toggle_repeat":
+          await session.setMusicGenerationConfig({ musicGenerationConfig: { repeat: data.enabled } });
+          break;
+        case "seek_to":
+          // Logic for time-based seeking in Lyria
+          break;
+      }
+
+      await this.syncToRtdb(sessionId, { [type === "seek_to" ? "progress" : "playbackState"]: data });
+    } catch (err) {
+      logger.error("[MAVE_SERVICE] Playback command failed", { error: err, type });
+    }
+  }
+
+  /**
+   * Actively steers the Lyria engine (BPM, Density, Brightness).
+   * Synchronized via Redis and RTDB for horizontal scalability.
+   */
+  async applySteering(ws: WebSocket, session: any, params: { bpm?: number, density?: number, brightness?: number, mutes?: string[] }, sessionId: string) {
+    try {
+      if (!session) return;
+
+      const config: any = {};
+      if (params.bpm) config.bpm = params.bpm;
+      if (params.density) config.density = params.density;
+      if (params.brightness) config.brightness = params.brightness;
+
+      if (params.mutes) {
+        config.mute_drums = params.mutes.includes("drums");
+        config.mute_bass = params.mutes.includes("bass");
+      }
+
+      await session.setMusicGenerationConfig({ musicGenerationConfig: config });
+
+      // Persistence: Update session state in Redis for cluster-wide consistency
+      const state = await this.safeGetSession(sessionId) || {};
+      const updatedState = { ...state, musicConfig: config };
+      await this.safeSaveSession(sessionId, updatedState);
+
+      // Real-time: Sync warped state to RTDB for immediate multi-client updates
+      await this.syncToRtdb(sessionId, { type: "steering_update", ...params } as any);
+
+      logger.info("[MAVE_SERVICE] Lyria Steering applied", { sessionId, config });
+    } catch (err) {
+      logger.error("[MAVE_SERVICE] Failed to apply steering", { error: err });
     }
   }
 
@@ -77,12 +177,12 @@ export class MusicService {
     try {
       const previousState = await this.safeGetSession(sessionId) || {};
 
-      const result = await (quinnGraph as any).invoke({
+      const result = await (maveGraph as any).invoke({
         ...previousState,
         userFeedback: feedback
       });
 
-      const updatePayload: QuinnEvent = {
+      const updatePayload: MaveEvent = {
         type: "agent_update",
         prompts: result.musicalPrompts,
         feedback: feedback,
@@ -99,84 +199,46 @@ export class MusicService {
 
       return result;
     } catch (err) {
-      logger.error("[MUSIC_SERVICE] Failed to handle feedback", { error: err });
+      logger.error("[MAVE_SERVICE] Failed to handle feedback", { error: err });
       throw err;
     }
   }
 
-  async generateMusicDirectly(image: string, type: 'music' | 'podcast' = 'music') {
-    const ai = getAi() as any;
+  // --- Enterprise RTDB Sync ---
 
-    const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
-      contents: [{
-        parts: [
-          { inlineData: { mimeType: "image/jpeg", data: image } },
-          { text: `You are a creative music director. Generate 3 short ${type} prompts based on this image. Use universal terminology.` }
-        ]
-      }],
-      config: {
-        responseMimeType: "application/json",
-      }
-    });
-
-    return JSON.parse(response.value);
-  }
-
-  async saveTrack(uid: string, trackData: any) {
-    return await trackRepository.saveTrack({
-      ...trackData,
-      userId: uid
-    });
-  }
-
-  async getCommunityTracks() {
-    const redis = getRedis();
-    if (redis) {
-      try {
-        const cached = await redis.get("community_tracks");
-        if (cached) return JSON.parse(cached as string);
-      } catch (e) {}
-    }
-
-    const tracks = await trackRepository.getCommunityTracks();
-
-    if (redis) {
-      try {
-        await redis.set("community_tracks", JSON.stringify(tracks), { ex: 60 });
-      } catch (e) {}
-    }
-
-    return tracks;
-  }
-
-  private async syncToRtdb(sessionId: string, data: Partial<QuinnEvent>) {
+  private async syncToRtdb(sessionId: string, data: Partial<MaveEvent>) {
     try {
       const ref = rtdb.ref(`sessions/${sessionId}/state`);
+      // Update is transactional and lightweight for state sync
       await ref.update({
         ...data,
         updatedAt: Date.now()
       });
     } catch (err) {
-      logger.error("[MUSIC_SERVICE] RTDB Sync failed", { error: err });
+      logger.error("[MAVE_SERVICE] RTDB Sync failed", { error: err });
     }
   }
 
+  // --- Resilience Helpers ---
+
   private async safeGetSession(sessionId: string) {
     try {
-      return await getQuinnSession(sessionId);
+      return await getMaveSession(sessionId);
     } catch (e) {
+      logger.warn("[MAVE_SERVICE] Session recovery failed (Redis down), starting fresh", { sessionId });
       return null;
     }
   }
 
   private async safeSaveSession(sessionId: string, state: any) {
     try {
-      await saveQuinnSession(sessionId, state);
-    } catch (e) {}
+      await saveMaveSession(sessionId, state);
+    } catch (e) {
+      logger.error("[MAVE_SERVICE] Session persistence failed", { sessionId, error: e });
+    }
   }
 
-  private safeSend(ws: WebSocket, payload: QuinnEvent) {
+  private safeSend(ws: WebSocket, payload: MaveEvent) {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify(payload));
     }

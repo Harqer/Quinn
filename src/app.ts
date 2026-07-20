@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 import { rateLimit } from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
 import Redis from "ioredis";
-import { spotifyRouter, musicRouter, logsRouter, reportsRouter } from "./routes/index.js";
+import { spotifyRouter, musicRouter, logsRouter, reportsRouter, authRouter } from "./routes/index.js";
 import logger from "./config/logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -47,6 +47,7 @@ app.use("/api/spotify", spotifyRouter);
 app.use("/api/music", musicRouter);
 app.use("/api/logs", logsRouter);
 app.use("/api/reports", reportsRouter);
+app.use("/api/auth", authRouter);
 
 // Serve frontend
 app.use(express.static(path.join(__dirname, "../../dist")));

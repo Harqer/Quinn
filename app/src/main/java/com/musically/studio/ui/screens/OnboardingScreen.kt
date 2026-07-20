@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.musically.studio.R
 import com.musically.studio.ui.theme.SpotifyBlack
 import com.musically.studio.ui.theme.SpotifyGreen
 
@@ -31,25 +32,17 @@ fun OnboardingScreen(onContinue: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Placeholder for an expressive graphic/icon
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .background(Color(0xFF2E2E2E), shape = RoundedCornerShape(24.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = androidx.compose.material.icons.Icons.Default.MusicNote,
-                    contentDescription = "App Logo",
-                    tint = SpotifyGreen,
-                    modifier = Modifier.size(64.dp)
-                )
-            }
+            // Mave Brand Logo
+            Image(
+                painter = painterResource(id = R.drawable.mave_brand),
+                contentDescription = "Mave Logo",
+                modifier = Modifier.size(180.dp)
+            )
             
             Spacer(modifier = Modifier.height(48.dp))
             
             Text(
-                text = "Welcome to Musically Live",
+                text = "Welcome to Mave Studio",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -59,7 +52,7 @@ fun OnboardingScreen(onContinue: () -> Unit) {
             Spacer(modifier = Modifier.height(24.dp))
             
             Text(
-                text = "To provide a seamless multimodal AI experience, we need access to your Meta glasses. We use the microphone to hear your voice prompts, and the camera to see what you see, allowing Gemini to create contextual music.",
+                text = "To provide a seamless multimodal AI experience, Mave needs access to your Meta glasses. We use the microphone to hear your voice prompts and the camera to see what you see, allowing our orchestra to create contextual music in real-time.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.LightGray,
                 textAlign = TextAlign.Center

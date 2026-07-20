@@ -34,9 +34,9 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="false"
-        android:label="Musically"
+        android:label="Mave Studio"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Musically">
+        android:theme="@style/Theme.Mave">
         
         <meta-data
             android:name="com.meta.wearable.mwdat.APPLICATION_ID"

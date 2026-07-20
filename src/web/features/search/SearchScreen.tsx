@@ -1,6 +1,6 @@
 import React from 'react';
-import { QuinnChat } from '../../components/organisms/QuinnChat';
+import { MaveChat } from '../../components/organisms/MaveChat';
 
 export const SearchScreen: React.FC = () => {
-  return <QuinnChat />;
+  return <MaveChat />;
 };

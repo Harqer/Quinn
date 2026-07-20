@@ -3,9 +3,10 @@ import logger from "../config/logger.js";
 
 let ai: GoogleGenAI;
 let contextCacheId: string | null = null;
+let cacheExpiry: number = 0;
 
 const MASSIVE_DEVELOPER_INSTRUCTIONS = `
-You are Quinn, the Musically Director and AI companion.
+You are Mave, the Mave Studio Director and AI companion.
 Your goal is to transform POV visual streams into evolving musical soundscapes and conversational narratives.
 Key Principles:
 1. Visual-to-Audio Mapping: Map colors, motion, and objects to musical textures.
@@ -27,32 +28,45 @@ export const initAi = async () => {
     apiKey: process.env.GEMINI_API_KEY,
   });
 
-  // Initialize Context Caching for Massive Instructions
+  await ensureContextCache();
+};
+
+/**
+ * Ensures the massive instructions are cached on Google's servers.
+ * Implements a rolling cache strategy to handle the 1-hour default TTL.
+ */
+export const ensureContextCache = async () => {
   try {
+    const now = Date.now();
+    // If cache exists and has > 10 mins remaining, skip
+    if (contextCacheId && cacheExpiry > now + 600000) return;
+
     const cacheManager = (ai as any).caches;
-    if (cacheManager) {
-      const response = await cacheManager.create({
-        model: "models/gemini-1.5-flash-001",
-        config: {
-          displayName: "quinn-core-instructions",
-          systemInstruction: {
-            parts: [{ text: MASSIVE_DEVELOPER_INSTRUCTIONS }]
-          },
-          ttl: { seconds: 3600 }
-        }
-      });
-      contextCacheId = response.name;
-      logger.info("[AI] Context Cache Initialized", { cacheId: contextCacheId });
-    }
+    if (!cacheManager) return;
+
+    logger.info("[AI] Initializing Context Caching for massive instructions...");
+
+    const response = await cacheManager.create({
+      model: "models/gemini-1.5-flash-001",
+      config: {
+        displayName: "mave-core-instructions",
+        systemInstruction: {
+          parts: [{ text: MASSIVE_DEVELOPER_INSTRUCTIONS }]
+        },
+        ttl: { seconds: 3600 }
+      }
+    });
+
+    contextCacheId = response.name;
+    cacheExpiry = now + 3600000;
+    logger.info("[AI] Context Cache Synchronized", { cacheId: contextCacheId, expires: new Date(cacheExpiry).toLocaleTimeString() });
   } catch (err) {
-    logger.warn("[AI] Context Caching failed to initialize. Falling back to stateless prompts.", { error: err });
+    logger.warn("[AI] Context Caching failed. Mave will operate in stateless mode.", { error: err });
   }
 };
 
 export const getAi = () => {
-  if (!ai) {
-    throw new Error("AI not initialized. Call initAi() first.");
-  }
+  if (!ai) throw new Error("AI not initialized. Call initAi() first.");
   return ai;
 };
 

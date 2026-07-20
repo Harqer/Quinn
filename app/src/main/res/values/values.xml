@@ -12,13 +12,13 @@
     <color name="secondary">#1DB954</color>
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#B3B3B3</color>
-    <string name="app_name">Musically</string>
+    <string name="app_name">Mave Studio</string>
     <string name="gcm_defaultSenderId" translatable="false">759854762539</string>
     <string name="google_api_key" translatable="false">YOUR_API_KEY</string>
     <string name="google_app_id" translatable="false">1:759854762539:android:e931c1265d228fa84cf86e</string>
     <string name="google_crash_reporting_api_key" translatable="false">YOUR_API_KEY</string>
-    <string name="google_storage_bucket" translatable="false">musically-studio.firebasestorage.app</string>
-    <string name="project_id" translatable="false">musically-studio</string>
+    <string name="google_storage_bucket" translatable="false">mave-studio.firebasestorage.app</string>
+    <string name="project_id" translatable="false">mave-studio</string>
     <string name="title_home">Home</string>
     <string name="title_library">Your Library</string>
     <string name="title_search">Search</string>
@@ -47,7 +47,7 @@
     <string name="other_devices">Other Devices</string>
     <string name="bluetooth_content_desc">Bluetooth</string>
     <string name="bluetooth_or_airplay">Bluetooth or Airplay</string>
-    <style name="Theme.Musically" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.Mave" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorSecondary">@color/secondary</item>
         <item name="android:colorBackground">@color/background</item>

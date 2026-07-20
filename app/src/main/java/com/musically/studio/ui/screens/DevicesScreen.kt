@@ -36,7 +36,6 @@ fun DevicesScreen(
 ) {
     val isWearableConnected by viewModel.isWearableConnected.collectAsState()
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     Scaffold(
         containerColor = SpotifyBlack,
@@ -76,10 +75,8 @@ fun DevicesScreen(
                     .fillMaxWidth()
                     .background(Color(0xFF2E2E2E), RoundedCornerShape(8.dp))
                     .clickable {
-                        // Mock Bluetooth Toggle for testing
-                        scope.launch {
-                            viewModel.setWearableConnected(!isWearableConnected)
-                        }
+                        // Real Lifecycle Management: Start/Stop the Wearable Service
+                        viewModel.setWearableConnected(context, !isWearableConnected)
                     }
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically

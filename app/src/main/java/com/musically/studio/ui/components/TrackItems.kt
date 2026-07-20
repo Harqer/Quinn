@@ -1,5 +1,6 @@
 package com.musically.studio.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkBorder
@@ -8,9 +9,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.musically.studio.R
 import com.musically.studio.network.SpotifyTrack
 import com.musically.studio.ui.models.ChatMessage
 import com.musically.studio.ui.theme.SpotifyGreen
@@ -30,11 +36,17 @@ fun TrackItem(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                modifier = Modifier.size(64.dp),
-                color = Color(0xFF282828),
-                shape = MaterialTheme.shapes.small
-            ) {}
+            AsyncImage(
+                model = track.album?.images?.firstOrNull()?.url,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.album_view),
+                error = painterResource(id = R.drawable.album_view),
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(MaterialTheme.shapes.small)
+                    .background(Color(0xFF282828))
+            )
             
             Spacer(modifier = Modifier.width(16.dp))
             

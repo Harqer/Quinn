@@ -11,25 +11,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val SpotifyColorScheme = darkColorScheme(
-    primary = SpotifyGreen,
-    secondary = SpotifyLightGray,
-    tertiary = SpotifyGreen,
-    background = SpotifyBlack,
-    surface = SpotifyBlack,
-    onPrimary = SpotifyBlack,
-    onSecondary = SpotifyWhite,
-    onTertiary = SpotifyBlack,
-    onBackground = SpotifyWhite,
-    onSurface = SpotifyWhite,
-    surfaceContainerHigh = SpotifyDarkGray,
-    surfaceContainerHighest = SpotifyLightGray
+private val MaveColorScheme = darkColorScheme(
+    primary = MaveBrand,
+    onPrimary = MaveBackground,
+    secondary = MaveOnSurfaceVariant,
+    background = MaveBackground,
+    surface = MaveBackground,
+    onBackground = MaveOnSurface,
+    onSurface = MaveOnSurface,
+    error = MaveError,
+    surfaceContainerHigh = MaveSurfaceContainer,
+    surfaceContainerHighest = MaveOnSurfaceVariant
 )
 
 @Composable
-fun MusicallyAppTheme(
+fun MaveAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is disabled to enforce Spotify aesthetic
+    // Dynamic color is disabled to enforce brand aesthetic
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -37,7 +35,7 @@ fun MusicallyAppTheme(
         val context = LocalContext.current
         if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
     } else {
-        SpotifyColorScheme
+        MaveColorScheme
     }
     
     val view = LocalView.current

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { useQuinn } from '../../hooks/useQuinn';
+import { useMave } from '../../hooks/useMave';
 import { Typography } from '../atoms/Typography';
 import { Icon } from '../atoms/Icon';
-import { Button } from '../atoms/Button';
 
-export const QuinnChat: React.FC = () => {
-  const { messages, sendText, mode, switchMode, isConnected } = useQuinn();
+export const MaveChat: React.FC = () => {
+  const { messages, sendText, mode, switchMode, isConnected } = useMave();
   const [inputText, setInputText] = useState('');
 
   const handleSend = () => {
@@ -20,16 +19,16 @@ export const QuinnChat: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-background/90 backdrop-blur-md sticky top-0 z-10 border-b border-surface-container">
         <Typography variant="title-lg" className="font-bold flex items-center gap-2">
-          <Icon name="graphic_eq" color="primary" /> Quinn {mode === 'music' ? 'Music' : 'Podcast'}
+          <Icon name="graphic_eq" color="primary" /> Mave {mode === 'music' ? 'Music' : 'Podcast'}
         </Typography>
         <div className="flex bg-surface-container rounded-full p-1">
-          <button 
+          <button
             className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${mode === 'music' ? 'bg-primary text-black' : 'text-text-secondary hover:text-white'}`}
             onClick={() => switchMode('music')}
           >
             Music
           </button>
-          <button 
+          <button
              className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${mode === 'podcast' ? 'bg-primary text-black' : 'text-text-secondary hover:text-white'}`}
              onClick={() => switchMode('podcast')}
           >
@@ -44,12 +43,12 @@ export const QuinnChat: React.FC = () => {
           <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50">
             <Icon name="graphic_eq" size="6xl" className="mb-4" />
             <Typography variant="headline">What do you want to hear?</Typography>
-            <Typography variant="body-md">Prompt Quinn to generate music or talk in a podcast.</Typography>
+            <Typography variant="body-md">Prompt Mave to generate music or talk in a podcast.</Typography>
           </div>
         ) : (
           messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div 
+              <div
                 className={`max-w-[80%] p-3 rounded-2xl ${msg.sender === 'user' ? 'bg-primary text-black rounded-br-sm' : 'bg-surface-container text-white rounded-bl-sm'}`}
               >
                 <Typography variant="body-md" color="inherit">
@@ -69,7 +68,7 @@ export const QuinnChat: React.FC = () => {
           </button>
           <input
             type="text"
-            placeholder={isConnected ? "Message Quinn..." : "Connecting..."}
+            placeholder={isConnected ? "Message Mave..." : "Connecting..."}
             className="flex-1 bg-transparent border-none outline-none text-white text-sm"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
@@ -78,7 +77,7 @@ export const QuinnChat: React.FC = () => {
             }}
             disabled={!isConnected}
           />
-          <button 
+          <button
             className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-black active:scale-95 transition-transform disabled:opacity-50"
             onClick={handleSend}
             disabled={!isConnected || !inputText.trim()}

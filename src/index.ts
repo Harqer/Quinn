@@ -54,9 +54,13 @@ async function startWorker() {
     const url = new URL(request.url!, `http://${request.headers.host}`);
     if (url.pathname === "/api/music/ws") {
       const token = url.searchParams.get("token");
+
+      // Audio First Policy: Allow guest access if no token is provided
       if (!token) {
-        socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-        socket.destroy();
+        logger.info("[WS] Guest user connected (Audio First)");
+        wss.handleUpgrade(request, socket, head, (ws) => {
+          wss.emit("connection", ws, request);
+        });
         return;
       }
 
@@ -66,8 +70,11 @@ async function startWorker() {
           wss.emit("connection", ws, request);
         });
       } catch (err) {
-        socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-        socket.destroy();
+        // Fallback to guest even if token is invalid, but log warning
+        logger.warn("[WS] Invalid token, falling back to guest mode");
+        wss.handleUpgrade(request, socket, head, (ws) => {
+          wss.emit("connection", ws, request);
+        });
       }
     } else {
       socket.destroy();

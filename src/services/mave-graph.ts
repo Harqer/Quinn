@@ -1,12 +1,12 @@
 import { StateGraph, Annotation, START, END } from "@langchain/langgraph";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { cacheVisionResult, getCachedVisionResult } from "../config/redis.js";
-import { getContextCacheId } from "./ai.js";
+import { getContextCacheId, ensureContextCache } from "./ai.js";
 import crypto from "crypto";
 import logger from "../config/logger.js";
 
 // Define the state schema
-const QuinnState = Annotation.Root({
+const MaveState = Annotation.Root({
   image: Annotation<string>(),
   visionDescription: Annotation<string>(),
   musicalPrompts: Annotation<string[]>(),
@@ -22,13 +22,14 @@ const getCachedModel = (modelName: string, temperature: number = 0.7) => {
     model: modelName,
     apiKey: process.env.GEMINI_API_KEY,
     temperature: temperature,
-    // @ts-ignore - Support for cached content ID in newer SDKs
+    // Support for cached content ID
+    // @ts-ignore
     cachedContent: cacheId || undefined,
   });
 };
 
 // Nodes
-const visualAnalyzerNode = async (state: typeof QuinnState.State, config: any) => {
+const visualAnalyzerNode = async (state: typeof MaveState.State, config: any) => {
   if (!state.image && state.visionDescription) {
     return { visionDescription: state.visionDescription };
   }
@@ -39,46 +40,70 @@ const visualAnalyzerNode = async (state: typeof QuinnState.State, config: any) =
   const cached = await getCachedVisionResult(imageHash);
 
   if (cached) {
-    logger.info("[QUINN_GRAPH] Cache hit for vision analysis", { hash: imageHash });
+    logger.info("[MAVE_GRAPH] Cache hit for vision analysis", { hash: imageHash });
     return { visionDescription: cached };
   }
 
-  const model = getCachedModel("gemini-1.5-flash", 0.1);
-  const response = await model.invoke([
+  // Ensure context cache is active before large vision task
+  await ensureContextCache();
+
+  // Use Thinking model for deep visual interpretation
+  const model = getCachedModel("gemini-2.0-flash-thinking-exp", 0.1);
+
+  const stream = await model.stream([
     ["system", "Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics."],
     ["human", state.image]
   ]);
 
-  const description = response.content.toString();
-  await cacheVisionResult(imageHash, description);
+  let fullDescription = "";
+  for await (const chunk of stream) {
+    const text = chunk.content.toString();
+    fullDescription += text;
 
-  return { visionDescription: description };
+    // Pipe chunks to frontend for zero-latency feedback
+    if (config.configurable?.onChunk) {
+      config.configurable.onChunk({ type: "vision_thinking", text });
+    }
+  }
+
+  await cacheVisionResult(imageHash, fullDescription);
+  return { visionDescription: fullDescription };
 };
 
-const musicDirectorNode = async (state: typeof QuinnState.State) => {
+const musicDirectorNode = async (state: typeof MaveState.State, config: any) => {
   if (state.mode !== 'music') return {};
 
-  const model = getCachedModel("gemini-1.5-flash-exp", 0.8);
+  const model = getCachedModel("gemini-2.0-flash-exp", 0.8);
   const feedbackContext = state.userFeedback ? `\nUser Feedback: ${state.userFeedback}` : "";
 
-  const response = await model.invoke([
-    ["system", "You are Quinn, the Musically Director. Map the following visual vibe and user feedback into a set of 3-5 weighted musical prompts for the Lyria Real-Time engine. Focus on tempo, instrumentation, and atmospheric textures."],
+  // Strategy: Stream the music director reasoning for immediate UX feedback
+  const stream = await model.stream([
+    ["system", "You are Mave, the Mave Studio Director. Map the following visual vibe and user feedback into a set of 3-5 weighted musical prompts for the Lyria Real-Time engine. Focus on tempo, instrumentation, and atmospheric textures."],
     ["human", `Visual Vibe: ${state.visionDescription}${feedbackContext}`]
   ]);
 
-  const prompts = (response.content.toString()).split("\n").filter((l: string) => l.trim().length > 0);
+  let reasoningText = "";
+  for await (const chunk of stream) {
+    const text = chunk.content.toString();
+    reasoningText += text;
+    if (config.configurable?.onChunk) {
+      config.configurable.onChunk({ type: "director_thinking", text });
+    }
+  }
+
+  const prompts = reasoningText.split("\n").filter((l: string) => l.trim().length > 0);
   return { musicalPrompts: prompts };
 };
 
-const podcastNarratorNode = async (state: typeof QuinnState.State, config: any) => {
+const podcastNarratorNode = async (state: typeof MaveState.State, config: any) => {
   if (state.mode !== 'podcast') return {};
 
-  const model = getCachedModel("gemini-2.0-flash-exp", 0.7);
+  // Use Thinking model for natural storytelling
+  const model = getCachedModel("gemini-2.0-flash-thinking-exp", 0.7);
   const feedbackContext = state.userFeedback ? `\nUser Input/Feedback: ${state.userFeedback}` : "";
 
-  // Real-time text chunking using model.stream
   const stream = await model.stream([
-    ["system", "You are Quinn, a podcast host. Based on the visual vibe and user instructions, generate a short, engaging narrative segment (2-4 sentences) for 'Musically POV'. If user gave feedback, acknowledge it naturally in your tone."],
+    ["system", "You are Mave, a podcast host. Based on the visual vibe and user instructions, generate a short, engaging narrative segment (2-4 sentences) for 'Mave POV'. If user gave feedback, acknowledge it naturally in your tone."],
     ["human", `Visual Vibe: ${state.visionDescription}${feedbackContext}`]
   ]);
 
@@ -87,9 +112,8 @@ const podcastNarratorNode = async (state: typeof QuinnState.State, config: any) 
     const text = chunk.content.toString();
     fullScript += text;
 
-    // Pipe chunks to a provided callback in the config if it exists
     if (config.configurable?.onChunk) {
-      config.configurable.onChunk({ type: "podcast_chunk", text });
+      config.configurable.onChunk({ type: "mave_thinking", text });
     }
   }
 
@@ -97,11 +121,11 @@ const podcastNarratorNode = async (state: typeof QuinnState.State, config: any) 
 };
 
 /**
- * Orchestrator Graph (Quinn v2.3)
+ * Orchestrator Graph (Mave v3.0)
  * Parallelizes Music and Narrative generation nodes to hit < 200ms latency targets.
- * Optimized with Google Context Caching for massive developer instructions.
+ * Optimized with Google Context Caching and real-time chunk streaming.
  */
-const workflow = new StateGraph(QuinnState)
+const workflow = new StateGraph(MaveState)
   .addNode("visualAnalyzer", visualAnalyzerNode)
   .addNode("musicDirector", musicDirectorNode)
   .addNode("podcastNarrator", podcastNarratorNode)
@@ -111,4 +135,4 @@ const workflow = new StateGraph(QuinnState)
   .addEdge("musicDirector", END)
   .addEdge("podcastNarrator", END);
 
-export const quinnGraph = workflow.compile();
+export const maveGraph = workflow.compile();

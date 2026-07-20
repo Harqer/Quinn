@@ -39,6 +39,9 @@ class WearableStreamingService : Service() {
         private val _cameraFrames = MutableSharedFlow<ByteArray>(extraBufferCapacity = 1)
         val cameraFrames = _cameraFrames.asSharedFlow()
         
+        private val _interactionEvents = MutableSharedFlow<String>(extraBufferCapacity = 10)
+        val interactionEvents = _interactionEvents.asSharedFlow()
+        
         private val _isServiceActive = MutableStateFlow(false)
         val isServiceActive: StateFlow<Boolean> = _isServiceActive.asStateFlow()
         
@@ -63,7 +66,7 @@ class WearableStreamingService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "wearable_service_channel",
-                "Wearable Streaming",
+                "Mave Wearable Streaming",
                 NotificationManager.IMPORTANCE_LOW
             )
             val manager = getSystemService(NotificationManager::class.java)
@@ -79,8 +82,8 @@ class WearableStreamingService : Service() {
             Notification.Builder(this)
         }
         return builder
-            .setContentTitle("Musically Wearable")
-            .setContentText("Streaming POV from your Meta glasses...")
+            .setContentTitle("Mave Wearable")
+            .setContentText("Streaming POV to Mave Studio...")
             .setSmallIcon(android.R.drawable.ic_menu_camera)
             .build()
     }
@@ -94,7 +97,7 @@ class WearableStreamingService : Service() {
                 // Monitor session state for proper lifecycle handling
                 scope.launch {
                     session.state.collect { state ->
-                        Log.d("WearableSession", "Session state changed: $state")
+                        Log.d("MaveWearable", "Session state changed: $state")
                         if (state == DeviceSessionState.IDLE || state == DeviceSessionState.STOPPED) {
                             stopSelf()
                         }
@@ -110,7 +113,7 @@ class WearableStreamingService : Service() {
     private suspend fun attachCapabilities(session: DeviceSession) {
         session.addDisplay(DisplayConfiguration()).onSuccess { display ->
             activeDisplay = display
-            updateWearableUi("Musically", "Welcome to Musically!")
+            updateWearableUi("Mave Studio", "Welcome! How can I assist your session today?")
             
             val config = StreamConfiguration(VideoQuality.MEDIUM, 24, false)
             session.addStream(config).onSuccess { stream ->
@@ -134,15 +137,21 @@ class WearableStreamingService : Service() {
                 WearableUi.mainDashboard(
                     songTitle = songTitle,
                     geminiResponse = geminiResponse,
-                    onSpeak = { Log.d("WearableUi", "Speak pressed") },
-                    onCreateMusic = { Log.d("WearableUi", "Create Music pressed") },
-                    onPlay = { Log.d("WearableUi", "Play pressed") },
-                    onPause = { Log.d("WearableUi", "Pause pressed") },
-                    onSkipNext = { Log.d("WearableUi", "Skip Next pressed") },
-                    onSkipPrevious = { Log.d("WearableUi", "Skip Previous pressed") },
-                    onBack = { Log.d("WearableUi", "Back pressed") }
+                    onSpeak = { emitInteraction("speak") },
+                    onCreateMusic = { emitInteraction("generate") },
+                    onPlay = { emitInteraction("play") },
+                    onPause = { emitInteraction("pause") },
+                    onSkipNext = { emitInteraction("next") },
+                    onSkipPrevious = { emitInteraction("previous") },
+                    onBack = { emitInteraction("back") }
                 )
             )
+        }
+    }
+
+    private fun emitInteraction(type: String) {
+        scope.launch {
+            _interactionEvents.emit(type)
         }
     }
 

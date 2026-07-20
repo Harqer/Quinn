@@ -24,7 +24,7 @@ object WearableUi {
                 alignment = Alignment.CENTER
             ) {
                 button("Back", ButtonStyle.SECONDARY, IconName.ARROW_LEFT, onBack)
-                text(" $songTitle ", TextStyle.HEADING, TextColor.PRIMARY)
+                text(" Mave Studio ", TextStyle.HEADING, TextColor.PRIMARY)
             }
             
             text(geminiResponse, TextStyle.BODY, TextColor.PRIMARY)

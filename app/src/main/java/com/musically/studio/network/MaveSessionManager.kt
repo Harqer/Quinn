@@ -8,7 +8,7 @@ import okhttp3.*
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
-class QuinnSessionManager(
+class MaveSessionManager(
     private val client: OkHttpClient
 ) {
     private var webSocket: WebSocket? = null
@@ -26,7 +26,7 @@ class QuinnSessionManager(
 
             webSocket = client.newWebSocket(request, object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket, response: Response) {
-                    Timber.d("Connected to Quinn Live")
+                    Timber.d("Connected to Mave Studio Live")
                 }
 
                 override fun onMessage(webSocket: WebSocket, text: String) {
@@ -34,11 +34,11 @@ class QuinnSessionManager(
                 }
 
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                    Timber.d("Session Closed: $reason")
+                    Timber.d("Mave Session Closed: $reason")
                 }
 
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                    Timber.e(t, "Session Failure")
+                    Timber.e(t, "Mave Session Failure")
                 }
             })
         }
@@ -61,6 +61,13 @@ class QuinnSessionManager(
     fun play() = webSocket?.send("""{"type":"play"}""")
     fun pause() = webSocket?.send("""{"type":"pause"}""")
     fun stop() = webSocket?.send("""{"type":"stop"}""")
+
+    fun sendAudio(base64: String) {
+        val json = JSONObject()
+        json.put("type", "audio")
+        json.put("data", base64)
+        webSocket?.send(json.toString())
+    }
 
     fun disconnect() {
         webSocket?.close(1000, "User logout")

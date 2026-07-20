@@ -25,18 +25,30 @@ import com.google.firebase.FirebaseApp
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.MiniPlayer
 import com.musically.studio.ui.screens.*
-import com.musically.studio.ui.theme.MusicallyAppTheme
+import com.musically.studio.ui.screens.onboarding.*
+import com.musically.studio.ui.theme.MaveAppTheme
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface Route {
     @Serializable data object Login : Route
-    @Serializable data object Onboarding : Route
     @Serializable data object Home : Route
     @Serializable data object Library : Route
     @Serializable data object Devices : Route
     @Serializable data class AlbumView(val albumId: String) : Route
+    
+    // Onboarding Sequence
+    @Serializable data object Welcome : Route
+    @Serializable data object AuthOptions : Route
+    @Serializable data object EmailInput : Route
+    @Serializable data object PasswordInput : Route
+    @Serializable data object BirthdayInput : Route
+    @Serializable data object GenderInput : Route
+    @Serializable data object NameTerms : Route
+    @Serializable data object Loading : Route
+    @Serializable data object Notification : Route
+    @Serializable data object ArtistSelection : Route
 }
 
 data class TopLevelRoute<T : Any>(val name: String, val route: T, val icon: ImageVector)
@@ -52,7 +64,6 @@ class MainActivity : ComponentActivity() {
         val audioGranted = permissions[Manifest.permission.RECORD_AUDIO] ?: false
         if (cameraGranted && audioGranted) {
             permissionsGranted.value = true
-            startSession()
         }
     }
 
@@ -61,27 +72,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         FirebaseApp.initializeApp(this)
         
-        handleIntent(intent)
-
         setContent {
-            MusicallyAppTheme {
-                MusicallyApp(
+            MaveAppTheme {
+                MaveApp(
                     onAcknowledgePermissions = { checkPermissions() },
                     hasPermissions = permissionsGranted.value
                 )
-            }
-        }
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        handleIntent(intent)
-    }
-
-    private fun handleIntent(intent: Intent) {
-        intent.data?.let { uri ->
-            if (uri.scheme == "musically" && uri.host == "callback") {
-                // val code = uri.getQueryParameter("code")
             }
         }
     }
@@ -97,16 +93,11 @@ class MainActivity : ComponentActivity() {
         }
         permissionLauncher.launch(permissions.toTypedArray())
     }
-
-    private fun startSession() {
-        val intent = Intent(this, WearableStreamingService::class.java)
-        startService(intent)
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MusicallyApp(
+fun MaveApp(
     viewModel: MainViewModel = viewModel(),
     onAcknowledgePermissions: () -> Unit,
     hasPermissions: Boolean
@@ -117,13 +108,7 @@ fun MusicallyApp(
     )
 
     var currentRoute: Route by remember { 
-        mutableStateOf(if (viewModel.isUserLoggedIn()) Route.Home else Route.Login) 
-    }
-    
-    LaunchedEffect(hasPermissions) {
-        if (hasPermissions && currentRoute == Route.Onboarding) {
-            currentRoute = Route.Home
-        }
+        mutableStateOf(if (viewModel.isUserLoggedIn()) Route.Home else Route.Welcome) 
     }
     
     val currentPlayingTrack by viewModel.currentPlayingTrack.collectAsStateWithLifecycle()
@@ -137,103 +122,121 @@ fun MusicallyApp(
     )
     val coroutineScope = rememberCoroutineScope()
 
-    if (currentRoute == Route.Login) {
-        LoginScreen(
-            onLoginSuccess = { currentRoute = if (hasPermissions) Route.Home else Route.Onboarding },
-            onNavigateToSignUp = { /* TODO */ },
-            viewModel = viewModel
-        )
-    } else if (currentRoute == Route.Onboarding) {
-        OnboardingScreen(onContinue = onAcknowledgePermissions)
-    } else {
-        BottomSheetScaffold(
-            scaffoldState = scaffoldState,
-            sheetPeekHeight = if (currentPlayingTrack != null) 72.dp else 0.dp,
-            sheetDragHandle = null,
-            sheetContent = {
-                if (currentPlayingTrack != null) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        NowPlayingScreen(
-                            track = currentPlayingTrack,
-                            viewModel = viewModel,
-                            onCollapse = {
-                                coroutineScope.launch {
-                                    scaffoldState.bottomSheetState.partialExpand()
-                                }
-                            }
+    val showBottomNav = currentRoute in listOf(Route.Home, Route.Library, Route.Devices) || currentRoute is Route.AlbumView
+    val showPlayerBar = showBottomNav && currentPlayingTrack != null
+
+    Scaffold { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
+            NavDisplay(
+                backStack = listOf(currentRoute),
+                onBack = { currentRoute = Route.Home }
+            ) { key: Route ->
+                androidx.navigation3.runtime.NavEntry<Route>(key) {
+                    when (key) {
+                        // --- Onboarding Screens ---
+                        Route.Welcome -> WelcomeScreen(
+                            onSignUpClick = { currentRoute = Route.AuthOptions },
+                            onLoginClick = { currentRoute = Route.Login }
                         )
-                        // Overlay the MiniPlayer when partially expanded so it covers NowPlaying
-                        if (scaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded || 
-                            scaffoldState.bottomSheetState.targetValue == SheetValue.PartiallyExpanded) {
+                        Route.AuthOptions -> AuthOptionsScreen(
+                            onEmailClick = { currentRoute = Route.EmailInput },
+                            onGoogleClick = { viewModel.guestLogin { s, _ -> if (s) currentRoute = Route.Loading } },
+                            onAppleClick = { /* logic */ },
+                            onLoginClick = { currentRoute = Route.Login },
+                            onBackClick = { currentRoute = Route.Welcome }
+                        )
+                        Route.EmailInput -> EmailInputScreen(
+                            viewModel = viewModel,
+                            onNextClick = { currentRoute = Route.PasswordInput },
+                            onBackClick = { currentRoute = Route.AuthOptions }
+                        )
+                        Route.PasswordInput -> PasswordInputScreen(
+                            viewModel = viewModel,
+                            onNextClick = { currentRoute = Route.BirthdayInput },
+                            onBackClick = { currentRoute = Route.EmailInput }
+                        )
+                        Route.BirthdayInput -> BirthdayInputScreen(
+                            viewModel = viewModel,
+                            onNextClick = { currentRoute = Route.GenderInput },
+                            onBackClick = { currentRoute = Route.PasswordInput }
+                        )
+                        Route.GenderInput -> GenderInputScreen(
+                            viewModel = viewModel,
+                            onNextClick = { currentRoute = Route.NameTerms },
+                            onBackClick = { currentRoute = Route.BirthdayInput }
+                        )
+                        Route.NameTerms -> NameTermsScreen(
+                            viewModel = viewModel,
+                            onNextClick = { currentRoute = Route.Loading },
+                            onBackClick = { currentRoute = Route.GenderInput }
+                        )
+                        Route.Loading -> {
+                            LoadingScreen()
+                            LaunchedEffect(Unit) {
+                                kotlinx.coroutines.delay(2000)
+                                currentRoute = Route.Notification
+                            }
+                        }
+                        Route.Notification -> NotificationScreen(
+                            onTurnOn = { onAcknowledgePermissions(); currentRoute = Route.ArtistSelection },
+                            onNotNow = { currentRoute = Route.ArtistSelection }
+                        )
+                        Route.ArtistSelection -> ArtistSelectionScreen(
+                            viewModel = viewModel,
+                            onDone = { currentRoute = Route.Home }
+                        )
+                        
+                        // --- Main Studio Screens ---
+                        Route.Login -> LoginScreen(
+                            onLoginSuccess = { currentRoute = Route.Home },
+                            onNavigateToSignUp = { currentRoute = Route.Welcome },
+                            viewModel = viewModel
+                        )
+                        Route.Home -> HomeScreen(
+                            viewModel = viewModel,
+                            isWearableConnected = isWearableConnected,
+                            onNavigateToDevices = { currentRoute = Route.Devices }
+                        )
+                        Route.Library -> LibraryScreen(
+                            viewModel = viewModel,
+                            onNavigateToNowPlaying = { /* logic */ },
+                            onNavigateToAlbum = { currentRoute = Route.AlbumView(it) },
+                            onNavigateToHome = { currentRoute = Route.Home }
+                        )
+                        is Route.AlbumView -> AlbumViewScreen(
+                            albumId = key.albumId,
+                            viewModel = viewModel,
+                            onNavigateBack = { currentRoute = Route.Library },
+                            onTrackClick = { /* logic */ }
+                        )
+                        Route.Devices -> DevicesScreen(
+                            viewModel = viewModel,
+                            onNavigateBack = { currentRoute = Route.Home }
+                        )
+                    }
+                }
+            }
+
+            if (showBottomNav) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Column(modifier = Modifier.align(androidx.compose.ui.Alignment.BottomCenter)) {
+                        if (showPlayerBar) {
                             MiniPlayer(
                                 track = currentPlayingTrack!!,
                                 isPlaying = isPlaying,
                                 onPlayPauseClick = { viewModel.togglePlayPause() },
-                                onClick = {
-                                    coroutineScope.launch {
-                                        scaffoldState.bottomSheetState.expand()
-                                    }
-                                }
+                                onClick = { /* expand logic */ }
                             )
                         }
-                    }
-                } else {
-                    Box(modifier = Modifier.height(1.dp)) // empty bottom sheet
-                }
-            }
-        ) { paddingValues ->
-            NavigationSuiteScaffold(
-                modifier = Modifier.padding(bottom = if (currentPlayingTrack != null && scaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) 72.dp else 0.dp),
-                navigationSuiteItems = {
-                    topLevelRoutes.forEach { topLevelRoute ->
-                        item(
-                            icon = { Icon(topLevelRoute.icon, contentDescription = topLevelRoute.name) },
-                            label = { Text(topLevelRoute.name) },
-                            selected = currentRoute == topLevelRoute.route,
-                            onClick = { currentRoute = topLevelRoute.route as Route }
-                        )
-                    }
-                }
-            ) {
-                NavDisplay(
-                    backStack = listOf(currentRoute),
-                    onBack = { currentRoute = Route.Home }
-                ) { key: Route ->
-                    androidx.navigation3.runtime.NavEntry<Route>(key) {
-                        when (key) {
-                            Route.Home -> HomeScreen(
-                                viewModel = viewModel,
-                                isWearableConnected = isWearableConnected,
-                                onNavigateToDevices = { currentRoute = Route.Devices }
-                            )
-                            Route.Library -> LibraryScreen(
-                                viewModel = viewModel,
-                                onNavigateToNowPlaying = { trackId -> 
-                                    // Play the track and expand
-                                    viewModel.tracks.value.find { it.id == trackId }?.let {
-                                        viewModel.playTrack(it)
-                                        coroutineScope.launch { scaffoldState.bottomSheetState.expand() }
-                                    }
-                                },
-                                onNavigateToAlbum = { albumId -> currentRoute = Route.AlbumView(albumId) },
-                                onNavigateToHome = { currentRoute = Route.Home }
-                            )
-                            is Route.AlbumView -> AlbumViewScreen(
-                                albumId = key.albumId,
-                                viewModel = viewModel,
-                                onNavigateBack = { currentRoute = Route.Library },
-                                onTrackClick = { trackId -> 
-                                    viewModel.tracks.value.find { it.id == trackId }?.let {
-                                        viewModel.playTrack(it)
-                                        coroutineScope.launch { scaffoldState.bottomSheetState.expand() }
-                                    }
-                                }
-                            )
-                            Route.Devices -> DevicesScreen(
-                                viewModel = viewModel,
-                                onNavigateBack = { currentRoute = Route.Home }
-                            )
-                            Route.Onboarding, Route.Login -> {}
+                        NavigationBar {
+                            topLevelRoutes.forEach { route ->
+                                NavigationBarItem(
+                                    icon = { Icon(route.icon, contentDescription = route.name) },
+                                    label = { Text(route.name) },
+                                    selected = currentRoute == route.route,
+                                    onClick = { currentRoute = route.route as Route }
+                                )
+                            }
                         }
                     }
                 }

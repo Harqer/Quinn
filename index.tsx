@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getDatabase } from "firebase/database";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 import firebaseConfig from "./firebase-applet-config.json";
 import { App } from "@/web/App";
@@ -12,6 +13,7 @@ import "./index.css";
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
+const rtdb = getDatabase(firebaseApp);
 
 // Initialize App Check
 if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {

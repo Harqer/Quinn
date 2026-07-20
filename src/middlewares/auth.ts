@@ -30,6 +30,59 @@ export const verifyFirebaseToken = async (
   }
 };
 
+export const optionalFirebaseToken = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    // Assign a guest UID for "Audio First" experience
+    const guestId = req.header("X-Guest-ID") || `guest_${Math.random().toString(36).substring(7)}`;
+    req.user = { uid: guestId, isGuest: true };
+    next();
+    return;
+  }
+
+  const idToken = authHeader.split("Bearer ")[1];
+  try {
+    const decodedToken = await auth.verifyIdToken(idToken);
+    req.user = { ...decodedToken, isGuest: false };
+    next();
+  } catch (err) {
+    // Fallback to guest if token is invalid but we want "Audio First"
+    const guestId = `guest_${Math.random().toString(36).substring(7)}`;
+    req.user = { uid: guestId, isGuest: true };
+    next();
+  }
+};
+
+export const optionalFirebaseToken = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    // Audio First: Assign guest UID
+    const guestId = req.header("X-Guest-ID") || `guest_${Math.random().toString(36).substring(7)}`;
+    req.user = { uid: guestId, isGuest: true };
+    next();
+    return;
+  }
+
+  const idToken = authHeader.split("Bearer ")[1];
+  try {
+    const decodedToken = await auth.verifyIdToken(idToken);
+    req.user = { ...decodedToken, isGuest: false };
+    next();
+  } catch (err) {
+    const guestId = `guest_${Math.random().toString(36).substring(7)}`;
+    req.user = { uid: guestId, isGuest: true };
+    next();
+  }
+};
+
 export const verifyAppCheck = async (
   req: Request,
   res: Response,
@@ -84,12 +137,14 @@ export const checkDailyQuota = async (
       currentQuota = { count: data.count || 0, lastUpdated: today };
     }
 
-    const DAILY_LIMIT = 50;
+    const DAILY_LIMIT = req.user?.isGuest ? 5 : 50;
     if (currentQuota.count >= DAILY_LIMIT) {
-      logger.warn(`[QUOTA] User exceeded daily generation limit.`, { uid, limit: DAILY_LIMIT });
+      logger.warn(`[QUOTA] User exceeded daily generation limit.`, { uid, limit: DAILY_LIMIT, isGuest: req.user?.isGuest });
       res.status(429).json({
         error: {
-          message: "Daily generation limit reached today. Please try again tomorrow.",
+          message: req.user?.isGuest
+            ? "Guest limit reached. Sign up for 50+ generations per day!"
+            : "Daily generation limit reached today. Please try again tomorrow.",
           code: "QUOTA_EXCEEDED"
         }
       });

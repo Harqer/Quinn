@@ -1,5 +1,6 @@
 package com.musically.studio.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,10 +9,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.musically.studio.R
 import com.musically.studio.ui.theme.SpotifyBlack
 import com.musically.studio.ui.theme.SpotifyGreen
 
@@ -37,12 +40,10 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Musically Live",
-                style = MaterialTheme.typography.displayMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                textAlign = TextAlign.Center
+            Image(
+                painter = painterResource(id = R.drawable.mave_brand),
+                contentDescription = "Mave Logo",
+                modifier = Modifier.size(200.dp)
             )
             
             Spacer(modifier = Modifier.height(48.dp))

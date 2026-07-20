@@ -19,6 +19,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.musically.studio.R
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.TrackItem
+import com.musically.studio.ui.components.atoms.MaveButton
+import com.musically.studio.ui.components.atoms.MaveLogo
+import androidx.compose.ui.draw.alpha
 
 @Composable
 fun LibraryScreen(
@@ -81,30 +84,29 @@ private fun EmptyLibraryState(onNavigateToHome: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(32.dp)
         ) {
+            // Mave Molecule: High-fidelity empty state
+            MaveLogo(size = 100, modifier = Modifier.alpha(0.5f))
+            Spacer(modifier = Modifier.height(24.dp))
+            
             Text(
-                text = stringResource(id = R.string.empty_library_title),
+                text = "Your Studio is empty",
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = stringResource(id = R.string.empty_library_message),
+                text = "Strike your first vibe with Mave to start building your personal orchestra.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(32.dp))
-            Button(
+            MaveButton(
+                text = "Strike a Vibe",
                 onClick = onNavigateToHome,
-                colors = ButtonDefaults.buttonColors(containerColor = com.musically.studio.ui.theme.SpotifyGreen)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.start_creating),
-                    color = com.musically.studio.ui.theme.SpotifyBlack,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }

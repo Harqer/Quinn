@@ -21,17 +21,15 @@ export const getRedis = () => {
 };
 
 /**
- * Saves Quinn session state using Redis JSON.
+ * Saves Mave session state using Redis JSON.
  */
-export const saveQuinnSession = async (sessionId: string, state: any) => {
+export const saveMaveSession = async (sessionId: string, state: any) => {
   const client = getRedis();
   if (!client) return;
-  // Using standard set with JSON string for widest compatibility,
-  // though Upstash supports JSON.SET if configured.
   await client.set(`session:${sessionId}`, JSON.stringify(state), { ex: 86400 }); // 24h TTL
 };
 
-export const getQuinnSession = async (sessionId: string): Promise<any | null> => {
+export const getMaveSession = async (sessionId: string): Promise<any | null> => {
   const client = getRedis();
   if (!client) return null;
   const data = await client.get(`session:${sessionId}`);
