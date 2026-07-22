@@ -16,9 +16,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.musically.studio.R
+import com.musically.studio.ui.components.atoms.MaveLogo
 
 @Composable
-fun OnboardingScreen(onContinue: () -> Unit) {
+fun OnboardingScreen(onGetStarted: () -> Unit) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
@@ -31,11 +32,7 @@ fun OnboardingScreen(onContinue: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Mave Brand Logo
-            Image(
-                painter = painterResource(id = R.drawable.mave_brand),
-                contentDescription = "Mave Logo",
-                modifier = Modifier.size(180.dp)
-            )
+            MaveLogo(size = 180)
             
             Spacer(modifier = Modifier.height(48.dp))
             

@@ -14,13 +14,14 @@ import androidx.compose.ui.unit.dp
 import com.musically.studio.R
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.atoms.MaveButton
+import com.musically.studio.ui.components.atoms.MaveLogo
 import com.musically.studio.ui.components.atoms.MaveTextField
 
 @Composable
 fun LoginScreen(
+    viewModel: MainViewModel,
     onLoginSuccess: () -> Unit,
-    onNavigateToSignUp: () -> Unit,
-    viewModel: MainViewModel
+    onNavigateToSignUp: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -40,11 +41,7 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.mave_brand),
-                contentDescription = "Mave Logo",
-                modifier = Modifier.size(200.dp)
-            )
+            MaveLogo(size = 200)
             
             Spacer(modifier = Modifier.height(48.dp))
             
