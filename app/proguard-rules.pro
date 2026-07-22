@@ -1,7 +1,10 @@
 # Musically Production Proguard Rules
 
-# Meta Wearables SDK - Keep core classes required for native bridging
--keep class com.meta.wearable.** { *; }
+# Meta Wearables SDK - Refined public API & native bridging keep rules
+-keep class com.meta.wearable.dat.core.** { *; }
+-keep class com.meta.wearable.dat.camera.** { *; }
+-keep class com.meta.wearable.dat.display.** { *; }
+-keep class com.meta.wearable.dat.mockdevice.** { *; }
 
 # Data Models for Serialization (Gson)
 # We keep the names of these classes and their fields to ensure JSON mapping works.
