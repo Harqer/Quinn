@@ -6,7 +6,7 @@ interface GesturePadProps {
 
 /**
  * Production-Grade 2D Gesture Pad.
- * Maps touch/mouse coordinates to Lyria BPM and Density.
+ * Maps touch/mouse coordinates to Mave Realtime BPM and Density.
  * Includes synthetic haptic detents for tactile feedback.
  */
 export const GesturePad: React.FC<GesturePadProps> = ({ onWarp }) => {
