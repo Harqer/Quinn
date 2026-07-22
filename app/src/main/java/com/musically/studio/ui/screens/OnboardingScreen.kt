@@ -19,7 +19,7 @@ import com.musically.studio.R
 import com.musically.studio.ui.components.atoms.MaveLogo
 
 @Composable
-fun OnboardingScreen(onGetStarted: () -> Unit) {
+fun OnboardingScreen(onContinue: () -> Unit) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
