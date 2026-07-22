@@ -4,31 +4,21 @@ import { logger } from '@/web/lib/logger';
 import { MusicVisualizer } from './MusicVisualizer';
 import { GesturePad } from './GesturePad';
 import { useMave } from '../../hooks/useMave';
-import maveLogoAsset from '../../assets/mave_brand.png';
+import maveLogoDark from '../../assets/mave_brand_dark.png';
+import maveLogoLight from '../../assets/mave_brand_light.png';
 
 /**
  * Mave Brand Logo Component.
- * Dynamically crops the provided logo asset based on the current UI theme.
+ * Uses designated Light / Dark mode logos.
  */
-const MaveLogo: React.FC<{ variant: 'light' | 'dark', size?: number }> = ({ variant, size = 120 }) => {
-  const height = size * 0.6;
+const MaveLogo: React.FC<{ variant?: 'light' | 'dark', size?: number }> = ({ variant = 'dark', size = 120 }) => {
+  const logoSrc = variant === 'light' ? maveLogoLight : maveLogoDark;
   return (
-    <div
-      className="overflow-hidden relative"
-      style={{ width: size, height: height }}
-    >
-      <img
-        src={maveLogoAsset}
-        alt="Mave Logo"
-        className="absolute w-full h-auto"
-        style={{
-          // Image contains light (top) and dark (bottom) variants
-          // We crop to show the correct one.
-          top: variant === 'light' ? '0' : '-50%',
-          objectFit: 'contain'
-        }}
-      />
-    </div>
+    <img
+      src={logoSrc}
+      alt="Mave Logo"
+      style={{ width: size, height: 'auto', display: 'block' }}
+    />
   );
 };
 

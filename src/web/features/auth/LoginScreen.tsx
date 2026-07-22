@@ -3,7 +3,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { Typography } from '../../components/atoms/Typography';
 import { Button } from '../../components/atoms/Button';
 import { Icon } from '../../components/atoms/Icon';
-import maveLogoAsset from '../../assets/mave_brand.png';
+import maveLogoDark from '../../assets/mave_brand_dark.png';
 
 /**
  * Rebranded Login Screen for Mave Studio.
@@ -41,7 +41,7 @@ export const LoginScreen: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
       <div className="z-10 flex flex-col items-center w-full mt-auto">
         <div className="w-48 h-24 overflow-hidden relative mb-6">
            <img
-            src={maveLogoAsset}
+            src={maveLogoDark}
             alt="Mave Logo"
             className="absolute w-full h-auto top-0"
             style={{ objectFit: 'contain' }}
