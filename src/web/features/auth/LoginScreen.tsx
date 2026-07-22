@@ -39,13 +39,12 @@ export const LoginScreen: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
       </div>
 
       <div className="z-10 flex flex-col items-center w-full mt-auto">
-        <div className="w-48 h-24 overflow-hidden relative mb-6">
+        <div className="w-56 h-auto flex items-center justify-center mb-6">
            <img
             src={maveLogoDark}
             alt="Mave Logo"
-            className="absolute w-full h-auto top-0"
-            style={{ objectFit: 'contain' }}
-           />
+            className="w-full h-auto object-contain"
+          />
         </div>
         
         <Typography variant="display" className="text-center mb-10 tracking-tight leading-tight font-bold">
