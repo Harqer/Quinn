@@ -37,8 +37,8 @@ export const optionalFirebaseToken = async (
 ) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    // Assign a guest UID for "Audio First" experience
-    const guestId = req.header("X-Guest-ID") || `guest_${Math.random().toString(36).substring(7)}`;
+    // Generate server-side guest identity for Audio First experience
+    const guestId = `guest_${Math.random().toString(36).substring(2, 10)}`;
     req.user = { uid: guestId, isGuest: true };
     next();
     return;
@@ -50,34 +50,7 @@ export const optionalFirebaseToken = async (
     req.user = { ...decodedToken, isGuest: false };
     next();
   } catch (err) {
-    // Fallback to guest if token is invalid but we want "Audio First"
-    const guestId = `guest_${Math.random().toString(36).substring(7)}`;
-    req.user = { uid: guestId, isGuest: true };
-    next();
-  }
-};
-
-export const optionalFirebaseToken = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    // Audio First: Assign guest UID
-    const guestId = req.header("X-Guest-ID") || `guest_${Math.random().toString(36).substring(7)}`;
-    req.user = { uid: guestId, isGuest: true };
-    next();
-    return;
-  }
-
-  const idToken = authHeader.split("Bearer ")[1];
-  try {
-    const decodedToken = await auth.verifyIdToken(idToken);
-    req.user = { ...decodedToken, isGuest: false };
-    next();
-  } catch (err) {
-    const guestId = `guest_${Math.random().toString(36).substring(7)}`;
+    const guestId = `guest_${Math.random().toString(36).substring(2, 10)}`;
     req.user = { uid: guestId, isGuest: true };
     next();
   }
@@ -95,7 +68,7 @@ export const verifyAppCheck = async (
       res.status(401).json({ error: "Unauthorized: Missing App Check token." });
       return;
     } else {
-      logger.warn("[APP_CHECK] Warning: Missing App Check token in non-production. Proceeding.");
+      logger.warn("[APP_CHECK] Warning: Missing App Check token in non-production environment.");
       next();
       return;
     }
@@ -106,13 +79,8 @@ export const verifyAppCheck = async (
     (req as AuthenticatedRequest).appCheck = appCheckResponse;
     next();
   } catch (err: any) {
-    if (process.env.NODE_ENV === "production") {
-      logger.error("[APP_CHECK] Validation failed:", { error: err.message || err });
-      res.status(401).json({ error: "Unauthorized: Invalid App Check token." });
-    } else {
-      logger.warn("[APP_CHECK] Warning: App Check token validation failed in non-production. Proceeding:", { error: err.message || err });
-      next();
-    }
+    logger.error("[APP_CHECK] App Check token validation failed:", { error: err.message || err });
+    res.status(401).json({ error: "Unauthorized: Invalid App Check token." });
   }
 };
 
@@ -156,6 +124,7 @@ export const checkDailyQuota = async (
     next();
   } catch (err) {
     logger.error("[QUOTA] Error checking daily quota limits:", { error: err });
-    next(); // Gracefully continue
+    // In production, log quota service unavailability
+    next();
   }
 };

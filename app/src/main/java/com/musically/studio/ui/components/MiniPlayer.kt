@@ -1,5 +1,6 @@
 package com.musically.studio.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,21 +12,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.musically.studio.network.SpotifyTrack
+import com.musically.studio.network.MaveTrack
 
 @Composable
 fun MiniPlayer(
-    track: SpotifyTrack,
+    track: MaveTrack,
     isPlaying: Boolean,
     onPlayPauseClick: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
             .fillMaxWidth()
@@ -53,6 +55,7 @@ fun MiniPlayer(
                     modifier = Modifier
                         .size(48.dp)
                         .clip(RoundedCornerShape(4.dp))
+                        .background(Color.DarkGray)
                 )
             }
             
@@ -65,14 +68,14 @@ fun MiniPlayer(
                 Text(
                     text = track.name,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = track.artists.joinToString { it.name },
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -82,7 +85,7 @@ fun MiniPlayer(
                 Icon(
                     imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
                     contentDescription = if (isPlaying) "Pause" else "Play",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

@@ -26,10 +26,15 @@ export const HomeScreen: React.FC = () => {
       ) : (
         <>
           <Carousel>
-            <Card title="1(Remastered)" />
-            <Card title="Lana Del Rey" isCircle />
-            <Card title="Marvin Gaye" isCircle />
-            <Card title="Indie Mix" />
+            {userTracks.length > 0 ? (
+              userTracks.slice(0, 5).map(track => (
+                <Card key={track.id} title={track.title} subtitle={track.artist} imageUrl={track.albumArtUrl} />
+              ))
+            ) : (
+              communityTracks.slice(0, 5).map(track => (
+                <Card key={track.id} title={track.title} subtitle={track.artist} imageUrl={track.albumArtUrl} />
+              ))
+            )}
           </Carousel>
           
           <div className="px-4 py-4">

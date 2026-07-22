@@ -49,10 +49,10 @@ export function useMave() {
             setThinkingText("");
             const text = msg.prompts ? `New vibe: ${msg.prompts[0]}` : (msg.script || msg.vision);
             if (text) {
-              setMessages(prev => [{ id: Date.now().toString(), text, sender: 'mave', trackId: msg.trackId }, ...prev].slice(0, 15));
+              setMessages(prev => [{ id: Date.now().toString(), text, sender: 'mave' as const, trackId: msg.trackId }, ...prev].slice(0, 15));
             }
           } else if (msg.type === 'message') {
-            setMessages(prev => [{ id: Date.now().toString(), text: msg.data, sender: 'mave' }, ...prev].slice(0, 15));
+            setMessages(prev => [{ id: Date.now().toString(), text: msg.data, sender: 'mave' as const }, ...prev].slice(0, 15));
           }
         } catch (err) {
           console.error('Error parsing Mave event', err);
@@ -78,7 +78,7 @@ export function useMave() {
   };
 
   const sendText = (text: string) => {
-    setMessages(prev => [{ id: Date.now().toString(), text, sender: 'user' }, ...prev].slice(0, 15));
+    setMessages(prev => [{ id: Date.now().toString(), text, sender: 'user' as const }, ...prev].slice(0, 15));
     setThinkingText("");
     const type = mode === 'podcast' ? 'text_command' : 'feedback';
     wsRef.current?.send(JSON.stringify({ type, text }));

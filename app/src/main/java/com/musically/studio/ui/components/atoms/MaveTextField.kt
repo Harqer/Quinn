@@ -1,15 +1,18 @@
 package com.musically.studio.ui.components.atoms
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.style.*
+import com.musically.studio.ui.theme.MaveStyles
 
 @Composable
 fun MaveTextField(
@@ -22,8 +25,14 @@ fun MaveTextField(
     errorMessage: String? = null,
     isPassword: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    trailingIcon: @Composable (() -> Unit)? = null
+    trailingIcon: @Composable (() -> Unit)? = null,
+    style: Style = Style
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) {
+        it.isEnabled = enabled
+    }
+
     Column(modifier = modifier) {
         OutlinedTextField(
             value = value,
@@ -35,7 +44,10 @@ fun MaveTextField(
             visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
             keyboardOptions = keyboardOptions,
             trailingIcon = trailingIcon,
-            modifier = Modifier.fillMaxWidth(),
+            interactionSource = interactionSource,
+            modifier = Modifier
+                .fillMaxWidth()
+                .styleable(styleState, MaveStyles.maveTextFieldStyle, style),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = Color.Gray,

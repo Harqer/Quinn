@@ -21,6 +21,8 @@ fun NameTermsScreen(
     var name by remember { mutableStateOf(viewModel.regName) }
     var shareData by remember { mutableStateOf(false) }
     var agreeTerms by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val isLoading by viewModel.isLoading.collectAsState()
 
     MaveStepLayout(
         title = "Create account",
@@ -31,11 +33,14 @@ fun NameTermsScreen(
                 onClick = { 
                     viewModel.regName = name
                     viewModel.completeRegistration { success, error ->
-                        if (success) onNextClick()
-                        // handle error
+                        if (success) {
+                            onNextClick()
+                        } else {
+                            errorMessage = error ?: "Registration failed"
+                        }
                     }
                 },
-                enabled = name.isNotBlank() && agreeTerms,
+                enabled = name.isNotBlank() && agreeTerms && !isLoading,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -65,6 +70,15 @@ fun NameTermsScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         
+        if (errorMessage != null) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = errorMessage!!,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
         Spacer(modifier = Modifier.height(32.dp))
         
         HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest, thickness = 0.5.dp)

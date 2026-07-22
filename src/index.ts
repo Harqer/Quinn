@@ -21,7 +21,16 @@ async function resolveSecrets() {
     if (projectId) {
       try {
         const client = new SecretManagerServiceClient();
-        const secrets = ["GEMINI_API_KEY", "SENTRY_DSN", "SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET", "UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN"];
+        const secrets = [
+          "GEMINI_API_KEY",
+          "SENTRY_DSN",
+          "SPOTIFY_CLIENT_ID",
+          "SPOTIFY_CLIENT_SECRET",
+          "UPSTASH_REDIS_REST_URL",
+          "UPSTASH_REDIS_REST_TOKEN",
+          "REDIS_URL",
+          "VITE_APP_CHECK_KEY"
+        ];
 
         for (const secret of secrets) {
           try {
@@ -30,7 +39,9 @@ async function resolveSecrets() {
             });
             const payload = version.payload?.data?.toString()?.trim();
             if (payload) process.env[secret] = payload;
-          } catch (e) {}
+          } catch (e: any) {
+            logger.debug(`[SECRET_MANAGER] Note: Secret ${secret} not fetched from Secret Manager: ${e.message || e}`);
+          }
         }
       } catch (err) {
         logger.error("Failed to initialize Google Secret Manager:", { error: err });
@@ -55,7 +66,6 @@ async function startWorker() {
     if (url.pathname === "/api/music/ws") {
       const token = url.searchParams.get("token");
 
-      // Audio First Policy: Allow guest access if no token is provided
       if (!token) {
         logger.info("[WS] Guest user connected (Audio First)");
         wss.handleUpgrade(request, socket, head, (ws) => {
@@ -70,11 +80,9 @@ async function startWorker() {
           wss.emit("connection", ws, request);
         });
       } catch (err) {
-        // Fallback to guest even if token is invalid, but log warning
-        logger.warn("[WS] Invalid token, falling back to guest mode");
-        wss.handleUpgrade(request, socket, head, (ws) => {
-          wss.emit("connection", ws, request);
-        });
+        logger.warn("[WS] Invalid authentication token provided. Connection rejected.");
+        socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+        socket.destroy();
       }
     } else {
       socket.destroy();

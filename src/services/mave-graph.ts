@@ -1,7 +1,8 @@
 import { StateGraph, Annotation, START, END } from "@langchain/langgraph";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { GoogleGenAI } from "@google/genai";
 import { cacheVisionResult, getCachedVisionResult } from "../config/redis.js";
-import { getContextCacheId, ensureContextCache } from "./ai.js";
+import { getContextCacheId, ensureContextCache, getAi } from "./ai.js";
 import crypto from "crypto";
 import logger from "../config/logger.js";
 
@@ -9,10 +10,13 @@ import logger from "../config/logger.js";
 const MaveState = Annotation.Root({
   image: Annotation<string>(),
   visionDescription: Annotation<string>(),
+  directorReasoning: Annotation<string>(),
   musicalPrompts: Annotation<string[]>(),
   podcastScript: Annotation<string>(),
   userFeedback: Annotation<string>(),
-  mode: Annotation<'music' | 'podcast'>(),
+  modality: Annotation<'music' | 'podcast' | 'audiobook' | 'mixed'>(),
+  previousInteractionId: Annotation<string>(),
+  generatedAudio: Annotation<string>(), // Base64 audio block
 });
 
 // Helper to create model instance with context caching
@@ -26,6 +30,26 @@ const getCachedModel = (modelName: string, temperature: number = 0.7) => {
     // @ts-ignore
     cachedContent: cacheId || undefined,
   });
+};
+
+/**
+ * Interactions API Wrapper for Structured Music Output
+ */
+const createMusicInteraction = async (input: string, image?: string, previousId?: string) => {
+    const ai = getAi();
+    const model = previousId ? "lyria-realtime-exp" : "lyria-3-pro-preview";
+
+    const contents: any[] = [{ type: "text", text: input }];
+    if (image) contents.push({ type: "image", data: image, mime_type: "image/jpeg" });
+
+    const interaction = await (ai as any).interactions.create({
+        model: model,
+        input: contents,
+        previous_interaction_id: previousId,
+        response_format: { type: "audio" }
+    });
+
+    return interaction;
 };
 
 // Nodes
@@ -47,11 +71,11 @@ const visualAnalyzerNode = async (state: typeof MaveState.State, config: any) =>
   // Ensure context cache is active before large vision task
   await ensureContextCache();
 
-  // Use Thinking model for deep visual interpretation
-  const model = getCachedModel("gemini-2.0-flash-thinking-exp", 0.1);
+  // Use flagship 3.5 model for ultra-fast, high-fidelity visual interpretation
+  const model = getCachedModel("gemini-3.5-flash", 0.1);
 
   const stream = await model.stream([
-    ["system", "Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics."],
+    ["system", "Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics. Avoid any technical jargon like 'neon' or 'proxy'. You support 70+ languages and should respond in the same language as the user input if possible."],
     ["human", state.image]
   ]);
 
@@ -70,40 +94,60 @@ const visualAnalyzerNode = async (state: typeof MaveState.State, config: any) =>
   return { visionDescription: fullDescription };
 };
 
-const musicDirectorNode = async (state: typeof MaveState.State, config: any) => {
-  if (state.mode !== 'music') return {};
+const directorNode = async (state: typeof MaveState.State, config: any) => {
+  const model = getCachedModel("gemini-3.1-pro-preview", 0.5);
+  const feedbackContext = state.userFeedback ? `\nUser Intent: ${state.userFeedback}` : "";
 
-  const model = getCachedModel("gemini-2.0-flash-exp", 0.8);
-  const feedbackContext = state.userFeedback ? `\nUser Feedback: ${state.userFeedback}` : "";
-
-  // Strategy: Stream the music director reasoning for immediate UX feedback
   const stream = await model.stream([
-    ["system", "You are Mave, the Mave Studio Director. Map the following visual vibe and user feedback into a set of 3-5 weighted musical prompts for the Lyria Real-Time engine. Focus on tempo, instrumentation, and atmospheric textures."],
+    ["system", "You are the Mave Director. Based on the visual vibe and user intent, determine the optimal output modality: 'music' (Lyria Real-Time), 'podcast' (narrative), 'audiobook' (storytelling), or 'mixed'. Provide your reasoning in a natural, fluid tone. Do not use technical terms like 'neon' or 'proxy'. You are a polyglot and support 70+ languages."],
     ["human", `Visual Vibe: ${state.visionDescription}${feedbackContext}`]
   ]);
 
-  let reasoningText = "";
+  let reasoning = "";
   for await (const chunk of stream) {
     const text = chunk.content.toString();
-    reasoningText += text;
+    reasoning += text;
     if (config.configurable?.onChunk) {
       config.configurable.onChunk({ type: "director_thinking", text });
     }
   }
 
-  const prompts = reasoningText.split("\n").filter((l: string) => l.trim().length > 0);
-  return { musicalPrompts: prompts };
+  // Simple heuristic for modality extraction from reasoning, or use a second pass if needed.
+  // For brevity, we'll look for keywords.
+  let modality: 'music' | 'podcast' | 'audiobook' | 'mixed' = 'music';
+  if (reasoning.toLowerCase().includes("audiobook") || reasoning.toLowerCase().includes("story")) modality = 'audiobook';
+  else if (reasoning.toLowerCase().includes("podcast") || reasoning.toLowerCase().includes("narrate")) modality = 'podcast';
+  else if (reasoning.toLowerCase().includes("mixed")) modality = 'mixed';
+
+  return { directorReasoning: reasoning, modality };
+};
+
+const musicDirectorNode = async (state: typeof MaveState.State, config: any) => {
+  if (state.modality !== 'music' && state.modality !== 'mixed') return {};
+
+  const input = `Visual Vibe: ${state.visionDescription}\nUser Feedback: ${state.userFeedback || "Generate music fitting this atmosphere"}`;
+
+  const interaction = await createMusicInteraction(input, state.image, state.previousInteractionId);
+
+  const prompts = interaction.output_text?.split("\n").filter((l: string) => l.trim().length > 0) || [];
+  const audio = interaction.output_audio?.data;
+
+  return {
+    musicalPrompts: prompts,
+    generatedAudio: audio,
+    previousInteractionId: interaction.id
+  };
 };
 
 const podcastNarratorNode = async (state: typeof MaveState.State, config: any) => {
-  if (state.mode !== 'podcast') return {};
+  if (state.modality === 'music') return {};
 
-  // Use Thinking model for natural storytelling
-  const model = getCachedModel("gemini-2.0-flash-thinking-exp", 0.7);
+  // Use flagship 3.1 Pro model for natural storytelling and narration
+  const model = getCachedModel("gemini-3.1-pro-preview", 0.7);
   const feedbackContext = state.userFeedback ? `\nUser Input/Feedback: ${state.userFeedback}` : "";
 
   const stream = await model.stream([
-    ["system", "You are Mave, a podcast host. Based on the visual vibe and user instructions, generate a short, engaging narrative segment (2-4 sentences) for 'Mave POV'. If user gave feedback, acknowledge it naturally in your tone."],
+    ["system", "You are Mave, the narrator. Based on the visual vibe and user instructions, generate a short, engaging narrative segment (2-4 sentences) for 'Mave POV'. If user gave feedback, acknowledge it naturally in your tone. No technical jargon."],
     ["human", `Visual Vibe: ${state.visionDescription}${feedbackContext}`]
   ]);
 
@@ -113,7 +157,7 @@ const podcastNarratorNode = async (state: typeof MaveState.State, config: any) =
     fullScript += text;
 
     if (config.configurable?.onChunk) {
-      config.configurable.onChunk({ type: "mave_thinking", text });
+      config.configurable.onChunk({ type: "director_thinking", text });
     }
   }
 
@@ -127,11 +171,13 @@ const podcastNarratorNode = async (state: typeof MaveState.State, config: any) =
  */
 const workflow = new StateGraph(MaveState)
   .addNode("visualAnalyzer", visualAnalyzerNode)
+  .addNode("director", directorNode)
   .addNode("musicDirector", musicDirectorNode)
   .addNode("podcastNarrator", podcastNarratorNode)
   .addEdge(START, "visualAnalyzer")
-  .addEdge("visualAnalyzer", "musicDirector")
-  .addEdge("visualAnalyzer", "podcastNarrator")
+  .addEdge("visualAnalyzer", "director")
+  .addEdge("director", "musicDirector")
+  .addEdge("director", "podcastNarrator")
   .addEdge("musicDirector", END)
   .addEdge("podcastNarrator", END);
 

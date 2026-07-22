@@ -6,5 +6,5 @@ import retrofit2.http.Header
 
 interface SpotifyApiService {
     @GET("v1/me/tracks")
-    fun getSavedTracks(@Header("Authorization") authorization: String): Call<SpotifyTracksResponse>
+    fun getSavedTracks(@Header("Authorization") authorization: String): Call<MaveTracksResponse>
 }

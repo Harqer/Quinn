@@ -7,7 +7,9 @@ import xss from "xss";
 const router = Router();
 
 router.get("/status", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
-  const uid = req.user?.uid || "local-dev-user";
+  const uid = req.user?.uid;
+  if (!uid) return res.status(401).json({ error: "Unauthorized" });
+
   const token = await spotifyService.getValidToken(uid);
   if (token) {
     const data = await spotifyRepository.getToken(uid);
@@ -19,6 +21,9 @@ router.get("/status", verifyFirebaseToken, async (req: AuthenticatedRequest, res
 });
 
 router.get("/auth-url", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
+  const uid = req.user?.uid;
+  if (!uid) return res.status(401).json({ error: "Unauthorized" });
+
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   if (!clientId) return res.status(400).json({ error: "Spotify Client ID not configured." });
 
@@ -31,7 +36,7 @@ router.get("/auth-url", verifyFirebaseToken, async (req: AuthenticatedRequest, r
     response_type: "code",
     redirect_uri: redirectUri,
     scope: "user-top-read playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private",
-    state: req.user?.uid || "local-dev-user",
+    state: uid,
   });
 
   res.json({ url: `https://accounts.spotify.com/authorize?${params.toString()}` });
@@ -60,9 +65,9 @@ router.get("/callback", async (req: Request, res: Response) => {
     `);
   }
 
-  if (!code) return res.status(400).send("Authorization code is missing.");
+  if (!code || !state) return res.status(400).send("Authorization code or state is missing.");
 
-  const uid = (state as string) || "local-dev-user";
+  const uid = state as string;
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
@@ -114,7 +119,9 @@ router.get("/callback", async (req: Request, res: Response) => {
 });
 
 router.get("/playlists", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
-  const uid = req.user?.uid || "local-dev-user";
+  const uid = req.user?.uid;
+  if (!uid) return res.status(401).json({ error: "Unauthorized" });
+
   const token = await spotifyService.getValidToken(uid);
   if (!token) return res.status(401).json({ error: "Unauthorized" });
 
@@ -126,7 +133,9 @@ router.get("/playlists", verifyFirebaseToken, async (req: AuthenticatedRequest, 
 });
 
 router.post("/podcast/save", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
-  const uid = req.user?.uid || "local-dev-user";
+  const uid = req.user?.uid;
+  if (!uid) return res.status(401).json({ error: "Unauthorized" });
+
   const { trackUri } = req.body;
   if (!trackUri) return res.status(400).json({ error: "trackUri is required" });
 

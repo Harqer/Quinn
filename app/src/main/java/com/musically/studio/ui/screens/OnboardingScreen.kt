@@ -16,13 +16,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.musically.studio.R
-import com.musically.studio.ui.theme.SpotifyBlack
-import com.musically.studio.ui.theme.SpotifyGreen
 
 @Composable
 fun OnboardingScreen(onContinue: () -> Unit) {
     Scaffold(
-        containerColor = SpotifyBlack
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -45,7 +43,7 @@ fun OnboardingScreen(onContinue: () -> Unit) {
                 text = "Welcome to Mave Studio",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center
             )
             
@@ -54,7 +52,7 @@ fun OnboardingScreen(onContinue: () -> Unit) {
             Text(
                 text = "To provide a seamless multimodal AI experience, Mave needs access to your Meta glasses. We use the microphone to hear your voice prompts and the camera to see what you see, allowing our orchestra to create contextual music in real-time.",
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.LightGray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
             
@@ -62,7 +60,7 @@ fun OnboardingScreen(onContinue: () -> Unit) {
             
             Button(
                 onClick = onContinue,
-                colors = ButtonDefaults.buttonColors(containerColor = SpotifyGreen),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -70,7 +68,7 @@ fun OnboardingScreen(onContinue: () -> Unit) {
             ) {
                 Text(
                     text = "Allow Access & Continue",
-                    color = SpotifyBlack,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )

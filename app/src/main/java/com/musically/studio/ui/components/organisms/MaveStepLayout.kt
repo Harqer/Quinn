@@ -53,6 +53,8 @@ fun MaveStepLayout(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
+                .imePadding()
                 .padding(horizontal = 24.dp),
             content = content
         )

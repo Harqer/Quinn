@@ -16,6 +16,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.musically.studio.R
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.TrackItem
@@ -33,41 +35,58 @@ fun LibraryScreen(
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val columns = when (adaptiveInfo.windowSizeClass.windowWidthSizeClass) {
+        WindowWidthSizeClass.COMPACT -> 1
+        WindowWidthSizeClass.MEDIUM -> 2
+        else -> 3
+    }
+
     LaunchedEffect(Unit) {
         viewModel.fetchUserTracks()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = stringResource(id = R.string.title_library),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        if (isLoading && tracks.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = com.musically.studio.ui.theme.SpotifyGreen)
-            }
-        } else if (tracks.isEmpty()) {
-            EmptyLibraryState(onNavigateToHome = onNavigateToHome)
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 300.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(tracks) { track ->
-                    TrackItem(
-                        track = track,
-                        onClick = { onNavigateToNowPlaying(track.id) },
-                        onAlbumClick = { track.album?.id?.let { onNavigateToAlbum(it) } }
-                    )
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            Text(
+                text = stringResource(id = R.string.title_library),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(16.dp)
+            )
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding)
+        ) {
+            if (isLoading && tracks.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                }
+            } else if (tracks.isEmpty()) {
+                EmptyLibraryState(onNavigateToHome = onNavigateToHome)
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(columns),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    items(tracks) { track ->
+                        TrackItem(
+                            track = track,
+                            onClick = { onNavigateToNowPlaying(track.id) },
+                            onAlbumClick = { track.album?.id?.let { onNavigateToAlbum(it) } }
+                        )
+                    }
                 }
             }
         }

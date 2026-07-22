@@ -12,7 +12,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,9 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musically.studio.R
 import com.musically.studio.ui.MainViewModel
-import com.musically.studio.ui.theme.SpotifyBlack
-import com.musically.studio.ui.theme.SpotifyGreen
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,15 +34,15 @@ fun DevicesScreen(
     val context = LocalContext.current
 
     Scaffold(
-        containerColor = SpotifyBlack,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { 
-                    Text(stringResource(id = R.string.connect_to_a_device), color = Color.White) 
+                    Text(stringResource(id = R.string.connect_to_a_device), color = MaterialTheme.colorScheme.onBackground) 
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back), tint = Color.White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back), tint = MaterialTheme.colorScheme.onBackground)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -64,7 +60,7 @@ fun DevicesScreen(
             Text(
                 text = stringResource(id = R.string.current_device),
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold
             )
             
@@ -73,9 +69,8 @@ fun DevicesScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFF2E2E2E), RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(8.dp))
                     .clickable {
-                        // Real Lifecycle Management: Start/Stop the Wearable Service
                         viewModel.setWearableConnected(context, !isWearableConnected)
                     }
                     .padding(16.dp),
@@ -84,7 +79,7 @@ fun DevicesScreen(
                 Icon(
                     imageVector = Icons.Default.DeviceUnknown,
                     contentDescription = stringResource(id = R.string.glasses_content_desc),
-                    tint = if (isWearableConnected) SpotifyGreen else Color.Gray,
+                    tint = if (isWearableConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(32.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
@@ -92,13 +87,13 @@ fun DevicesScreen(
                     Text(
                         text = stringResource(id = R.string.ray_ban_meta_smart_glasses),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = if (isWearableConnected) SpotifyGreen else Color.White,
+                        color = if (isWearableConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = if (isWearableConnected) stringResource(id = R.string.connected) else stringResource(id = R.string.disconnected),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -108,7 +103,7 @@ fun DevicesScreen(
             Text(
                 text = stringResource(id = R.string.other_devices),
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold
             )
             
@@ -126,14 +121,14 @@ fun DevicesScreen(
                 Icon(
                     imageVector = Icons.Default.Bluetooth,
                     contentDescription = stringResource(id = R.string.bluetooth_content_desc),
-                    tint = Color.Gray,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = stringResource(id = R.string.bluetooth_or_airplay),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

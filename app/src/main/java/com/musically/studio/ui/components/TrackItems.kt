@@ -1,6 +1,7 @@
 package com.musically.studio.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkBorder
@@ -17,13 +18,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.R
-import com.musically.studio.network.SpotifyTrack
+import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.models.ChatMessage
-import com.musically.studio.ui.theme.SpotifyGreen
 
 @Composable
 fun TrackItem(
-    track: SpotifyTrack, 
+    track: MaveTrack, 
     onClick: () -> Unit = {},
     onAlbumClick: () -> Unit = {}
 ) {
@@ -37,7 +37,7 @@ fun TrackItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = track.album?.images?.firstOrNull()?.url,
+                model = track.album.images.firstOrNull()?.url,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(id = R.drawable.album_view),
@@ -45,7 +45,8 @@ fun TrackItem(
                 modifier = Modifier
                     .size(64.dp)
                     .clip(MaterialTheme.shapes.small)
-                    .background(Color(0xFF282828))
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    .clickable { onAlbumClick() }
             )
             
             Spacer(modifier = Modifier.width(16.dp))
@@ -55,12 +56,12 @@ fun TrackItem(
                     text = track.name,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = track.artists?.joinToString { it.name } ?: "Unknown Artist",
+                    text = track.artists.joinToString { it.name }.ifEmpty { "Independent Creator" },
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -74,8 +75,8 @@ fun ChatBubble(
     onBookmark: () -> Unit = {}
 ) {
     val alignment = if (message.isUser) Alignment.End else Alignment.Start
-    val containerColor = if (message.isUser) Color(0xFF2E2E2E) else SpotifyGreen
-    val contentColor = if (message.isUser) Color.White else Color.Black
+    val containerColor = if (message.isUser) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.primary
+    val contentColor = if (message.isUser) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onPrimary
 
     Column(
         modifier = Modifier.fillMaxWidth(),

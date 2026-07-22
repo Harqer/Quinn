@@ -16,9 +16,13 @@ export const ToastMessage: React.FC = () => {
     }
   }, [visible]);
 
-  // Attach to window for global access (similar to the Lit custom element dispatch)
   useEffect(() => {
-    (window as any).showToast = show;
+    const handleToast = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) show(customEvent.detail);
+    };
+    window.addEventListener('show-toast', handleToast);
+    return () => window.removeEventListener('show-toast', handleToast);
   }, [show]);
 
   if (!visible) return null;

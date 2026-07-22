@@ -1,40 +1,49 @@
 package com.musically.studio.di
 
-import com.musically.studio.network.AIApiService
-import com.musically.studio.network.TokenManager
-import kotlinx.coroutines.runBlocking
-import okhttp3.Interceptor
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.musically.studio.network.ApiClient
+import com.musically.studio.network.RealApiClient
+import com.musically.studio.network.MaveSessionManager
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
 
+@Module
+@InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "https://musically-studio.run.app/" // Production URL
 
-    private val authInterceptor = Interceptor { chain ->
-        val original = chain.request()
-        val token = runBlocking { TokenManager.getValidToken() }
-        
-        val request = if (token != null) {
-            original.newBuilder()
-                .header("Authorization", "Bearer $token")
-                .build()
-        } else {
-            original
-        }
-        
-        chain.proceed(request)
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .build()
     }
 
-    private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(authInterceptor)
-        .build()
+    @Provides
+    @Singleton
+    fun provideApiClient(okHttpClient: OkHttpClient): ApiClient {
+        return RealApiClient(okHttpClient)
+    }
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    @Provides
+    @Singleton
+    fun provideMaveSessionManager(okHttpClient: OkHttpClient): MaveSessionManager {
+        return MaveSessionManager(okHttpClient)
+    }
 
-    val aiApiService: AIApiService = retrofit.create(AIApiService::class.java)
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseDatabase(): FirebaseDatabase {
+        return FirebaseDatabase.getInstance()
+    }
 }

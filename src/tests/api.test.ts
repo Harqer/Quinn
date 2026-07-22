@@ -17,7 +17,7 @@ describe('API Schemas', () => {
   it('should validate valid share vibe request', () => {
     const data = {
       title: 'Summer Jazz',
-      artist: 'Quinn',
+      artist: 'Mave',
       vibe: 'Relaxing jazz in the park',
       imageUrl: 'https://example.com/image.jpg'
     };

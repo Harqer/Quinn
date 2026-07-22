@@ -48,6 +48,10 @@
             android:name="com.meta.wearable.mwdat.DAM_ENABLED"
             android:value="true" />
         
+        <property
+            android:name="android.app.appfunctions.app_metadata"
+            android:resource="@xml/app_metadata" />
+
         <service
             android:name=".WearableStreamingService"
             android:enabled="true"
@@ -56,7 +60,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -68,6 +73,12 @@
                 <data android:scheme="musically" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".WearableActivity"
+            android:exported="false"
+            android:requiredDisplayCategory="xr_projected"
+            android:theme="@style/Theme.Mave" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

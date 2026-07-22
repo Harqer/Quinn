@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { getAuth } from 'firebase/auth';
 import { logger } from '@/web/lib/logger';
 import { MusicVisualizer } from './MusicVisualizer';
 import { GesturePad } from './GesturePad';
@@ -89,10 +90,16 @@ export const MainDashboard: React.FC = () => {
     if (!trackId) return;
     if ('vibrate' in navigator) navigator.vibrate(20);
     try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      const token = user ? await user.getIdToken() : '';
       const endpoint = action === 'like' ? '/api/spotify/track/save' : '/api/music/bookmark';
       await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ trackId })
       });
     } catch (err) {

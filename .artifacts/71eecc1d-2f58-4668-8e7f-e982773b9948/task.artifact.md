@@ -1,18 +1,17 @@
-# Task: Finalizing Mave Studio Frontend (No More Mocks)
+# Task: High-Fidelity Testing Strategy (v15.0)
 
-- `[x]` MainViewModel: State & Logic Completion
-    - `[x]` Implement missing playback and UI states
-    - `[x]` Implement user auth methods (Guest & Email)
-    - `[x]` Implement full playback control suite
-- `[x]` Studio Core: Real-Time Multimodal
-    - `[x]` Implement production-grade frame analyzer in `CameraPreview.kt`
-    - `[x]` Refactor `MainActivity.kt` for "Audio-First" guest routing
-- `[x]` UI Polish & Interaction
-    - `[x]` Connect `NowPlayingScreen.kt` slider and duration labels
-    - `[x]` Fix `TrackItems.kt` album art placeholders
-    - `[x]` Implement "More Options" bottom sheet in `AlbumViewScreen.kt`
-    - `[x]` Connect `DevicesScreen.kt` to real `WearableStreamingService` lifecycle
-- `[x]` Verification
-    - `[x]` Grep audit for "Mock" or "TODO" in production paths
-    - `[x]` Verify guest session audio generation
-    - `[x]` Final push to main
+- `[ ]` Infrastructure: Screenshot & E2E Tools
+    - `[ ]` Add Roborazzi and UI Automator to `libs.versions.toml`
+    - `[ ]` Apply Roborazzi plugin and configure `build.gradle.kts`
+- `[ ]` Test Harness: Fakes & Mocks
+    - `[ ]` Create `FakeApiClient.kt`
+    - `[ ]` Create `MaveTestRunner.kt` for Hilt instrumented tests
+- `[ ]` Test Suites: Sovereignty Verification
+    - `[ ]` Create `MainViewModelTest.kt` (Unit)
+    - `[ ]` Create `HomeScreenTest.kt` (UI/Robolectric)
+    - `[ ]` Create `MaveScreenshotTest.kt` (Roborazzi)
+- `[ ]` Code Coverage
+    - `[ ]` Finalize Jacoco merge configuration
+- `[ ]` Verification
+    - `[ ]` Run unit tests
+    - `[ ]` Record Roborazzi screenshots

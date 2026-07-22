@@ -5,8 +5,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+    id("jacoco")
+    alias(libs.plugins.roborazzi)
 }
 
 val localProperties = Properties().apply {
@@ -17,22 +19,22 @@ val localProperties = Properties().apply {
 }
 
 val mwdatApplicationId: String =
-    System.getenv("MWDAT_APPLICATION_ID") ?: (localProperties.getProperty("mwdat_application_id") ?: "0")
+    System.getenv("MWDAT_APPLICATION_ID") ?: (localProperties.getProperty("mwdat_application_id") ?: "1727526605052408")
 val mwdatClientToken: String =
-    System.getenv("MWDAT_CLIENT_TOKEN") ?: (localProperties.getProperty("mwdat_client_token") ?: "0")
+    System.getenv("MWDAT_CLIENT_TOKEN") ?: (localProperties.getProperty("mwdat_client_token") ?: "AR|1727526605052408|909d8c639703f725fb94099504a0bafb")
 
 android {
     namespace = "com.musically.studio"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.musically.studio"
-        minSdk = 29
-        targetSdk = 36
+        minSdk = 34
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.musically.studio.MaveTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -44,6 +46,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     buildTypes {
@@ -65,6 +68,19 @@ android {
             useLegacyPackaging = true
             keepDebugSymbols.add("**/*.so")
         }
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
+        }
+    }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            all {
+                it.systemProperty("robolectric.pixelCopyRenderMode", "hardware")
+            }
+        }
     }
 }
 
@@ -73,22 +89,38 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         freeCompilerArgs.addAll(
             "-opt-in=androidx.compose.foundation.style.ExperimentalFoundationStyleApi",
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi"
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
+            "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
+            "-opt-in=androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi"
         )
     }
+}
+
+ksp {
+    arg("appfunctions:aggregateAppFunctions", "true")
 }
 
 dependencies {
     implementation(libs.mwdat.core)
     implementation(libs.mwdat.camera)
     implementation(libs.mwdat.display)
+    implementation(libs.mwdat.mockdevice)
+    implementation(libs.androidx.xr.glimmer)
+    implementation(libs.androidx.xr.projected)
+    implementation(libs.androidx.appfunctions)
+    implementation(libs.androidx.appfunctions.service)
+    ksp(libs.androidx.appfunctions.compiler)
 
     // AndroidX & Material UI Components
-    implementation("com.google.android.material:material:1.12.0")
+    implementation(libs.google.material)
+    implementation(libs.google.play.services.auth)
+    implementation(libs.androidx.identity)
+    implementation(libs.androidx.identity.play)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
-    implementation("androidx.compose.runtime:runtime")
+    implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.layout)
@@ -97,53 +129,91 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.foundation)
-    implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.compose.material.icons.extended)
     
     // Jetpack Navigation 3 & Adaptive
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation("androidx.compose.material3.adaptive:adaptive-navigation3:1.0.0-alpha01")
-    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.4.0-alpha01")
+    implementation(libs.adaptive.navigation3)
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
 
     // Spotify Auth SDK
-    implementation("com.spotify.android:auth:2.1.0")
+    implementation(libs.spotify.auth)
 
     // Retrofit & Gson
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.gson)
 
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation(libs.glide.core)
+    implementation(libs.coil.compose)
 
     // CameraX
-    val cameraxVersion = "1.5.0-alpha01"
-    implementation("androidx.camera:camera-core:${cameraxVersion}")
-    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
-    implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
-    implementation("androidx.camera:camera-view:${cameraxVersion}")
-    implementation("androidx.camera:camera-extensions:${cameraxVersion}")
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.compose)
+    implementation(libs.androidx.camera.extensions)
 
-    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-database")
-    implementation("com.google.firebase:firebase-database-ktx")
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-crashlytics")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.crashlytics)
 
     // Logging
-    implementation("com.jakewharton.timber:timber:5.0.1")
+    implementation(libs.timber)
 
     // Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation(libs.kotlinx.serialization.json)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.hilt.testing)
+    kspTest(libs.hilt.compiler)
+    
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.mockk)
+    androidTestImplementation(libs.hilt.testing)
+    androidTestImplementation(libs.androidx.uiautomator)
+    kspAndroidTest(libs.hilt.compiler)
+    
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    testImplementation(libs.roborazzi.main)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(libs.roborazzi.junit)
+}
+
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    val fileFilter = listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*", "android/**/*.*")
+    val debugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) {
+        exclude(fileFilter)
+    }
+    val mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories.setFrom(files(mainSrc))
+    classDirectories.setFrom(files(debugTree))
+    executionData.setFrom(fileTree(layout.buildDirectory) {
+        include("jacoco/testDebugUnitTest.exec", "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
+    })
 }

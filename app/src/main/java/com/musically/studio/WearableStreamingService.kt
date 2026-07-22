@@ -5,9 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
-import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import com.meta.wearable.dat.camera.Stream
 import com.meta.wearable.dat.camera.addStream
 import com.meta.wearable.dat.camera.removeStream
@@ -21,12 +19,14 @@ import com.meta.wearable.dat.display.Display
 import com.meta.wearable.dat.display.addDisplay
 import com.meta.wearable.dat.display.removeDisplay
 import com.meta.wearable.dat.display.types.DisplayConfiguration
+import androidx.xr.projected.ProjectedContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import timber.log.Timber
 
 class WearableStreamingService : Service() {
 
@@ -46,6 +46,10 @@ class WearableStreamingService : Service() {
         val isServiceActive: StateFlow<Boolean> = _isServiceActive.asStateFlow()
         
         private var instance: WearableStreamingService? = null
+
+        fun updateUi(songTitle: String, geminiResponse: String) {
+            instance?.updateWearableUi(songTitle, geminiResponse)
+        }
     }
 
     override fun onCreate() {
@@ -63,25 +67,17 @@ class WearableStreamingService : Service() {
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "wearable_service_channel",
-                "Mave Wearable Streaming",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(
+            "wearable_service_channel",
+            "Mave Wearable Streaming",
+            NotificationManager.IMPORTANCE_LOW
+        )
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(channel)
     }
 
     private fun createNotification(): Notification {
-        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification.Builder(this, "wearable_service_channel")
-        } else {
-            @Suppress("DEPRECATION")
-            Notification.Builder(this)
-        }
-        return builder
+        return Notification.Builder(this, "wearable_service_channel")
             .setContentTitle("Mave Wearable")
             .setContentText("Streaming POV to Mave Studio...")
             .setSmallIcon(android.R.drawable.ic_menu_camera)
@@ -97,7 +93,7 @@ class WearableStreamingService : Service() {
                 // Monitor session state for proper lifecycle handling
                 scope.launch {
                     session.state.collect { state ->
-                        Log.d("MaveWearable", "Session state changed: $state")
+                        Timber.d("Session state changed: $state")
                         if (state == DeviceSessionState.IDLE || state == DeviceSessionState.STOPPED) {
                             stopSelf()
                         }
@@ -113,7 +109,14 @@ class WearableStreamingService : Service() {
     private suspend fun attachCapabilities(session: DeviceSession) {
         session.addDisplay(DisplayConfiguration()).onSuccess { display ->
             activeDisplay = display
-            updateWearableUi("Mave Studio", "Welcome! How can I assist your session today?")
+            
+            // Launch WearableActivity on the projected display using Glimmer's ProjectedContext
+            @OptIn(androidx.xr.projected.experimental.ExperimentalProjectedApi::class)
+            val projectedContext = ProjectedContext.createProjectedDeviceContext(this)
+            val intent = Intent(projectedContext, WearableActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            projectedContext.startActivity(intent)
             
             val config = StreamConfiguration(VideoQuality.MEDIUM, 24, false)
             session.addStream(config).onSuccess { stream ->
@@ -131,22 +134,9 @@ class WearableStreamingService : Service() {
         }
     }
 
+    // Legacy updateWearableUi removed in favor of Glimmer WearableActivity
     fun updateWearableUi(songTitle: String, geminiResponse: String) {
-        scope.launch {
-            activeDisplay?.sendContent(
-                WearableUi.mainDashboard(
-                    songTitle = songTitle,
-                    geminiResponse = geminiResponse,
-                    onSpeak = { emitInteraction("speak") },
-                    onCreateMusic = { emitInteraction("generate") },
-                    onPlay = { emitInteraction("play") },
-                    onPause = { emitInteraction("pause") },
-                    onSkipNext = { emitInteraction("next") },
-                    onSkipPrevious = { emitInteraction("previous") },
-                    onBack = { emitInteraction("back") }
-                )
-            )
-        }
+        // No-op: The activity handles UI updates via ViewModel observation
     }
 
     private fun emitInteraction(type: String) {

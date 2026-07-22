@@ -53,11 +53,6 @@ export class SpotifyService {
       logger.error("[SPOTIFY] Error retrieving token from storage:", { error: err, uid });
     }
 
-    const vaultToken = process.env.SPOTIFY_BEARER_TOKEN || process.env.SPOTIFY_ACCESS_TOKEN;
-    if (vaultToken) {
-      return vaultToken;
-    }
-
     return null;
   }
 

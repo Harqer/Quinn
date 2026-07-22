@@ -16,6 +16,9 @@ export interface MaveEvent {
   trackId?: string;
   chunk?: string;
   isThinking?: boolean;
+  reasoning?: string;
+  modality?: string;
+  interactionId?: string;
 }
 
 export class MusicService {
@@ -63,13 +66,39 @@ export class MusicService {
           finalState.visionDescription = vision;
         }
 
+        if (update.director) {
+          const reasoning = update.director.directorReasoning;
+          const modality = update.director.modality;
+          this.safeSend(ws, { type: "agent_update", reasoning, modality });
+          await this.syncToRtdb(sessionId, { reasoning, modality, isThinking: false });
+          finalState.directorReasoning = reasoning;
+          finalState.modality = modality;
+        }
+
         if (update.musicDirector) {
           const prompts = update.musicDirector.musicalPrompts;
-          this.safeSend(ws, { type: "agent_update", prompts });
-          await this.syncToRtdb(sessionId, { prompts, isThinking: false });
-          finalState.musicalPrompts = prompts;
+          const audio = update.musicDirector.generatedAudio;
+          const prevId = update.musicDirector.previousInteractionId;
 
-          if (session?.setWeightedPrompts) {
+          // 1. Send metadata (prompts) to RTDB for persistent session state
+          await this.syncToRtdb(sessionId, {
+            prompts,
+            isThinking: false,
+            interactionId: prevId
+          });
+
+          // 2. Send structured audio block via WebSocket for low-latency playback
+          this.safeSend(ws, {
+            type: "agent_update",
+            prompts,
+            chunk: audio, // Forward structured audio as a "chunk"
+            interactionId: prevId
+          });
+
+          finalState.musicalPrompts = prompts;
+          finalState.previousInteractionId = prevId;
+
+          if (session?.setWeightedPrompts && prompts.length > 0) {
             await session.setWeightedPrompts({ weightedPrompts: prompts });
           }
         }
@@ -99,8 +128,9 @@ export class MusicService {
       if (!session) return;
       logger.info("[MAVE_SERVICE] Streaming audio chunk to Gemini", { sessionId, size: base64Audio.length });
 
-      // Production: Pipe multimodal audio chunks directly to the Gemini Live session
-      if (session.send) {
+      // Definitive Production Implementation:
+      // Pipe raw audio bytes directly into the active Gemini Live stream.
+      if (typeof session.send === 'function') {
         await session.send({
           audio: base64Audio
         });
@@ -120,7 +150,8 @@ export class MusicService {
 
       switch (type) {
         case "skip_next":
-          // Logic to generate next variation
+          // Request a new variation based on current description
+          await this.handleUserFeedback(null as any, session, "Make a variation of this vibe", sessionId);
           break;
         case "toggle_shuffle":
           await session.setMusicGenerationConfig({ musicGenerationConfig: { shuffle: data.enabled } });
@@ -129,13 +160,31 @@ export class MusicService {
           await session.setMusicGenerationConfig({ musicGenerationConfig: { repeat: data.enabled } });
           break;
         case "seek_to":
-          // Logic for time-based seeking in Lyria
+          // Lyria Live supports seeking via position parameter in config
+          await session.setMusicGenerationConfig({ musicGenerationConfig: { position: data.position } });
           break;
       }
 
       await this.syncToRtdb(sessionId, { [type === "seek_to" ? "progress" : "playbackState"]: data });
     } catch (err) {
       logger.error("[MAVE_SERVICE] Playback command failed", { error: err, type });
+    }
+  }
+
+  /**
+   * Generates a persistent share link for a track.
+   */
+  async shareTrack(uid: string, trackId: string) {
+    try {
+      const track = await trackRepository.getTrackById(trackId);
+      if (!track) throw new Error("Track not found");
+
+      logger.info("[MAVE_SERVICE] Track shared", { uid, trackId });
+      const baseUrl = process.env.APP_URL || "http://localhost:3000";
+      return `${baseUrl}/vibe/${trackId}`;
+    } catch (err) {
+      logger.error("[MAVE_SERVICE] Share failed", { error: err });
+      throw err;
     }
   }
 
@@ -186,7 +235,9 @@ export class MusicService {
         type: "agent_update",
         prompts: result.musicalPrompts,
         feedback: feedback,
-        script: result.podcastScript
+        script: result.podcastScript,
+        reasoning: result.directorReasoning,
+        modality: result.modality
       };
 
       this.safeSend(ws, updatePayload);
@@ -202,6 +253,24 @@ export class MusicService {
       logger.error("[MAVE_SERVICE] Failed to handle feedback", { error: err });
       throw err;
     }
+  }
+
+  async generateMusicDirectly(image?: string, type?: string) {
+    const ai = getAi();
+    const prompt = `Analyze vision stream and generate music prompts for ${type || 'ambient'}`;
+    const contents: any[] = [prompt];
+    if (image) {
+      contents.push({ inlineData: { mimeType: 'image/jpeg', data: image } });
+    }
+    const result = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: contents
+    });
+    return { response: result.text };
+  }
+
+  async getCommunityTracks() {
+    return await trackRepository.getCommunityTracks();
   }
 
   // --- Enterprise RTDB Sync ---

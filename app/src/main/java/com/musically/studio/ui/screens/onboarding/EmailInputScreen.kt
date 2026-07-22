@@ -48,7 +48,7 @@ fun EmailInputScreen(
         MaveTextField(
             value = email,
             onValueChange = { email = it },
-            label = "" // Follows Spotify style with no inner label
+            label = "" // Follows Mave Studio minimal input style
         )
         
         Spacer(modifier = Modifier.height(8.dp))

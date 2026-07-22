@@ -15,18 +15,20 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Rate Limiting Setup (Production Grade)
-const isProduction = process.env.NODE_ENV === "production";
 let limiterStore;
 
-if (isProduction && process.env.UPSTASH_REDIS_REST_URL) {
-  // Extract TCP URL from REST URL if possible or assume separate ENV
-  // For Upstash, we can use the REST API via a custom store or just use ioredis with the rediss:// url
-  const redisUrl = process.env.REDIS_URL || process.env.UPSTASH_REDIS_REST_URL.replace("https://", "rediss://");
-  const client = new Redis(redisUrl);
-  limiterStore = new RedisStore({
-    // @ts-expect-error - ioredis type compatibility
-    sendCommand: (...args: string[]) => client.call(...args),
-  });
+const redisUrl = process.env.REDIS_URL;
+if (redisUrl) {
+  try {
+    const client = new Redis(redisUrl, { maxRetriesPerRequest: 3, enableOfflineQueue: false });
+    client.on("error", (err) => logger.warn("[REDIS_STORE] Redis client error:", { error: err.message }));
+    limiterStore = new RedisStore({
+      // @ts-expect-error - ioredis type compatibility
+      sendCommand: (...args: string[]) => client.call(...args),
+    });
+  } catch (err) {
+    logger.warn("[REDIS_STORE] Failed to initialize Redis store for rate limiting, falling back to memory store.");
+  }
 }
 
 const globalLimiter = rateLimit({
@@ -40,7 +42,7 @@ const globalLimiter = rateLimit({
 
 app.use(globalLimiter);
 app.use(express.json());
-app.use(helmet({ contentSecurityPolicy: false, frameguard: false }));
+app.use(helmet());
 app.use(compression());
 
 app.use("/api/spotify", spotifyRouter);

@@ -1,5 +1,6 @@
 package com.musically.studio.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,11 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.R
-import com.musically.studio.network.SpotifyTrack
+import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.MainViewModel
-import com.musically.studio.ui.theme.SpotifyBlack
-import com.musically.studio.ui.theme.SpotifyGreen
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,43 +34,64 @@ fun AlbumViewScreen(
     onTrackClick: (String) -> Unit
 ) {
     val tracks by viewModel.tracks.collectAsState()
+    val context = LocalContext.current
     val albumTracks = tracks.filter { it.album.id == albumId }
     val albumInfo = albumTracks.firstOrNull()?.album
     
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var showSheet by remember { mutableStateOf(false) }
-    var selectedTrackForSheet by remember { mutableStateOf<SpotifyTrack?>(null) }
+    var selectedTrackForSheet by remember { mutableStateOf<MaveTrack?>(null) }
 
     if (showSheet && selectedTrackForSheet != null) {
         ModalBottomSheet(
             onDismissRequest = { showSheet = false },
             sheetState = sheetState,
-            containerColor = Color(0xFF282828)
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
             Column(modifier = Modifier.fillMaxWidth().padding(16.dp).navigationBarsPadding()) {
                 Text(
                     text = selectedTrackForSheet!!.name,
                     style = MaterialTheme.typography.titleLarge,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 ListItem(
-                    headlineContent = { Text("Add to playlist", color = Color.White) },
-                    leadingContent = { Icon(Icons.Default.Add, contentDescription = null, tint = Color.Gray) },
-                    modifier = Modifier.clickable { /* logic */ }
+                    headlineContent = { Text("Add to playlist", color = MaterialTheme.colorScheme.onSurface) },
+                    leadingContent = { Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    modifier = Modifier.clickable { 
+                        selectedTrackForSheet?.let { viewModel.addToPlaylist(it.id) }
+                        showSheet = false
+                    }
                 )
                 ListItem(
-                    headlineContent = { Text("View artist", color = Color.White) },
-                    leadingContent = { Icon(Icons.Default.Person, contentDescription = null, tint = Color.Gray) },
-                    modifier = Modifier.clickable { /* logic */ }
+                    headlineContent = { Text("View artist", color = MaterialTheme.colorScheme.onSurface) },
+                    leadingContent = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    modifier = Modifier.clickable { 
+                        selectedTrackForSheet?.let { viewModel.viewArtist(context, it) }
+                        showSheet = false
+                    }
                 )
                 ListItem(
-                    headlineContent = { Text("Share vibe", color = Color.White) },
-                    leadingContent = { Icon(Icons.Default.Share, contentDescription = null, tint = Color.Gray) },
-                    modifier = Modifier.clickable { /* logic */ }
+                    headlineContent = { Text("Share vibe", color = MaterialTheme.colorScheme.onSurface) },
+                    leadingContent = { Icon(Icons.Default.Share, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    modifier = Modifier.clickable { 
+                        selectedTrackForSheet?.let { track ->
+                            viewModel.shareTrack(track.id) { url ->
+                                if (url != null) {
+                                    val sendIntent = Intent().apply {
+                                        action = Intent.ACTION_SEND
+                                        putExtra(Intent.EXTRA_TEXT, "Check out this vibe on Mave: $url")
+                                        type = "text/plain"
+                                    }
+                                    val shareIntent = Intent.createChooser(sendIntent, null)
+                                    context.startActivity(shareIntent)
+                                }
+                            }
+                        }
+                        showSheet = false
+                    }
                 )
                 Spacer(modifier = Modifier.height(24.dp))
             }
@@ -80,13 +99,13 @@ fun AlbumViewScreen(
     }
 
     Scaffold(
-        containerColor = SpotifyBlack,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { },
+                title = { Text(albumInfo?.name ?: "", color = MaterialTheme.colorScheme.onBackground) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back), tint = Color.White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back), tint = MaterialTheme.colorScheme.onBackground)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -113,21 +132,21 @@ fun AlbumViewScreen(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(200.dp)
-                            .background(Color.DarkGray)
+                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                     )
                     
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     Text(
-                        text = albumInfo?.name ?: stringResource(id = R.string.unknown_album),
+                        text = albumInfo?.name ?: "Untitled Vibe",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                        text = albumInfo?.artists?.joinToString { it.name } ?: stringResource(id = R.string.unknown_artist),
+                        text = stringResource(id = R.string.album_bullet, albumInfo?.artists?.joinToString { it.name } ?: "Independent Creator"),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     
                     Spacer(modifier = Modifier.height(16.dp))
@@ -139,25 +158,25 @@ fun AlbumViewScreen(
                     ) {
                         Row {
                             IconButton(onClick = { albumTracks.firstOrNull()?.let { viewModel.bookmarkTrack(it.id) } }) {
-                                Icon(Icons.Default.FavoriteBorder, contentDescription = "Like", tint = Color.White)
+                                Icon(Icons.Default.FavoriteBorder, contentDescription = stringResource(id = R.string.like_content_desc), tint = MaterialTheme.colorScheme.onBackground)
                             }
                             IconButton(onClick = { 
                                 selectedTrackForSheet = albumTracks.firstOrNull()
                                 showSheet = true
                             }) {
-                                Icon(Icons.Default.MoreVert, contentDescription = "More", tint = Color.White)
+                                Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_content_desc), tint = MaterialTheme.colorScheme.onBackground)
                             }
                         }
                         Box(
                             modifier = Modifier
                                 .size(56.dp)
-                                .background(SpotifyGreen, CircleShape)
+                                .background(MaterialTheme.colorScheme.primary, CircleShape)
                                 .clickable { 
                                     albumTracks.firstOrNull()?.let { onTrackClick(it.id) }
                                 },
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.PlayArrow, contentDescription = "Play", tint = SpotifyBlack, modifier = Modifier.size(32.dp))
+                            Icon(Icons.Default.PlayArrow, contentDescription = stringResource(id = R.string.play_content_desc), tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(32.dp))
                         }
                     }
                     
@@ -182,7 +201,7 @@ fun AlbumViewScreen(
 
 @Composable
 fun AlbumTrackItem(
-    track: SpotifyTrack,
+    track: MaveTrack,
     trackNumber: Int,
     onClick: () -> Unit,
     onMoreClick: () -> Unit
@@ -197,25 +216,25 @@ fun AlbumTrackItem(
         Text(
             text = trackNumber.toString(),
             style = MaterialTheme.typography.bodyLarge,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.width(32.dp)
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = track.name,
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1
             )
             Text(
                 text = track.artists.joinToString { it.name },
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1
             )
         }
         IconButton(onClick = onMoreClick) {
-            Icon(Icons.Default.MoreVert, contentDescription = "More", tint = Color.Gray)
+            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_content_desc), tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

@@ -23,7 +23,7 @@ fun ArtistSelectionScreen(
     viewModel: com.musically.studio.ui.MainViewModel,
     onDone: () -> Unit
 ) {
-    val artists = listOf(
+    val allArtists = listOf(
         Artist("Taylor Swift", "https://i.scdn.co/image/ab6761610000e5eb859fab694841393c6165c694"),
         Artist("Drake", "https://i.scdn.co/image/ab6761610000e5eb4293385d324db8558179afd9"),
         Artist("The Weeknd", "https://i.scdn.co/image/ab6761610000e5eb214f3cfc684347781b0a501e"),
@@ -34,6 +34,12 @@ fun ArtistSelectionScreen(
     
     val selectedArtists = remember { mutableStateListOf<String>() }
     var searchQuery by remember { mutableStateOf("") }
+
+    val filteredArtists = if (searchQuery.isBlank()) {
+        allArtists
+    } else {
+        allArtists.filter { it.name.contains(searchQuery, ignoreCase = true) }
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -89,7 +95,7 @@ fun ArtistSelectionScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                items(artists) { artist ->
+                items(filteredArtists) { artist ->
                     MaveArtistCard(
                         name = artist.name,
                         imageUrl = artist.imageUrl,

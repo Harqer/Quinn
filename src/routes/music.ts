@@ -25,15 +25,28 @@ router.post("/generate", optionalFirebaseToken, verifyAppCheck, checkDailyQuota,
 });
 
 router.post("/share", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
-  const result = ShareVibeSchema.safeParse(req.body);
-  if (!result.success) return res.status(400).json({ error: result.error.issues });
+  const { trackId } = req.body;
+  if (!trackId) return res.status(400).json({ error: "trackId is required" });
 
   try {
-    const trackId = await musicService.saveTrack(req.user!.uid, result.data);
-    res.status(201).json({ id: trackId, message: "Track shared with community" });
+    const url = await musicService.shareTrack(req.user!.uid, trackId);
+    res.json({ url });
   } catch (err) {
     logger.error("Failed to share track", { error: err });
     res.status(500).json({ error: "Failed to share track" });
+  }
+});
+
+router.post("/playlist/add", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
+  const { trackId, playlistId } = req.body;
+  if (!trackId) return res.status(400).json({ error: "trackId is required" });
+
+  try {
+    const bookmarkId = await trackRepository.bookmarkTrack(req.user!.uid, trackId);
+    res.json({ success: true, id: bookmarkId, playlistId: playlistId || "favorites", message: "Added to playlist" });
+  } catch (err) {
+    logger.error("Failed to add to playlist", { error: err });
+    res.status(500).json({ error: "Failed to add to playlist" });
   }
 });
 
@@ -70,7 +83,7 @@ router.get("/user/tracks", verifyFirebaseToken, async (req: AuthenticatedRequest
   }
 });
 
-// WebSocket Server for Mave Studio Proxy (Music & Podcast)
+// WebSocket Server for Mave Studio Engine (Music & Podcast)
 export const setupMusicWebSocket = (wss: WebSocketServer) => {
   wss.on("connection", async (ws: WebSocket, request) => {
     const url = new URL(request.url || "", `http://${request.headers.host}`);
@@ -79,15 +92,15 @@ export const setupMusicWebSocket = (wss: WebSocketServer) => {
     let uid = "";
     if (!token) {
       uid = `guest_${Math.random().toString(36).substring(7)}`;
-      logger.info(`[WS_PROXY] Guest user connected.`, { uid });
+      logger.info(`[WS_STUDIO] Guest user connected.`, { uid });
     } else {
       try {
         const decodedToken = await auth.verifyIdToken(token);
         uid = decodedToken.uid;
-        logger.info(`[WS_PROXY] Authenticated user connected.`, { uid });
+        logger.info(`[WS_STUDIO] Authenticated user connected.`, { uid });
       } catch (err) {
         uid = `guest_${Math.random().toString(36).substring(7)}`;
-        logger.warn(`[WS_PROXY] Invalid token, falling back to guest.`, { uid });
+        logger.warn(`[WS_STUDIO] Invalid token, falling back to guest.`, { uid });
       }
     }
 
@@ -97,8 +110,7 @@ export const setupMusicWebSocket = (wss: WebSocketServer) => {
 
     const initMusic = async () => {
       const ai = getAi();
-      // @ts-ignore
-      musicSession = await ai.live.music.connect({
+      musicSession = await (ai as any).live.connect({
         model: "lyria-realtime-exp",
         callbacks: {
           onmessage: (e: any) => ws.readyState === WebSocket.OPEN && ws.send(JSON.stringify({ type: "message", data: e })),
@@ -119,7 +131,7 @@ export const setupMusicWebSocket = (wss: WebSocketServer) => {
           } else if (currentMode === 'music' && !musicSession) {
             await initMusic();
           }
-          logger.info(`[WS_PROXY] User switched to ${currentMode} mode.`, { uid });
+          logger.info(`[WS_STUDIO] User switched to ${currentMode} mode.`, { uid });
           return;
         }
 

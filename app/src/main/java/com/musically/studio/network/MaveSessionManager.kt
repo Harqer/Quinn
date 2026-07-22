@@ -18,6 +18,7 @@ class MaveSessionManager(
     val events = _events.asSharedFlow()
 
     fun connect() {
+        if (webSocket != null) return
         scope.launch {
             val token = TokenManager.getValidToken() ?: return@launch
             val request = Request.Builder()

@@ -1,7 +1,7 @@
 import { getAi } from "./ai.js";
 import { WebSocket } from "ws";
 import logger from "../config/logger.js";
-import { quinnGraph } from "./quinn-graph.js";
+import { maveGraph } from "./mave-graph.js";
 
 export class PodcastService {
   async startPodcastSession(ws: WebSocket, uid: string) {
@@ -10,9 +10,10 @@ export class PodcastService {
 
     try {
       // establishes a multimodal live session for audio output
+      // uses the recommended gemini-3.1-flash-live-preview model
       // @ts-ignore
       session = await ai.live.connect({
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-3.1-flash-live-preview",
         config: {
           responseModalities: ["audio"],
           speechConfig: { voice: "AOEDE" } // Musical/Expressive voice
@@ -43,7 +44,7 @@ export class PodcastService {
 
   async processVisionForPodcast(ws: WebSocket, session: any, image: string) {
     try {
-      const result = await (quinnGraph as any).invoke({
+      const result = await (maveGraph as any).invoke({
         image,
         mode: 'podcast'
       });

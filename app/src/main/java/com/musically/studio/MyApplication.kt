@@ -1,11 +1,24 @@
 package com.musically.studio
 
 import android.app.Application
+import androidx.appfunctions.service.AppFunctionConfiguration
 import com.meta.wearable.dat.core.Wearables
+import com.musically.studio.appfunctions.MaveFunctions
 import com.musically.studio.logging.CrashlyticsTree
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
+import javax.inject.Inject
 
-class MyApplication : Application() {
+@HiltAndroidApp
+class MyApplication : Application(), AppFunctionConfiguration.Provider {
+
+    @Inject lateinit var maveFunctions: MaveFunctions
+
+    override val appFunctionConfiguration: AppFunctionConfiguration =
+        AppFunctionConfiguration.Builder()
+            .addEnclosingClassFactory(MaveFunctions::class.java) { maveFunctions }
+            .build()
+
     override fun onCreate() {
         super.onCreate()
         

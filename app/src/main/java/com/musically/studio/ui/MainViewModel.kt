@@ -6,13 +6,13 @@ import android.content.Intent
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
-import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Base64
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -20,29 +20,33 @@ import com.google.firebase.database.ValueEventListener
 import com.musically.studio.WearableStreamingService
 import com.musically.studio.network.ApiClient
 import com.musically.studio.network.MaveSessionManager
-import com.musically.studio.network.SpotifyTrack
+import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.models.ChatMessage
-import kotlinx.coroutines.CoroutineScope
+import com.musically.studio.ui.navigation.Route
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import org.json.JSONObject
 import timber.log.Timber
+import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
-    private val auth = FirebaseAuth.getInstance()
-    private val rtdb: FirebaseDatabase = FirebaseDatabase.getInstance()
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val apiClient: ApiClient,
+    private val maveSessionManager: MaveSessionManager,
+    private val auth: FirebaseAuth,
+    private val rtdb: FirebaseDatabase
+) : ViewModel() {
 
-    private val _isSpotifyConnected = MutableStateFlow(false)
-    val isSpotifyConnected: StateFlow<Boolean> = _isSpotifyConnected.asStateFlow()
+    private val _isMusicAccountConnected = MutableStateFlow(false)
+    val isMusicAccountConnected: StateFlow<Boolean> = _isMusicAccountConnected.asStateFlow()
 
-    private val _tracks = MutableStateFlow<List<SpotifyTrack>>(emptyList())
-    val tracks: StateFlow<List<SpotifyTrack>> = _tracks.asStateFlow()
+    private val _tracks = MutableStateFlow<List<MaveTrack>>(emptyList())
+    val tracks: StateFlow<List<MaveTrack>> = _tracks.asStateFlow()
     
     private val _isWearableConnected = MutableStateFlow(false)
     val isWearableConnected: StateFlow<Boolean> = _isWearableConnected.asStateFlow()
@@ -50,8 +54,8 @@ class MainViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _currentPlayingTrack = MutableStateFlow<SpotifyTrack?>(null)
-    val currentPlayingTrack: StateFlow<SpotifyTrack?> = _currentPlayingTrack.asStateFlow()
+    private val _currentPlayingTrack = MutableStateFlow<MaveTrack?>(null)
+    val currentPlayingTrack: StateFlow<MaveTrack?> = _currentPlayingTrack.asStateFlow()
 
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
@@ -65,18 +69,28 @@ class MainViewModel : ViewModel() {
     private val _isRepeatEnabled = MutableStateFlow(false)
     val isRepeatEnabled: StateFlow<Boolean> = _isRepeatEnabled.asStateFlow()
 
+    private val _isHapticFeedbackEnabled = MutableStateFlow(true)
+    val isHapticFeedbackEnabled: StateFlow<Boolean> = _isHapticFeedbackEnabled.asStateFlow()
+
+    // Navigation and UI State
+    private val _shouldExpandBottomSheet = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
+    val shouldExpandBottomSheet = _shouldExpandBottomSheet.asSharedFlow()
+
+    private val _navigationEvent = MutableSharedFlow<Route>(extraBufferCapacity = 1)
+    val navigationEvent = _navigationEvent.asSharedFlow()
+
+    // Auth Side Effects
+    private val _authSideEffect = MutableSharedFlow<AuthSideEffect>(extraBufferCapacity = 1)
+    val authSideEffect = _authSideEffect.asSharedFlow()
+
     val messages = mutableStateListOf<ChatMessage>()
     
     private val _thinkingText = MutableStateFlow("")
     val thinkingText: StateFlow<String> = _thinkingText.asStateFlow()
 
-    private val _currentMode = MutableStateFlow("music")
-    val currentMode: StateFlow<String> = _currentMode.asStateFlow()
+    private val _currentModality = MutableStateFlow("music")
+    val currentModality: StateFlow<String> = _currentModality.asStateFlow()
 
-    private val okHttpClient = OkHttpClient()
-    private val maveSessionManager = MaveSessionManager(okHttpClient)
-    private val apiClient = ApiClient(okHttpClient)
-    
     private var rtdbListener: ValueEventListener? = null
 
     // Registration State Accumulator
@@ -86,7 +100,9 @@ class MainViewModel : ViewModel() {
     var regGender = ""
     var regName = ""
 
-    private var isRecording = false
+    private val _isRecording = MutableStateFlow(false)
+    val isRecording: StateFlow<Boolean> = _isRecording.asStateFlow()
+
     private var audioRecord: AudioRecord? = null
     private var recordingJob: Job? = null
 
@@ -109,13 +125,12 @@ class MainViewModel : ViewModel() {
                     startRtdbSync()
                     callback(true, null)
                 } else {
-                    callback(false, task.exception?.message)
+                    callback(false, "Check your email and password, or sign up for a new account.")
                 }
             }
     }
 
     fun guestLogin(callback: (Boolean, String?) -> Unit) {
-        // For production "Audio First", we use anonymous auth
         _isLoading.value = true
         auth.signInAnonymously()
             .addOnCompleteListener { task ->
@@ -124,7 +139,67 @@ class MainViewModel : ViewModel() {
                     startRtdbSync()
                     callback(true, null)
                 } else {
-                    callback(false, task.exception?.message)
+                    callback(false, "Could not start guest session. Please check your connection.")
+                }
+            }
+    }
+
+    fun triggerGoogleSignIn() {
+        viewModelScope.launch {
+            _authSideEffect.emit(AuthSideEffect.LaunchGoogleSignIn)
+        }
+    }
+
+    fun triggerAppleSignIn() {
+        viewModelScope.launch {
+            _authSideEffect.emit(AuthSideEffect.LaunchAppleSignIn)
+        }
+    }
+
+    fun triggerVerifiedEmailSignIn() {
+        viewModelScope.launch {
+            _authSideEffect.emit(AuthSideEffect.LaunchVerifiedEmail)
+        }
+    }
+
+    fun loginWithVerifiedEmail(credentialJson: String, nonce: String, callback: (Boolean, String?) -> Unit) {
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val customToken = apiClient.verifyDigitalCredential(credentialJson, nonce)
+                if (customToken != null) {
+                    auth.signInWithCustomToken(customToken)
+                        .addOnCompleteListener { task ->
+                            _isLoading.value = false
+                            if (task.isSuccessful) {
+                                startRtdbSync()
+                                callback(true, null)
+                            } else {
+                                callback(false, "Authentication failed with verified credential.")
+                            }
+                        }
+                } else {
+                    _isLoading.value = false
+                    callback(false, "Digital credential verification failed on server.")
+                }
+            } catch (e: Exception) {
+                _isLoading.value = false
+                callback(false, "An error occurred during verification: ${e.message}")
+            }
+        }
+    }
+
+    fun loginWithGoogle(idToken: String, callback: (Boolean, String?) -> Unit) {
+        _isLoading.value = true
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener { task ->
+                _isLoading.value = false
+                if (task.isSuccessful) {
+                    startRtdbSync()
+                    callback(true, null)
+                } else {
+                    callback(false, "Google account connection encountered an issue.")
                 }
             }
     }
@@ -143,13 +218,13 @@ class MainViewModel : ViewModel() {
                                 startRtdbSync()
                                 callback(true, null)
                             } else {
-                                callback(false, "Failed to sync profile to backend")
+                                callback(false, "Could not complete your profile. Please try again.")
                             }
                         }
                     }
                 } else {
                     _isLoading.value = false
-                    callback(false, task.exception?.message)
+                    callback(false, task.exception?.message ?: "Registration encountered an issue.")
                 }
             }
     }
@@ -167,8 +242,8 @@ class MainViewModel : ViewModel() {
                 try {
                     val json = JSONObject(event)
                     when (json.optString("type")) {
-                        "mave_thinking", "mave_chunk" -> {
-                            val chunk = json.optString("chunk")
+                        "mave_thinking", "mave_chunk", "vision_thinking", "director_thinking" -> {
+                            val chunk = json.optString("chunk") ?: json.optString("text")
                             _thinkingText.value += chunk
                         }
                         "agent_update" -> {
@@ -177,8 +252,16 @@ class MainViewModel : ViewModel() {
                             val prompts = json.optJSONArray("prompts")
                             val script = json.optString("script")
                             val trackId = json.optString("trackId")
+                            val reasoning = json.optString("reasoning")
+                            val modality = json.optString("modality")
+
+                            if (!modality.isNullOrBlank()) {
+                                _currentModality.value = modality
+                            }
                             
-                            val message = if (prompts != null && prompts.length() > 0) {
+                            val message = if (!reasoning.isNullOrBlank()) {
+                                reasoning
+                            } else if (prompts != null && prompts.length() > 0) {
                                 "New vibe: ${prompts.getString(0)}"
                             } else if (!script.isNullOrBlank()) {
                                 script
@@ -188,6 +271,7 @@ class MainViewModel : ViewModel() {
                             
                             if (message.isNotBlank()) {
                                 messages.add(0, ChatMessage(message, false, trackId))
+                                WearableStreamingService.updateUi("Mave Studio", message)
                             }
                         }
                         "error" -> {
@@ -220,7 +304,6 @@ class MainViewModel : ViewModel() {
                         _thinkingText.value = ""
                     }
                     
-                    // Sync playback states if present in RTDB
                     (data?.get("isPlaying") as? Boolean)?.let { _isPlaying.value = it }
                     (data?.get("progress") as? Number)?.let { _trackProgress.value = it.toFloat() }
                 } catch (e: Exception) {
@@ -269,21 +352,15 @@ class MainViewModel : ViewModel() {
         startRtdbSync()
     }
 
-    fun switchMode(mode: String) {
-        _currentMode.value = mode
-        maveSessionManager.sendEvent("switch_mode", mapOf("mode" to mode))
-    }
-
     fun sendTextCommand(text: String) {
         messages.add(0, ChatMessage(text, true))
         _thinkingText.value = ""
-        val type = if (_currentMode.value == "podcast") "text_command" else "feedback"
-        maveSessionManager.sendEvent(type, mapOf("text" to text))
+        maveSessionManager.sendEvent("feedback", mapOf("text" to text))
     }
 
     @SuppressLint("MissingPermission")
     fun recordVoice() {
-        if (isRecording) {
+        if (_isRecording.value) {
             stopRecording()
         } else {
             startRecording()
@@ -307,13 +384,13 @@ class MainViewModel : ViewModel() {
             bufferSize
         )
 
-        isRecording = true
+        _isRecording.value = true
         maveSessionManager.sendEvent("start_voice", emptyMap())
         audioRecord?.startRecording()
 
         recordingJob = viewModelScope.launch(Dispatchers.IO) {
             val audioBuffer = ShortArray(bufferSize)
-            while (isRecording) {
+            while (_isRecording.value) {
                 val read = audioRecord?.read(audioBuffer, 0, bufferSize) ?: 0
                 if (read > 0) {
                     val byteBuffer = java.nio.ByteBuffer.allocate(read * 2)
@@ -329,7 +406,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun stopRecording() {
-        isRecording = false
+        _isRecording.value = false
         recordingJob?.cancel()
         audioRecord?.stop()
         audioRecord?.release()
@@ -377,10 +454,15 @@ class MainViewModel : ViewModel() {
         maveSessionManager.sendEvent("toggle_repeat", mapOf("enabled" to _isRepeatEnabled.value))
     }
 
-    fun playTrack(track: SpotifyTrack) {
+    fun toggleHapticFeedback() {
+        _isHapticFeedbackEnabled.value = !_isHapticFeedbackEnabled.value
+    }
+
+    fun playTrack(track: MaveTrack) {
         _currentPlayingTrack.value = track
         _isPlaying.value = true
         maveSessionManager.sendEvent("play_track", mapOf("trackId" to track.id))
+        viewModelScope.launch { _shouldExpandBottomSheet.emit(true) }
     }
 
     fun sendFrame(base64: String) {
@@ -389,6 +471,44 @@ class MainViewModel : ViewModel() {
 
     fun applySteering(params: Map<String, Any>) {
         maveSessionManager.sendEvent("steering_action", mapOf("params" to params))
+    }
+
+    fun viewArtist(context: Context, track: MaveTrack) {
+        if (track.userId != null) {
+            // Case 2: Mave Community track -> route to user profile
+            viewModelScope.launch {
+                _navigationEvent.emit(Route.UserProfile(track.userId))
+            }
+        } else {
+            // Case 1: Spotify track -> query from Spotify
+            val artistId = track.artists.firstOrNull()?.id
+            if (artistId != null) {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = android.net.Uri.parse("spotify:artist:$artistId")
+                    putExtra(Intent.EXTRA_REFERRER, android.net.Uri.parse("android-app://${context.packageName}"))
+                }
+                try {
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    // Fallback to web
+                    val webIntent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://open.spotify.com/artist/$artistId"))
+                    context.startActivity(webIntent)
+                }
+            }
+        }
+    }
+
+    fun shareTrack(trackId: String, callback: (String?) -> Unit) {
+        viewModelScope.launch {
+            val url = apiClient.shareVibe(trackId)
+            callback(url)
+        }
+    }
+
+    fun addToPlaylist(trackId: String, playlistId: String? = null) {
+        viewModelScope.launch {
+            apiClient.addToPlaylist(trackId, playlistId)
+        }
     }
 
     fun bookmarkTrack(trackId: String) {
@@ -403,9 +523,9 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun connectSpotify() {
+    fun connectMusicAccount() {
         viewModelScope.launch {
-            _isSpotifyConnected.value = true
+            _isMusicAccountConnected.value = true
         }
     }
 
@@ -415,6 +535,20 @@ class MainViewModel : ViewModel() {
             val result = apiClient.getUserTracks()
             if (result != null) {
                 _tracks.value = result
+            }
+            _isLoading.value = false
+        }
+    }
+
+    private val _userVibes = MutableStateFlow<List<MaveTrack>>(emptyList())
+    val userVibes: StateFlow<List<MaveTrack>> = _userVibes.asStateFlow()
+
+    fun fetchVibesByUserId(userId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val result = apiClient.getVibesByUserId(userId)
+            if (result != null) {
+                _userVibes.value = result
             }
             _isLoading.value = false
         }
@@ -430,4 +564,10 @@ class MainViewModel : ViewModel() {
             }
         }
     }
+}
+
+sealed interface AuthSideEffect {
+    data object LaunchGoogleSignIn : AuthSideEffect
+    data object LaunchAppleSignIn : AuthSideEffect
+    data object LaunchVerifiedEmail : AuthSideEffect
 }

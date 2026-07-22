@@ -1,0 +1,7 @@
+<AppFunctionAppMetadata xmlns:appfn="http://schemas.android.com/apk/androidx.appfunctions"
+    appfn:description="Mave Studio: A high-fidelity AI Music Studio.
+    Operational Patterns:
+    - Use 'strikeVibe' to initiate music generation with natural language.
+    - Use 'warpMusic' to adjust tempo and density of the current session.
+    - Use 'narratePOV' to trigger real-time AI narration of your surroundings."
+    appfn:displayDescription="@string/app_name" />

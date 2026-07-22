@@ -1,61 +1,63 @@
 package com.musically.studio
 
 import android.Manifest
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.DigitalCredential
+import androidx.credentials.GetDigitalCredentialOption
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ContentTransform
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material3.*
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
+import android.widget.Toast
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.OAuthProvider
+import com.musically.studio.ui.AuthSideEffect
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.MiniPlayer
+import com.musically.studio.ui.navigation.*
 import com.musically.studio.ui.screens.*
 import com.musically.studio.ui.screens.onboarding.*
 import com.musically.studio.ui.theme.MaveAppTheme
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
+import org.json.JSONObject
+import java.util.UUID
 
-@Serializable
-sealed interface Route {
-    @Serializable data object Login : Route
-    @Serializable data object Home : Route
-    @Serializable data object Library : Route
-    @Serializable data object Devices : Route
-    @Serializable data class AlbumView(val albumId: String) : Route
-    
-    // Onboarding Sequence
-    @Serializable data object Welcome : Route
-    @Serializable data object AuthOptions : Route
-    @Serializable data object EmailInput : Route
-    @Serializable data object PasswordInput : Route
-    @Serializable data object BirthdayInput : Route
-    @Serializable data object GenderInput : Route
-    @Serializable data object NameTerms : Route
-    @Serializable data object Loading : Route
-    @Serializable data object Notification : Route
-    @Serializable data object ArtistSelection : Route
-}
-
-data class TopLevelRoute<T : Any>(val name: String, val route: T, val icon: ImageVector)
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private var permissionsGranted = mutableStateOf(false)
+    private lateinit var mainViewModel: MainViewModel
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -67,14 +69,45 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val googleSignInLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(com.google.android.gms.common.api.ApiException::class.java)
+            val idToken = account?.idToken
+            if (idToken != null) {
+                mainViewModel.loginWithGoogle(idToken.toString()) { success, _ ->
+                    // Navigation handled by state observations in MaveApp
+                }
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Something went wrong during sign-in. Please try again.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        window.isNavigationBarContrastEnforced = false
         FirebaseApp.initializeApp(this)
         
         setContent {
+            mainViewModel = viewModel()
+            
+            LaunchedEffect(Unit) {
+                mainViewModel.authSideEffect.collectLatest { effect ->
+                    when (effect) {
+                        AuthSideEffect.LaunchGoogleSignIn -> launchGoogleSignIn()
+                        AuthSideEffect.LaunchAppleSignIn -> launchAppleSignIn(mainViewModel)
+                        AuthSideEffect.LaunchVerifiedEmail -> launchVerifiedEmail(mainViewModel)
+                    }
+                }
+            }
+
             MaveAppTheme {
                 MaveApp(
+                    viewModel = mainViewModel,
                     onAcknowledgePermissions = { checkPermissions() },
                     hasPermissions = permissionsGranted.value
                 )
@@ -82,165 +115,231 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun launchGoogleSignIn() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.google_api_key)) 
+            .requestEmail()
+            .build()
+        val client = GoogleSignIn.getClient(this, gso)
+        googleSignInLauncher.launch(client.signInIntent)
+    }
+
+    private fun launchAppleSignIn(viewModel: MainViewModel) {
+        val provider = OAuthProvider.newBuilder("apple.com")
+        FirebaseAuth.getInstance().startActivityForSignInWithProvider(this, provider.build())
+            .addOnSuccessListener {
+                viewModel.startRtdbSync()
+                // Navigation will update via isUserLoggedIn check or state observation
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Apple Sign-In failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     private fun checkPermissions() {
         val permissions = mutableListOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.BLUETOOTH_CONNECT
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.POST_NOTIFICATIONS
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
-        }
         permissionLauncher.launch(permissions.toTypedArray())
+    }
+
+    @OptIn(androidx.credentials.ExperimentalDigitalCredentialApi::class)
+    private fun launchVerifiedEmail(viewModel: MainViewModel) {
+        val credentialManager = CredentialManager.create(this)
+        val nonce = UUID.randomUUID().toString()
+
+        val openId4vpRequest = """
+        {
+          "requests": [
+            {
+              "protocol": "openid4vp-v1-unsigned",
+              "data": {
+                "response_type": "vp_token",
+                "response_mode": "dc_api",
+                "nonce": "$nonce",
+                "dcql_query": {
+                  "credentials": [
+                    {
+                      "id": "user_info_query",
+                      "format": "dc+sd-jwt",
+                       "meta": { 
+                          "vct_values": ["UserInfoCredential"] 
+                       },
+                      "claims": [ 
+                        {"path": ["email"]}, 
+                        {"path": ["name"]},  
+                        {"path": ["given_name"]},
+                        {"path": ["family_name"]},
+                        {"path": ["picture"]},
+                        {"path": ["hd"]},
+                        {"path": ["email_verified"]}
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+        """
+
+        val getDigitalCredentialOption = GetDigitalCredentialOption(requestJson = openId4vpRequest)
+        val request = GetCredentialRequest(listOf(getDigitalCredentialOption))
+
+        lifecycleScope.launch {
+            try {
+                val result = credentialManager.getCredential(this@MainActivity, request)
+                val credential = result.credential
+                if (credential is DigitalCredential) {
+                    val responseJsonString = credential.credentialJson
+                    viewModel.loginWithVerifiedEmail(responseJsonString, nonce) { success, error ->
+                         if (success) {
+                             Toast.makeText(this@MainActivity, "Verified Login Success", Toast.LENGTH_SHORT).show()
+                         } else {
+                             Toast.makeText(this@MainActivity, error ?: "Verification failed", Toast.LENGTH_SHORT).show()
+                         }
+                    }
+                } else {
+                    Toast.makeText(this@MainActivity, "Unexpected credential type", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: androidx.credentials.exceptions.NoCredentialException) {
+                Toast.makeText(this@MainActivity, "No verified credentials found on device.", Toast.LENGTH_SHORT).show()
+            } catch (e: GetCredentialException) {
+                Toast.makeText(this@MainActivity, "Verification failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MaveApp(
-    viewModel: MainViewModel = viewModel(),
+    viewModel: MainViewModel,
     onAcknowledgePermissions: () -> Unit,
     hasPermissions: Boolean
 ) {
-    val topLevelRoutes = listOf(
-        TopLevelRoute("Studio", Route.Home, Icons.Default.Home),
-        TopLevelRoute("Library", Route.Library, Icons.Default.LibraryMusic)
-    )
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
 
-    var currentRoute: Route by remember { 
-        mutableStateOf(if (viewModel.isUserLoggedIn()) Route.Home else Route.Welcome) 
-    }
+    val topLevelRoutes = setOf<NavKey>(Route.Home, Route.Library)
+    val startRoute: NavKey = if (viewModel.isUserLoggedIn()) Route.Home else Route.Welcome
+
+    val navigationState = rememberNavigationState(
+        startRoute = startRoute,
+        topLevelRoutes = topLevelRoutes
+    )
+    val navigator = remember { Navigator(navigationState) }
     
     val currentPlayingTrack by viewModel.currentPlayingTrack.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
-    val isWearableConnected by viewModel.isWearableConnected.collectAsStateWithLifecycle()
-    val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberStandardBottomSheetState(
-            initialValue = SheetValue.PartiallyExpanded,
-            skipHiddenState = false
-        )
-    )
+    
+    val scaffoldState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
+    val currentModality by viewModel.currentModality.collectAsStateWithLifecycle()
 
-    val showBottomNav = currentRoute in listOf(Route.Home, Route.Library, Route.Devices) || currentRoute is Route.AlbumView
-    val showPlayerBar = showBottomNav && currentPlayingTrack != null
+    LaunchedEffect(Unit) {
+        viewModel.shouldExpandBottomSheet.collectLatest { expand ->
+            if (expand) {
+                scaffoldState.bottomSheetState.expand()
+            }
+        }
+    }
 
-    Scaffold { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
-            NavDisplay(
-                backStack = listOf(currentRoute),
-                onBack = { currentRoute = Route.Home }
-            ) { key: Route ->
-                androidx.navigation3.runtime.NavEntry<Route>(key) {
-                    when (key) {
-                        // --- Onboarding Screens ---
-                        Route.Welcome -> WelcomeScreen(
-                            onSignUpClick = { currentRoute = Route.AuthOptions },
-                            onLoginClick = { currentRoute = Route.Login }
-                        )
-                        Route.AuthOptions -> AuthOptionsScreen(
-                            onEmailClick = { currentRoute = Route.EmailInput },
-                            onGoogleClick = { viewModel.guestLogin { s, _ -> if (s) currentRoute = Route.Loading } },
-                            onAppleClick = { /* logic */ },
-                            onLoginClick = { currentRoute = Route.Login },
-                            onBackClick = { currentRoute = Route.Welcome }
-                        )
-                        Route.EmailInput -> EmailInputScreen(
-                            viewModel = viewModel,
-                            onNextClick = { currentRoute = Route.PasswordInput },
-                            onBackClick = { currentRoute = Route.AuthOptions }
-                        )
-                        Route.PasswordInput -> PasswordInputScreen(
-                            viewModel = viewModel,
-                            onNextClick = { currentRoute = Route.BirthdayInput },
-                            onBackClick = { currentRoute = Route.EmailInput }
-                        )
-                        Route.BirthdayInput -> BirthdayInputScreen(
-                            viewModel = viewModel,
-                            onNextClick = { currentRoute = Route.GenderInput },
-                            onBackClick = { currentRoute = Route.PasswordInput }
-                        )
-                        Route.GenderInput -> GenderInputScreen(
-                            viewModel = viewModel,
-                            onNextClick = { currentRoute = Route.NameTerms },
-                            onBackClick = { currentRoute = Route.BirthdayInput }
-                        )
-                        Route.NameTerms -> NameTermsScreen(
-                            viewModel = viewModel,
-                            onNextClick = { currentRoute = Route.Loading },
-                            onBackClick = { currentRoute = Route.GenderInput }
-                        )
-                        Route.Loading -> {
-                            LoadingScreen()
-                            LaunchedEffect(Unit) {
-                                kotlinx.coroutines.delay(2000)
-                                currentRoute = Route.Notification
-                            }
-                        }
-                        Route.Notification -> NotificationScreen(
-                            onTurnOn = { onAcknowledgePermissions(); currentRoute = Route.ArtistSelection },
-                            onNotNow = { currentRoute = Route.ArtistSelection }
-                        )
-                        Route.ArtistSelection -> ArtistSelectionScreen(
-                            viewModel = viewModel,
-                            onDone = { currentRoute = Route.Home }
-                        )
-                        
-                        // --- Main Studio Screens ---
-                        Route.Login -> LoginScreen(
-                            onLoginSuccess = { currentRoute = Route.Home },
-                            onNavigateToSignUp = { currentRoute = Route.Welcome },
-                            viewModel = viewModel
-                        )
-                        Route.Home -> HomeScreen(
-                            viewModel = viewModel,
-                            isWearableConnected = isWearableConnected,
-                            onNavigateToDevices = { currentRoute = Route.Devices }
-                        )
-                        Route.Library -> LibraryScreen(
-                            viewModel = viewModel,
-                            onNavigateToNowPlaying = { /* logic */ },
-                            onNavigateToAlbum = { currentRoute = Route.AlbumView(it) },
-                            onNavigateToHome = { currentRoute = Route.Home }
-                        )
-                        is Route.AlbumView -> AlbumViewScreen(
-                            albumId = key.albumId,
-                            viewModel = viewModel,
-                            onNavigateBack = { currentRoute = Route.Library },
-                            onTrackClick = { /* logic */ }
-                        )
-                        Route.Devices -> DevicesScreen(
-                            viewModel = viewModel,
-                            onNavigateBack = { currentRoute = Route.Home }
-                        )
-                    }
+    val currentRoute = navigationState.backStacks[navigationState.topLevelRoute]?.last() ?: navigationState.topLevelRoute
+    val showNavSuite = currentRoute in listOf(Route.Home, Route.Library, Route.Devices) || currentRoute is Route.AlbumView || currentRoute is Route.UserProfile
+    
+    val entryProvider = maveEntryProvider(
+        viewModel = viewModel,
+        navigator = navigator,
+        onAcknowledgePermissions = onAcknowledgePermissions
+    )
+
+    if (showNavSuite) {
+        val navSuiteType = if (isExpanded) {
+            NavigationSuiteType.NavigationRail
+        } else {
+            NavigationSuiteType.NavigationBar
+        }
+
+        NavigationSuiteScaffold(
+            layoutType = navSuiteType,
+            navigationSuiteItems = {
+                listOf(
+                    TopLevelRoute("Studio", Route.Home, Icons.Default.Home),
+                    TopLevelRoute("Library", Route.Library, Icons.Default.LibraryMusic)
+                ).forEach { tr ->
+                    item(
+                        icon = { Icon(tr.icon, contentDescription = tr.name) },
+                        label = { }, // Show only icons for a minimalist feel
+                        selected = navigationState.topLevelRoute == tr.route,
+                        onClick = { navigator.navigate(tr.route as Route) }
+                    )
                 }
             }
-
-            if (showBottomNav) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.align(androidx.compose.ui.Alignment.BottomCenter)) {
-                        if (showPlayerBar) {
-                            MiniPlayer(
-                                track = currentPlayingTrack!!,
-                                isPlaying = isPlaying,
-                                onPlayPauseClick = { viewModel.togglePlayPause() },
-                                onClick = { /* expand logic */ }
+        ) {
+            BottomSheetScaffold(
+                scaffoldState = scaffoldState,
+                sheetPeekHeight = if (currentPlayingTrack != null) 72.dp else 0.dp,
+                sheetDragHandle = null,
+                sheetContent = {
+                    if (currentPlayingTrack != null) {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            NowPlayingScreen(
+                                track = currentPlayingTrack,
+                                viewModel = viewModel,
+                                modality = currentModality,
+                                onCollapse = {
+                                    coroutineScope.launch {
+                                        scaffoldState.bottomSheetState.partialExpand()
+                                    }
+                                }
                             )
-                        }
-                        NavigationBar {
-                            topLevelRoutes.forEach { route ->
-                                NavigationBarItem(
-                                    icon = { Icon(route.icon, contentDescription = route.name) },
-                                    label = { Text(route.name) },
-                                    selected = currentRoute == route.route,
-                                    onClick = { currentRoute = route.route as Route }
+                            if (scaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
+                                MiniPlayer(
+                                    track = currentPlayingTrack!!,
+                                    isPlaying = isPlaying,
+                                    onPlayPauseClick = { viewModel.togglePlayPause() },
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            scaffoldState.bottomSheetState.expand()
+                                        }
+                                    }
                                 )
                             }
                         }
+                    } else {
+                        Box(modifier = Modifier.height(1.dp))
                     }
+                }
+            ) { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .consumeWindowInsets(paddingValues)
+                ) {
+                    NavDisplay(
+                        entries = navigationState.toEntries(entryProvider as (NavKey) -> NavEntry<NavKey>),
+                        onBack = { navigator.goBack() },
+                        transitionSpec = maveTransitionSpec() as AnimatedContentTransitionScope<androidx.navigation3.scene.Scene<NavKey>>.() -> ContentTransform,
+                        popTransitionSpec = mavePopTransitionSpec() as AnimatedContentTransitionScope<androidx.navigation3.scene.Scene<NavKey>>.() -> ContentTransform,
+                        sceneStrategies = listOf(BottomSheetSceneStrategy<NavKey>(), androidx.navigation3.scene.SinglePaneSceneStrategy())
+                    )
                 }
             }
         }
+    } else {
+        NavDisplay(
+            entries = navigationState.toEntries(entryProvider as (NavKey) -> NavEntry<NavKey>),
+            onBack = { navigator.goBack() },
+            transitionSpec = maveTransitionSpec() as AnimatedContentTransitionScope<androidx.navigation3.scene.Scene<NavKey>>.() -> ContentTransform,
+            popTransitionSpec = mavePopTransitionSpec() as AnimatedContentTransitionScope<androidx.navigation3.scene.Scene<NavKey>>.() -> ContentTransform,
+            sceneStrategies = listOf(BottomSheetSceneStrategy<NavKey>(), androidx.navigation3.scene.SinglePaneSceneStrategy())
+        )
     }
 }

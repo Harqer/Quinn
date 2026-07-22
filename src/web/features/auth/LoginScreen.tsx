@@ -57,7 +57,7 @@ export const LoginScreen: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
         )}
         
         <div className="w-full space-y-3 flex flex-col items-center">
-          <Button fullWidth onClick={onLogin} disabled={loading}>
+          <Button fullWidth onClick={handleGoogleLogin} disabled={loading}>
             Sign up free
           </Button>
           
@@ -72,7 +72,7 @@ export const LoginScreen: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
           </Button>
         </div>
         
-        <button onClick={onLogin} className="mt-8 text-white font-bold text-base hover:scale-105 transition-transform active:scale-95">
+        <button onClick={handleGoogleLogin} disabled={loading} className="mt-8 text-white font-bold text-base hover:scale-105 transition-transform active:scale-95 disabled:opacity-50">
           Log in
         </button>
       </div>

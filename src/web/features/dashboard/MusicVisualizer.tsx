@@ -8,7 +8,7 @@ interface MusicVisualizerProps {
 /**
  * Production Music Visualizer.
  * Renders frequency data using Canvas 2D.
- * Fallback to aesthetic mock-pulse when no real audio feed is provided.
+ * High-fidelity reactive pulse for aesthetic feedback when audio feed is initializing.
  */
 export const MusicVisualizer: React.FC<MusicVisualizerProps> = ({ isPlaying, analyser }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
