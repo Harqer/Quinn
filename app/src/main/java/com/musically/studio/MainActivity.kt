@@ -101,6 +101,7 @@ class MainActivity : ComponentActivity() {
                         AuthSideEffect.LaunchGoogleSignIn -> launchGoogleSignIn()
                         AuthSideEffect.LaunchAppleSignIn -> launchAppleSignIn(mainViewModel)
                         AuthSideEffect.LaunchVerifiedEmail -> launchVerifiedEmail(mainViewModel)
+                        AuthSideEffect.LaunchFacebookSignIn -> { /* Launch facebook */ }
                     }
                 }
             }

@@ -25,6 +25,7 @@ fun maveEntryProvider(
 ) = entryProvider {
     entry<Route.Welcome> {
         WelcomeScreen(
+            viewModel = viewModel,
             onSignUpClick = { navigator.navigate(Route.AuthOptions) },
             onLoginClick = { navigator.navigate(Route.Login) }
         )
@@ -51,7 +52,41 @@ fun maveEntryProvider(
     entry<Route.Home> {
         HomeScreen(
             viewModel = viewModel,
-            onNavigateToDevices = { navigator.navigate(Route.Devices) }
+            onNavigateToSettings = { navigator.navigate(Route.UserProfile(viewModel.getUserId())) },
+            onNavigateToLibrary = { navigator.navigate(Route.Library) },
+            onNavigateToDevices = { navigator.navigate(Route.Devices) },
+            onNavigateToMore = { navigator.navigate(Route.Library) },
+            onNavigateToCamera = { navigator.navigate(Route.Camera) },
+            onNavigateToLiveSession = { navigator.navigate(Route.LiveSession) }
+        )
+    }
+
+    entry<Route.Camera> {
+        CameraCaptureScreen(
+            onImageCaptured = { base64 ->
+                viewModel.generateMusicPrompts(base64)
+                navigator.goBack()
+            },
+            onClose = { navigator.goBack() }
+        )
+    }
+
+    entry<Route.Gallery> {
+        GalleryPickerScreen(
+            onImageSelected = { base64 ->
+                viewModel.onGalleryImageSelected(base64)
+                navigator.goBack()
+            },
+            onClose = { navigator.goBack() }
+        )
+    }
+
+    entry<Route.LiveSession> {
+        LiveSessionScreen(
+            viewModel = viewModel,
+            onNavigateBack = { navigator.goBack() },
+            onNavigateToCamera = { navigator.navigate(Route.Camera) },
+            onNavigateToGallery = { navigator.navigate(Route.Gallery) }
         )
     }
 

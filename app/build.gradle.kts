@@ -110,6 +110,10 @@ dependencies {
     implementation(libs.androidx.appfunctions)
     implementation(libs.androidx.appfunctions.service)
     ksp(libs.androidx.appfunctions.compiler)
+    implementation(kotlin("reflect"))
+
+    testImplementation("org.mockito:mockito-core:5.3.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
 
     // AndroidX & Material UI Components
     implementation(libs.google.material)

@@ -18,6 +18,7 @@ interface ApiClient {
     suspend fun reportTarget(targetId: String, targetType: String, reason: String): Boolean
     suspend fun getCommunityTracks(): List<MaveTrack>?
     suspend fun verifyDigitalCredential(credentialJson: String, nonce: String): String?
+    suspend fun generateMusicPrompts(imageB64: String): List<String>?
 }
 
 class RealApiClient(private val client: OkHttpClient) : ApiClient {
@@ -234,6 +235,41 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
         } catch (e: IOException) {
             Timber.e(e, "Network Error")
             false
+        }
+    }
+
+    override suspend fun generateMusicPrompts(imageB64: String): List<String>? {
+        val token = TokenManager.getValidToken() ?: return null
+        val json = JSONObject().apply {
+            put("image", imageB64)
+        }
+        val body = json.toString().toRequestBody(JSON)
+        val request = Request.Builder()
+            .url("$BASE_URL/generate")
+            .header("Authorization", "Bearer $token")
+            .post(body)
+            .build()
+        
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val respBody = response.body?.string()
+                    if (!respBody.isNullOrEmpty()) {
+                        val respJson = JSONObject(respBody)
+                        val promptsArray = respJson.optJSONArray("prompts")
+                        val list = mutableListOf<String>()
+                        if (promptsArray != null) {
+                            for (i in 0 until promptsArray.length()) {
+                                list.add(promptsArray.getString(i))
+                            }
+                        }
+                        list
+                    } else emptyList()
+                } else null
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error generating music prompts")
+            null
         }
     }
 }

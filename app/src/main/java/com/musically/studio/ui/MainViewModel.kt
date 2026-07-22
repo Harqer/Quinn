@@ -6,7 +6,6 @@ import android.content.Intent
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
-import android.os.Vibrator
 import android.util.Base64
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
@@ -22,6 +21,8 @@ import com.musically.studio.network.ApiClient
 import com.musically.studio.network.MaveSessionManager
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.models.ChatMessage
+import com.musically.studio.ui.models.AudioDevice
+import com.musically.studio.ui.models.DeviceType
 import com.musically.studio.ui.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +30,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
 import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
@@ -47,6 +47,9 @@ class MainViewModel @Inject constructor(
 
     private val _tracks = MutableStateFlow<List<MaveTrack>>(emptyList())
     val tracks: StateFlow<List<MaveTrack>> = _tracks.asStateFlow()
+
+    private val _communityTracks = MutableStateFlow<List<MaveTrack>>(emptyList())
+    val communityTracks: StateFlow<List<MaveTrack>> = _communityTracks.asStateFlow()
     
     private val _isWearableConnected = MutableStateFlow(false)
     val isWearableConnected: StateFlow<Boolean> = _isWearableConnected.asStateFlow()
@@ -91,6 +94,9 @@ class MainViewModel @Inject constructor(
     private val _currentModality = MutableStateFlow("music")
     val currentModality: StateFlow<String> = _currentModality.asStateFlow()
 
+    private val _generatedPrompts = MutableStateFlow<List<String>>(emptyList())
+    val generatedPrompts: StateFlow<List<String>> = _generatedPrompts.asStateFlow()
+
     private var rtdbListener: ValueEventListener? = null
 
     // Registration State Accumulator
@@ -103,18 +109,37 @@ class MainViewModel @Inject constructor(
     private val _isRecording = MutableStateFlow(false)
     val isRecording: StateFlow<Boolean> = _isRecording.asStateFlow()
 
+    // Live Session State
+    private val _isLiveSessionActive = MutableStateFlow(false)
+    val isLiveSessionActive: StateFlow<Boolean> = _isLiveSessionActive.asStateFlow()
+
+    // Gallery/Video image-to-music state
+    private val _pendingGalleryImageBase64 = MutableStateFlow<String?>(null)
+    val pendingGalleryImageBase64: StateFlow<String?> = _pendingGalleryImageBase64.asStateFlow()
+
+    // Wearable frame streaming toggle (default off to preserve battery)
+    private val _isWearableFrameStreamingEnabled = MutableStateFlow(false)
+    val isWearableFrameStreamingEnabled: StateFlow<Boolean> = _isWearableFrameStreamingEnabled.asStateFlow()
+
     private var audioRecord: AudioRecord? = null
     private var recordingJob: Job? = null
+    private var wearableFrameJob: Job? = null
+
+    // Throttle wearable frame streaming to 1 frame per 2 seconds to avoid overloading backend
+    private val WEARABLE_FRAME_INTERVAL_MS = 2000L
 
     init {
         setupWebSocketCollector()
         setupWearableCollector()
+        setupWearableFrameStreaming()
         if (isUserLoggedIn()) {
             startRtdbSync()
         }
     }
 
     fun isUserLoggedIn(): Boolean = auth.currentUser != null
+
+    fun getUserId(): String = auth.currentUser?.uid ?: ""
 
     fun loginWithEmail(email: String, pass: String, callback: (Boolean, String?) -> Unit) {
         _isLoading.value = true
@@ -159,6 +184,12 @@ class MainViewModel @Inject constructor(
     fun triggerVerifiedEmailSignIn() {
         viewModelScope.launch {
             _authSideEffect.emit(AuthSideEffect.LaunchVerifiedEmail)
+        }
+    }
+
+    fun triggerFacebookSignIn() {
+        viewModelScope.launch {
+            _authSideEffect.emit(AuthSideEffect.LaunchFacebookSignIn)
         }
     }
 
@@ -317,6 +348,22 @@ class MainViewModel @Inject constructor(
         })
     }
 
+    // Collect wearable POV camera frames and forward to backend when streaming is enabled
+    private fun setupWearableFrameStreaming() {
+        wearableFrameJob = viewModelScope.launch {
+            WearableStreamingService.cameraFrames.collect { frameBytes ->
+                if (_isWearableFrameStreamingEnabled.value && _isLiveSessionActive.value) {
+                    maveSessionManager.sendVideoFrame(frameBytes)
+                    delay(WEARABLE_FRAME_INTERVAL_MS)
+                }
+            }
+        }
+    }
+
+    fun toggleWearableFrameStreaming() {
+        _isWearableFrameStreamingEnabled.value = !_isWearableFrameStreamingEnabled.value
+    }
+
     private fun setupWearableCollector() {
         viewModelScope.launch {
             WearableStreamingService.isServiceActive.collectLatest { active ->
@@ -347,9 +394,26 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun connectToMave() {
+    /** Starts the live real-time Mave session (WebSocket + RTDB sync). */
+    fun startLiveSession() {
+        if (_isLiveSessionActive.value) return
+        _isLiveSessionActive.value = true
         maveSessionManager.connect()
         startRtdbSync()
+    }
+
+    /** Stops the live session including any ongoing recording. */
+    fun stopLiveSession() {
+        if (_isRecording.value) {
+            stopRecording()
+        }
+        _isLiveSessionActive.value = false
+        maveSessionManager.disconnect()
+    }
+
+    /** Legacy alias kept for compatibility. */
+    fun connectToMave() {
+        startLiveSession()
     }
 
     fun sendTextCommand(text: String) {
@@ -469,6 +533,44 @@ class MainViewModel @Inject constructor(
         maveSessionManager.sendEvent("vision", mapOf("image" to base64))
     }
 
+    /**
+     * Processes a gallery-picked or camera-captured image for music generation.
+     * Sends the image to the backend orchestration layer which calls Gemini to generate
+     * music prompts from visual context.
+     */
+    fun generateMusicPrompts(base64: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _pendingGalleryImageBase64.value = base64
+            // Also send as a vision frame to the live session if active
+            if (_isLiveSessionActive.value) {
+                maveSessionManager.sendVideoFrame(
+                    Base64.decode(base64, Base64.NO_WRAP)
+                )
+            }
+            val result = apiClient.generateMusicPrompts(base64)
+            if (result != null) {
+                _generatedPrompts.value = result
+                // Auto-send generated prompts to session if active
+                if (_isLiveSessionActive.value && result.isNotEmpty()) {
+                    val promptMaps = result.map { mapOf("text" to it, "weight" to 1.0) }
+                    maveSessionManager.sendPrompts(promptMaps)
+                }
+            }
+            _isLoading.value = false
+        }
+    }
+
+    /** Called when the user has selected a gallery image (base64 encoded). */
+    fun onGalleryImageSelected(base64: String) {
+        generateMusicPrompts(base64)
+    }
+
+    /** Clear any pending gallery image state. */
+    fun clearPendingGalleryImage() {
+        _pendingGalleryImageBase64.value = null
+    }
+
     fun applySteering(params: Map<String, Any>) {
         maveSessionManager.sendEvent("steering_action", mapOf("params" to params))
     }
@@ -540,8 +642,30 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun fetchCommunityTracks() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val result = apiClient.getCommunityTracks()
+            if (result != null) {
+                _communityTracks.value = result
+            }
+            _isLoading.value = false
+        }
+    }
+
     private val _userVibes = MutableStateFlow<List<MaveTrack>>(emptyList())
     val userVibes: StateFlow<List<MaveTrack>> = _userVibes.asStateFlow()
+
+    private val _devices = MutableStateFlow<List<AudioDevice>>(emptyList())
+    val devices: StateFlow<List<AudioDevice>> = _devices.asStateFlow()
+
+    fun selectDevice(device: AudioDevice) {
+        val currentDevices = _devices.value.toMutableList()
+        val updatedDevices = currentDevices.map { 
+            it.copy(isCurrent = it.id == device.id)
+        }
+        _devices.value = updatedDevices
+    }
 
     fun fetchVibesByUserId(userId: String) {
         viewModelScope.launch {
@@ -570,4 +694,5 @@ sealed interface AuthSideEffect {
     data object LaunchGoogleSignIn : AuthSideEffect
     data object LaunchAppleSignIn : AuthSideEffect
     data object LaunchVerifiedEmail : AuthSideEffect
+    data object LaunchFacebookSignIn : AuthSideEffect
 }

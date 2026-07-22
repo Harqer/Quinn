@@ -15,9 +15,19 @@ object MaveStyles {
         // Default Button Style
         shape(RoundedCornerShape(28.dp))
         minHeight(56.dp)
-        
-        // Using State-based styling as supported by foundation.style.Style
-        // If these specific attributes are not in alpha01, we use generic ones.
+    }
+
+    val primaryButton = Style {
+        shape(RoundedCornerShape(28.dp))
+        minHeight(56.dp)
+        background(Color(0xFF1ED760))
+    }
+
+    val outlinedButton = Style {
+        shape(RoundedCornerShape(28.dp))
+        minHeight(56.dp)
+        border(1.dp, Color.White)
+        background(Color.Transparent)
     }
 
     val maveTextFieldStyle = Style {

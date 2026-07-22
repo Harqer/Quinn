@@ -8,32 +8,36 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.atoms.MaveButton
+import com.musically.studio.ui.components.atoms.MaveTextField
 import com.musically.studio.ui.components.molecules.MaveArtistCard
-
-data class Artist(val name: String, val imageUrl: String?)
+import com.musically.studio.ui.theme.MaveStyles
+import androidx.compose.foundation.style.styleable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArtistSelectionScreen(
-    viewModel: com.musically.studio.ui.MainViewModel,
+    viewModel: MainViewModel,
     onDone: () -> Unit
 ) {
-    val allArtists = listOf(
-        Artist("Taylor Swift", "https://i.scdn.co/image/ab6761610000e5eb859fab694841393c6165c694"),
-        Artist("Drake", "https://i.scdn.co/image/ab6761610000e5eb4293385d324db8558179afd9"),
-        Artist("The Weeknd", "https://i.scdn.co/image/ab6761610000e5eb214f3cfc684347781b0a501e"),
-        Artist("Bad Bunny", "https://i.scdn.co/image/ab6761610000e5eb499d2d46e3929ef31d048f61"),
-        Artist("Ed Sheeran", "https://i.scdn.co/image/ab6761610000e5eb12826c47474400787e35ccb7"),
-        Artist("Billie Eilish", "https://i.scdn.co/image/ab6761610000e5eb20560a80e1590f6f059f4277")
-    )
+    val tracks by viewModel.communityTracks.collectAsStateWithLifecycle()
+    val allArtists = remember(tracks) {
+        tracks.flatMap { it.artists }.distinctBy { it.id }
+    }
     
     val selectedArtists = remember { mutableStateListOf<String>() }
     var searchQuery by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchCommunityTracks()
+    }
 
     val filteredArtists = if (searchQuery.isBlank()) {
         allArtists
@@ -52,7 +56,8 @@ fun ArtistSelectionScreen(
                             onDone()
                         }
                     },
-                    modifier = Modifier.fillMaxWidth().padding(32.dp)
+                    modifier = Modifier.fillMaxWidth().padding(32.dp),
+                    style = MaveStyles.primaryButton
                 )
             }
         }
@@ -74,40 +79,40 @@ fun ArtistSelectionScreen(
             
             Spacer(modifier = Modifier.height(24.dp))
             
-            OutlinedTextField(
+            MaveTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text("Search", color = Color.Gray) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black
-                )
+                label = "Search",
+                trailingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
+                modifier = Modifier.fillMaxWidth()
             )
             
             Spacer(modifier = Modifier.height(24.dp))
             
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                items(filteredArtists) { artist ->
-                    MaveArtistCard(
-                        name = artist.name,
-                        imageUrl = artist.imageUrl,
-                        isSelected = selectedArtists.contains(artist.name),
-                        onClick = {
-                            if (selectedArtists.contains(artist.name)) {
-                                selectedArtists.remove(artist.name)
-                            } else {
-                                selectedArtists.add(artist.name)
+            if (allArtists.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("No artists found", color = Color.White, style = MaterialTheme.typography.titleMedium)
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    items(filteredArtists) { artist ->
+                        MaveArtistCard(
+                            name = artist.name,
+                            imageUrl = null,
+                            isSelected = selectedArtists.contains(artist.name),
+                            onClick = {
+                                if (selectedArtists.contains(artist.name)) {
+                                    selectedArtists.remove(artist.name)
+                                } else {
+                                    selectedArtists.add(artist.name)
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

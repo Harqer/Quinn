@@ -22,10 +22,7 @@ fun MaveButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    containerColor: Color = MaterialTheme.colorScheme.primary,
-    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
-    style: Style = Style,
-    outlined: Boolean = false
+    style: Style = Style
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val styleState = rememberUpdatedStyleState(interactionSource) {
@@ -36,12 +33,7 @@ fun MaveButton(
         onClick = onClick,
         enabled = enabled,
         interactionSource = interactionSource,
-        color = if (outlined) Color.Transparent else containerColor,
-        contentColor = if (outlined) containerColor else contentColor,
-        shape = RoundedCornerShape(28.dp),
-        modifier = modifier
-            .styleable(styleState, MaveStyles.maveButtonStyle, style)
-            .then(if (outlined) Modifier.border(1.dp, containerColor, RoundedCornerShape(28.dp)) else Modifier)
+        modifier = modifier.styleable(styleState, MaveStyles.maveButtonStyle, style)
     ) {
         Box(
             modifier = Modifier

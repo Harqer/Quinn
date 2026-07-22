@@ -1,29 +1,30 @@
 package com.musically.studio.ui.screens
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
-import com.github.takahirom.roborazzi.captureRoboImage
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import com.musically.studio.network.FakeApiClient
 import com.musically.studio.network.MaveSessionManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.musically.studio.ui.MainViewModel
-import com.musically.studio.ui.screens.HomeScreen
+import com.musically.studio.ui.screens.onboarding.WelcomeScreen
 import com.musically.studio.ui.theme.MaveAppTheme
 import org.junit.Before
+import org.mockito.Mockito
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import com.github.takahirom.roborazzi.captureRoboImage
 
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(qualifiers = RobolectricDeviceQualifiers.Pixel5)
-class HomeScreenTest {
+class WelcomeScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -38,22 +39,16 @@ class HomeScreenTest {
         val mockFlow = kotlinx.coroutines.flow.MutableSharedFlow<String>()
         Mockito.doReturn(mockFlow).`when`(mockSession).events
         viewModel = MainViewModel(FakeApiClient(), mockSession, mockAuth, mockDb)
-        
-        // Setup initial feed
-        viewModel.fetchCommunityTracks()
     }
 
     @Test
-    fun homeScreen_rendersCorrectly() {
+    fun welcomeScreen_rendersCorrectly() {
         composeTestRule.setContent {
             MaveAppTheme {
-                HomeScreen(
+                WelcomeScreen(
                     viewModel = viewModel,
-                    isWearableConnected = false,
-                    onNavigateToSettings = {},
-                    onNavigateToLibrary = {},
-                    onNavigateToDevices = {},
-                    onNavigateToMore = {}
+                    onLoginClick = {},
+                    onSignUpClick = {}
                 )
             }
         }

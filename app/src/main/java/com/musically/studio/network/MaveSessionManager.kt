@@ -8,14 +8,14 @@ import okhttp3.*
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
-class MaveSessionManager(
+open class MaveSessionManager(
     private val client: OkHttpClient
 ) {
     private var webSocket: WebSocket? = null
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private val _events = MutableSharedFlow<String>(extraBufferCapacity = 10)
-    val events = _events.asSharedFlow()
+    open val events = _events.asSharedFlow()
 
     fun connect() {
         if (webSocket != null) return
@@ -36,10 +36,12 @@ class MaveSessionManager(
 
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                     Timber.d("Mave Session Closed: $reason")
+                    this@MaveSessionManager.webSocket = null
                 }
 
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                     Timber.e(t, "Mave Session Failure")
+                    this@MaveSessionManager.webSocket = null
                 }
             })
         }
@@ -55,7 +57,13 @@ class MaveSessionManager(
     fun sendPrompts(prompts: List<Map<String, Any>>) {
         val json = JSONObject()
         json.put("type", "setWeightedPrompts")
-        // ... build array
+        val promptsArray = org.json.JSONArray()
+        prompts.forEach { prompt ->
+            val promptObj = JSONObject()
+            prompt.forEach { (k, v) -> promptObj.put(k, v) }
+            promptsArray.put(promptObj)
+        }
+        json.put("prompts", promptsArray)
         webSocket?.send(json.toString())
     }
 
@@ -70,8 +78,16 @@ class MaveSessionManager(
         webSocket?.send(json.toString())
     }
 
+    fun sendVideoFrame(frameBytes: ByteArray) {
+        val base64 = android.util.Base64.encodeToString(frameBytes, android.util.Base64.NO_WRAP)
+        val json = JSONObject()
+        json.put("type", "vision")
+        json.put("image", base64)
+        webSocket?.send(json.toString())
+    }
+
     fun disconnect() {
         webSocket?.close(1000, "User logout")
-        scope.cancel()
+        webSocket = null
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.components.atoms.MaveButton
 import com.musically.studio.ui.components.atoms.MaveLogo
+import com.musically.studio.ui.theme.MaveStyles
 
 @Composable
 fun AuthOptionsScreen(
@@ -56,7 +57,8 @@ fun AuthOptionsScreen(
             MaveButton(
                 text = "Continue with email",
                 onClick = onEmailClick,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                style = MaveStyles.primaryButton
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -64,8 +66,8 @@ fun AuthOptionsScreen(
             MaveButton(
                 text = "Continue with Google",
                 onClick = onGoogleClick,
-                outlined = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                style = MaveStyles.outlinedButton
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -73,8 +75,8 @@ fun AuthOptionsScreen(
             MaveButton(
                 text = "Continue with Apple",
                 onClick = onAppleClick,
-                outlined = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                style = MaveStyles.outlinedButton
             )
             
             Spacer(modifier = Modifier.weight(1f))

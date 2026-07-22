@@ -20,6 +20,7 @@ class FakeApiClient : ApiClient {
     override suspend fun getUserTracks(): List<MaveTrack>? = userTracksResult
     override suspend fun getVibesByUserId(userId: String): List<MaveTrack>? = userTracksResult
     override suspend fun reportTarget(targetId: String, targetType: String, reason: String): Boolean = true
-    override suspend fun getCommunityTracks(): List<MaveTrack>? = communityTracksResult
-    override suspend fun verifyDigitalCredential(credentialJson: String, nonce: String): String? = verifyCredentialResult
+    override suspend fun getCommunityTracks(): List<MaveTrack>? = emptyList()
+    override suspend fun verifyDigitalCredential(credentialJson: String, nonce: String): String? = "mock-token"
+    override suspend fun generateMusicPrompts(imageB64: String): List<String>? = emptyList()
 }

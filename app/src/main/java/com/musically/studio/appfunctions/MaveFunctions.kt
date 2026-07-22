@@ -14,7 +14,7 @@ class MaveFunctions @Inject constructor(
     private val sessionManager: MaveSessionManager
 ) {
     /**
-     * Initiates music generation based on a natural language vibe description.
+     * Initiate music generation based on a natural language vibe description.
      *
      * @param context The execution context.
      * @param text The natural language description of the desired musical atmosphere.
@@ -26,7 +26,8 @@ class MaveFunctions @Inject constructor(
     }
 
     /**
-     * Dynamically warps the current musical session's parameters.
+     * Dynamically warp the current musical session's parameters.
+     * Required workflow: Call "strikeVibe" first to initiate a session.
      *
      * @param context The execution context.
      * @param bpm The desired beats per minute. If null, the current BPM is maintained.
@@ -42,7 +43,7 @@ class MaveFunctions @Inject constructor(
     }
 
     /**
-     * Triggers real-time AI narration of the user's current environment.
+     * Trigger real-time AI narration of the user's current environment.
      *
      * @param context The execution context.
      */
@@ -50,5 +51,39 @@ class MaveFunctions @Inject constructor(
     suspend fun narratePOV(context: AppFunctionContext) {
         sessionManager.connect()
         sessionManager.sendEvent("text_command", mapOf("text" to "Narrate my surroundings"))
+    }
+
+    /**
+     * Search for a track or podcast by query string.
+     *
+     * @param context The execution context.
+     * @param query Search string for track or podcast content.
+     */
+    @AppFunction(isDescribedByKDoc = true)
+    suspend fun searchForContent(context: AppFunctionContext, query: String) {
+        sessionManager.connect()
+        sessionManager.sendEvent("text_command", mapOf("text" to "Search for $query"))
+    }
+
+    /**
+     * Navigate the user to their library of saved tracks and podcasts.
+     *
+     * @param context The execution context.
+     */
+    @AppFunction(isDescribedByKDoc = true)
+    suspend fun openLibrary(context: AppFunctionContext) {
+        sessionManager.connect()
+        sessionManager.sendEvent("navigation", mapOf("destination" to "library"))
+    }
+    
+    /**
+     * Navigate the user to the home screen showing community and user tracks.
+     *
+     * @param context The execution context.
+     */
+    @AppFunction(isDescribedByKDoc = true)
+    suspend fun openHome(context: AppFunctionContext) {
+        sessionManager.connect()
+        sessionManager.sendEvent("navigation", mapOf("destination" to "home"))
     }
 }
