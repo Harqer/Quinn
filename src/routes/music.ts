@@ -99,8 +99,9 @@ export const setupMusicWebSocket = (wss: WebSocketServer) => {
         uid = decodedToken.uid;
         logger.info(`[WS_STUDIO] Authenticated user connected.`, { uid });
       } catch (err) {
-        uid = `guest_${Math.random().toString(36).substring(7)}`;
-        logger.warn(`[WS_STUDIO] Invalid token, falling back to guest.`, { uid });
+        logger.error(`[WS_STUDIO] Token verification failed. Closing connection.`, { error: err });
+        ws.close(4001, "Unauthorized: Invalid Auth Token");
+        return;
       }
     }
 
