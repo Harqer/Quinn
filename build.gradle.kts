@@ -11,6 +11,7 @@ plugins {
 
 subprojects {
     val buildDir = File("/tmp/lyria-build/${project.name}")
+    buildDir.mkdirs()
     layout.buildDirectory.set(buildDir)
 }
 

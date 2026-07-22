@@ -34,7 +34,9 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="false"
-        android:label="Mave Studio"
+        android:icon="@drawable/mave_brand_light"
+        android:roundIcon="@drawable/mave_brand_light"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Mave">
         
