@@ -158,19 +158,18 @@ export const setupMusicWebSocket = (wss: WebSocketServer) => {
 
     const appCheckToken = url.searchParams.get("appCheck");
 
-    if (process.env.NODE_ENV === "production") {
-      if (!appCheckToken) {
-        logger.error(`[WS_STUDIO] Missing App Check token. Closing connection.`);
-        ws.close(4001, "Unauthorized: Missing App Check Token");
-        return;
-      }
-      try {
-        await appCheck.verifyToken(appCheckToken);
-      } catch (err) {
-        logger.error(`[WS_STUDIO] Invalid App Check token. Closing connection.`, { error: err });
-        ws.close(4001, "Unauthorized: Invalid App Check Token");
-        return;
-      }
+    if (!appCheckToken) {
+      logger.error(`[WS_STUDIO] Missing App Check token. Closing connection.`);
+      ws.close(4001, "Unauthorized: Missing App Check Token");
+      return;
+    }
+
+    try {
+      await appCheck.verifyToken(appCheckToken);
+    } catch (err) {
+      logger.error(`[WS_STUDIO] Invalid App Check token.`, { error: err });
+      ws.close(4001, "Unauthorized: Invalid App Check Token");
+      return;
     }
 
     let musicSessionInitialized = false;

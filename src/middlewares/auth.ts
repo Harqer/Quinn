@@ -63,14 +63,8 @@ export const verifyAppCheck = async (
   const token = req.header("X-Firebase-AppCheck");
 
   if (!token) {
-    if (process.env.NODE_ENV === "production") {
-      res.status(401).json({ error: "Unauthorized: Missing App Check token." });
-      return;
-    } else {
-      logger.warn("[APP_CHECK] Warning: Missing App Check token in non-production environment.");
-      next();
-      return;
-    }
+    res.status(401).json({ error: "Unauthorized: Missing App Check token." });
+    return;
   }
 
   try {
