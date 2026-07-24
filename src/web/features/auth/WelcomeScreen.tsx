@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { Typography } from '../../components/atoms/Typography';
 import { Icon } from '../../components/atoms/Icon';
 import { Button } from '../../components/atoms/Button';
@@ -7,6 +8,7 @@ import maveLogoDark from '../../assets/mave_brand_dark.png';
 
 export const WelcomeScreen: React.FC<{ onSignUp: () => void, onLogin: () => void }> = ({ onSignUp, onLogin }) => {
   const { t } = useTranslation();
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   return (
     <div className="flex flex-col items-center justify-center h-full w-full bg-background px-6 pb-12 relative overflow-hidden">
       <div className="absolute inset-0 bg-[#121212] z-0">
@@ -28,11 +30,12 @@ export const WelcomeScreen: React.FC<{ onSignUp: () => void, onLogin: () => void
         </Typography>
 
         <div className="w-full space-y-3 flex flex-col items-center">
-          <Button fullWidth onClick={onSignUp} icon={<Icon name="person_add" />} title={t('welcome.signUp')} />
-          <Button variant="outlined" fullWidth onClick={onLogin} icon={<Icon name="login" />} title={t('welcome.logIn')} />
+          <Turnstile siteKey={(window as any).VITE_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"} onSuccess={setTurnstileToken} />
+          <Button fullWidth disabled={!turnstileToken} onClick={onSignUp} icon={<Icon name="person_add" />} title={t('welcome.signUp')} />
+          <Button variant="outlined" fullWidth disabled={!turnstileToken} onClick={onLogin} icon={<Icon name="login" />} title={t('welcome.logIn')} />
         </div>
         
-        <button onClick={onLogin} className="mt-8 text-white font-bold text-base hover:scale-105 transition-transform active:scale-95" title={t('welcome.logIn')}>
+        <button onClick={onLogin} disabled={!turnstileToken} className="mt-8 text-white font-bold text-base hover:scale-105 transition-transform active:scale-95 disabled:opacity-50" title={t('welcome.logIn')}>
           <Icon name="login" size="md" />
         </button>
       </div>
