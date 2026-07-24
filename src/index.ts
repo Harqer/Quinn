@@ -15,10 +15,8 @@ const PORT = process.env.PORT || 3000;
 const isGcpEnvironment = process.env.NODE_ENV === "production" || !!process.env.K_SERVICE || !!process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
 async function resolveSecrets() {
-  if (process.env.GEMINI_API_KEY) {
-    return; // Already configured in environment
-  }
   if (isGcpEnvironment) {
+    logger.info("[SECRET_MANAGER] Resolving secrets from Google Cloud Secret Manager for production...");
     try {
       const projectId = firebaseConfig.projectId || "musically-studio";
       const client = new SecretManagerServiceClient();
