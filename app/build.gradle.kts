@@ -3,6 +3,7 @@ import java.io.File
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
@@ -67,6 +68,7 @@ android {
         jniLibs {
             useLegacyPackaging = true
             keepDebugSymbols.add("**/*.so")
+            doNotStrip.add("**/*.so")
         }
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -101,6 +103,8 @@ ksp {
 }
 
 dependencies {
+    implementation(project(":shared"))
+
     implementation(libs.mwdat.core)
     implementation(libs.mwdat.camera)
     implementation(libs.mwdat.display)
@@ -141,7 +145,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.adaptive.navigation3)
-    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
 
     // Spotify Auth SDK
     implementation(libs.spotify.auth)
@@ -160,6 +163,9 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.camera.compose)
     implementation(libs.androidx.camera.extensions)
+
+    implementation("androidx.media3:media3-exoplayer:1.2.0")
+    implementation("androidx.media3:media3-session:1.2.0")
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)

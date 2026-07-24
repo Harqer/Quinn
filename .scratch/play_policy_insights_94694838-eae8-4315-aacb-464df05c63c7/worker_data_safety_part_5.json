@@ -1,0 +1,59 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "EMAIL",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "dist/assets/LibraryScreen-4FO9XJ80.js",
+        "dist/assets/SearchScreen-By9waXgK.js"
+      ],
+      "evidence": "Email is only used locally to extract the first letter for an avatar.",
+      "recommendation": "No action needed.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "FILES_AND_DOCS",
+      "policy_id": "data_safety_section",
+      "issue_summary": "**Manual Sharing**: **Policy Exempt**. User triggers transfer to 3P; no disclosure or declaration needed.",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "dist/assets/DevicesScreen-GY7CbrDm.js",
+        "dist/assets/index-Iqq9eRPA.js",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/AlbumViewScreen.kt"
+      ],
+      "evidence": "localStorage is local only. Intent.ACTION_SEND in AlbumViewScreen.kt is a user-initiated share to third parties.",
+      "recommendation": "No action needed.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": true,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Manual sharing",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "FITNESS",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "dist/assets/SearchScreen-By9waXgK.js"
+      ],
+      "evidence": "Workout is just a hardcoded music category for the UI, not collected user fitness data.",
+      "recommendation": "No action needed.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    }
+  ]
+}

@@ -2,6 +2,7 @@ package com.musically.studio.ui.screens
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -14,6 +15,7 @@ import com.musically.studio.ui.theme.MaveAppTheme
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import android.content.Context
 import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.robolectric.annotation.Config
@@ -36,7 +38,7 @@ class UserProfileScreenTest {
         val mockSession = Mockito.mock(MaveSessionManager::class.java)
         val mockFlow = kotlinx.coroutines.flow.MutableSharedFlow<String>()
         Mockito.doReturn(mockFlow).`when`(mockSession).events
-        viewModel = MainViewModel(FakeApiClient(), mockSession, mockAuth, mockDb)
+        viewModel = MainViewModel(ApplicationProvider.getApplicationContext(), FakeApiClient(), mockSession, mockAuth, mockDb)
     }
 
     @Test

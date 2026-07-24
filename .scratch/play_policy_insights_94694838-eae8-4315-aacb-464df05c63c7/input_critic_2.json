@@ -1,0 +1,62 @@
+{
+    "5": {
+        "psl_constant": "CRASH_LOGS",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "Silent Background Transfer: Policy violation. Data is sent without prior disclosure.",
+        "severity": "CRITICAL",
+        "files_involved": [
+            "app/src/main/java/com/musically/studio/MyApplication.kt",
+            "shared/src/androidMain/kotlin/com/musically/studio/logging/CrashlyticsTree.kt"
+        ],
+        "evidence": "Timber.plant(CrashlyticsTree()) called unconditionally in onCreate() when not in debug mode.",
+        "recommendation": "Add a prominent disclosure dialog on first app launch before initializing Crashlytics.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "MISSING",
+        "purpose": "Analytics",
+        "linked_to_user": false,
+        "worker_file": "worker_data_safety_part_3.json",
+        "finding_id": "5"
+    },
+    "6": {
+        "psl_constant": "NAME",
+        "policy_id": "data_safety_section",
+        "issue_summary": "User-Initiated Collection: Disclosure exempt, but must be declared in Play Store form.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "app/src/main/java/com/musically/studio/MainActivity.kt",
+            "src/services/CredentialVerifier.ts"
+        ],
+        "evidence": "MainActivity fetches DigitalCredential containing family_name. CredentialVerifier.ts extracts name and given_name on the server.",
+        "recommendation": "Ensure NAME collection is declared in the Play Store Data Safety form.",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_3.json",
+        "finding_id": "6"
+    },
+    "8": {
+        "psl_constant": "PHOTOS",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "Silent Background Transfer: Policy violation. Data is sent without prior disclosure.",
+        "severity": "CRITICAL",
+        "files_involved": [
+            "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/CameraPreview.kt",
+            "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+        ],
+        "evidence": "In CameraPreview.kt, imageAnalysis continuously captures frames every 1.5 seconds and calls viewModel?.sendFrame(base64) which transfers the frames off-device via maveSessionManager.sendEvent without an affirmative prominent disclosure gatekeeper.",
+        "recommendation": "Implement a prominent disclosure dialog before the CameraPreview is initialized, explicitly stating that camera frames are continuously collected and sent to the server for music generation, and require affirmative user consent.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "MISSING",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_4.json",
+        "finding_id": "8"
+    }
+}

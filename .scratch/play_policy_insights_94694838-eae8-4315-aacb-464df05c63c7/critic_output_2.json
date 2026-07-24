@@ -1,0 +1,17 @@
+{
+  "5": {
+    "action": "PRUNED",
+    "confidence": "High",
+    "critic_justification": "Standard Crashlytics integration is a common architectural pattern and does not require a prominent disclosure gatekeeper under typical Play Store policies, provided it is declared in the Data Safety section."
+  },
+  "6": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "The DigitalCredential fetch is clearly user-initiated via launchVerifiedEmail. The worker correctly identified it as exempt from prominent disclosure but requiring a Data Safety declaration."
+  },
+  "8": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "CameraPreview continuously captures and transfers frames off-device via the ViewModel and maveSessionManager every 1.5 seconds without any visible prominent disclosure gatekeeper."
+  }
+}

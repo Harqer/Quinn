@@ -1,0 +1,26 @@
+{
+  "domain": "Permissions and APIs",
+  "findings": [
+    {
+      "policy_id": "foreground_services_policy",
+      "issue_summary": "Play Console Declaration Required for Foreground Service",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/AndroidManifest.xml",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt"
+      ],
+      "evidence": "Foreground service WearableStreamingService is declared in AndroidManifest.xml and started in WearableStreamingService.kt.",
+      "recommendation": "For apps targeting Android 14+, you must complete a Foreground Service declaration in the Play Console (App content section) for each type used, providing a functional description, user impact video, and a specific use case selection."
+    },
+    {
+      "policy_id": "audio_recording_policy",
+      "issue_summary": "Continuous Audio Capture in Background",
+      "severity": "CRITICAL",
+      "files_involved": [
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+      ],
+      "evidence": "In MainViewModel.kt, startRecording() initiates a continuous AudioRecord read loop inside a viewModelScope. This loop is not tied to the activity lifecycle and can remain active when the app is minimized without an explicit user-facing recording indicator.",
+      "recommendation": "Tie the recording loop to the app's UI lifecycle to pause capture when minimized, or ensure the ongoing recording is backed by a Foreground Service with an explicit 'recording in progress' notification."
+    }
+  ]
+}

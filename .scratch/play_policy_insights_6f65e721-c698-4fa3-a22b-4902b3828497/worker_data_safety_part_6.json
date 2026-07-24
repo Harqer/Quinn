@@ -1,0 +1,15 @@
+{
+    "domain": "Data Safety and Privacy - App Activity & Device IDs",
+    "findings": [
+        {
+            "policy_id": "device_identifiers",
+            "issue_summary": "Firebase Auth and App Check tokens used for secure client validation.",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/MainViewModel.kt"
+            ],
+            "evidence": "Firebase App Check safety tokens are transmitted over TLS to authenticate backend requests.",
+            "recommendation": "Declare App Identifiers under Security & Account Management in Play Console Data Safety."
+        }
+    ]
+}

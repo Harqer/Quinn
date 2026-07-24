@@ -1,0 +1,36 @@
+{
+    "15": {
+        "data_type": "PERSONAL_INFO_OTHER",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "severity": "IMPORTANT",
+        "issue_summary": "User-Initiated Collection",
+        "worker_file": "worker_data_safety_part_6.json",
+        "finding_id": "15"
+    },
+    "16": {
+        "data_type": "VIDEOS",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "MISSING",
+        "severity": "CRITICAL",
+        "issue_summary": "Silent Background Transfer",
+        "worker_file": "worker_data_safety_part_6.json",
+        "finding_id": "16"
+    },
+    "22": {
+        "policy_id": "audio_recording_policy",
+        "issue_summary": "Continuous Audio Capture in Background",
+        "severity": "CRITICAL",
+        "files_involved": [
+            "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+        ],
+        "evidence": "In MainViewModel.kt, startRecording() initiates a continuous AudioRecord read loop inside a viewModelScope. This loop is not tied to the activity lifecycle and can remain active when the app is minimized without an explicit user-facing recording indicator.",
+        "recommendation": "Tie the recording loop to the app's UI lifecycle to pause capture when minimized, or ensure the ongoing recording is backed by a Foreground Service with an explicit 'recording in progress' notification.",
+        "worker_file": "worker_permissions_and_apis.json",
+        "finding_id": "22"
+    }
+}

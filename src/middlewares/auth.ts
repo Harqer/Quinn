@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { auth, appCheck } from "../config/firebase.js";
+import { auth, appCheck, db } from "../config/firebase.js";
 import logger from "../config/logger.js";
-import { quotaRepository } from "../repositories/QuotaRepository.js";
 
 export interface AuthenticatedRequest extends Request {
   user?: any;
@@ -98,7 +97,8 @@ export const checkDailyQuota = async (
   const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
   try {
-    const data = await quotaRepository.getQuota(uid);
+    const doc = await db.collection("user_quotas").doc(uid).get();
+    const data = doc.exists ? (doc.data() as { count: number; lastUpdated: string }) : null;
     let currentQuota = { count: 0, lastUpdated: today };
 
     if (data && data.lastUpdated === today) {
@@ -120,7 +120,7 @@ export const checkDailyQuota = async (
     }
 
     currentQuota.count += 1;
-    await quotaRepository.updateQuota(uid, currentQuota);
+    await db.collection("user_quotas").doc(uid).set(currentQuota);
     next();
   } catch (err) {
     logger.error("[QUOTA] Error checking daily quota limits:", { error: err });

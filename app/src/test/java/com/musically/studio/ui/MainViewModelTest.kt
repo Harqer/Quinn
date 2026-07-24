@@ -1,5 +1,6 @@
 package com.musically.studio.ui
 
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -16,6 +17,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import android.content.Context
 import org.junit.runner.RunWith
 import org.mockito.Mockito
 
@@ -37,7 +39,7 @@ class MainViewModelTest {
         val mockFlow = kotlinx.coroutines.flow.MutableSharedFlow<String>()
         Mockito.doReturn(mockFlow).`when`(mockSession).events
 
-        viewModel = MainViewModel(fakeApiClient, mockSession, mockAuth, mockDb)
+        viewModel = MainViewModel(ApplicationProvider.getApplicationContext(), fakeApiClient, mockSession, mockAuth, mockDb)
     }
 
     @After
@@ -64,7 +66,7 @@ class MainViewModelTest {
         val mockSession = Mockito.mock(MaveSessionManager::class.java)
         val mockFlow = kotlinx.coroutines.flow.MutableSharedFlow<String>()
         Mockito.doReturn(mockFlow).`when`(mockSession).events
-        val viewModel2 = MainViewModel(fakeApiClient, mockSession, mockAuth, Mockito.mock(FirebaseDatabase::class.java))
+        val viewModel2 = MainViewModel(ApplicationProvider.getApplicationContext(), fakeApiClient, mockSession, mockAuth, Mockito.mock(FirebaseDatabase::class.java))
         
         var callbackSuccess = false
         viewModel2.guestLogin { success, _ ->

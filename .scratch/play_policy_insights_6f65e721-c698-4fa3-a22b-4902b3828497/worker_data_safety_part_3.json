@@ -1,0 +1,15 @@
+{
+    "domain": "Data Safety and Privacy - Messages & Photos/Videos",
+    "findings": [
+        {
+            "policy_id": "photos_and_videos_access",
+            "issue_summary": "App processes camera frame input for real-time vibe inference.",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/CameraCaptureScreen.kt"
+            ],
+            "evidence": "Camera frames are processed ephemerally for Lyria atmosphere music generation and are encrypted in transit via WSS/TLS.",
+            "recommendation": "Declare Photo/Video collection in the Play Console Data Safety form under App Functionality with Encryption in Transit enabled."
+        }
+    ]
+}

@@ -11,6 +11,8 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        // Compose Multiplatform plugin and dev snapshots
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 
@@ -39,3 +41,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "MyExampleApp"
 include(":app")
+include(":shared")

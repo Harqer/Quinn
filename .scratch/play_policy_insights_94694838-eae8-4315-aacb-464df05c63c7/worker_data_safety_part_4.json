@@ -1,0 +1,59 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "PHOTOS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "Silent Background Transfer: Policy violation. Data is sent without prior disclosure.",
+      "severity": "CRITICAL",
+      "files_involved": [
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/CameraPreview.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+      ],
+      "evidence": "In CameraPreview.kt, imageAnalysis continuously captures frames every 1.5 seconds and calls viewModel?.sendFrame(base64) which transfers the frames off-device via maveSessionManager.sendEvent without an affirmative prominent disclosure gatekeeper.",
+      "recommendation": "Implement a prominent disclosure dialog before the CameraPreview is initialized, explicitly stating that camera frames are continuously collected and sent to the server for music generation, and require affirmative user consent.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "MISSING",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "OTHER_AUDIO",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/res/xml/app_metadata.xml",
+        "/home/shaolin/lyria/dist/assets/HomeScreen-BxzBGPTO.js",
+        "/home/shaolin/lyria/dist/assets/LibraryScreen-4FO9XJ80.js"
+      ],
+      "evidence": "The pattern 'podcast' in the reviewed files refers to UI elements and metadata descriptions for navigating to or discovering podcast content. It does not indicate the collection or transfer of user-created audio files.",
+      "recommendation": "No action needed. Ensure any future implementation that collects user audio includes proper prominent disclosure and Data Safety declarations.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "EMAIL",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/dist/assets/HomeScreen-BxzBGPTO.js"
+      ],
+      "evidence": "The email property (c?.email) is accessed purely locally in HomeScreen-BxzBGPTO.js to derive the first letter for the user's avatar initial. No off-device transmission was found originating from this specific UI logic.",
+      "recommendation": "No action needed for this UI-level usage. Ensure that backend handling of the email address is accurately declared in the Play Store Data Safety form.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    }
+  ]
+}

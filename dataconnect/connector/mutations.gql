@@ -1,0 +1,27 @@
+mutation CreateTrack(
+  $name: String!,
+  $artistName: String!,
+  $albumName: String!,
+  $imageUrl: String,
+  $isCommunity: Boolean!
+) @auth(level: USER) {
+  track_insert(data: {
+    name: $name,
+    artistName: $artistName,
+    albumName: $albumName,
+    imageUrl: $imageUrl,
+    isCommunity: $isCommunity,
+    owner: { uid_expr: "auth.uid" }
+  })
+}
+
+mutation UpsertUser(
+  $displayName: String,
+  $email: String
+) @auth(level: USER) {
+  user_upsert(data: {
+    uid_expr: "auth.uid",
+    displayName: $displayName,
+    email: $email
+  })
+}

@@ -1,0 +1,511 @@
+package com.musically.studio.ui.screens
+
+import android.content.Intent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowWidthSizeClass
+import coil.compose.AsyncImage
+import com.musically.studio.shared.R
+import com.musically.studio.network.MaveTrack
+import com.musically.studio.ui.MainViewModel
+import java.util.*
+import kotlin.math.abs
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NowPlayingScreen(
+    track: MaveTrack?,
+    viewModel: MainViewModel,
+    modality: String = "music",
+    onCollapse: () -> Unit,
+    onMoreOptions: (String) -> Unit,
+    onQueueClick: () -> Unit = {},
+    onLyricsClick: () -> Unit = {}
+) {
+    val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
+    val trackProgress by viewModel.trackProgress.collectAsStateWithLifecycle()
+    val isShuffleEnabled by viewModel.isShuffleEnabled.collectAsStateWithLifecycle()
+    val isRepeatEnabled by viewModel.isRepeatEnabled.collectAsStateWithLifecycle()
+    val devices by viewModel.devices.collectAsStateWithLifecycle()
+    val localCtx = androidx.compose.ui.platform.LocalContext.current
+
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
+
+
+
+    val bgColor = remember(track?.id) {
+        val hash = abs(track?.id?.hashCode() ?: 0)
+        val r = (hash and 0xFF0000) shr 16
+        val g = (hash and 0x00FF00) shr 8
+        val b = hash and 0x0000FF
+        Color(r, g, b).copy(alpha = 0.5f)
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Brush.verticalGradient(
+                colors = listOf(bgColor, Color(0xFF121212))
+            ))
+    ) {
+        if (track == null) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            }
+        } else {
+            if (isExpanded) {
+                TwoPaneNowPlaying(
+                    track = track,
+                    isPlaying = isPlaying,
+                    trackProgress = trackProgress,
+                    isShuffleEnabled = isShuffleEnabled,
+                    isRepeatEnabled = isRepeatEnabled,
+                    devices = devices,
+                    modality = modality,
+                    onCollapse = onCollapse,
+                    onMore = { onMoreOptions(track.id) },
+                    onSeek = { viewModel.seekTo(it) },
+                    onTogglePlay = { viewModel.togglePlayPause() },
+                    onNext = { viewModel.skipNext() },
+                    onPrevious = { viewModel.skipPrevious() },
+                    onToggleShuffle = { viewModel.toggleShuffle() },
+                    onToggleRepeat = { viewModel.toggleRepeat() },
+                    onLike = { viewModel.bookmarkTrack(track.id) },
+                    onShare = { viewModel.shareTrack(track.id) {} },
+                    onQueueClick = onQueueClick,
+                    onLyricsClick = onLyricsClick
+                )
+            } else {
+                CompactNowPlaying(
+                    track = track,
+                    isPlaying = isPlaying,
+                    trackProgress = trackProgress,
+                    isShuffleEnabled = isShuffleEnabled,
+                    isRepeatEnabled = isRepeatEnabled,
+                    devices = devices,
+                    modality = modality,
+                    onCollapse = onCollapse,
+                    onMore = { onMoreOptions(track.id) },
+                    onSeek = { viewModel.seekTo(it) },
+                    onTogglePlay = { viewModel.togglePlayPause() },
+                    onNext = { viewModel.skipNext() },
+                    onPrevious = { viewModel.skipPrevious() },
+                    onToggleShuffle = { viewModel.toggleShuffle() },
+                    onToggleRepeat = { viewModel.toggleRepeat() },
+                    onLike = { viewModel.bookmarkTrack(track.id) },
+                    onShare = { viewModel.shareTrack(track.id) {} },
+                    onQueueClick = onQueueClick,
+                    onLyricsClick = onLyricsClick
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TwoPaneNowPlaying(
+    track: MaveTrack,
+    isPlaying: Boolean,
+    trackProgress: Float,
+    isShuffleEnabled: Boolean,
+    isRepeatEnabled: Boolean,
+    devices: List<com.musically.studio.ui.models.AudioDevice>,
+    modality: String,
+    onCollapse: () -> Unit,
+    onMore: () -> Unit,
+    onSeek: (Float) -> Unit,
+    onTogglePlay: () -> Unit,
+    onNext: () -> Unit,
+    onPrevious: () -> Unit,
+    onToggleShuffle: () -> Unit,
+    onToggleRepeat: () -> Unit,
+    onLike: () -> Unit,
+    onShare: () -> Unit,
+    onQueueClick: () -> Unit,
+    onLyricsClick: () -> Unit
+) {
+    val localCtx = androidx.compose.ui.platform.LocalContext.current
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .padding(24.dp),
+        horizontalArrangement = Arrangement.spacedBy(32.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Left Pane: Album Art
+        AsyncImage(
+            model = track.album.images.firstOrNull()?.url,
+            contentDescription = "Album Art",
+            contentScale = ContentScale.Crop,
+            placeholder = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
+            error = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
+            modifier = Modifier
+                .weight(1f)
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+        )
+
+        // Right Pane: Details & Controls
+        Column(
+            modifier = Modifier.weight(1.2f),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onCollapse) {
+                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Close")
+                }
+                Text(
+                    text = when(modality) {
+                        "podcast" -> "Mave Podcast"
+                        "audiobook" -> "Mave Audiobook"
+                        else -> "Unknown Artist"
+                    },
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.width(48.dp))
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = track.name,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = track.artists.joinToString { it.name },
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1
+                    )
+                }
+                IconButton(onClick = onMore) {
+                    Icon(Icons.Default.MoreHoriz, contentDescription = "More", tint = MaterialTheme.colorScheme.onBackground)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            PlaybackSlider(
+                progress = trackProgress,
+                durationMs = track.durationMs,
+                onSeek = onSeek
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            PlaybackControls(
+                isPlaying = isPlaying,
+                isShuffleEnabled = isShuffleEnabled,
+                isRepeatEnabled = isRepeatEnabled,
+                onToggleShuffle = onToggleShuffle,
+                onToggleRepeat = onToggleRepeat,
+                onPrevious = onPrevious,
+                onNext = onNext,
+                onPlayPause = onTogglePlay
+            )
+        }
+    }
+}
+
+@Composable
+private fun CompactNowPlaying(
+    track: MaveTrack,
+    isPlaying: Boolean,
+    trackProgress: Float,
+    isShuffleEnabled: Boolean,
+    isRepeatEnabled: Boolean,
+    devices: List<com.musically.studio.ui.models.AudioDevice>,
+    modality: String,
+    onCollapse: () -> Unit,
+    onMore: () -> Unit,
+    onSeek: (Float) -> Unit,
+    onTogglePlay: () -> Unit,
+    onNext: () -> Unit,
+    onPrevious: () -> Unit,
+    onToggleShuffle: () -> Unit,
+    onToggleRepeat: () -> Unit,
+    onLike: () -> Unit,
+    onShare: () -> Unit,
+    onQueueClick: () -> Unit,
+    onLyricsClick: () -> Unit
+) {
+    val localCtx = androidx.compose.ui.platform.LocalContext.current
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .padding(horizontal = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Top Bar
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onCollapse) {
+                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Close", tint = MaterialTheme.colorScheme.onBackground)
+            }
+            Text(
+                when(modality) {
+                    "podcast" -> "Mave Podcast"
+                    "audiobook" -> "Mave Audiobook"
+                    else -> "Unknown Artist"
+                }, 
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.width(48.dp))
+        }
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        // Album Art
+        AsyncImage(
+            model = track.album.images.firstOrNull()?.url,
+            contentDescription = "Album Art",
+            contentScale = ContentScale.Crop,
+            placeholder = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
+            error = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+        )
+        
+        Spacer(modifier = Modifier.height(48.dp))
+        
+        // Track Info & Like Button
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = track.name,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    maxLines = 1
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = track.artists.joinToString { it.name },
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1
+                )
+            }
+            Row {
+                IconButton(onClick = onLike) {
+                    Icon(Icons.Default.FavoriteBorder, contentDescription = "Like", tint = MaterialTheme.colorScheme.onBackground)
+                }
+                IconButton(onClick = onMore) {
+                    Icon(Icons.Default.MoreHoriz, contentDescription = "More", tint = MaterialTheme.colorScheme.onBackground)
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        PlaybackSlider(progress = trackProgress, durationMs = track.durationMs, onSeek = onSeek)
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        PlaybackControls(
+            isPlaying = isPlaying,
+            isShuffleEnabled = isShuffleEnabled,
+            isRepeatEnabled = isRepeatEnabled,
+            onToggleShuffle = onToggleShuffle,
+            onToggleRepeat = onToggleRepeat,
+            onPrevious = onPrevious,
+            onNext = onNext,
+            onPlayPause = onTogglePlay
+        )
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Bluetooth, contentDescription = "Device", tint = Color(0xFF1DB954), modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(devices.firstOrNull()?.name ?: "Phone Speaker", color = Color(0xFF1DB954), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                IconButton(onClick = onShare, modifier = Modifier.size(24.dp)) {
+                    Icon(Icons.Default.Share, contentDescription = "Share", tint = Color.White)
+                }
+                IconButton(onClick = onQueueClick, modifier = Modifier.size(24.dp)) {
+                    Icon(Icons.Default.Menu, contentDescription = "Queue", tint = Color.White)
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.weight(1f))
+        
+        val lyricsColor = remember(track.id) {
+            val hash = kotlin.math.abs(track.id.hashCode() * 31)
+            val r = (hash and 0xFF0000) shr 16
+            val g = (hash and 0x00FF00) shr 8
+            val b = hash and 0x0000FF
+            Color(r, g, b).copy(alpha = 0.8f)
+        }
+        
+        // Lyrics Peek
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(68.dp)
+                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                .background(lyricsColor)
+                .clickable { onLyricsClick() }
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(32.dp)
+                    .height(4.dp)
+                    .background(Color.White.copy(alpha = 0.5f), RoundedCornerShape(2.dp))
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Lyrics", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                Box(
+                    modifier = Modifier.background(Color.Black.copy(alpha = 0.3f), RoundedCornerShape(16.dp)).padding(horizontal = 12.dp, vertical = 4.dp)
+                ) {
+                    Text("MORE", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelSmall)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PlaybackSlider(
+    progress: Float,
+    durationMs: Long,
+    onSeek: (Float) -> Unit
+) {
+    var sliderPosition by remember(progress) { mutableFloatStateOf(progress) }
+
+    Slider(
+        value = sliderPosition,
+        onValueChange = { sliderPosition = it },
+        onValueChangeFinished = { onSeek(sliderPosition) },
+        colors = SliderDefaults.colors(
+            thumbColor = Color.White,
+            activeTrackColor = Color.White,
+            inactiveTrackColor = Color.White.copy(alpha = 0.3f)
+        ),
+        modifier = Modifier.fillMaxWidth()
+    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(formatDuration((sliderPosition * durationMs).toLong()), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.7f))
+        Text(formatDuration(durationMs), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.7f))
+    }
+}
+
+@Composable
+private fun PlaybackControls(
+    isPlaying: Boolean,
+    isShuffleEnabled: Boolean,
+    isRepeatEnabled: Boolean,
+    onToggleShuffle: () -> Unit,
+    onToggleRepeat: () -> Unit,
+    onPrevious: () -> Unit,
+    onNext: () -> Unit,
+    onPlayPause: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = onToggleShuffle) {
+            Icon(Icons.Default.Shuffle, contentDescription = "Shuffle", tint = if (isShuffleEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground)
+        }
+        IconButton(onClick = onPrevious) {
+            Icon(Icons.Default.SkipPrevious, contentDescription = "Previous", tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(36.dp))
+        }
+        
+        Box(
+            modifier = Modifier
+                .size(64.dp)
+                .background(Color.White, CircleShape)
+                .clickable { onPlayPause() },
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                contentDescription = "Play/Pause",
+                tint = Color.Black,
+                modifier = Modifier.size(36.dp)
+            )
+        }
+        
+        IconButton(onClick = onNext) {
+            Icon(Icons.Default.SkipNext, contentDescription = "Next", tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(36.dp))
+        }
+        IconButton(onClick = onToggleRepeat) {
+            Icon(Icons.Default.Repeat, contentDescription = "Repeat", tint = if (isRepeatEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground)
+        }
+    }
+}
+
+private fun formatDuration(millis: Long): String {
+    val totalSeconds = millis / 1000
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return String.format(Locale.US, "%d:%02d", minutes, seconds)
+}

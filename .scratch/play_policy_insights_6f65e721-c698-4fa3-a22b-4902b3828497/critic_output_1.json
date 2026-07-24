@@ -1,0 +1,32 @@
+{
+  "verified_findings": [
+    {
+      "finding_id": "1",
+      "status": "VERIFIED"
+    },
+    {
+      "finding_id": "2",
+      "status": "VERIFIED"
+    },
+    {
+      "finding_id": "3",
+      "status": "VERIFIED"
+    },
+    {
+      "finding_id": "4",
+      "status": "VERIFIED"
+    },
+    {
+      "finding_id": "5",
+      "status": "VERIFIED"
+    },
+    {
+      "finding_id": "6",
+      "status": "VERIFIED"
+    },
+    {
+      "finding_id": "7",
+      "status": "VERIFIED"
+    }
+  ]
+}

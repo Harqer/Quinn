@@ -1,0 +1,74 @@
+type User @table(key: "uid") {
+  uid: String! @default(expr: "auth.uid")
+  displayName: String
+  email: String
+}
+
+type Track @table {
+  id: String! @default(expr: "uuidV4()")
+  name: String!
+  artistName: String!
+  albumName: String!
+  imageUrl: String
+  audioUrl: String
+  createdAt: Timestamp! @default(expr: "request.time")
+  owner: User!
+  isCommunity: Boolean! @default(value: false)
+}
+
+type Category @table {
+  id: String! @default(expr: "uuidV4()")
+  name: String!
+  imageUrl: String
+  type: String! # e.g., "MUSIC", "PODCAST", "AUDIOBOOK"
+}
+
+type Playlist @table {
+  id: String! @default(expr: "uuidV4()")
+  name: String!
+  description: String
+  imageUrl: String
+  owner: User!
+  isPublic: Boolean! @default(value: true)
+}
+
+type PlaylistEntry @table(key: ["playlist", "track"]) {
+  playlist: Playlist!
+  track: Track!
+  addedAt: Timestamp! @default(expr: "request.time")
+}
+
+type Album @table {
+  id: String! @default(expr: "uuidV4()")
+  name: String!
+  artistName: String!
+  imageUrl: String
+  releaseYear: Int
+}
+
+type Podcast @table {
+  id: String! @default(expr: "uuidV4()")
+  name: String!
+  publisher: String!
+  imageUrl: String
+  description: String
+}
+
+type PodcastEpisode @table {
+  id: String! @default(expr: "uuidV4()")
+  podcast: Podcast!
+  title: String!
+  duration: Int
+  publishDate: Timestamp
+  audioUrl: String
+}
+
+type Audiobook @table {
+  id: String! @default(expr: "uuidV4()")
+  title: String!
+  author: String!
+  narrator: String
+  imageUrl: String
+  duration: Int
+  audioUrl: String
+}

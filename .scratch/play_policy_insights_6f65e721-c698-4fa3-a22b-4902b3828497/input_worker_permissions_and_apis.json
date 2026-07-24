@@ -1,0 +1,190 @@
+{
+    "APP_DIR": "/home/shaolin/lyria/app",
+    "APP_NAME": "app_name",
+    "PACKAGE_NAME": null,
+    "REPO_ROOT": "/home/shaolin/lyria/.agents/skills/play-policy-insights",
+    "TARGET_SDK": null,
+    "TEMP_DIR": "/home/shaolin/lyria/.scratch/play_policy_insights_6f65e721-c698-4fa3-a22b-4902b3828497",
+    "data_sources": {
+        "AUDIO": [
+            "../dist/assets/SearchScreen-Cx2R6QHq.js (Pattern: MediaRecorder)",
+            "src/main/java/com/musically/studio/MainActivity.kt (Pattern: RECORD_AUDIO)",
+            "src/main/java/com/musically/studio/WearableActivity.kt (Pattern: record)"
+        ],
+        "CRASH_LOGS": [
+            "../dist/assets/index-CYwsE8vb.js (Pattern: uncaughtException)",
+            "src/main/java/com/musically/studio/MyApplication.kt (Pattern: Crashlytics)",
+            "src/main/java/com/musically/studio/logging/CrashlyticsTree.kt (Pattern: Crashlytics)"
+        ],
+        "DEVICE_ID": [
+            "../dist/assets/index-CYwsE8vb.js (Pattern: instanceId)"
+        ],
+        "EMAIL": [
+            "../dist/assets/LibraryScreen-702Azbnf.js (Pattern: .email)",
+            "../dist/assets/index-CYwsE8vb.js (Pattern: .email)",
+            "../src/routes/auth.ts (Pattern: .email)"
+        ],
+        "FILES_AND_DOCS": [
+            "../dist/assets/DevicesScreen-DSoPqcSl.js (Pattern: localStorage)",
+            "../dist/assets/index-CYwsE8vb.js (Pattern: localStorage)",
+            "src/main/java/com/musically/studio/ui/screens/AlbumViewScreen.kt (Pattern: text/plain)"
+        ],
+        "MEDIA": [
+            "src/main/java/com/musically/studio/ui/screens/GalleryPickerScreen.kt (Pattern: MediaStore)"
+        ],
+        "MUSIC": [
+            "../dist/assets/AlbumView-B_3aTMqr.js (Pattern: artist)",
+            "../dist/assets/DevicesScreen-DSoPqcSl.js (Pattern: track)",
+            "../dist/assets/HomeScreen-BaKciP5m.js (Pattern: artist)"
+        ],
+        "NAME": [
+            "../src/services/CredentialVerifier.ts (Pattern: given_name)",
+            "src/main/java/com/musically/studio/MainActivity.kt (Pattern: family_name)"
+        ],
+        "OTHER_APP_PERFORMANCE": [
+            "../dist/assets/index-CYwsE8vb.js (Pattern: heartbeat)"
+        ],
+        "OTHER_AUDIO": [
+            "../dist/assets/PodcastGeneratorScreen-Ud5AQwwI.js (Pattern: podcast)",
+            "../dist/assets/SearchScreen-Cx2R6QHq.js (Pattern: podcast)",
+            "../src/repositories/SpotifyRepository.ts (Pattern: podcast)"
+        ],
+        "PERFORMANCE_DIAGNOSTICS": [
+            "../dist/assets/index-CYwsE8vb.js (Pattern: Debug)",
+            "../index.tsx (Pattern: StrictMode)",
+            "src/main/java/com/musically/studio/MyApplication.kt (Pattern: Debug)"
+        ],
+        "PERSONAL_INFO_OTHER": [
+            "../src/repositories/UserRepository.ts (Pattern: gender)",
+            "../src/routes/auth.ts (Pattern: gender)",
+            "src/main/java/com/musically/studio/network/ApiClient.kt (Pattern: gender)"
+        ],
+        "PHOTOS": [
+            "../src/services/ai.ts (Pattern: CAMERA)",
+            "src/main/java/com/musically/studio/MainActivity.kt (Pattern: CAMERA)",
+            "src/main/java/com/musically/studio/ui/components/CameraPreview.kt (Pattern: CAMERA)"
+        ],
+        "RACE_ETHNICITY": [
+            "../dist/assets/index-CYwsE8vb.js (Pattern: race)",
+            "../src/index.ts (Pattern: race)"
+        ],
+        "USER_ACCOUNT": [
+            "../dist/assets/LoginScreen-ClkfNdYG.js (Pattern: login)",
+            "../dist/assets/index-CYwsE8vb.js (Pattern: login)",
+            "../package.json (Pattern: uid)"
+        ],
+        "VIDEOS": [
+            "../dist/assets/SearchScreen-Cx2R6QHq.js (Pattern: MediaRecorder)",
+            "src/main/java/com/musically/studio/ui/MainViewModel.kt (Pattern: MediaRecorder)"
+        ]
+    },
+    "disclosure": [
+        "../dist/assets/index-CYwsE8vb.js (Pattern: collect)",
+        "../src/repositories/LogRepository.ts (Pattern: collect)",
+        "../src/repositories/QuotaRepository.ts (Pattern: collect)",
+        "../src/repositories/ReportRepository.ts (Pattern: collect)",
+        "../src/repositories/SpotifyRepository.ts (Pattern: collect)",
+        "../src/repositories/TrackRepository.ts (Pattern: collect)",
+        "../src/repositories/UserRepository.ts (Pattern: collect)",
+        "../src/routes/music.ts (Pattern: share)",
+        "../src/services/MusicService.ts (Pattern: share)",
+        "../src/services/backup.ts (Pattern: collect)",
+        "src/main/java/com/musically/studio/MainActivity.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/WearableActivity.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/WearableStreamingService.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/network/ApiClient.kt (Pattern: share)",
+        "src/main/java/com/musically/studio/ui/MainViewModel.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/components/POVView.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/navigation/EntryProvider.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/AlbumViewScreen.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/DevicesBottomSheet.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/DevicesScreen.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/HomeScreen.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/LibraryScreen.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/LiveSessionScreen.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/NowPlayingScreen.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/PodcastSelectionScreen.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/UserProfileScreen.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/onboarding/ArtistSelectionScreen.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/onboarding/BirthdayInputScreen.kt (Pattern: Dialog)",
+        "src/main/java/com/musically/studio/ui/screens/onboarding/LoginScreen.kt (Pattern: collect)",
+        "src/main/java/com/musically/studio/ui/screens/onboarding/NameTermsScreen.kt (Pattern: Privacy Policy)",
+        "src/main/java/com/musically/studio/utils/FrameProcessor.kt (Pattern: collect)"
+    ],
+    "foreground_service": [
+        "src/main/java/com/musically/studio/WearableStreamingService.kt (Pattern: startForeground)",
+        "src/main/java/com/musically/studio/ui/MainViewModel.kt (Pattern: startForeground)"
+    ],
+    "found_urls": [],
+    "network_transmission": {
+        "-": [
+            "../dist/assets/PodcastGeneratorScreen-Ud5AQwwI.js (Pattern: fetch)",
+            "../dist/assets/SearchScreen-Cx2R6QHq.js (Pattern: fetch)",
+            "../dist/assets/index-CYwsE8vb.js (Pattern: fetch)",
+            "../dist/assets/useTracks-Dkf7Hl6y.js (Pattern: fetch)",
+            "../package.json (Pattern: fetch)",
+            "../src/index.ts (Pattern: WebSocket)",
+            "../src/routes/index.ts (Pattern: WebSocket)",
+            "../src/routes/music.ts (Pattern: fetch)",
+            "../src/routes/spotify.ts (Pattern: fetch)",
+            "../src/services/CredentialVerifier.ts (Pattern: fetch)",
+            "../src/services/MusicService.ts (Pattern: WebSocket)",
+            "../src/services/PodcastService.ts (Pattern: WebSocket)",
+            "../src/services/SpotifyService.ts (Pattern: fetch)",
+            "src/main/java/com/musically/studio/di/NetworkModule.kt (Pattern: HttpClient)",
+            "src/main/java/com/musically/studio/network/ApiClient.kt (Pattern: HttpClient)",
+            "src/main/java/com/musically/studio/network/MaveSessionManager.kt (Pattern: WebSocket)",
+            "src/main/java/com/musically/studio/ui/MainViewModel.kt (Pattern: fetch)",
+            "src/main/java/com/musically/studio/ui/screens/HomeScreen.kt (Pattern: fetch)",
+            "src/main/java/com/musically/studio/ui/screens/LibraryScreen.kt (Pattern: fetch)",
+            "src/main/java/com/musically/studio/ui/screens/PodcastSelectionScreen.kt (Pattern: fetch)",
+            "src/main/java/com/musically/studio/ui/screens/UserProfileScreen.kt (Pattern: fetch)",
+            "src/main/java/com/musically/studio/ui/screens/onboarding/ArtistSelectionScreen.kt (Pattern: fetch)"
+        ]
+    },
+    "requested_permissions": {
+        "AUDIO": [
+            "android.permission.RECORD_AUDIO"
+        ],
+        "PHOTOS": [
+            "android.permission.CAMERA"
+        ],
+        "VIDEOS": [
+            "android.permission.CAMERA",
+            "android.permission.RECORD_AUDIO"
+        ],
+        "foreground_service": [
+            "android.permission.FOREGROUND_SERVICE"
+        ]
+    },
+    "semantic_files": {
+        "CONFIG": [
+            "vite.config.ts"
+        ],
+        "LEGAL": [
+            "NameTermsScreen.kt"
+        ],
+        "MUSIC": [
+            "MiniPlayer.kt",
+            "music.ts",
+            "MusicService.ts"
+        ],
+        "OTHER_AUDIO": [
+            "PodcastSelectionScreen.kt",
+            "PodcastGeneratorScreen-Ud5AQwwI.js",
+            "PodcastService.ts"
+        ],
+        "PHOTOS": [
+            "CameraPreview.kt",
+            "CameraCaptureScreen.kt",
+            "GalleryPickerScreen.kt"
+        ],
+        "USER_ACCOUNT": [
+            "AuthOptionsScreen.kt",
+            "LoginScreen.kt",
+            "LoginScreen-ClkfNdYG.js",
+            "auth.ts",
+            "auth.ts"
+        ]
+    }
+}

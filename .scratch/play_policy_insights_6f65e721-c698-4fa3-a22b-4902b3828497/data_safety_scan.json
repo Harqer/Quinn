@@ -1,0 +1,2529 @@
+{
+    "codebase_map": {
+        "all_files": [
+            [
+                ".firebaserc",
+                "/home/shaolin/lyria/.firebaserc",
+                "/home/shaolin/lyria"
+            ],
+            [
+                ".gitignore",
+                "/home/shaolin/lyria/.gitignore",
+                "/home/shaolin/lyria"
+            ],
+            [
+                ".infisical.json",
+                "/home/shaolin/lyria/.infisical.json",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "Dockerfile",
+                "/home/shaolin/lyria/Dockerfile",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "Info.plist",
+                "/home/shaolin/lyria/Info.plist",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "README.md",
+                "/home/shaolin/lyria/README.md",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "build.gradle.kts",
+                "/home/shaolin/lyria/build.gradle.kts",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "build_mave.log",
+                "/home/shaolin/lyria/build_mave.log",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "classes.log",
+                "/home/shaolin/lyria/classes.log",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "firebase-applet-config.json",
+                "/home/shaolin/lyria/firebase-applet-config.json",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "firebase.json",
+                "/home/shaolin/lyria/firebase.json",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "gradle.properties",
+                "/home/shaolin/lyria/gradle.properties",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "gradlew",
+                "/home/shaolin/lyria/gradlew",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "gradlew.bat",
+                "/home/shaolin/lyria/gradlew.bat",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "index.css",
+                "/home/shaolin/lyria/index.css",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "index.html",
+                "/home/shaolin/lyria/index.html",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "index.tsx",
+                "/home/shaolin/lyria/index.tsx",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "java_pid30500.hprof",
+                "/home/shaolin/lyria/java_pid30500.hprof",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "local.properties",
+                "/home/shaolin/lyria/local.properties",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "musically-debug.apk",
+                "/home/shaolin/lyria/musically-debug.apk",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "mwdat-core-0.8.0.aar",
+                "/home/shaolin/lyria/mwdat-core-0.8.0.aar",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "package.json",
+                "/home/shaolin/lyria/package.json",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "pnpm-lock.yaml",
+                "/home/shaolin/lyria/pnpm-lock.yaml",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "server.ts",
+                "/home/shaolin/lyria/server.ts",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "settings.gradle.kts",
+                "/home/shaolin/lyria/settings.gradle.kts",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "tsconfig.json",
+                "/home/shaolin/lyria/tsconfig.json",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "validate_dependencies.js",
+                "/home/shaolin/lyria/validate_dependencies.js",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "vite.config.ts",
+                "/home/shaolin/lyria/vite.config.ts",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "wearables.log",
+                "/home/shaolin/lyria/wearables.log",
+                "/home/shaolin/lyria"
+            ],
+            [
+                "AGENTS.md",
+                "/home/shaolin/lyria/.agents/AGENTS.md",
+                "/home/shaolin/lyria/.agents"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive"
+            ],
+            [
+                "container-behavior.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/container-behavior.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox"
+            ],
+            [
+                "get-started.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/get-started.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox"
+            ],
+            [
+                "index.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/index.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox"
+            ],
+            [
+                "item-behavior.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/item-behavior.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox"
+            ],
+            [
+                "container-properties.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/container-properties.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid"
+            ],
+            [
+                "get-started.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/get-started.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid"
+            ],
+            [
+                "index.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/index.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid"
+            ],
+            [
+                "item-properties.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/item-properties.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid"
+            ],
+            [
+                "index.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/mediaquery/index.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/mediaquery"
+            ],
+            [
+                "debug.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/tooling/debug.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/develop/ui/compose/tooling"
+            ],
+            [
+                "material-listdetail.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/guide/navigation/navigation-3/recipes/material-listdetail.md",
+                "/home/shaolin/lyria/.agents/skills/adaptive/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/agentskill-sh-learn/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/agentskill-sh-learn"
+            ],
+            [
+                "SECURITY.md",
+                "/home/shaolin/lyria/.agents/skills/agentskill-sh-learn/references/SECURITY.md",
+                "/home/shaolin/lyria/.agents/skills/agentskill-sh-learn/references"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/agentskill-sh-review-skill/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/agentskill-sh-review-skill"
+            ],
+            [
+                "rubric.md",
+                "/home/shaolin/lyria/.agents/skills/agentskill-sh-review-skill/references/rubric.md",
+                "/home/shaolin/lyria/.agents/skills/agentskill-sh-review-skill/references"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/agp-9-upgrade/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/agp-9-upgrade"
+            ],
+            [
+                "buildconfig.md",
+                "/home/shaolin/lyria/.agents/skills/agp-9-upgrade/references/buildconfig.md",
+                "/home/shaolin/lyria/.agents/skills/agp-9-upgrade/references"
+            ],
+            [
+                "ksp-kapt.md",
+                "/home/shaolin/lyria/.agents/skills/agp-9-upgrade/references/ksp-kapt.md",
+                "/home/shaolin/lyria/.agents/skills/agp-9-upgrade/references"
+            ],
+            [
+                "paparazzi-gradle-9.md",
+                "/home/shaolin/lyria/.agents/skills/agp-9-upgrade/references/paparazzi-gradle-9.md",
+                "/home/shaolin/lyria/.agents/skills/agp-9-upgrade/references"
+            ],
+            [
+                "recipes.md",
+                "/home/shaolin/lyria/.agents/skills/agp-9-upgrade/references/recipes.md",
+                "/home/shaolin/lyria/.agents/skills/agp-9-upgrade/references"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/android-cli/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/android-cli"
+            ],
+            [
+                "interact.md",
+                "/home/shaolin/lyria/.agents/skills/android-cli/references/interact.md",
+                "/home/shaolin/lyria/.agents/skills/android-cli/references"
+            ],
+            [
+                "journeys.md",
+                "/home/shaolin/lyria/.agents/skills/android-cli/references/journeys.md",
+                "/home/shaolin/lyria/.agents/skills/android-cli/references"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/android-intent-security/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/android-intent-security"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/appfunctions/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/appfunctions"
+            ],
+            [
+                "adb-interaction-testing.md",
+                "/home/shaolin/lyria/.agents/skills/appfunctions/references/adb-interaction-testing.md",
+                "/home/shaolin/lyria/.agents/skills/appfunctions/references"
+            ],
+            [
+                "feature-discovery-analysis.md",
+                "/home/shaolin/lyria/.agents/skills/appfunctions/references/feature-discovery-analysis.md",
+                "/home/shaolin/lyria/.agents/skills/appfunctions/references"
+            ],
+            [
+                "implementation-configuration.md",
+                "/home/shaolin/lyria/.agents/skills/appfunctions/references/implementation-configuration.md",
+                "/home/shaolin/lyria/.agents/skills/appfunctions/references"
+            ],
+            [
+                "kdoc-refinement-optimization.md",
+                "/home/shaolin/lyria/.agents/skills/appfunctions/references/kdoc-refinement-optimization.md",
+                "/home/shaolin/lyria/.agents/skills/appfunctions/references"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/camerax"
+            ],
+            [
+                "camera1-to-camerax.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/camera1-to-camerax.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "camera2-to-camerax.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/camera2-to-camerax.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "expert-blueprints.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/expert-blueprints.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "foldables.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/foldables.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "immutability.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/immutability.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "low-light.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/low-light.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "mlkit-spatial.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/mlkit-spatial.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "modern-apis.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/modern-apis.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "testing.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/testing.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "thermals.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/thermals.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "wear-os.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/wear-os.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "xr.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references/xr.md",
+                "/home/shaolin/lyria/.agents/skills/camerax/references"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer"
+            ],
+            [
+                "button-samples-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/button-samples-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "button-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/button-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "card-samples-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/card-samples-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "card-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/card-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "deptheffect-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/deptheffect-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "deptheffectlevels-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/deptheffectlevels-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "glimmersansflextypography-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/glimmersansflextypography-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "glimmertheme-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/glimmertheme-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "icon-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/icon-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "iconbutton-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/iconbutton-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "iconsizes-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/iconsizes-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "list-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/list-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "listitem-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/listitem-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "liststate-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/liststate-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "material-hct-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/material-hct-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "projectedcontext-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/projectedcontext-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "stack-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/stack-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "stackitemscope-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/stackitemscope-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "stackstate-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/stackstate-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "surface-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/surface-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "titlechip-samples-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/titlechip-samples-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "titlechip-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/titlechip-source.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references"
+            ],
+            [
+                "inputs.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/design/ui/ai-glasses/guides/interaction/inputs.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/design/ui/ai-glasses/guides/interaction"
+            ],
+            [
+                "access-hardware-projected-context.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/access-hardware-projected-context.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk"
+            ],
+            [
+                "request-hardware-permissions.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/request-hardware-permissions.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk"
+            ],
+            [
+                "buttons.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer/buttons.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer"
+            ],
+            [
+                "cards.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer/cards.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer"
+            ],
+            [
+                "focus.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer/focus.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer"
+            ],
+            [
+                "icons.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer/icons.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer"
+            ],
+            [
+                "text.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer/text.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer"
+            ],
+            [
+                "title-chips.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer/title-chips.md",
+                "/home/shaolin/lyria/.agents/skills/display-glasses-with-jetpack-compose-glimmer/references/android/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/edge-to-edge/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/edge-to-edge"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration"
+            ],
+            [
+                "clusters.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/clusters.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references"
+            ],
+            [
+                "common.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/common.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references"
+            ],
+            [
+                "patterns.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/patterns.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references"
+            ],
+            [
+                "requests.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/requests.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references"
+            ],
+            [
+                "faq.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/faq.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage"
+            ],
+            [
+                "food.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/food.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage"
+            ],
+            [
+                "healthandfitness.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/healthandfitness.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage"
+            ],
+            [
+                "listen.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/listen.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage"
+            ],
+            [
+                "otherverticals.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/otherverticals.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage"
+            ],
+            [
+                "read.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/read.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage"
+            ],
+            [
+                "shopping.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage"
+            ],
+            [
+                "social.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/social.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage"
+            ],
+            [
+                "travel.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/travel.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage"
+            ],
+            [
+                "watch.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/watch.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage"
+            ],
+            [
+                "entitlements.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/tv/entitlements.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/tv"
+            ],
+            [
+                "getting-started.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/tv/getting-started.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/tv"
+            ],
+            [
+                "recommendations.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/tv/recommendations.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/tv"
+            ],
+            [
+                "index.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/tv/continue-watching/index.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/tv/continue-watching"
+            ],
+            [
+                "food.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas/food.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas"
+            ],
+            [
+                "listen.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas/listen.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas"
+            ],
+            [
+                "other.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas/other.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas"
+            ],
+            [
+                "read.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas/read.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas"
+            ],
+            [
+                "shopping.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas/shopping.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas"
+            ],
+            [
+                "social.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas/social.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas"
+            ],
+            [
+                "travel.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas/travel.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas"
+            ],
+            [
+                "tv.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas/tv.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas"
+            ],
+            [
+                "watch.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas/watch.md",
+                "/home/shaolin/lyria/.agents/skills/engage-sdk-integration/references/schemas"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/microsoft-podcast-generation/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/microsoft-podcast-generation"
+            ],
+            [
+                "acceptance-criteria.md",
+                "/home/shaolin/lyria/.agents/skills/microsoft-podcast-generation/references/acceptance-criteria.md",
+                "/home/shaolin/lyria/.agents/skills/microsoft-podcast-generation/references"
+            ],
+            [
+                "architecture.md",
+                "/home/shaolin/lyria/.agents/skills/microsoft-podcast-generation/references/architecture.md",
+                "/home/shaolin/lyria/.agents/skills/microsoft-podcast-generation/references"
+            ],
+            [
+                "code-examples.md",
+                "/home/shaolin/lyria/.agents/skills/microsoft-podcast-generation/references/code-examples.md",
+                "/home/shaolin/lyria/.agents/skills/microsoft-podcast-generation/references"
+            ],
+            [
+                "pcm_to_wav.py",
+                "/home/shaolin/lyria/.agents/skills/microsoft-podcast-generation/scripts/pcm_to_wav.py",
+                "/home/shaolin/lyria/.agents/skills/microsoft-podcast-generation/scripts"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose"
+            ],
+            [
+                "analysis-of-the-project-and-layout.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references/analysis-of-the-project-and-layout.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references"
+            ],
+            [
+                "identify-optimal-xml-candidate.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references/identify-optimal-xml-candidate.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references"
+            ],
+            [
+                "xml-layout-migration.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references/xml-layout-migration.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references"
+            ],
+            [
+                "setup-compose-dependencies-and-compiler.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references/android/develop/ui/compose/setup-compose-dependencies-and-compiler.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references/android/develop/ui/compose"
+            ],
+            [
+                "migrate-xml-theme-to-compose.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references/android/develop/ui/compose/designsystems/migrate-xml-theme-to-compose.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references/android/develop/ui/compose/designsystems"
+            ],
+            [
+                "compose-in-views.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references/android/develop/ui/compose/migrate/interoperability-apis/compose-in-views.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references/android/develop/ui/compose/migrate/interoperability-apis"
+            ],
+            [
+                "views-in-compose.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references/android/develop/ui/compose/migrate/interoperability-apis/views-in-compose.md",
+                "/home/shaolin/lyria/.agents/skills/migrate-xml-views-to-jetpack-compose/references/android/develop/ui/compose/migrate/interoperability-apis"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3"
+            ],
+            [
+                "type-safe-destinations.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/type-safe-destinations.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation"
+            ],
+            [
+                "index.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/index.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3"
+            ],
+            [
+                "migration-guide.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/migration-guide.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3"
+            ],
+            [
+                "animations.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/animations.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "basic.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basic.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "basicdsl.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basicdsl.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "basicsaveable.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basicsaveable.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "bottomsheet.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/bottomsheet.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "common-ui.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/common-ui.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "conditional.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/conditional.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "deeplinks-advanced.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-advanced.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "dialog.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/dialog.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "material-listdetail.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/material-listdetail.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "material-supportingpane.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/material-supportingpane.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "modular-hilt.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/modular-hilt.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "modular-koin.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/modular-koin.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "multiple-backstacks.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/multiple-backstacks.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "passingarguments.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/passingarguments.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "results-event.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/results-event.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "results-state.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/results-state.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "scenes-listdetail.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/scenes-listdetail.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "scenes-twopane.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/scenes-twopane.md",
+                "/home/shaolin/lyria/.agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-sql/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-sql"
+            ],
+            [
+                "perfetto-stdlib.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-sql/references/perfetto-stdlib.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-sql/references"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis"
+            ],
+            [
+                "hints_cpu.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references/hints_cpu.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references"
+            ],
+            [
+                "hints_graphics.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references/hints_graphics.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references"
+            ],
+            [
+                "hints_io.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references/hints_io.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references"
+            ],
+            [
+                "hints_ipc.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references/hints_ipc.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references"
+            ],
+            [
+                "hints_memory.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references/hints_memory.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references"
+            ],
+            [
+                "hints_power.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references/hints_power.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references"
+            ],
+            [
+                "perfetto-stdlib.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references/perfetto-stdlib.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references"
+            ],
+            [
+                "sql.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references/sql.md",
+                "/home/shaolin/lyria/.agents/skills/perfetto-trace-analysis/references"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/play-billing-library-version-upgrade/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/play-billing-library-version-upgrade"
+            ],
+            [
+                "migration-logic.md",
+                "/home/shaolin/lyria/.agents/skills/play-billing-library-version-upgrade/references/migration-logic.md",
+                "/home/shaolin/lyria/.agents/skills/play-billing-library-version-upgrade/references"
+            ],
+            [
+                "version-checklist.md",
+                "/home/shaolin/lyria/.agents/skills/play-billing-library-version-upgrade/references/version-checklist.md",
+                "/home/shaolin/lyria/.agents/skills/play-billing-library-version-upgrade/references"
+            ],
+            [
+                "release-notes.md",
+                "/home/shaolin/lyria/.agents/skills/play-billing-library-version-upgrade/references/android/google/play/billing/release-notes.md",
+                "/home/shaolin/lyria/.agents/skills/play-billing-library-version-upgrade/references/android/google/play/billing"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights"
+            ],
+            [
+                "common_mandates.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources/common_mandates.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources"
+            ],
+            [
+                "compliance_report_template.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources/compliance_report_template.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources"
+            ],
+            [
+                "critic.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources/critic.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources"
+            ],
+            [
+                "goal_data_safety.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources/goal_data_safety.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources"
+            ],
+            [
+                "goal_permissions_and_apis.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources/goal_permissions_and_apis.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources"
+            ],
+            [
+                "goal_user_account.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources/goal_user_account.md",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources"
+            ],
+            [
+                "policies.json",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources/policies.json",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources"
+            ],
+            [
+                "scanner_config.json",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources/scanner_config.json",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/resources"
+            ],
+            [
+                "generate_report.py",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts/generate_report.py",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts"
+            ],
+            [
+                "orchestrator.py",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts/orchestrator.py",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts"
+            ],
+            [
+                "play_store_scraper.py",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts/play_store_scraper.py",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts"
+            ],
+            [
+                "scanner.py",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts/scanner.py",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts"
+            ],
+            [
+                "template_engine.py",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts/template_engine.py",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts"
+            ],
+            [
+                "scanner.cpython-312.pyc",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts/__pycache__/scanner.cpython-312.pyc",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts/__pycache__"
+            ],
+            [
+                "template_engine.cpython-312.pyc",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts/__pycache__/template_engine.cpython-312.pyc",
+                "/home/shaolin/lyria/.agents/skills/play-policy-insights/scripts/__pycache__"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer"
+            ],
+            [
+                "CONFIGURATION-ANALYZER.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references/CONFIGURATION-ANALYZER.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references"
+            ],
+            [
+                "CONFIGURATION.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references/CONFIGURATION.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references"
+            ],
+            [
+                "KEEP-RULES-IMPACT-HIERARCHY.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references/KEEP-RULES-IMPACT-HIERARCHY.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references"
+            ],
+            [
+                "REDUNDANT-RULES.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references/REDUNDANT-RULES.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references"
+            ],
+            [
+                "REFLECTION-GUIDE.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references/REFLECTION-GUIDE.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references"
+            ],
+            [
+                "REPORT_FORMAT.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references/REPORT_FORMAT.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references"
+            ],
+            [
+                "enable-app-optimization.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references/android/topic/performance/app-optimization/enable-app-optimization.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references/android/topic/performance/app-optimization"
+            ],
+            [
+                "ui-automator.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references/android/training/testing/other-components/ui-automator.md",
+                "/home/shaolin/lyria/.agents/skills/r8-analyzer/references/android/training/testing/other-components"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/styles/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/styles"
+            ],
+            [
+                "custom.md",
+                "/home/shaolin/lyria/.agents/skills/styles/references/android/develop/ui/compose/designsystems/custom.md",
+                "/home/shaolin/lyria/.agents/skills/styles/references/android/develop/ui/compose/designsystems"
+            ],
+            [
+                "fundamentals.md",
+                "/home/shaolin/lyria/.agents/skills/styles/references/android/develop/ui/compose/styles/fundamentals.md",
+                "/home/shaolin/lyria/.agents/skills/styles/references/android/develop/ui/compose/styles"
+            ],
+            [
+                "state-animations.md",
+                "/home/shaolin/lyria/.agents/skills/styles/references/android/develop/ui/compose/styles/state-animations.md",
+                "/home/shaolin/lyria/.agents/skills/styles/references/android/develop/ui/compose/styles"
+            ],
+            [
+                "styles-vs-modifiers.md",
+                "/home/shaolin/lyria/.agents/skills/styles/references/android/develop/ui/compose/styles/styles-vs-modifiers.md",
+                "/home/shaolin/lyria/.agents/skills/styles/references/android/develop/ui/compose/styles"
+            ],
+            [
+                "theming.md",
+                "/home/shaolin/lyria/.agents/skills/styles/references/android/develop/ui/compose/styles/theming.md",
+                "/home/shaolin/lyria/.agents/skills/styles/references/android/develop/ui/compose/styles"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/testing-setup/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/testing-setup"
+            ],
+            [
+                "common-patterns.md",
+                "/home/shaolin/lyria/.agents/skills/testing-setup/references/android/develop/ui/compose/testing/common-patterns.md",
+                "/home/shaolin/lyria/.agents/skills/testing-setup/references/android/develop/ui/compose/testing"
+            ],
+            [
+                "compose-screenshot-testing.md",
+                "/home/shaolin/lyria/.agents/skills/testing-setup/references/android/studio/preview/compose-screenshot-testing.md",
+                "/home/shaolin/lyria/.agents/skills/testing-setup/references/android/studio/preview"
+            ],
+            [
+                "hilt-testing.md",
+                "/home/shaolin/lyria/.agents/skills/testing-setup/references/android/training/dependency-injection/hilt-testing.md",
+                "/home/shaolin/lyria/.agents/skills/testing-setup/references/android/training/dependency-injection"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email"
+            ],
+            [
+                "index.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/credential-manager/index.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/credential-manager"
+            ],
+            [
+                "credential-verifier.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/digital-credentials/credential-verifier.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/digital-credentials"
+            ],
+            [
+                "email-verification-implementation.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/digital-credentials/email-verification-implementation.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/digital-credentials"
+            ],
+            [
+                "email-verification.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/digital-credentials/email-verification.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/digital-credentials"
+            ],
+            [
+                "index.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/digital-credentials/index.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/digital-credentials"
+            ],
+            [
+                "create-passkeys.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/passkeys/create-passkeys.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/passkeys"
+            ],
+            [
+                "credential-manager-webview.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/sign-in/credential-manager-webview.md",
+                "/home/shaolin/lyria/.agents/skills/verified-email/references/android/identity/sign-in"
+            ],
+            [
+                "SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/wear-compose-m3/SKILL.md",
+                "/home/shaolin/lyria/.agents/skills/wear-compose-m3"
+            ],
+            [
+                "migrate-to-material3.md",
+                "/home/shaolin/lyria/.agents/skills/wear-compose-m3/references/android/training/wearables/compose/migrate-to-material3.md",
+                "/home/shaolin/lyria/.agents/skills/wear-compose-m3/references/android/training/wearables/compose"
+            ],
+            [
+                "debug.keystore",
+                "/home/shaolin/lyria/.android_home/debug.keystore",
+                "/home/shaolin/lyria/.android_home"
+            ],
+            [
+                "debug.keystore.lock",
+                "/home/shaolin/lyria/.android_home/debug.keystore.lock",
+                "/home/shaolin/lyria/.android_home"
+            ],
+            [
+                "sdkbin-1_029f9a26-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_029f9a26-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_02d73479-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_02d73479-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_2193743a-addon2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_2193743a-addon2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_3bb7c63e-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_3bb7c63e-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_485070ac-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_485070ac-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_53ed092d-addon2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_53ed092d-addon2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_678e6ea3-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_678e6ea3-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_6dd634b6-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_6dd634b6-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_706db414-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_706db414-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_72847604-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_72847604-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_7577a689-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_7577a689-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_8f4284d5-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_8f4284d5-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_a37be9bd-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_a37be9bd-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_b743781d-repository2-2_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_b743781d-repository2-2_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_b7518f9e-repository2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_b7518f9e-repository2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_bdaee495-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_bdaee495-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_c45a1453-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_c45a1453-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_d1e71dd8-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_d1e71dd8-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_d2c7e9a3-addons_list-6_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_d2c7e9a3-addons_list-6_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_da4252ec-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_da4252ec-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkbin-1_df1ec398-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkbin-1_df1ec398-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_029f9a26-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_029f9a26-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_02d73479-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_02d73479-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_2193743a-addon2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_2193743a-addon2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_3bb7c63e-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_3bb7c63e-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_485070ac-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_485070ac-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_53ed092d-addon2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_53ed092d-addon2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_678e6ea3-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_678e6ea3-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_6dd634b6-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_6dd634b6-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_706db414-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_706db414-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_72847604-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_72847604-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_7577a689-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_7577a689-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_8f4284d5-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_8f4284d5-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_a37be9bd-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_a37be9bd-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_b743781d-repository2-2_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_b743781d-repository2-2_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_b7518f9e-repository2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_b7518f9e-repository2-3_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_bdaee495-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_bdaee495-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_c45a1453-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_c45a1453-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_d1e71dd8-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_d1e71dd8-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_d2c7e9a3-addons_list-6_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_d2c7e9a3-addons_list-6_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_da4252ec-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_da4252ec-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "sdkinf-1_df1ec398-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache/sdkinf-1_df1ec398-sys-img2-4_xml",
+                "/home/shaolin/lyria/.android_home/cache"
+            ],
+            [
+                "backend_walkthrough.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948/backend_walkthrough.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948"
+            ],
+            [
+                "di_architecture_audit.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948/di_architecture_audit.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948"
+            ],
+            [
+                "implementation_plan.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948/implementation_plan.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948"
+            ],
+            [
+                "performance_audit_guide.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948/performance_audit_guide.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948"
+            ],
+            [
+                "task.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948/task.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948"
+            ],
+            [
+                "testing_analysis.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948/testing_analysis.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948"
+            ],
+            [
+                "testing_strategy_analysis.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948/testing_strategy_analysis.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948"
+            ],
+            [
+                "walkthrough.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948/walkthrough.artifact.md",
+                "/home/shaolin/lyria/.artifacts/71eecc1d-2f58-4668-8e7f-e982773b9948"
+            ],
+            [
+                "implementation_plan.artifact.md",
+                "/home/shaolin/lyria/.artifacts/84c34434-abaf-4754-a6c8-370e955bfd5d/implementation_plan.artifact.md",
+                "/home/shaolin/lyria/.artifacts/84c34434-abaf-4754-a6c8-370e955bfd5d"
+            ],
+            [
+                "hosting.ZGlzdA.cache",
+                "/home/shaolin/lyria/.firebase/hosting.ZGlzdA.cache",
+                "/home/shaolin/lyria/.firebase"
+            ],
+            [
+                "ci-cd.yml",
+                "/home/shaolin/lyria/.github/workflows/ci-cd.yml",
+                "/home/shaolin/lyria/.github/workflows"
+            ],
+            [
+                "firebase-hosting-merge.yml",
+                "/home/shaolin/lyria/.github/workflows/firebase-hosting-merge.yml",
+                "/home/shaolin/lyria/.github/workflows"
+            ],
+            [
+                "firebase-hosting-pull-request.yml",
+                "/home/shaolin/lyria/.github/workflows/firebase-hosting-pull-request.yml",
+                "/home/shaolin/lyria/.github/workflows"
+            ],
+            [
+                "errors-1784714549265.log",
+                "/home/shaolin/lyria/.kotlin/errors/errors-1784714549265.log",
+                "/home/shaolin/lyria/.kotlin/errors"
+            ],
+            [
+                "app.iml",
+                "/home/shaolin/lyria/app/app.iml",
+                "/home/shaolin/lyria/app"
+            ],
+            [
+                "build.gradle.kts",
+                "/home/shaolin/lyria/app/build.gradle.kts",
+                "/home/shaolin/lyria/app"
+            ],
+            [
+                "google-services.json",
+                "/home/shaolin/lyria/app/google-services.json",
+                "/home/shaolin/lyria/app"
+            ],
+            [
+                "proguard-rules.pro",
+                "/home/shaolin/lyria/app/proguard-rules.pro",
+                "/home/shaolin/lyria/app"
+            ],
+            [
+                "theme_baseline.png",
+                "/home/shaolin/lyria/app/theme_baseline.png",
+                "/home/shaolin/lyria/app"
+            ],
+            [
+                "upload-keystore.jks",
+                "/home/shaolin/lyria/app/upload-keystore.jks",
+                "/home/shaolin/lyria/app"
+            ],
+            [
+                "AndroidManifest.xml",
+                "/home/shaolin/lyria/app/src/main/AndroidManifest.xml",
+                "/home/shaolin/lyria/app/src/main"
+            ],
+            [
+                "MainActivity.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio"
+            ],
+            [
+                "MyApplication.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio"
+            ],
+            [
+                "WearableActivity.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/WearableActivity.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio"
+            ],
+            [
+                "WearableStreamingService.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/WearableStreamingService.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio"
+            ],
+            [
+                "MaveFunctions.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/appfunctions"
+            ],
+            [
+                "NetworkModule.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/di/NetworkModule.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/di"
+            ],
+            [
+                "CrashlyticsTree.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/logging/CrashlyticsTree.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/logging"
+            ],
+            [
+                "AIApiService.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/AIApiService.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network"
+            ],
+            [
+                "ApiClient.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/ApiClient.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network"
+            ],
+            [
+                "MaveModels.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/MaveModels.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network"
+            ],
+            [
+                "MaveSessionManager.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/MaveSessionManager.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network"
+            ],
+            [
+                "SpotifyApiService.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/SpotifyApiService.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network"
+            ],
+            [
+                "TokenManager.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/TokenManager.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network"
+            ],
+            [
+                "MainViewModel.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/MainViewModel.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui"
+            ],
+            [
+                "CameraPreview.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/CameraPreview.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components"
+            ],
+            [
+                "MiniPlayer.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/MiniPlayer.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components"
+            ],
+            [
+                "POVView.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/POVView.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components"
+            ],
+            [
+                "TrackItems.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/TrackItems.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components"
+            ],
+            [
+                "MaveButton.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/atoms/MaveButton.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/atoms"
+            ],
+            [
+                "MaveLogo.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/atoms/MaveLogo.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/atoms"
+            ],
+            [
+                "MaveTextField.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/atoms/MaveTextField.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/atoms"
+            ],
+            [
+                "MaveArtistCard.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/molecules/MaveArtistCard.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/molecules"
+            ],
+            [
+                "MaveStepLayout.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/organisms/MaveStepLayout.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/organisms"
+            ],
+            [
+                "AudioDevice.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/models/AudioDevice.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/models"
+            ],
+            [
+                "ChatMessage.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/models/ChatMessage.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/models"
+            ],
+            [
+                "BottomSheetSceneStrategy.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation/BottomSheetSceneStrategy.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation"
+            ],
+            [
+                "EntryProvider.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation/EntryProvider.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation"
+            ],
+            [
+                "NavigationState.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation/NavigationState.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation"
+            ],
+            [
+                "Navigator.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation/Navigator.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation"
+            ],
+            [
+                "Route.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation/Route.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation"
+            ],
+            [
+                "AlbumViewScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/AlbumViewScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "CameraCaptureScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/CameraCaptureScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "DevicesBottomSheet.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/DevicesBottomSheet.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "DevicesScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/DevicesScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "GalleryPickerScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/GalleryPickerScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "GenerateCoverScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/GenerateCoverScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "HomeScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/HomeScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "LibraryScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/LibraryScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "LiveSessionScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/LiveSessionScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "NowPlayingScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/NowPlayingScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "OnboardingScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/OnboardingScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "PodcastSelectionScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/PodcastSelectionScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "UserProfileScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/UserProfileScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens"
+            ],
+            [
+                "ArtistSelectionScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/ArtistSelectionScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding"
+            ],
+            [
+                "AuthOptionsScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/AuthOptionsScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding"
+            ],
+            [
+                "BirthdayInputScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/BirthdayInputScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding"
+            ],
+            [
+                "EmailInputScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/EmailInputScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding"
+            ],
+            [
+                "GenderInputScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/GenderInputScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding"
+            ],
+            [
+                "LoadingScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/LoadingScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding"
+            ],
+            [
+                "LoginScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/LoginScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding"
+            ],
+            [
+                "NameTermsScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/NameTermsScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding"
+            ],
+            [
+                "NotificationScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/NotificationScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding"
+            ],
+            [
+                "PasswordInputScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/PasswordInputScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding"
+            ],
+            [
+                "WelcomeScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding"
+            ],
+            [
+                "Color.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/Color.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme"
+            ],
+            [
+                "ComponentStyles.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/ComponentStyles.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme"
+            ],
+            [
+                "Spacing.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/Spacing.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme"
+            ],
+            [
+                "Theme.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/Theme.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme"
+            ],
+            [
+                "Typography.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/Typography.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme"
+            ],
+            [
+                "FrameProcessor.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/utils/FrameProcessor.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/utils"
+            ],
+            [
+                "album_view.xml",
+                "/home/shaolin/lyria/app/src/main/res/drawable/album_view.xml",
+                "/home/shaolin/lyria/app/src/main/res/drawable"
+            ],
+            [
+                "mave_brand_dark.png",
+                "/home/shaolin/lyria/app/src/main/res/drawable/mave_brand_dark.png",
+                "/home/shaolin/lyria/app/src/main/res/drawable"
+            ],
+            [
+                "mave_brand_light.png",
+                "/home/shaolin/lyria/app/src/main/res/drawable/mave_brand_light.png",
+                "/home/shaolin/lyria/app/src/main/res/drawable"
+            ],
+            [
+                "ic_launcher.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-hdpi"
+            ],
+            [
+                "ic_launcher_round.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-hdpi"
+            ],
+            [
+                "ic_launcher.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-mdpi"
+            ],
+            [
+                "ic_launcher_round.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-mdpi"
+            ],
+            [
+                "ic_launcher.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xhdpi"
+            ],
+            [
+                "ic_launcher_round.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xhdpi"
+            ],
+            [
+                "ic_launcher.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xxhdpi"
+            ],
+            [
+                "ic_launcher_round.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xxhdpi"
+            ],
+            [
+                "ic_launcher.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xxxhdpi"
+            ],
+            [
+                "ic_launcher_round.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
+                "/home/shaolin/lyria/app/src/main/res/mipmap-xxxhdpi"
+            ],
+            [
+                "values.xml",
+                "/home/shaolin/lyria/app/src/main/res/values/values.xml",
+                "/home/shaolin/lyria/app/src/main/res/values"
+            ],
+            [
+                "app_metadata.xml",
+                "/home/shaolin/lyria/app/src/main/res/xml/app_metadata.xml",
+                "/home/shaolin/lyria/app/src/main/res/xml"
+            ],
+            [
+                "provider_paths.xml",
+                "/home/shaolin/lyria/app/src/main/res/xml/provider_paths.xml",
+                "/home/shaolin/lyria/app/src/main/res/xml"
+            ],
+            [
+                "index.html",
+                "/home/shaolin/lyria/dist/index.html",
+                "/home/shaolin/lyria/dist"
+            ],
+            [
+                "AlbumView-B_3aTMqr.js",
+                "/home/shaolin/lyria/dist/assets/AlbumView-B_3aTMqr.js",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "DevicesScreen-DSoPqcSl.js",
+                "/home/shaolin/lyria/dist/assets/DevicesScreen-DSoPqcSl.js",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "HomeScreen-BaKciP5m.js",
+                "/home/shaolin/lyria/dist/assets/HomeScreen-BaKciP5m.js",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "LibraryScreen-702Azbnf.js",
+                "/home/shaolin/lyria/dist/assets/LibraryScreen-702Azbnf.js",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "LoginScreen-ClkfNdYG.js",
+                "/home/shaolin/lyria/dist/assets/LoginScreen-ClkfNdYG.js",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "PodcastGeneratorScreen-Ud5AQwwI.js",
+                "/home/shaolin/lyria/dist/assets/PodcastGeneratorScreen-Ud5AQwwI.js",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "SearchScreen-Cx2R6QHq.js",
+                "/home/shaolin/lyria/dist/assets/SearchScreen-Cx2R6QHq.js",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "TrackListItem-DoPX71sX.js",
+                "/home/shaolin/lyria/dist/assets/TrackListItem-DoPX71sX.js",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "index-CYwsE8vb.js",
+                "/home/shaolin/lyria/dist/assets/index-CYwsE8vb.js",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "index-CqUM7F4u.css",
+                "/home/shaolin/lyria/dist/assets/index-CqUM7F4u.css",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "mave_brand_dark-D0-lh7No.png",
+                "/home/shaolin/lyria/dist/assets/mave_brand_dark-D0-lh7No.png",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "useTracks-Dkf7Hl6y.js",
+                "/home/shaolin/lyria/dist/assets/useTracks-Dkf7Hl6y.js",
+                "/home/shaolin/lyria/dist/assets"
+            ],
+            [
+                "libs.versions.toml",
+                "/home/shaolin/lyria/gradle/libs.versions.toml",
+                "/home/shaolin/lyria/gradle"
+            ],
+            [
+                "gradle-wrapper.jar",
+                "/home/shaolin/lyria/gradle/wrapper/gradle-wrapper.jar",
+                "/home/shaolin/lyria/gradle/wrapper"
+            ],
+            [
+                "gradle-wrapper.properties",
+                "/home/shaolin/lyria/gradle/wrapper/gradle-wrapper.properties",
+                "/home/shaolin/lyria/gradle/wrapper"
+            ],
+            [
+                "make_transparent_logos.py",
+                "/home/shaolin/lyria/scripts/make_transparent_logos.py",
+                "/home/shaolin/lyria/scripts"
+            ],
+            [
+                "perfetto_analyzer.py",
+                "/home/shaolin/lyria/scripts/perfetto_analyzer.py",
+                "/home/shaolin/lyria/scripts"
+            ],
+            [
+                "play_policy_insights.py",
+                "/home/shaolin/lyria/scripts/play_policy_insights.py",
+                "/home/shaolin/lyria/scripts"
+            ],
+            [
+                "r8_analyzer.py",
+                "/home/shaolin/lyria/scripts/r8_analyzer.py",
+                "/home/shaolin/lyria/scripts"
+            ],
+            [
+                "app.ts",
+                "/home/shaolin/lyria/src/app.ts",
+                "/home/shaolin/lyria/src"
+            ],
+            [
+                "index.ts",
+                "/home/shaolin/lyria/src/index.ts",
+                "/home/shaolin/lyria/src"
+            ],
+            [
+                "firebase.ts",
+                "/home/shaolin/lyria/src/config/firebase.ts",
+                "/home/shaolin/lyria/src/config"
+            ],
+            [
+                "logger.ts",
+                "/home/shaolin/lyria/src/config/logger.ts",
+                "/home/shaolin/lyria/src/config"
+            ],
+            [
+                "redis.ts",
+                "/home/shaolin/lyria/src/config/redis.ts",
+                "/home/shaolin/lyria/src/config"
+            ],
+            [
+                "auth.ts",
+                "/home/shaolin/lyria/src/middlewares/auth.ts",
+                "/home/shaolin/lyria/src/middlewares"
+            ],
+            [
+                "index.ts",
+                "/home/shaolin/lyria/src/middlewares/index.ts",
+                "/home/shaolin/lyria/src/middlewares"
+            ],
+            [
+                "LogRepository.ts",
+                "/home/shaolin/lyria/src/repositories/LogRepository.ts",
+                "/home/shaolin/lyria/src/repositories"
+            ],
+            [
+                "QuotaRepository.ts",
+                "/home/shaolin/lyria/src/repositories/QuotaRepository.ts",
+                "/home/shaolin/lyria/src/repositories"
+            ],
+            [
+                "ReportRepository.ts",
+                "/home/shaolin/lyria/src/repositories/ReportRepository.ts",
+                "/home/shaolin/lyria/src/repositories"
+            ],
+            [
+                "SpotifyRepository.ts",
+                "/home/shaolin/lyria/src/repositories/SpotifyRepository.ts",
+                "/home/shaolin/lyria/src/repositories"
+            ],
+            [
+                "TrackRepository.ts",
+                "/home/shaolin/lyria/src/repositories/TrackRepository.ts",
+                "/home/shaolin/lyria/src/repositories"
+            ],
+            [
+                "UserRepository.ts",
+                "/home/shaolin/lyria/src/repositories/UserRepository.ts",
+                "/home/shaolin/lyria/src/repositories"
+            ],
+            [
+                "auth.ts",
+                "/home/shaolin/lyria/src/routes/auth.ts",
+                "/home/shaolin/lyria/src/routes"
+            ],
+            [
+                "index.ts",
+                "/home/shaolin/lyria/src/routes/index.ts",
+                "/home/shaolin/lyria/src/routes"
+            ],
+            [
+                "logs.ts",
+                "/home/shaolin/lyria/src/routes/logs.ts",
+                "/home/shaolin/lyria/src/routes"
+            ],
+            [
+                "music.ts",
+                "/home/shaolin/lyria/src/routes/music.ts",
+                "/home/shaolin/lyria/src/routes"
+            ],
+            [
+                "reports.ts",
+                "/home/shaolin/lyria/src/routes/reports.ts",
+                "/home/shaolin/lyria/src/routes"
+            ],
+            [
+                "spotify.ts",
+                "/home/shaolin/lyria/src/routes/spotify.ts",
+                "/home/shaolin/lyria/src/routes"
+            ],
+            [
+                "api.ts",
+                "/home/shaolin/lyria/src/schemas/api.ts",
+                "/home/shaolin/lyria/src/schemas"
+            ],
+            [
+                "CredentialVerifier.ts",
+                "/home/shaolin/lyria/src/services/CredentialVerifier.ts",
+                "/home/shaolin/lyria/src/services"
+            ],
+            [
+                "MusicService.ts",
+                "/home/shaolin/lyria/src/services/MusicService.ts",
+                "/home/shaolin/lyria/src/services"
+            ],
+            [
+                "PodcastService.ts",
+                "/home/shaolin/lyria/src/services/PodcastService.ts",
+                "/home/shaolin/lyria/src/services"
+            ],
+            [
+                "SpotifyService.ts",
+                "/home/shaolin/lyria/src/services/SpotifyService.ts",
+                "/home/shaolin/lyria/src/services"
+            ],
+            [
+                "ai.ts",
+                "/home/shaolin/lyria/src/services/ai.ts",
+                "/home/shaolin/lyria/src/services"
+            ],
+            [
+                "backup.ts",
+                "/home/shaolin/lyria/src/services/backup.ts",
+                "/home/shaolin/lyria/src/services"
+            ],
+            [
+                "mave-graph.ts",
+                "/home/shaolin/lyria/src/services/mave-graph.ts",
+                "/home/shaolin/lyria/src/services"
+            ],
+            [
+                "css.d.ts",
+                "/home/shaolin/lyria/src/types/css.d.ts",
+                "/home/shaolin/lyria/src/types"
+            ],
+            [
+                "genai.d.ts",
+                "/home/shaolin/lyria/src/types/genai.d.ts",
+                "/home/shaolin/lyria/src/types"
+            ]
+        ],
+        "gradles": [
+            "/home/shaolin/lyria/build.gradle.kts",
+            "/home/shaolin/lyria/settings.gradle.kts",
+            "/home/shaolin/lyria/app/build.gradle.kts"
+        ],
+        "manifests": [
+            "/home/shaolin/lyria/app/src/main/AndroidManifest.xml"
+        ],
+        "source_code": [
+            "/home/shaolin/lyria/index.tsx",
+            "/home/shaolin/lyria/package.json",
+            "/home/shaolin/lyria/server.ts",
+            "/home/shaolin/lyria/validate_dependencies.js",
+            "/home/shaolin/lyria/vite.config.ts",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/WearableActivity.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/WearableStreamingService.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/di/NetworkModule.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/logging/CrashlyticsTree.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/AIApiService.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/ApiClient.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/MaveModels.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/MaveSessionManager.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/SpotifyApiService.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/network/TokenManager.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/MainViewModel.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/CameraPreview.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/MiniPlayer.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/POVView.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/TrackItems.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/atoms/MaveButton.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/atoms/MaveLogo.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/atoms/MaveTextField.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/molecules/MaveArtistCard.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/components/organisms/MaveStepLayout.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/models/AudioDevice.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/models/ChatMessage.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation/BottomSheetSceneStrategy.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation/EntryProvider.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation/NavigationState.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation/Navigator.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/navigation/Route.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/AlbumViewScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/CameraCaptureScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/DevicesBottomSheet.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/DevicesScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/GalleryPickerScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/GenerateCoverScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/HomeScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/LibraryScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/LiveSessionScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/NowPlayingScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/OnboardingScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/PodcastSelectionScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/UserProfileScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/ArtistSelectionScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/AuthOptionsScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/BirthdayInputScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/EmailInputScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/GenderInputScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/LoadingScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/LoginScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/NameTermsScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/NotificationScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/PasswordInputScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/Color.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/ComponentStyles.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/Spacing.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/Theme.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/theme/Typography.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/utils/FrameProcessor.kt",
+            "/home/shaolin/lyria/app/src/main/res/values/values.xml",
+            "/home/shaolin/lyria/app/src/main/res/xml/app_metadata.xml",
+            "/home/shaolin/lyria/app/src/main/res/xml/provider_paths.xml",
+            "/home/shaolin/lyria/dist/assets/AlbumView-B_3aTMqr.js",
+            "/home/shaolin/lyria/dist/assets/DevicesScreen-DSoPqcSl.js",
+            "/home/shaolin/lyria/dist/assets/HomeScreen-BaKciP5m.js",
+            "/home/shaolin/lyria/dist/assets/LibraryScreen-702Azbnf.js",
+            "/home/shaolin/lyria/dist/assets/LoginScreen-ClkfNdYG.js",
+            "/home/shaolin/lyria/dist/assets/PodcastGeneratorScreen-Ud5AQwwI.js",
+            "/home/shaolin/lyria/dist/assets/SearchScreen-Cx2R6QHq.js",
+            "/home/shaolin/lyria/dist/assets/TrackListItem-DoPX71sX.js",
+            "/home/shaolin/lyria/dist/assets/index-CYwsE8vb.js",
+            "/home/shaolin/lyria/dist/assets/useTracks-Dkf7Hl6y.js",
+            "/home/shaolin/lyria/src/app.ts",
+            "/home/shaolin/lyria/src/index.ts",
+            "/home/shaolin/lyria/src/config/firebase.ts",
+            "/home/shaolin/lyria/src/config/logger.ts",
+            "/home/shaolin/lyria/src/config/redis.ts",
+            "/home/shaolin/lyria/src/middlewares/auth.ts",
+            "/home/shaolin/lyria/src/middlewares/index.ts",
+            "/home/shaolin/lyria/src/repositories/LogRepository.ts",
+            "/home/shaolin/lyria/src/repositories/QuotaRepository.ts",
+            "/home/shaolin/lyria/src/repositories/ReportRepository.ts",
+            "/home/shaolin/lyria/src/repositories/SpotifyRepository.ts",
+            "/home/shaolin/lyria/src/repositories/TrackRepository.ts",
+            "/home/shaolin/lyria/src/repositories/UserRepository.ts",
+            "/home/shaolin/lyria/src/routes/auth.ts",
+            "/home/shaolin/lyria/src/routes/index.ts",
+            "/home/shaolin/lyria/src/routes/logs.ts",
+            "/home/shaolin/lyria/src/routes/music.ts",
+            "/home/shaolin/lyria/src/routes/reports.ts",
+            "/home/shaolin/lyria/src/routes/spotify.ts",
+            "/home/shaolin/lyria/src/schemas/api.ts",
+            "/home/shaolin/lyria/src/services/CredentialVerifier.ts",
+            "/home/shaolin/lyria/src/services/MusicService.ts",
+            "/home/shaolin/lyria/src/services/PodcastService.ts",
+            "/home/shaolin/lyria/src/services/SpotifyService.ts",
+            "/home/shaolin/lyria/src/services/ai.ts",
+            "/home/shaolin/lyria/src/services/backup.ts",
+            "/home/shaolin/lyria/src/services/mave-graph.ts",
+            "/home/shaolin/lyria/src/types/css.d.ts",
+            "/home/shaolin/lyria/src/types/genai.d.ts"
+        ]
+    },
+    "data_safety_scan": {
+        "data_sources": {
+            "AUDIO": [
+                "../dist/assets/SearchScreen-Cx2R6QHq.js (Pattern: MediaRecorder)",
+                "src/main/java/com/musically/studio/MainActivity.kt (Pattern: RECORD_AUDIO)",
+                "src/main/java/com/musically/studio/WearableActivity.kt (Pattern: record)",
+                "src/main/java/com/musically/studio/logging/CrashlyticsTree.kt (Pattern: record)",
+                "src/main/java/com/musically/studio/ui/MainViewModel.kt (Pattern: AudioRecord)",
+                "src/main/java/com/musically/studio/ui/screens/LiveSessionScreen.kt (Pattern: record)"
+            ],
+            "CRASH_LOGS": [
+                "../dist/assets/index-CYwsE8vb.js (Pattern: uncaughtException)",
+                "src/main/java/com/musically/studio/MyApplication.kt (Pattern: Crashlytics)",
+                "src/main/java/com/musically/studio/logging/CrashlyticsTree.kt (Pattern: Crashlytics)"
+            ],
+            "DEVICE_ID": [
+                "../dist/assets/index-CYwsE8vb.js (Pattern: instanceId)"
+            ],
+            "EMAIL": [
+                "../dist/assets/LibraryScreen-702Azbnf.js (Pattern: .email)",
+                "../dist/assets/index-CYwsE8vb.js (Pattern: .email)",
+                "../src/routes/auth.ts (Pattern: .email)",
+                "../src/services/CredentialVerifier.ts (Pattern: .email)"
+            ],
+            "FILES_AND_DOCS": [
+                "../dist/assets/DevicesScreen-DSoPqcSl.js (Pattern: localStorage)",
+                "../dist/assets/index-CYwsE8vb.js (Pattern: localStorage)",
+                "src/main/java/com/musically/studio/ui/screens/AlbumViewScreen.kt (Pattern: text/plain)",
+                "src/main/java/com/musically/studio/ui/screens/DevicesBottomSheet.kt (Pattern: text/plain)",
+                "src/main/java/com/musically/studio/ui/screens/NowPlayingScreen.kt (Pattern: text/plain)"
+            ],
+            "MEDIA": [
+                "src/main/java/com/musically/studio/ui/screens/GalleryPickerScreen.kt (Pattern: MediaStore)"
+            ],
+            "MUSIC": [
+                "../dist/assets/AlbumView-B_3aTMqr.js (Pattern: artist)",
+                "../dist/assets/DevicesScreen-DSoPqcSl.js (Pattern: track)",
+                "../dist/assets/HomeScreen-BaKciP5m.js (Pattern: artist)",
+                "../dist/assets/LibraryScreen-702Azbnf.js (Pattern: artist)",
+                "../dist/assets/LoginScreen-ClkfNdYG.js (Pattern: track)",
+                "../dist/assets/PodcastGeneratorScreen-Ud5AQwwI.js (Pattern: music)",
+                "../dist/assets/SearchScreen-Cx2R6QHq.js (Pattern: music)",
+                "../dist/assets/TrackListItem-DoPX71sX.js (Pattern: music)",
+                "../dist/assets/index-CYwsE8vb.js (Pattern: track)",
+                "../dist/assets/useTracks-Dkf7Hl6y.js (Pattern: music)",
+                "../src/app.ts (Pattern: music)",
+                "../src/config/logger.ts (Pattern: music)",
+                "../src/index.ts (Pattern: music)",
+                "../src/repositories/ReportRepository.ts (Pattern: track)",
+                "../src/repositories/TrackRepository.ts (Pattern: music)",
+                "../src/repositories/UserRepository.ts (Pattern: artist)",
+                "../src/routes/auth.ts (Pattern: artist)",
+                "../src/routes/index.ts (Pattern: music)",
+                "../src/routes/music.ts (Pattern: music)",
+                "../src/routes/reports.ts (Pattern: track)",
+                "../src/routes/spotify.ts (Pattern: playlist)",
+                "../src/schemas/api.ts (Pattern: music)",
+                "../src/services/MusicService.ts (Pattern: music)",
+                "../src/services/PodcastService.ts (Pattern: artist)",
+                "../src/services/SpotifyService.ts (Pattern: playlist)",
+                "../src/services/ai.ts (Pattern: music)",
+                "../src/services/mave-graph.ts (Pattern: music)",
+                "src/main/java/com/musically/studio/MainActivity.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/MyApplication.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/WearableActivity.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/WearableStreamingService.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/di/NetworkModule.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/logging/CrashlyticsTree.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/network/AIApiService.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/network/ApiClient.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/network/MaveModels.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/network/MaveSessionManager.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/network/SpotifyApiService.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/network/TokenManager.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/MainViewModel.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/components/CameraPreview.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/components/MiniPlayer.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/components/POVView.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/components/TrackItems.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/components/atoms/MaveButton.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/components/atoms/MaveLogo.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/components/atoms/MaveTextField.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/components/molecules/MaveArtistCard.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/components/organisms/MaveStepLayout.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/models/AudioDevice.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/models/ChatMessage.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/navigation/BottomSheetSceneStrategy.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/navigation/EntryProvider.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/navigation/NavigationState.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/navigation/Navigator.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/navigation/Route.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/AlbumViewScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/CameraCaptureScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/DevicesBottomSheet.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/DevicesScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/GalleryPickerScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/GenerateCoverScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/HomeScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/LibraryScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/LiveSessionScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/NowPlayingScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/OnboardingScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/PodcastSelectionScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/UserProfileScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/ArtistSelectionScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/AuthOptionsScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/BirthdayInputScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/EmailInputScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/GenderInputScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/LoadingScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/LoginScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/NameTermsScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/NotificationScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/PasswordInputScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/theme/Color.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/theme/ComponentStyles.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/theme/Spacing.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/theme/Theme.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/ui/theme/Typography.kt (Pattern: music)",
+                "src/main/java/com/musically/studio/utils/FrameProcessor.kt (Pattern: music)",
+                "src/main/res/values/values.xml (Pattern: artist)",
+                "src/main/res/xml/app_metadata.xml (Pattern: music)"
+            ],
+            "NAME": [
+                "../src/services/CredentialVerifier.ts (Pattern: given_name)",
+                "src/main/java/com/musically/studio/MainActivity.kt (Pattern: family_name)"
+            ],
+            "OTHER_APP_PERFORMANCE": [
+                "../dist/assets/index-CYwsE8vb.js (Pattern: heartbeat)"
+            ],
+            "OTHER_AUDIO": [
+                "../dist/assets/PodcastGeneratorScreen-Ud5AQwwI.js (Pattern: podcast)",
+                "../dist/assets/SearchScreen-Cx2R6QHq.js (Pattern: podcast)",
+                "../src/repositories/SpotifyRepository.ts (Pattern: podcast)",
+                "../src/repositories/TrackRepository.ts (Pattern: podcast)",
+                "../src/routes/music.ts (Pattern: podcast)",
+                "../src/routes/spotify.ts (Pattern: podcast)",
+                "../src/schemas/api.ts (Pattern: podcast)",
+                "../src/services/MusicService.ts (Pattern: podcast)",
+                "../src/services/PodcastService.ts (Pattern: podcast)",
+                "../src/services/SpotifyService.ts (Pattern: podcast)",
+                "../src/services/mave-graph.ts (Pattern: podcast)",
+                "src/main/java/com/musically/studio/ui/screens/HomeScreen.kt (Pattern: podcast)",
+                "src/main/java/com/musically/studio/ui/screens/NowPlayingScreen.kt (Pattern: podcast)",
+                "src/main/java/com/musically/studio/ui/screens/PodcastSelectionScreen.kt (Pattern: podcast)",
+                "src/main/res/xml/app_metadata.xml (Pattern: podcast)"
+            ],
+            "PERFORMANCE_DIAGNOSTICS": [
+                "../dist/assets/index-CYwsE8vb.js (Pattern: Debug)",
+                "../index.tsx (Pattern: StrictMode)",
+                "src/main/java/com/musically/studio/MyApplication.kt (Pattern: Debug)"
+            ],
+            "PERSONAL_INFO_OTHER": [
+                "../src/repositories/UserRepository.ts (Pattern: gender)",
+                "../src/routes/auth.ts (Pattern: gender)",
+                "src/main/java/com/musically/studio/network/ApiClient.kt (Pattern: gender)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/GenderInputScreen.kt (Pattern: gender)"
+            ],
+            "PHOTOS": [
+                "../src/services/ai.ts (Pattern: CAMERA)",
+                "src/main/java/com/musically/studio/MainActivity.kt (Pattern: CAMERA)",
+                "src/main/java/com/musically/studio/ui/components/CameraPreview.kt (Pattern: CAMERA)",
+                "src/main/java/com/musically/studio/ui/navigation/EntryProvider.kt (Pattern: ImageCapture)",
+                "src/main/java/com/musically/studio/ui/screens/CameraCaptureScreen.kt (Pattern: ImageCapture)",
+                "src/main/java/com/musically/studio/ui/screens/GalleryPickerScreen.kt (Pattern: PickVisualMedia)"
+            ],
+            "RACE_ETHNICITY": [
+                "../dist/assets/index-CYwsE8vb.js (Pattern: race)",
+                "../src/index.ts (Pattern: race)"
+            ],
+            "USER_ACCOUNT": [
+                "../dist/assets/LoginScreen-ClkfNdYG.js (Pattern: login)",
+                "../dist/assets/index-CYwsE8vb.js (Pattern: login)",
+                "../package.json (Pattern: uid)",
+                "../src/config/redis.ts (Pattern: credentials)",
+                "../src/middlewares/auth.ts (Pattern: uid)",
+                "../src/repositories/QuotaRepository.ts (Pattern: uid)",
+                "../src/repositories/SpotifyRepository.ts (Pattern: uid)",
+                "../src/repositories/TrackRepository.ts (Pattern: uid)",
+                "../src/repositories/UserRepository.ts (Pattern: uid)",
+                "../src/routes/auth.ts (Pattern: uid)",
+                "../src/routes/music.ts (Pattern: uid)",
+                "../src/routes/reports.ts (Pattern: uid)",
+                "../src/routes/spotify.ts (Pattern: credentials)",
+                "../src/services/CredentialVerifier.ts (Pattern: credentials)",
+                "../src/services/MusicService.ts (Pattern: uid)",
+                "../src/services/PodcastService.ts (Pattern: uid)",
+                "../src/services/SpotifyService.ts (Pattern: uid)",
+                "../src/services/ai.ts (Pattern: uid)",
+                "../src/services/mave-graph.ts (Pattern: uid)",
+                "../validate_dependencies.js (Pattern: credentials)",
+                "src/main/java/com/musically/studio/MainActivity.kt (Pattern: login)",
+                "src/main/java/com/musically/studio/di/NetworkModule.kt (Pattern: FirebaseAuth)",
+                "src/main/java/com/musically/studio/network/TokenManager.kt (Pattern: FirebaseAuth)",
+                "src/main/java/com/musically/studio/ui/MainViewModel.kt (Pattern: login)",
+                "src/main/java/com/musically/studio/ui/navigation/EntryProvider.kt (Pattern: GoogleSignIn)",
+                "src/main/java/com/musically/studio/ui/screens/GenerateCoverScreen.kt (Pattern: uid)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/LoginScreen.kt (Pattern: login)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt (Pattern: GoogleSignIn)"
+            ],
+            "VIDEOS": [
+                "../dist/assets/SearchScreen-Cx2R6QHq.js (Pattern: MediaRecorder)",
+                "src/main/java/com/musically/studio/ui/MainViewModel.kt (Pattern: MediaRecorder)"
+            ]
+        },
+        "disclosure": {
+            "-": [
+                "../dist/assets/index-CYwsE8vb.js (Pattern: collect)",
+                "../src/repositories/LogRepository.ts (Pattern: collect)",
+                "../src/repositories/QuotaRepository.ts (Pattern: collect)",
+                "../src/repositories/ReportRepository.ts (Pattern: collect)",
+                "../src/repositories/SpotifyRepository.ts (Pattern: collect)",
+                "../src/repositories/TrackRepository.ts (Pattern: collect)",
+                "../src/repositories/UserRepository.ts (Pattern: collect)",
+                "../src/routes/music.ts (Pattern: share)",
+                "../src/services/MusicService.ts (Pattern: share)",
+                "../src/services/backup.ts (Pattern: collect)",
+                "src/main/java/com/musically/studio/MainActivity.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/WearableActivity.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/WearableStreamingService.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/network/ApiClient.kt (Pattern: share)",
+                "src/main/java/com/musically/studio/ui/MainViewModel.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/components/POVView.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/navigation/EntryProvider.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/AlbumViewScreen.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/DevicesBottomSheet.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/DevicesScreen.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/HomeScreen.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/LibraryScreen.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/LiveSessionScreen.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/NowPlayingScreen.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/PodcastSelectionScreen.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/UserProfileScreen.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/ArtistSelectionScreen.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/BirthdayInputScreen.kt (Pattern: Dialog)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/LoginScreen.kt (Pattern: collect)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/NameTermsScreen.kt (Pattern: Privacy Policy)",
+                "src/main/java/com/musically/studio/utils/FrameProcessor.kt (Pattern: collect)"
+            ]
+        },
+        "foreground_service": {
+            "-": [
+                "src/main/java/com/musically/studio/WearableStreamingService.kt (Pattern: startForeground)",
+                "src/main/java/com/musically/studio/ui/MainViewModel.kt (Pattern: startForeground)"
+            ]
+        },
+        "network_transmission": {
+            "-": [
+                "../dist/assets/PodcastGeneratorScreen-Ud5AQwwI.js (Pattern: fetch)",
+                "../dist/assets/SearchScreen-Cx2R6QHq.js (Pattern: fetch)",
+                "../dist/assets/index-CYwsE8vb.js (Pattern: fetch)",
+                "../dist/assets/useTracks-Dkf7Hl6y.js (Pattern: fetch)",
+                "../package.json (Pattern: fetch)",
+                "../src/index.ts (Pattern: WebSocket)",
+                "../src/routes/index.ts (Pattern: WebSocket)",
+                "../src/routes/music.ts (Pattern: fetch)",
+                "../src/routes/spotify.ts (Pattern: fetch)",
+                "../src/services/CredentialVerifier.ts (Pattern: fetch)",
+                "../src/services/MusicService.ts (Pattern: WebSocket)",
+                "../src/services/PodcastService.ts (Pattern: WebSocket)",
+                "../src/services/SpotifyService.ts (Pattern: fetch)",
+                "src/main/java/com/musically/studio/di/NetworkModule.kt (Pattern: HttpClient)",
+                "src/main/java/com/musically/studio/network/ApiClient.kt (Pattern: HttpClient)",
+                "src/main/java/com/musically/studio/network/MaveSessionManager.kt (Pattern: WebSocket)",
+                "src/main/java/com/musically/studio/ui/MainViewModel.kt (Pattern: fetch)",
+                "src/main/java/com/musically/studio/ui/screens/HomeScreen.kt (Pattern: fetch)",
+                "src/main/java/com/musically/studio/ui/screens/LibraryScreen.kt (Pattern: fetch)",
+                "src/main/java/com/musically/studio/ui/screens/PodcastSelectionScreen.kt (Pattern: fetch)",
+                "src/main/java/com/musically/studio/ui/screens/UserProfileScreen.kt (Pattern: fetch)",
+                "src/main/java/com/musically/studio/ui/screens/onboarding/ArtistSelectionScreen.kt (Pattern: fetch)"
+            ]
+        }
+    },
+    "found_urls": [],
+    "semantic_files": {
+        "CONFIG": [
+            "vite.config.ts"
+        ],
+        "LEGAL": [
+            "NameTermsScreen.kt"
+        ],
+        "MUSIC": [
+            "MiniPlayer.kt",
+            "music.ts",
+            "MusicService.ts"
+        ],
+        "OTHER_AUDIO": [
+            "PodcastSelectionScreen.kt",
+            "PodcastGeneratorScreen-Ud5AQwwI.js",
+            "PodcastService.ts"
+        ],
+        "PHOTOS": [
+            "CameraPreview.kt",
+            "CameraCaptureScreen.kt",
+            "GalleryPickerScreen.kt"
+        ],
+        "USER_ACCOUNT": [
+            "AuthOptionsScreen.kt",
+            "LoginScreen.kt",
+            "LoginScreen-ClkfNdYG.js",
+            "auth.ts",
+            "auth.ts"
+        ]
+    }
+}

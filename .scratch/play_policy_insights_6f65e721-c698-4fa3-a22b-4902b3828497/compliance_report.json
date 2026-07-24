@@ -1,0 +1,95 @@
+{
+    "data_safety_mismatches": [],
+    "findings": [
+        {
+            "evidence": "App manages user accounts and authentication flow, but UserProfileScreen.kt lacks any in-app account deletion mechanism or remote data deletion request.\n\n**Critic Verification**: Automatically verified (bypassed critic review). (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/UserProfileScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/LoginScreen.kt"
+            ],
+            "finding_id": "7",
+            "issue_summary": "App manages user accounts, but NO code, layout, or string suggests an in-app deletion button or process.",
+            "policy_id": "account_deletion",
+            "recommendation": "Implement in-app deletion: Create a highly discoverable path (e.g., under User Profile/Account Settings) to let users initiate account deletion directly in the app.",
+            "severity": "IMPORTANT"
+        },
+        {
+            "evidence": "Audio stream is processed ephemerally for Google Cloud AI Model Garden podcast and voice inputs.\n\n**Critic Verification**: Automatically verified (bypassed critic review). (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/LiveSessionScreen.kt"
+            ],
+            "finding_id": "2",
+            "issue_summary": "App accesses microphone for voice vibe streaming and podcast generation.",
+            "policy_id": "audio_recording_access",
+            "recommendation": "Declare Audio collection in the Data Safety form under App Functionality.",
+            "severity": "SUGGESTION"
+        },
+        {
+            "evidence": "Firebase App Check safety tokens are transmitted over TLS to authenticate backend requests.\n\n**Critic Verification**: Automatically verified (bypassed critic review). (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/MainViewModel.kt"
+            ],
+            "finding_id": "3",
+            "issue_summary": "Firebase Auth and App Check tokens used for secure client validation.",
+            "policy_id": "device_identifiers",
+            "recommendation": "Declare App Identifiers under Security & Account Management in Play Console Data Safety.",
+            "severity": "SUGGESTION"
+        },
+        {
+            "evidence": "WearableStreamingService is declared with android:foregroundServiceType=\"camera|microphone|mediaPlayback\" and implements startForeground() with notification.\n\n**Critic Verification**: Automatically verified (bypassed critic review). (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/AndroidManifest.xml",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/WearableStreamingService.kt"
+            ],
+            "finding_id": "4",
+            "issue_summary": "Foreground service declared and active for smart glasses camera, microphone, and media playback streaming.",
+            "policy_id": "foreground_services_policy",
+            "recommendation": "Play Console Declaration Required: Ensure you complete the Foreground Service declaration form in Play Console (App content section) for camera, microphone, and mediaPlayback types prior to submission.",
+            "severity": "SUGGESTION"
+        },
+        {
+            "evidence": "LoginScreen.kt implements email/password authentication (loginWithEmail) and AuthOptionsScreen.kt provides login and registration buttons.\n\n**Critic Verification**: Automatically verified (bypassed critic review). (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/AuthOptionsScreen.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/onboarding/LoginScreen.kt"
+            ],
+            "finding_id": "6",
+            "issue_summary": "App displays or contains a login screen, registration wall, or authentication interface.",
+            "policy_id": "login_credentials",
+            "recommendation": "Administrative Console Requirements: Because your app implements a login flow, you MUST complete two manual setup steps in the Play Console dashboard to pass review:\n1. Reviewer Demo Credentials: Submit active, non-expiring test credentials so Google Play reviewers can access your gated features.\n2. Account Deletion Link: Submit a public-facing web link for account deletion to satisfy Google Play's data deletion policies.",
+            "severity": "IMPORTANT"
+        },
+        {
+            "evidence": "Camera frames are processed ephemerally for Lyria atmosphere music generation and are encrypted in transit via WSS/TLS.\n\n**Critic Verification**: Automatically verified (bypassed critic review). (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/CameraCaptureScreen.kt"
+            ],
+            "finding_id": "1",
+            "issue_summary": "App processes camera frame input for real-time vibe inference.",
+            "policy_id": "photos_and_videos_access",
+            "recommendation": "Declare Photo/Video collection in the Play Console Data Safety form under App Functionality with Encryption in Transit enabled.",
+            "severity": "SUGGESTION"
+        },
+        {
+            "evidence": "Manifest requests CAMERA, RECORD_AUDIO, and BLUETOOTH_CONNECT for Meta Wearables smart glasses video feed and voice AI generation.\n\n**Critic Verification**: Automatically verified (bypassed critic review). (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/AndroidManifest.xml",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/ui/screens/CameraCaptureScreen.kt"
+            ],
+            "finding_id": "5",
+            "issue_summary": "CAMERA, RECORD_AUDIO, and BLUETOOTH_CONNECT runtime permissions requested.",
+            "policy_id": "sensitive_permissions",
+            "recommendation": "Provide clear runtime rationale dialogs explaining why camera and audio access are required before requesting permissions.",
+            "severity": "SUGGESTION"
+        }
+    ],
+    "manual_review": [],
+    "metadata": {
+        "app_id": "unknown",
+        "overall_compliance": "Needs review",
+        "scan_date": "2026-07-22T20:39:19.404189"
+    },
+    "suggested_declaration": {
+        "collected_data": []
+    }
+}

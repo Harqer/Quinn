@@ -17,7 +17,7 @@ class MaveFunctions @Inject constructor(
      * Initiate music generation based on a natural language vibe description.
      *
      * @param context The execution context.
-     * @param text The natural language description of the desired musical atmosphere.
+     * @param text Musical atmosphere description.
      */
     @AppFunction(isDescribedByKDoc = true)
     suspend fun strikeVibe(context: AppFunctionContext, text: String) {
@@ -26,12 +26,12 @@ class MaveFunctions @Inject constructor(
     }
 
     /**
-     * Dynamically warp the current musical session's parameters.
+     * Warp the current musical session's parameters.
      * Required workflow: Call "strikeVibe" first to initiate a session.
      *
      * @param context The execution context.
-     * @param bpm The desired beats per minute. If null, the current BPM is maintained.
-     * @param density The musical density (0.0 to 1.0). If null, current density is maintained.
+     * @param bpm Beats per minute. If null, current BPM is maintained.
+     * @param density Musical density (0.0 to 1.0). If null, current density is maintained.
      */
     @AppFunction(isDescribedByKDoc = true)
     suspend fun warpMusic(context: AppFunctionContext, bpm: Int?, density: Float?) {
@@ -43,7 +43,7 @@ class MaveFunctions @Inject constructor(
     }
 
     /**
-     * Trigger real-time AI narration of the user's current environment.
+     * Trigger real-time AI narration of the user's environment.
      *
      * @param context The execution context.
      */
@@ -54,10 +54,10 @@ class MaveFunctions @Inject constructor(
     }
 
     /**
-     * Search for a track or podcast by query string.
+     * Search for a track or podcast by query.
      *
      * @param context The execution context.
-     * @param query Search string for track or podcast content.
+     * @param query Search string.
      */
     @AppFunction(isDescribedByKDoc = true)
     suspend fun searchForContent(context: AppFunctionContext, query: String) {
@@ -66,7 +66,7 @@ class MaveFunctions @Inject constructor(
     }
 
     /**
-     * Navigate the user to their library of saved tracks and podcasts.
+     * Navigate to the library of saved tracks and podcasts.
      *
      * @param context The execution context.
      */
@@ -77,7 +77,7 @@ class MaveFunctions @Inject constructor(
     }
     
     /**
-     * Navigate the user to the home screen showing community and user tracks.
+     * Navigate to the home screen showing community and user tracks.
      *
      * @param context The execution context.
      */

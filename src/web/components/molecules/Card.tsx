@@ -1,5 +1,6 @@
 import React from 'react';
 import { Typography } from '../atoms/Typography';
+import { Shimmer } from '../atoms/Shimmer';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -24,15 +25,11 @@ export const Card: React.FC<CardProps> = ({
       onClick={onClick}
       {...props}
     >
-      <div className={`w-full aspect-square bg-surface-container flex items-center justify-center shadow-lg overflow-hidden relative ${isCircle ? 'rounded-full' : 'rounded-md'}`}>
+      <div className={`w-full aspect-square bg-surface-container flex items-center justify-center shadow-lg overflow-hidden relative ${isCircle ? 'rounded-full' : 'rounded-[4px]'}`}>
         {imageUrl ? (
-          <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
+          <img src={imageUrl} alt={title} loading="lazy" className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full bg-surface-container flex items-center justify-center">
-             <Typography variant="display" color="secondary" className="opacity-50">
-               {title.charAt(0)}
-             </Typography>
-          </div>
+          <Shimmer className="w-full h-full" />
         )}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors pointer-events-none" />
       </div>

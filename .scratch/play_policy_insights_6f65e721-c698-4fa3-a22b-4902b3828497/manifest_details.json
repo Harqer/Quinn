@@ -1,0 +1,23 @@
+{
+    "app_dir": "/home/shaolin/lyria/app",
+    "app_label": "app_name",
+    "foreground_services": [
+        {
+            "name": ".WearableStreamingService",
+            "type": "camera|microphone|mediaPlayback"
+        }
+    ],
+    "package_name": null,
+    "permissions": [
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.CAMERA",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_CAMERA",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.FOREGROUND_SERVICE_MICROPHONE",
+        "android.permission.INTERNET",
+        "android.permission.RECORD_AUDIO"
+    ],
+    "target_sdk": null
+}

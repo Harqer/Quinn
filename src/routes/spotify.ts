@@ -1,18 +1,19 @@
 import { Router, Response, Request } from "express";
-import { verifyFirebaseToken, AuthenticatedRequest } from "../middlewares/auth.js";
+import { verifyFirebaseToken, verifyAppCheck, AuthenticatedRequest } from "../middlewares/auth.js";
 import { spotifyService } from "../services/SpotifyService.js";
-import { spotifyRepository } from "../repositories/SpotifyRepository.js";
+import { db } from "../config/firebase.js";
 import xss from "xss";
 
 const router = Router();
 
-router.get("/status", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
+router.get("/status", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
   const uid = req.user?.uid;
   if (!uid) return res.status(401).json({ error: "Unauthorized" });
 
   const token = await spotifyService.getValidToken(uid);
   if (token) {
-    const data = await spotifyRepository.getToken(uid);
+    const doc = await db.collection("spotify_tokens").doc(uid).get();
+    const data = doc.exists ? doc.data() : null;
     const source = (data && data.accessToken === token) ? "oauth" : "vault";
     res.json({ connected: true, source, token });
   } else {
@@ -20,7 +21,7 @@ router.get("/status", verifyFirebaseToken, async (req: AuthenticatedRequest, res
   }
 });
 
-router.get("/auth-url", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
+router.get("/auth-url", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
   const uid = req.user?.uid;
   if (!uid) return res.status(401).json({ error: "Unauthorized" });
 
@@ -90,11 +91,11 @@ router.get("/callback", async (req: Request, res: Response) => {
     if (!tokenRes.ok) throw new Error("Token exchange failed");
 
     const tokenData: any = await tokenRes.json();
-    await spotifyRepository.saveToken(uid, {
+    await db.collection("spotify_tokens").doc(uid).set({
       accessToken: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresAt: Date.now() + (tokenData.expires_in * 1000),
-    });
+    }, { merge: true });
 
     res.send(`
       <html>
@@ -118,7 +119,7 @@ router.get("/callback", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/playlists", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
+router.get("/playlists", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
   const uid = req.user?.uid;
   if (!uid) return res.status(401).json({ error: "Unauthorized" });
 
@@ -132,7 +133,7 @@ router.get("/playlists", verifyFirebaseToken, async (req: AuthenticatedRequest, 
   else res.status(response.status).json({ error: "Failed to fetch playlists" });
 });
 
-router.post("/podcast/save", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
+router.post("/podcast/save", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
   const uid = req.user?.uid;
   if (!uid) return res.status(401).json({ error: "Unauthorized" });
 
@@ -142,6 +143,30 @@ router.post("/podcast/save", verifyFirebaseToken, async (req: AuthenticatedReque
   const success = await spotifyService.savePodcastToPlaylist(uid, trackUri);
   if (success) res.json({ success: true });
   else res.status(500).json({ error: "Failed to save podcast" });
+});
+
+router.post("/music/save", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
+  const uid = req.user?.uid;
+  if (!uid) return res.status(401).json({ error: "Unauthorized" });
+
+  const { trackUri } = req.body;
+  if (!trackUri) return res.status(400).json({ error: "trackUri is required" });
+
+  const success = await spotifyService.saveMusicToPlaylist(uid, trackUri);
+  if (success) res.json({ success: true });
+  else res.status(500).json({ error: "Failed to save music" });
+});
+
+router.post("/audiobook/save", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
+  const uid = req.user?.uid;
+  if (!uid) return res.status(401).json({ error: "Unauthorized" });
+
+  const { trackUri } = req.body;
+  if (!trackUri) return res.status(400).json({ error: "trackUri is required" });
+
+  const success = await spotifyService.saveAudiobookToPlaylist(uid, trackUri);
+  if (success) res.json({ success: true });
+  else res.status(500).json({ error: "Failed to save audiobook" });
 });
 
 export default router;

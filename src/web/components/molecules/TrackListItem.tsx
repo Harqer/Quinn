@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography } from '../atoms/Typography';
 import { Icon } from '../atoms/Icon';
+import { Shimmer } from '../atoms/Shimmer';
 
 export interface TrackListItemProps {
   title: string;
@@ -28,11 +29,9 @@ export const TrackListItem: React.FC<TrackListItemProps> = ({
     >
       <div className="flex items-center gap-3 overflow-hidden">
         {albumArtUrl ? (
-          <img src={albumArtUrl} alt={`${title} art`} className="w-12 h-12 rounded bg-surface object-cover flex-shrink-0" />
+          <img src={albumArtUrl} alt={`${title} art`} loading="lazy" className="w-12 h-12 rounded bg-surface object-cover flex-shrink-0" />
         ) : (
-          <div className="w-12 h-12 rounded bg-surface-container flex items-center justify-center flex-shrink-0">
-            <Icon name="music_note" color="secondary" />
-          </div>
+          <Shimmer className="w-12 h-12 rounded flex-shrink-0" />
         )}
         
         <div className="flex flex-col overflow-hidden">

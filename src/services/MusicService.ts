@@ -1,10 +1,10 @@
 import { maveGraph } from "./mave-graph.js";
-import { getAi } from "./ai.js";
+import { getAi, generateCoverMedia, generateLiveEphemeralToken } from "./ai.js";
 import { WebSocket } from "ws";
 import logger from "../config/logger.js";
 import { trackRepository } from "../repositories/TrackRepository.js";
 import { getRedis, saveMaveSession, getMaveSession } from "../config/redis.js";
-import { rtdb } from "../config/firebase.js";
+import { getRtdbShard } from "../config/firebase.js";
 
 export interface MaveEvent {
   type: string;
@@ -13,12 +13,14 @@ export interface MaveEvent {
   script?: string;
   feedback?: string;
   error?: string;
+  token?: string;
   trackId?: string;
   chunk?: string;
   isThinking?: boolean;
   reasoning?: string;
   modality?: string;
   interactionId?: string;
+  playbackState?: any;
 }
 
 export class MusicService {
@@ -26,7 +28,7 @@ export class MusicService {
    * Processes vision event with Gemini Thinking SDK streaming and RTDB state sync.
    * Professional Grade: Interleaves WebSocket delivery with RTDB source-of-truth updates.
    */
-  async processVisionEvent(ws: WebSocket, session: any, image: string, sessionId: string) {
+  async processVisionEvent(ws: WebSocket, image: string, sessionId: string) {
     try {
       const previousState = await this.safeGetSession(sessionId) || {};
 
@@ -98,9 +100,7 @@ export class MusicService {
           finalState.musicalPrompts = prompts;
           finalState.previousInteractionId = prevId;
 
-          if (session?.setWeightedPrompts && prompts.length > 0) {
-            await session.setWeightedPrompts({ weightedPrompts: prompts });
-          }
+          // (Legacy support: removed session?.setWeightedPrompts as we use ephemeral tokens now)
         }
 
         if (update.podcastNarrator) {
@@ -121,47 +121,43 @@ export class MusicService {
   }
 
   /**
-   * Handles real-time audio chunks for intent detection.
+   * Generates an Ephemeral Token for client-side direct connection instead of proxying raw audio.
    */
-  async handleRealTimeAudio(ws: WebSocket, session: any, base64Audio: string, sessionId: string) {
+  async generateMusicLiveToken(ws: WebSocket, sessionId: string) {
     try {
-      if (!session) return;
-      logger.info("[MAVE_SERVICE] Streaming audio chunk to Gemini", { sessionId, size: base64Audio.length });
+      logger.info("[MAVE_SERVICE] Generating Ephemeral Token for Gemini Live API", { sessionId });
+      
+      const token = await generateLiveEphemeralToken(
+        "gemini-3.1-flash-live-preview",
+        "You are Mave, the Executive Creative Director, Master Musical Orchestrator..."
+      );
 
-      // Definitive Production Implementation:
-      // Pipe raw audio bytes directly into the active Gemini Live stream.
-      if (typeof session.send === 'function') {
-        await session.send({
-          audio: base64Audio
-        });
-      }
+      this.safeSend(ws, {
+        type: "ephemeral_token",
+        token: token
+      });
+      return token;
     } catch (err) {
-      logger.error("[MAVE_SERVICE] Audio processing failed", { error: err });
+      logger.error("[MAVE_SERVICE] Token generation failed", { error: err });
     }
   }
 
   /**
    * Handles specific playback commands (Skip, Shuffle, Repeat).
    */
-  async handlePlaybackCommand(type: string, data: any, session: any, sessionId: string) {
+  async handlePlaybackCommand(type: string, data: any, sessionId: string) {
     try {
-      if (!session) return;
       logger.info("[MAVE_SERVICE] Playback command", { sessionId, type, data });
 
       switch (type) {
         case "skip_next":
           // Request a new variation based on current description
-          await this.handleUserFeedback(null as any, session, "Make a variation of this vibe", sessionId);
+          await this.handleUserFeedback(null as any, "Make a variation of this vibe", sessionId);
           break;
         case "toggle_shuffle":
-          await session.setMusicGenerationConfig({ musicGenerationConfig: { shuffle: data.enabled } });
-          break;
         case "toggle_repeat":
-          await session.setMusicGenerationConfig({ musicGenerationConfig: { repeat: data.enabled } });
-          break;
         case "seek_to":
-          // Lyria Live supports seeking via position parameter in config
-          await session.setMusicGenerationConfig({ musicGenerationConfig: { position: data.position } });
+          // Client handles Gemini Live configuration; we just sync state to RTDB
           break;
       }
 
@@ -179,9 +175,10 @@ export class MusicService {
       const track = await trackRepository.getTrackById(trackId);
       if (!track) throw new Error("Track not found");
 
-      logger.info("[MAVE_SERVICE] Track shared", { uid, trackId });
+      const shortCode = await trackRepository.createShortLink(trackId);
+      logger.info("[MAVE_SERVICE] Track shared with short link", { uid, trackId, shortCode });
       const baseUrl = process.env.APP_URL || "http://localhost:3000";
-      return `${baseUrl}/vibe/${trackId}`;
+      return `${baseUrl}/s/${shortCode}`;
     } catch (err) {
       logger.error("[MAVE_SERVICE] Share failed", { error: err });
       throw err;
@@ -192,9 +189,8 @@ export class MusicService {
    * Actively steers the Lyria engine (BPM, Density, Brightness).
    * Synchronized via Redis and RTDB for horizontal scalability.
    */
-  async applySteering(ws: WebSocket, session: any, params: { bpm?: number, density?: number, brightness?: number, mutes?: string[] }, sessionId: string) {
+  async applySteering(params: { bpm?: number, density?: number, brightness?: number, mutes?: string[] }, sessionId: string) {
     try {
-      if (!session) return;
 
       const config: any = {};
       if (params.bpm) config.bpm = params.bpm;
@@ -206,7 +202,8 @@ export class MusicService {
         config.mute_bass = params.mutes.includes("bass");
       }
 
-      await session.setMusicGenerationConfig({ musicGenerationConfig: config });
+      // Client directly updates the Gemini Live connection with new config;
+      // Here we just persist the updated config for cluster-wide consistency and sync.
 
       // Persistence: Update session state in Redis for cluster-wide consistency
       const state = await this.safeGetSession(sessionId) || {};
@@ -222,7 +219,7 @@ export class MusicService {
     }
   }
 
-  async handleUserFeedback(ws: WebSocket, session: any, feedback: string, sessionId: string) {
+  async handleUserFeedback(ws: WebSocket, feedback: string, sessionId: string) {
     try {
       const previousState = await this.safeGetSession(sessionId) || {};
 
@@ -244,9 +241,7 @@ export class MusicService {
       await this.syncToRtdb(sessionId, updatePayload);
       await this.safeSaveSession(sessionId, result);
 
-      if (session?.setWeightedPrompts) {
-        await session.setWeightedPrompts({ weightedPrompts: result.musicalPrompts });
-      }
+      // (Legacy support: removed session?.setWeightedPrompts as we use ephemeral tokens now)
 
       return result;
     } catch (err) {
@@ -255,7 +250,13 @@ export class MusicService {
     }
   }
 
-  async generateMusicDirectly(image?: string, type?: string) {
+  async generateMusicDirectly(image?: string, type?: string, variant?: 'latest' | 'flash') {
+    if (type === 'cover_art' || type === 'video_motion') {
+      const userPrompt = image || "Aesthetic vibe soundtrack";
+      const coverResult = await generateCoverMedia(userPrompt, type, variant || 'latest');
+      return { url: coverResult.url, prompt: coverResult.prompt, type, modelUsed: coverResult.modelUsed };
+    }
+
     const ai = getAi();
     const prompt = `Analyze vision stream and generate music prompts for ${type || 'ambient'}`;
     const contents: any[] = [prompt];
@@ -274,17 +275,55 @@ export class MusicService {
   }
 
   // --- Enterprise RTDB Sync ---
+  private syncTimers: Map<string, NodeJS.Timeout> = new Map();
+  private pendingSyncData: Map<string, Partial<MaveEvent>> = new Map();
 
   private async syncToRtdb(sessionId: string, data: Partial<MaveEvent>) {
-    try {
-      const ref = rtdb.ref(`sessions/${sessionId}/state`);
-      // Update is transactional and lightweight for state sync
-      await ref.update({
-        ...data,
-        updatedAt: Date.now()
-      });
-    } catch (err) {
-      logger.error("[MAVE_SERVICE] RTDB Sync failed", { error: err });
+    const rtdbInstance = getRtdbShard(sessionId);
+    
+    // Merge pending data
+    const existing = this.pendingSyncData.get(sessionId) || {};
+    const merged = { ...existing, ...data };
+    this.pendingSyncData.set(sessionId, merged);
+
+    // Debounce high-frequency streaming events (chunks/thinking) to prevent maxing out RTDB write limits
+    const isHighFrequency = data.chunk !== undefined || data.isThinking !== undefined;
+    const isImportant = data.prompts || data.script || data.type === 'steering_update' || data.reasoning || data.playbackState;
+
+    if (isHighFrequency && !isImportant) {
+      if (!this.syncTimers.has(sessionId)) {
+        const timer = setTimeout(async () => {
+          this.syncTimers.delete(sessionId);
+          const flushData = this.pendingSyncData.get(sessionId);
+          this.pendingSyncData.delete(sessionId);
+          if (flushData) {
+            try {
+              await rtdbInstance.ref(`sessions/${sessionId}/state`).update({
+                ...flushData,
+                updatedAt: Date.now()
+              });
+            } catch (err) {
+              logger.error("[MAVE_SERVICE] RTDB Batched Sync failed", { error: err });
+            }
+          }
+        }, 500); // 500ms debounce
+        this.syncTimers.set(sessionId, timer);
+      }
+    } else {
+      // Flush immediately for structural state changes
+      const timer = this.syncTimers.get(sessionId);
+      if (timer) clearTimeout(timer);
+      this.syncTimers.delete(sessionId);
+      this.pendingSyncData.delete(sessionId);
+      
+      try {
+        await rtdbInstance.ref(`sessions/${sessionId}/state`).update({
+          ...merged,
+          updatedAt: Date.now()
+        });
+      } catch (err) {
+        logger.error("[MAVE_SERVICE] RTDB Immediate Sync failed", { error: err });
+      }
     }
   }
 

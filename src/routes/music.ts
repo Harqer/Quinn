@@ -1,11 +1,11 @@
 import { Router, Response } from "express";
 import { optionalFirebaseToken, verifyFirebaseToken, AuthenticatedRequest, checkDailyQuota, verifyAppCheck } from "../middlewares/auth.js";
-import { auth } from "../config/firebase.js";
+import { auth, appCheck } from "../config/firebase.js";
 import { GenerateSchema, ShareVibeSchema } from "../schemas/api.js";
 import { WebSocketServer, WebSocket } from "ws";
 import logger from "../config/logger.js";
 import { musicService } from "../services/MusicService.js";
-import { podcastService } from "../services/PodcastService.js";
+import { narrativeService } from "../services/NarrativeService.js";
 import { trackRepository } from "../repositories/TrackRepository.js";
 import { getAi } from "../services/ai.js";
 
@@ -16,11 +16,47 @@ router.post("/generate", optionalFirebaseToken, verifyAppCheck, checkDailyQuota,
   if (!result.success) return res.status(400).json({ error: result.error.issues });
 
   try {
-    const data = await musicService.generateMusicDirectly(result.data.image, result.data.type);
+    const data = await musicService.generateMusicDirectly(result.data.image, result.data.type, req.body.variant);
     res.json(data);
   } catch (err) {
     logger.error("Generation Failed", { error: err });
     res.status(500).json({ error: "Generation Failed" });
+  }
+});
+
+router.post("/podcast/generate", optionalFirebaseToken, verifyAppCheck, checkDailyQuota, async (req: AuthenticatedRequest, res: Response) => {
+  const { prompt, voice } = req.body;
+  const locale = req.headers["accept-language"] || "en";
+  if (!prompt || typeof prompt !== "string" || prompt.trim().length === 0) {
+    return res.status(400).json({ error: "Valid prompt string is required" });
+  }
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  try {
+    await narrativeService.generateStream(prompt.trim(), "podcast", voice || "AOEDE", locale, res);
+  } catch (err) {
+    logger.error("[PODCAST_ROUTE] Generation Stream Failed", { error: err });
+    res.write(`data: ${JSON.stringify({ type: 'error', error: "Podcast Generation Failed" })}\n\n`);
+    res.end();
+  }
+});
+
+router.post("/audiobook/generate", optionalFirebaseToken, verifyAppCheck, checkDailyQuota, async (req: AuthenticatedRequest, res: Response) => {
+  const { prompt, voice } = req.body;
+  const locale = req.headers["accept-language"] || "en";
+  if (!prompt || typeof prompt !== "string" || prompt.trim().length === 0) {
+    return res.status(400).json({ error: "Valid prompt string is required" });
+  }
+
+  try {
+    const audiobookTrack = await narrativeService.generateFromPrompt(prompt.trim(), "audiobook", voice || "KORE", locale);
+    res.json(audiobookTrack);
+  } catch (err) {
+    logger.error("[AUDIOBOOK_ROUTE] Generation Failed", { error: err });
+    res.status(500).json({ error: "Audiobook Generation Failed" });
   }
 });
 
@@ -63,7 +99,7 @@ router.post("/bookmark", verifyFirebaseToken, verifyAppCheck, async (req: Authen
   }
 });
 
-router.get("/community/tracks", async (req, res) => {
+router.get("/community/tracks", verifyAppCheck, async (req, res) => {
   try {
     const tracks = await musicService.getCommunityTracks();
     res.json({ tracks });
@@ -85,9 +121,24 @@ router.get("/user/tracks", verifyFirebaseToken, async (req: AuthenticatedRequest
 
 // WebSocket Server for Mave Studio Engine (Music & Podcast)
 export const setupMusicWebSocket = (wss: WebSocketServer) => {
-  wss.on("connection", async (ws: WebSocket, request) => {
+  // Ping/Pong Heartbeat to prune dead connections
+  const interval = setInterval(() => {
+    wss.clients.forEach((ws: any) => {
+      if (ws.isAlive === false) return ws.terminate();
+      ws.isAlive = false;
+      ws.ping();
+    });
+  }, 30000);
+
+  wss.on("close", () => clearInterval(interval));
+
+  wss.on("connection", async (ws: any, request) => {
+    ws.isAlive = true;
+    ws.on("pong", () => { ws.isAlive = true; });
+
     const url = new URL(request.url || "", `http://${request.headers.host}`);
     const token = url.searchParams.get("token");
+    const locale = request.headers["accept-language"] || "en";
 
     let uid = "";
     if (!token) {
@@ -105,31 +156,53 @@ export const setupMusicWebSocket = (wss: WebSocketServer) => {
       }
     }
 
-    let musicSession: any = null;
-    let podcastSession: any = null;
-    let currentMode: 'music' | 'podcast' = 'music';
+    const appCheckToken = url.searchParams.get("appCheck");
+
+    if (process.env.NODE_ENV === "production") {
+      if (!appCheckToken) {
+        logger.error(`[WS_STUDIO] Missing App Check token. Closing connection.`);
+        ws.close(4001, "Unauthorized: Missing App Check Token");
+        return;
+      }
+      try {
+        await appCheck.verifyToken(appCheckToken);
+      } catch (err) {
+        logger.error(`[WS_STUDIO] Invalid App Check token. Closing connection.`, { error: err });
+        ws.close(4001, "Unauthorized: Invalid App Check Token");
+        return;
+      }
+    }
+
+    let musicSessionInitialized = false;
+    let podcastSessionInitialized = false;
+    let audiobookSessionInitialized = false;
+    let currentMode: 'music' | 'podcast' | 'audiobook' = 'music';
+    let isInitializingMusic = false;
 
     const initMusic = async () => {
-      const ai = getAi();
-      musicSession = await (ai as any).live.connect({
-        model: "lyria-realtime-exp",
-        callbacks: {
-          onmessage: (e: any) => ws.readyState === WebSocket.OPEN && ws.send(JSON.stringify({ type: "message", data: e })),
-          onclose: () => ws.close(),
-          onerror: (err: any) => logger.error("[MUSIC_SESSION] error", { error: err }),
-        },
-      });
+      if (musicSessionInitialized || isInitializingMusic) return;
+      isInitializingMusic = true;
+      try {
+        await musicService.generateMusicLiveToken(ws, uid);
+        musicSessionInitialized = true;
+      } finally {
+        isInitializingMusic = false;
+      }
     };
 
-    ws.on("message", async (data) => {
+    ws.on("message", async (data: any) => {
       try {
         const msg = JSON.parse(data.toString());
 
         if (msg.type === "switch_mode") {
           currentMode = msg.mode;
-          if (currentMode === 'podcast' && !podcastSession) {
-            podcastSession = await podcastService.startPodcastSession(ws, uid);
-          } else if (currentMode === 'music' && !musicSession) {
+          if (currentMode === 'podcast' && !podcastSessionInitialized) {
+            await narrativeService.startSession(ws, uid, "podcast", locale);
+            podcastSessionInitialized = true;
+          } else if (currentMode === 'audiobook' && !audiobookSessionInitialized) {
+            await narrativeService.startSession(ws, uid, "audiobook", locale);
+            audiobookSessionInitialized = true;
+          } else if (currentMode === 'music' && !musicSessionInitialized) {
             await initMusic();
           }
           logger.info(`[WS_STUDIO] User switched to ${currentMode} mode.`, { uid });
@@ -137,29 +210,42 @@ export const setupMusicWebSocket = (wss: WebSocketServer) => {
         }
 
         if (currentMode === 'music') {
-          if (!musicSession) await initMusic();
+          if (!musicSessionInitialized) await initMusic();
           if (msg.type === "vision") {
-            await musicService.processVisionEvent(ws, musicSession, msg.image, uid);
+            await musicService.processVisionEvent(ws, msg.image, uid);
           } else if (msg.type === "feedback") {
-            await musicService.handleUserFeedback(ws, musicSession, msg.text, uid);
+            await musicService.handleUserFeedback(ws, msg.text, uid);
           } else if (msg.type === "steering_action") {
-            await musicService.applySteering(ws, musicSession, msg.params, uid);
-          } else if (msg.type === "setWeightedPrompts") {
-            await musicSession.setWeightedPrompts({ weightedPrompts: msg.prompts });
-          } else if (msg.type === "audio") {
-            await musicService.handleRealTimeAudio(ws, musicSession, msg.data, uid);
+            await musicService.applySteering(msg.params, uid);
           } else if (["skip_next", "skip_previous", "toggle_shuffle", "toggle_repeat", "seek_to"].includes(msg.type)) {
-            await musicService.handlePlaybackCommand(msg.type, msg, musicSession, uid);
+            await musicService.handlePlaybackCommand(msg.type, msg, uid);
           } else if (["play", "pause", "stop"].includes(msg.type)) {
-            musicSession[msg.type]();
+            // The client manages playback directly, we just sync state to RTDB if needed
+            logger.info(`[WS_STUDIO] Playback state changed to ${msg.type}`, { uid });
           }
-        } else {
+        } else if (currentMode === 'podcast') {
           // Podcast Mode
-          if (!podcastSession) podcastSession = await podcastService.startPodcastSession(ws, uid);
+          if (!podcastSessionInitialized) {
+            await narrativeService.startSession(ws, uid, "podcast", locale);
+            podcastSessionInitialized = true;
+          }
           if (msg.type === "vision") {
-            await podcastService.processVisionForPodcast(ws, podcastSession, msg.image);
+            await narrativeService.processVision(ws, msg.image, "podcast", locale);
           } else if (msg.type === "text_command") {
-            await podcastSession.send({ text: msg.text });
+            // Text commands are sent directly by the client to Gemini, we can log them or sync to RTDB
+            logger.info(`[WS_STUDIO] Received text command: ${msg.text}`, { uid });
+          }
+        } else if (currentMode === 'audiobook') {
+          // Audiobook Mode
+          if (!audiobookSessionInitialized) {
+            await narrativeService.startSession(ws, uid, "audiobook", locale);
+            audiobookSessionInitialized = true;
+          }
+          if (msg.type === "vision") {
+            await narrativeService.processVision(ws, msg.image, "audiobook", locale);
+          } else if (msg.type === "text_command") {
+            // Text commands are sent directly by the client to Gemini, we can log them or sync to RTDB
+            logger.info(`[WS_STUDIO] Received text command: ${msg.text}`, { uid });
           }
         }
       } catch (msgErr) {
@@ -168,8 +254,9 @@ export const setupMusicWebSocket = (wss: WebSocketServer) => {
     });
 
     ws.on("close", () => {
-      if (musicSession) musicSession.stop();
-      if (podcastSession) podcastSession.stop();
+      musicSessionInitialized = false;
+      podcastSessionInitialized = false;
+      audiobookSessionInitialized = false;
     });
   });
 };

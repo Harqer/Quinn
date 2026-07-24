@@ -1,32 +1,34 @@
 import { Router, Response } from "express";
-import { verifyFirebaseToken, AuthenticatedRequest } from "../middlewares/auth.js";
-import { userRepository } from "../repositories/UserRepository.js";
+import { verifyFirebaseToken, verifyAppCheck, AuthenticatedRequest } from "../middlewares/auth.js";
 import { credentialVerifier } from "../services/CredentialVerifier.js";
-import { auth } from "../config/firebase.js";
+import { auth, db } from "../config/firebase.js";
 import logger from "../config/logger.js";
 import { z } from "zod";
 
 const router = Router();
 
 const ProfileSchema = z.object({
-  name: z.string().min(1),
-  birthday: z.string().optional(),
-  gender: z.string().optional(),
+  name: z.string().min(1).max(100),
+  birthday: z.string().max(20).optional(),
+  gender: z.string().max(50).optional(),
 });
 
 const PreferencesSchema = z.object({
-  artists: z.array(z.string()).min(3),
+  artists: z.array(z.string().max(100)).min(1).max(50),
 });
 
-router.post("/profile", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
+router.post("/profile", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
   const result = ProfileSchema.safeParse(req.body);
   if (!result.success) return res.status(400).json({ error: result.error.issues });
 
   try {
-    await userRepository.createProfile(req.user!.uid, {
+    await db.collection("users").doc(req.user!.uid).set({
       ...result.data,
       email: req.user!.email,
-    });
+      uid: req.user!.uid,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }, { merge: true });
     res.status(200).json({ success: true, message: "Profile created" });
   } catch (err) {
     logger.error("Failed to create user profile", { error: err });
@@ -34,12 +36,15 @@ router.post("/profile", verifyFirebaseToken, async (req: AuthenticatedRequest, r
   }
 });
 
-router.post("/preferences", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
+router.post("/preferences", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
   const result = PreferencesSchema.safeParse(req.body);
   if (!result.success) return res.status(400).json({ error: result.error.issues });
 
   try {
-    await userRepository.updatePreferences(req.user!.uid, result.data.artists);
+    await db.collection("users").doc(req.user!.uid).update({
+      preferences: result.data.artists,
+      updatedAt: new Date(),
+    });
     res.status(200).json({ success: true, message: "Preferences updated" });
   } catch (err) {
     logger.error("Failed to update user preferences", { error: err });
@@ -47,7 +52,7 @@ router.post("/preferences", verifyFirebaseToken, async (req: AuthenticatedReques
   }
 });
 
-router.post("/verify-credential", async (req: any, res: any) => {
+router.post("/verify-credential", verifyAppCheck, async (req: any, res: any) => {
   const { credentialJson, nonce } = req.body;
   if (!credentialJson || !nonce) return res.status(400).json({ error: "Missing credential data or nonce" });
 

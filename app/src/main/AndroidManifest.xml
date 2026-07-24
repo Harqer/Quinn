@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
@@ -41,6 +42,10 @@
         android:theme="@style/Theme.Mave">
         
         <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
+        
+        <meta-data
             android:name="com.meta.wearable.mwdat.APPLICATION_ID"
             android:value="${mwdat_application_id}" />
         <meta-data
@@ -60,6 +65,16 @@
             android:exported="false"
             android:foregroundServiceType="camera|microphone|mediaPlayback" />
 
+        <service
+            android:name="com.musically.studio.audio.PlaybackService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -76,11 +91,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".WearableActivity"
-            android:exported="false"
-            android:requiredDisplayCategory="xr_projected"
-            android:theme="@style/Theme.Mave" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -91,6 +101,18 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <receiver
+            android:name="com.musically.studio.engage.EngageBroadcastReceiver"
+            android:permission="com.google.android.engage.REQUEST_ENGAGE_DATA"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.engage.action.PUBLISH_RECOMMENDATION" />
+                <action android:name="com.google.android.engage.action.PUBLISH_CONTINUATION" />
+                <action android:name="com.google.android.engage.action.PUBLISH_FEATURED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

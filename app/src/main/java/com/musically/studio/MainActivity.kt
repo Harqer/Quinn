@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LibraryMusic
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Podcasts
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -53,11 +56,18 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.UUID
 
+import android.content.ComponentName
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.ListenableFuture
+import com.musically.studio.audio.PlaybackService
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private var permissionsGranted = mutableStateOf(false)
     private lateinit var mainViewModel: MainViewModel
+    private var controllerFuture: ListenableFuture<MediaController>? = null
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -92,6 +102,8 @@ class MainActivity : ComponentActivity() {
         window.isNavigationBarContrastEnforced = false
         FirebaseApp.initializeApp(this)
         
+        com.musically.studio.engage.EngageBroadcastReceiver.register(this)
+        
         setContent {
             mainViewModel = viewModel()
             
@@ -101,7 +113,12 @@ class MainActivity : ComponentActivity() {
                         AuthSideEffect.LaunchGoogleSignIn -> launchGoogleSignIn()
                         AuthSideEffect.LaunchAppleSignIn -> launchAppleSignIn(mainViewModel)
                         AuthSideEffect.LaunchVerifiedEmail -> launchVerifiedEmail(mainViewModel)
-                        AuthSideEffect.LaunchFacebookSignIn -> { /* Launch facebook */ }
+                        AuthSideEffect.LaunchFacebookSignIn -> { /* Facebook sign-in */ }
+                        // Navigation on sign-out and deletion is handled by UserProfileScreen's
+                        // onSignedOut callback which routes to Route.Login. No additional
+                        // activity-level action required.
+                        AuthSideEffect.SignedOut -> { /* handled in UserProfileScreen */ }
+                        AuthSideEffect.AccountDeleted -> { /* handled in UserProfileScreen */ }
                     }
                 }
             }
@@ -114,6 +131,28 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
+        val future = MediaController.Builder(this, sessionToken).buildAsync()
+        controllerFuture = future
+        
+        future.addListener({
+            val controller = future.get()
+            controller.addListener(object : androidx.media3.common.Player.Listener {
+                override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                    mainViewModel.setPlayingState(playWhenReady)
+                }
+            })
+        }, androidx.core.content.ContextCompat.getMainExecutor(this))
+    }
+
+    override fun onStop() {
+        super.onStop()
+        controllerFuture?.let { MediaController.releaseFuture(it) }
+        controllerFuture = null
     }
 
     private fun launchGoogleSignIn() {
@@ -217,130 +256,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MaveApp(
-    viewModel: MainViewModel,
-    onAcknowledgePermissions: () -> Unit,
-    hasPermissions: Boolean
-) {
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
-
-    val topLevelRoutes = setOf<NavKey>(Route.Home, Route.Library)
-    val startRoute: NavKey = if (viewModel.isUserLoggedIn()) Route.Home else Route.Welcome
-
-    val navigationState = rememberNavigationState(
-        startRoute = startRoute,
-        topLevelRoutes = topLevelRoutes
-    )
-    val navigator = remember { Navigator(navigationState) }
-    
-    val currentPlayingTrack by viewModel.currentPlayingTrack.collectAsStateWithLifecycle()
-    val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
-    
-    val scaffoldState = rememberBottomSheetScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
-    val currentModality by viewModel.currentModality.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.shouldExpandBottomSheet.collectLatest { expand ->
-            if (expand) {
-                scaffoldState.bottomSheetState.expand()
-            }
-        }
-    }
-
-    val currentRoute = navigationState.backStacks[navigationState.topLevelRoute]?.last() ?: navigationState.topLevelRoute
-    val showNavSuite = currentRoute in listOf(Route.Home, Route.Library, Route.Devices) || currentRoute is Route.AlbumView || currentRoute is Route.UserProfile
-    
-    val entryProvider = maveEntryProvider(
-        viewModel = viewModel,
-        navigator = navigator,
-        onAcknowledgePermissions = onAcknowledgePermissions
-    )
-
-    if (showNavSuite) {
-        val navSuiteType = if (isExpanded) {
-            NavigationSuiteType.NavigationRail
-        } else {
-            NavigationSuiteType.NavigationBar
-        }
-
-        NavigationSuiteScaffold(
-            layoutType = navSuiteType,
-            navigationSuiteItems = {
-                listOf(
-                    TopLevelRoute("Studio", Route.Home, Icons.Default.Home),
-                    TopLevelRoute("Library", Route.Library, Icons.Default.LibraryMusic)
-                ).forEach { tr ->
-                    item(
-                        icon = { Icon(tr.icon, contentDescription = tr.name) },
-                        label = { }, // Show only icons for a minimalist feel
-                        selected = navigationState.topLevelRoute == tr.route,
-                        onClick = { navigator.navigate(tr.route as Route) }
-                    )
-                }
-            }
-        ) {
-            BottomSheetScaffold(
-                scaffoldState = scaffoldState,
-                sheetPeekHeight = if (currentPlayingTrack != null) 72.dp else 0.dp,
-                sheetDragHandle = null,
-                sheetContent = {
-                    if (currentPlayingTrack != null) {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            NowPlayingScreen(
-                                track = currentPlayingTrack,
-                                viewModel = viewModel,
-                                modality = currentModality,
-                                onCollapse = {
-                                    coroutineScope.launch {
-                                        scaffoldState.bottomSheetState.partialExpand()
-                                    }
-                                }
-                            )
-                            if (scaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
-                                MiniPlayer(
-                                    track = currentPlayingTrack!!,
-                                    isPlaying = isPlaying,
-                                    onPlayPauseClick = { viewModel.togglePlayPause() },
-                                    onClick = {
-                                        coroutineScope.launch {
-                                            scaffoldState.bottomSheetState.expand()
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    } else {
-                        Box(modifier = Modifier.height(1.dp))
-                    }
-                }
-            ) { paddingValues ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .consumeWindowInsets(paddingValues)
-                ) {
-                    NavDisplay(
-                        entries = navigationState.toEntries(entryProvider as (NavKey) -> NavEntry<NavKey>),
-                        onBack = { navigator.goBack() },
-                        transitionSpec = maveTransitionSpec() as AnimatedContentTransitionScope<androidx.navigation3.scene.Scene<NavKey>>.() -> ContentTransform,
-                        popTransitionSpec = mavePopTransitionSpec() as AnimatedContentTransitionScope<androidx.navigation3.scene.Scene<NavKey>>.() -> ContentTransform,
-                        sceneStrategies = listOf(BottomSheetSceneStrategy<NavKey>(), androidx.navigation3.scene.SinglePaneSceneStrategy())
-                    )
-                }
-            }
-        }
-    } else {
-        NavDisplay(
-            entries = navigationState.toEntries(entryProvider as (NavKey) -> NavEntry<NavKey>),
-            onBack = { navigator.goBack() },
-            transitionSpec = maveTransitionSpec() as AnimatedContentTransitionScope<androidx.navigation3.scene.Scene<NavKey>>.() -> ContentTransform,
-            popTransitionSpec = mavePopTransitionSpec() as AnimatedContentTransitionScope<androidx.navigation3.scene.Scene<NavKey>>.() -> ContentTransform,
-            sceneStrategies = listOf(BottomSheetSceneStrategy<NavKey>(), androidx.navigation3.scene.SinglePaneSceneStrategy())
-        )
-    }
-}

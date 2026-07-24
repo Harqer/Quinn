@@ -1,6 +1,6 @@
 import { Router, Response } from "express";
 import { verifyFirebaseToken, AuthenticatedRequest, verifyAppCheck } from "../middlewares/auth.js";
-import { reportRepository } from "../repositories/ReportRepository.js";
+import { db, FieldValue } from "../config/firebase.js";
 import { z } from "zod";
 import logger from "../config/logger.js";
 
@@ -18,11 +18,12 @@ router.post("/", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedR
   if (!result.success) return res.status(400).json({ error: result.error.issues });
 
   try {
-    const reportId = await reportRepository.createReport({
+    const docRef = await db.collection("reports").add({
       reporterId: req.user!.uid,
       ...result.data,
+      createdAt: FieldValue.serverTimestamp(),
     });
-    res.status(201).json({ id: reportId, message: "Report submitted successfully" });
+    res.status(201).json({ id: docRef.id, message: "Report submitted successfully" });
   } catch (err) {
     logger.error("Failed to submit report", { error: err });
     res.status(500).json({ error: "Failed to submit report" });

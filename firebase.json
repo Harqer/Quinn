@@ -1,6 +1,9 @@
 {
   "hosting": {
     "public": "dist",
+    "i18n": {
+      "root": "/"
+    },
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -8,9 +11,29 @@
     ],
     "rewrites": [
       {
+        "source": "/api/**",
+        "run": {
+          "serviceId": "musically-studio",
+          "region": "us-central1"
+        }
+      },
+      {
+        "source": "/vibe/**",
+        "run": {
+          "serviceId": "musically-studio",
+          "region": "us-central1"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
     ]
+  },
+  "dataconnect": {
+    "source": "dataconnect"
+  },
+  "database": {
+    "rules": "database.rules.json"
   }
 }

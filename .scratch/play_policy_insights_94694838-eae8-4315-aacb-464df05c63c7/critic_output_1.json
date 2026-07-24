@@ -1,0 +1,17 @@
+{
+  "1": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "The WearableActivity explicitly binds a microphone icon button to viewModel.recordVoice(), which initiates audio recording and streams the base64 encoded audio to maveSessionManager.sendAudio. This confirms user-initiated audio collection."
+  },
+  "3": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "MainActivity explicitly launches Google and Apple sign-in flows which transmit user account information to Firebase Auth. This is initiated via AuthSideEffect events triggered by the ViewModel, confirming user-initiated collection."
+  },
+  "4": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "MyApplication.onCreate() unconditionally plants a CrashlyticsTree for non-debug builds without any prior user consent or UI gatekeeper, confirming silent background transfer of performance diagnostics."
+  }
+}

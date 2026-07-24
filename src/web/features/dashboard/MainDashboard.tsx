@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getAuth } from 'firebase/auth';
 import { logger } from '@/web/lib/logger';
 import { MusicVisualizer } from './MusicVisualizer';
@@ -6,6 +7,7 @@ import { GesturePad } from './GesturePad';
 import { useMave } from '../../hooks/useMave';
 import maveLogoDark from '../../assets/mave_brand_dark.png';
 import maveLogoLight from '../../assets/mave_brand_light.png';
+import { EmptyState } from '../../components/molecules/EmptyState';
 
 /**
  * Mave Brand Logo Component.
@@ -26,7 +28,14 @@ export const MainDashboard: React.FC = () => {
   const [videoActive, setVideoActive] = useState(true);
   const [playbackState, setPlaybackState] = useState<'playing' | 'stopped'>('stopped');
   const [voiceStatus, setVoiceStatus] = useState<'idle' | 'listening' | 'processing' | 'speaking'>('idle');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [inputText, setInputText] = useState("");
+  const { t } = useTranslation();
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
 
   const {
     messages,
@@ -36,6 +45,7 @@ export const MainDashboard: React.FC = () => {
     thinkingText,
     switchMode,
     sendText,
+    sendVisionFrame,
     toggleRecording,
     warp
   } = useMave();
@@ -45,9 +55,12 @@ export const MainDashboard: React.FC = () => {
 
   useEffect(() => {
     let interval: any;
+    let activeStream: MediaStream | null = null;
+
     if (videoActive && videoRef.current) {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => {
+          activeStream = stream;
           if (videoRef.current) videoRef.current.srcObject = stream;
 
           interval = setInterval(() => {
@@ -59,14 +72,20 @@ export const MainDashboard: React.FC = () => {
                 canvas.height = 240;
                 ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
                 const base64Frame = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
-                // Handled via useMave if we added sendVision there, or direct ref
+                sendVisionFrame(base64Frame);
               }
             }
           }, 1000);
         })
         .catch(err => logger.error("Camera access failed", err));
     }
-    return () => clearInterval(interval);
+
+    return () => {
+      if (interval) clearInterval(interval);
+      if (activeStream) {
+        activeStream.getTracks().forEach(track => track.stop());
+      }
+    };
   }, [videoActive, isConnected]);
 
   const handleSend = () => {
@@ -78,13 +97,24 @@ export const MainDashboard: React.FC = () => {
 
   const handleAction = async (action: 'like' | 'bookmark', trackId?: string) => {
     if (!trackId) return;
-    if ('vibrate' in navigator) navigator.vibrate(20);
+    if ('vibrate' in navigator) navigator.vibrate([50, 50, 50]);
     try {
       const auth = getAuth();
       const user = auth.currentUser;
       const token = user ? await user.getIdToken() : '';
-      const endpoint = action === 'like' ? '/api/spotify/track/save' : '/api/music/bookmark';
-      await fetch(endpoint, {
+      
+      let endpoint = '/api/music/bookmark';
+      if (action === 'like') {
+        if (mode === 'podcast') {
+          endpoint = '/api/spotify/podcast/save';
+        } else if (mode === 'audiobook') {
+          endpoint = '/api/spotify/audiobook/save';
+        } else {
+          endpoint = '/api/spotify/music/save';
+        }
+      }
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -92,14 +122,25 @@ export const MainDashboard: React.FC = () => {
         },
         body: JSON.stringify({ trackId })
       });
+
+      if (!response.ok) throw new Error(`API Error: ${response.status}`);
+      showToast('Saved to your library!');
     } catch (err) {
-      logger.error(`Failed to ${action} vibe`, err);
+      logger.error(`Failed to ${action} track`, err);
+      showToast('Unable to complete action. Please try again later.');
     }
   };
 
   return (
     <div className="flex flex-col h-full bg-[#121212] text-white relative">
       <canvas ref={canvasRef} className="hidden" />
+
+      {/* Global Toast */}
+      {toastMessage && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-red-500 text-white px-6 py-2 rounded-full shadow-lg font-bold text-sm transition-all animate-in fade-in slide-in-from-top-4">
+          {toastMessage}
+        </div>
+      )}
 
       {/* Main Studio Workspace */}
       <div className="flex-1 flex overflow-hidden">
@@ -123,13 +164,19 @@ export const MainDashboard: React.FC = () => {
                   onClick={() => switchMode('music')}
                   className={`px-6 py-1.5 rounded-full text-xs font-bold transition-all ${mode === 'music' ? 'bg-[#1DB954] text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
                 >
-                  MUSIC
+                  <span className="material-icons-round text-lg leading-none">music_note</span>
                 </button>
                 <button
                   onClick={() => switchMode('podcast')}
                   className={`px-6 py-1.5 rounded-full text-xs font-bold transition-all ${mode === 'podcast' ? 'bg-[#1DB954] text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
                 >
-                  PODCAST
+                  <span className="material-icons-round text-lg leading-none">podcasts</span>
+                </button>
+                <button
+                  onClick={() => switchMode('audiobook')}
+                  className={`px-6 py-1.5 rounded-full text-xs font-bold transition-all ${mode === 'audiobook' ? 'bg-[#1DB954] text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                >
+                  <span className="material-icons-round text-lg leading-none">menu_book</span>
                 </button>
               </div>
             </div>
@@ -143,33 +190,29 @@ export const MainDashboard: React.FC = () => {
               </button>
               <div className="px-4 py-2 bg-red-600 rounded-full flex items-center gap-2 shadow-lg">
                 <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-widest">LIVE POV</span>
+                <span className="text-[10px] font-black uppercase tracking-widest">{t('dashboard.livePov')}</span>
               </div>
             </div>
           </div>
 
-          {/* Mave Thinking Console */}
-          {thinkingText && (
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[60%] max-w-xl">
-              <div className="bg-black/60 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-2xl animate-in fade-in slide-in-from-bottom-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1DB954] animate-ping" />
-                  <span className="text-[10px] font-black text-[#1DB954] uppercase tracking-widest">Mave Reasoning Stream</span>
-                </div>
-                <p className="text-xs font-medium text-gray-200 leading-relaxed italic line-clamp-3">
-                  {thinkingText}...
-                </p>
-              </div>
-            </div>
-          )}
+          {/* Removed floating thinking console as per immersive UI guidelines */}
         </div>
 
         {/* Conversational Sidebar */}
         <div className="w-[400px] flex flex-col gap-4 p-6 border-l border-white/5 bg-[#121212] backdrop-blur-3xl shadow-2xl">
           <div className="flex-1 overflow-y-auto space-y-6 custom-scrollbar pr-2">
             {messages.length === 0 && !thinkingText && (
-              <div className="text-center py-32 text-gray-500 text-sm font-medium animate-pulse">
-                "Mave is mapping your visual vibe..."
+              <EmptyState 
+                icon="chat_bubble_outline" 
+                title={t('dashboard.readingImage') || "Ready to Chat"} 
+                description="Ask Mave anything about your music, podcasts, or audiobooks." 
+              />
+            )}
+            {thinkingText && (
+              <div className="flex flex-col items-start">
+                <div className="max-w-[90%] p-4 rounded-3xl text-sm font-bold shadow-xl leading-relaxed bg-[#1DB954] text-black">
+                  {thinkingText}
+                </div>
               </div>
             )}
             {messages.map((m, i) => (
@@ -216,7 +259,7 @@ export const MainDashboard: React.FC = () => {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder={`Instruct Mave to shift the ${mode === 'music' ? 'musical textures' : 'narrative arc'}...`}
+            placeholder={mode === 'music' ? t('dashboard.instructMusic') : t('dashboard.instructNarrative')}
             className="flex-1 bg-transparent border-none outline-none text-base font-bold placeholder:text-gray-600 text-white px-2"
           />
           <button

@@ -1,0 +1,401 @@
+{
+    "findings": [
+        {
+            "psl_constant": "AUDIO",
+            "policy_id": "data_safety_section",
+            "issue_summary": "User-Initiated Collection",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/WearableActivity.kt",
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+            ],
+            "evidence": "WearableActivity.kt (line 67): onClick = { viewModel.recordVoice() } -> MainViewModel.kt (line 474): maveSessionManager.sendAudio(base64)",
+            "recommendation": "Declare AUDIO collection in the Play Store Data Safety form.",
+            "is_transferred": true,
+            "user_initiated": true,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "App functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_1.json",
+            "finding_id": "1"
+        },
+        {
+            "psl_constant": "MUSIC",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt"
+            ],
+            "evidence": "Usage of Icons.Default.LibraryMusic. No transmission of user's music files found.",
+            "recommendation": "No action required.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_1.json",
+            "finding_id": "2"
+        },
+        {
+            "psl_constant": "USER_ACCOUNT",
+            "policy_id": "data_safety_section",
+            "issue_summary": "User-Initiated Collection",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt"
+            ],
+            "evidence": "Lines 126-145: User manually initiates sign-in using Google or Apple, which transmits account details (idToken) via FirebaseAuth.",
+            "recommendation": "Must be declared in the Play Store Data Safety form.",
+            "is_transferred": true,
+            "user_initiated": true,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "App functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_2.json",
+            "finding_id": "3"
+        },
+        {
+            "psl_constant": "PERFORMANCE_DIAGNOSTICS",
+            "policy_id": "prominent_disclosure_policy",
+            "issue_summary": "Silent Background Transfer",
+            "severity": "CRITICAL",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt"
+            ],
+            "evidence": "Line 29: Timber.plant(CrashlyticsTree()) is executed unconditionally in MyApplication.onCreate() before any UI is shown or consent is gathered.",
+            "recommendation": "Implement a consent gatekeeper UI before initializing Crashlytics.",
+            "is_transferred": true,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "MISSING",
+            "purpose": "Analytics",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_2.json",
+            "finding_id": "4"
+        },
+        {
+            "psl_constant": "CRASH_LOGS",
+            "policy_id": "prominent_disclosure_policy",
+            "issue_summary": "Silent Background Transfer: Policy violation. Data is sent without prior disclosure.",
+            "severity": "CRITICAL",
+            "files_involved": [
+                "app/src/main/java/com/musically/studio/MyApplication.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/logging/CrashlyticsTree.kt"
+            ],
+            "evidence": "Timber.plant(CrashlyticsTree()) called unconditionally in onCreate() when not in debug mode.",
+            "recommendation": "Add a prominent disclosure dialog on first app launch before initializing Crashlytics.",
+            "is_transferred": true,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "MISSING",
+            "purpose": "Analytics",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_3.json",
+            "finding_id": "5"
+        },
+        {
+            "psl_constant": "NAME",
+            "policy_id": "data_safety_section",
+            "issue_summary": "User-Initiated Collection: Disclosure exempt, but must be declared in Play Store form.",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "app/src/main/java/com/musically/studio/MainActivity.kt",
+                "src/services/CredentialVerifier.ts"
+            ],
+            "evidence": "MainActivity fetches DigitalCredential containing family_name. CredentialVerifier.ts extracts name and given_name on the server.",
+            "recommendation": "Ensure NAME collection is declared in the Play Store Data Safety form.",
+            "is_transferred": true,
+            "user_initiated": true,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "App functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_3.json",
+            "finding_id": "6"
+        },
+        {
+            "psl_constant": "PHOTOS",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "app/src/main/java/com/musically/studio/MainActivity.kt"
+            ],
+            "evidence": "Requests Manifest.permission.CAMERA but does not transfer photo data off-device.",
+            "recommendation": "No action required, data stays local.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_3.json",
+            "finding_id": "7"
+        },
+        {
+            "psl_constant": "PHOTOS",
+            "policy_id": "prominent_disclosure_policy",
+            "issue_summary": "Silent Background Transfer: Policy violation. Data is sent without prior disclosure.",
+            "severity": "CRITICAL",
+            "files_involved": [
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/CameraPreview.kt",
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+            ],
+            "evidence": "In CameraPreview.kt, imageAnalysis continuously captures frames every 1.5 seconds and calls viewModel?.sendFrame(base64) which transfers the frames off-device via maveSessionManager.sendEvent without an affirmative prominent disclosure gatekeeper.",
+            "recommendation": "Implement a prominent disclosure dialog before the CameraPreview is initialized, explicitly stating that camera frames are continuously collected and sent to the server for music generation, and require affirmative user consent.",
+            "is_transferred": true,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "MISSING",
+            "purpose": "App functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_4.json",
+            "finding_id": "8"
+        },
+        {
+            "psl_constant": "OTHER_AUDIO",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/res/xml/app_metadata.xml",
+                "/home/shaolin/lyria/dist/assets/HomeScreen-BxzBGPTO.js",
+                "/home/shaolin/lyria/dist/assets/LibraryScreen-4FO9XJ80.js"
+            ],
+            "evidence": "The pattern 'podcast' in the reviewed files refers to UI elements and metadata descriptions for navigating to or discovering podcast content. It does not indicate the collection or transfer of user-created audio files.",
+            "recommendation": "No action needed. Ensure any future implementation that collects user audio includes proper prominent disclosure and Data Safety declarations.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "App functionality",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_4.json",
+            "finding_id": "9"
+        },
+        {
+            "psl_constant": "EMAIL",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "/home/shaolin/lyria/dist/assets/HomeScreen-BxzBGPTO.js"
+            ],
+            "evidence": "The email property (c?.email) is accessed purely locally in HomeScreen-BxzBGPTO.js to derive the first letter for the user's avatar initial. No off-device transmission was found originating from this specific UI logic.",
+            "recommendation": "No action needed for this UI-level usage. Ensure that backend handling of the email address is accurately declared in the Play Store Data Safety form.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "App functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_4.json",
+            "finding_id": "10"
+        },
+        {
+            "psl_constant": "EMAIL",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "dist/assets/LibraryScreen-4FO9XJ80.js",
+                "dist/assets/SearchScreen-By9waXgK.js"
+            ],
+            "evidence": "Email is only used locally to extract the first letter for an avatar.",
+            "recommendation": "No action needed.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_5.json",
+            "finding_id": "11"
+        },
+        {
+            "psl_constant": "FILES_AND_DOCS",
+            "policy_id": "data_safety_section",
+            "issue_summary": "**Manual Sharing**: **Policy Exempt**. User triggers transfer to 3P; no disclosure or declaration needed.",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "dist/assets/DevicesScreen-GY7CbrDm.js",
+                "dist/assets/index-Iqq9eRPA.js",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/AlbumViewScreen.kt"
+            ],
+            "evidence": "localStorage is local only. Intent.ACTION_SEND in AlbumViewScreen.kt is a user-initiated share to third parties.",
+            "recommendation": "No action needed.",
+            "is_transferred": true,
+            "user_initiated": true,
+            "is_third_party": true,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Manual sharing",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_5.json",
+            "finding_id": "12"
+        },
+        {
+            "psl_constant": "FITNESS",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "dist/assets/SearchScreen-By9waXgK.js"
+            ],
+            "evidence": "Workout is just a hardcoded music category for the UI, not collected user fitness data.",
+            "recommendation": "No action needed.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_5.json",
+            "finding_id": "13"
+        },
+        {
+            "data_type": "FITNESS",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "severity": "SUGGESTION",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "worker_file": "worker_data_safety_part_6.json",
+            "finding_id": "14"
+        },
+        {
+            "data_type": "PERSONAL_INFO_OTHER",
+            "is_transferred": true,
+            "user_initiated": true,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "severity": "IMPORTANT",
+            "issue_summary": "User-Initiated Collection",
+            "worker_file": "worker_data_safety_part_6.json",
+            "finding_id": "15"
+        },
+        {
+            "data_type": "VIDEOS",
+            "is_transferred": true,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "MISSING",
+            "severity": "CRITICAL",
+            "issue_summary": "Silent Background Transfer",
+            "worker_file": "worker_data_safety_part_6.json",
+            "finding_id": "16"
+        },
+        {
+            "data_type": "RACE_ETHNICITY",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "severity": "SUGGESTION",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "worker_file": "worker_data_safety_part_6.json",
+            "finding_id": "17"
+        },
+        {
+            "psl_constant": "RACE_ETHNICITY",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "/home/shaolin/lyria/src/index.ts"
+            ],
+            "evidence": "Pattern matched Promise.race, which is a false positive and not related to user race/ethnicity.",
+            "recommendation": "No changes required.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_7.json",
+            "finding_id": "18"
+        },
+        {
+            "psl_constant": "OTHER_APP_PERFORMANCE",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "/home/shaolin/lyria/dist/assets/index-Iqq9eRPA.js",
+                "/home/shaolin/lyria/src/routes/music.ts"
+            ],
+            "evidence": "Pattern matched 'heartbeat' for a WebSocket ping interval, which does not transfer user app performance data off-device. False positive.",
+            "recommendation": "No changes required.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_7.json",
+            "finding_id": "19"
+        },
+        {
+            "psl_constant": "DEVICE_ID",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "/home/shaolin/lyria/dist/assets/index-Iqq9eRPA.js",
+                "/home/shaolin/lyria/dataconnect/dataconnect.yaml"
+            ],
+            "evidence": "Pattern matched 'instanceId', which refers to a database or generic instance identifier, not a user device ID. False positive.",
+            "recommendation": "No changes required.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_7.json",
+            "finding_id": "20"
+        },
+        {
+            "policy_id": "foreground_services_policy",
+            "issue_summary": "Play Console Declaration Required for Foreground Service",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/AndroidManifest.xml",
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt"
+            ],
+            "evidence": "Foreground service WearableStreamingService is declared in AndroidManifest.xml and started in WearableStreamingService.kt.",
+            "recommendation": "For apps targeting Android 14+, you must complete a Foreground Service declaration in the Play Console (App content section) for each type used, providing a functional description, user impact video, and a specific use case selection.",
+            "worker_file": "worker_permissions_and_apis.json",
+            "finding_id": "21"
+        },
+        {
+            "policy_id": "audio_recording_policy",
+            "issue_summary": "Continuous Audio Capture in Background",
+            "severity": "CRITICAL",
+            "files_involved": [
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+            ],
+            "evidence": "In MainViewModel.kt, startRecording() initiates a continuous AudioRecord read loop inside a viewModelScope. This loop is not tied to the activity lifecycle and can remain active when the app is minimized without an explicit user-facing recording indicator.",
+            "recommendation": "Tie the recording loop to the app's UI lifecycle to pause capture when minimized, or ensure the ongoing recording is backed by a Foreground Service with an explicit 'recording in progress' notification.",
+            "worker_file": "worker_permissions_and_apis.json",
+            "finding_id": "22"
+        },
+        {
+            "policy_id": "login_credentials",
+            "issue_summary": "App displays or contains a login screen, registration wall, or authentication interface.",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt"
+            ],
+            "evidence": "MainViewModel.kt contains loginWithEmail and guestLogin methods. MainActivity.kt contains Google and Apple Sign-In implementations.",
+            "recommendation": "Administrative Console Requirements: Because your app implements a login flow, you MUST complete two manual setup steps in the Play Console dashboard to pass review:\n1. Reviewer Demo Credentials: Submit active, non-expiring test credentials so Google Play reviewers can access your gated features.\n2. Account Deletion Link: Submit a public-facing web link for account deletion to satisfy Google Play's data deletion policies.",
+            "worker_file": "worker_user_account.json",
+            "finding_id": "23"
+        }
+    ]
+}

@@ -4,6 +4,7 @@ import { Typography } from '../../components/atoms/Typography';
 import { Button } from '../../components/atoms/Button';
 import { Icon } from '../../components/atoms/Icon';
 import maveLogoDark from '../../assets/mave_brand_dark.png';
+import { useTracks } from '../../hooks/useTracks';
 
 /**
  * Rebranded Login Screen for Mave Studio.
@@ -11,6 +12,7 @@ import maveLogoDark from '../../assets/mave_brand_dark.png';
 export const LoginScreen: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { communityTracks } = useTracks();
 
   const handleGoogleLogin = async () => {
     setLoading(true);
@@ -32,10 +34,16 @@ export const LoginScreen: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
     <div className="flex flex-col items-center justify-center h-full w-full bg-background px-6 pb-12 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-surface-container to-background z-0"></div>
       
-      {/* Background artwork placeholder */}
-      <div className="absolute top-10 flex flex-wrap gap-4 opacity-50 pointer-events-none p-4 justify-center z-0">
-        <div className="w-32 h-32 rounded-full bg-primary/20 blur-3xl"></div>
-        <div className="w-40 h-40 rounded-full bg-secondary/20 blur-3xl ml-10"></div>
+      {/* Background artwork from context/hooks */}
+      <div className="absolute inset-0 flex flex-wrap opacity-30 pointer-events-none justify-center items-center z-0 overflow-hidden">
+        {communityTracks.filter(t => t.albumArtUrl).slice(0, 4).map((track, i) => (
+          <img 
+            key={track.id} 
+            src={track.albumArtUrl} 
+            alt="" 
+            className={`w-64 h-64 rounded-full object-cover blur-3xl absolute ${i % 2 === 0 ? '-left-10' : '-right-10'} ${i < 2 ? 'top-10' : 'bottom-20'}`} 
+          />
+        ))}
       </div>
 
       <div className="z-10 flex flex-col items-center w-full mt-auto">
@@ -56,9 +64,7 @@ export const LoginScreen: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
         )}
         
         <div className="w-full space-y-3 flex flex-col items-center">
-          <Button fullWidth onClick={handleGoogleLogin} disabled={loading}>
-            Sign up free
-          </Button>
+          <Button fullWidth onClick={handleGoogleLogin} disabled={loading} icon={<Icon name="person_add" />} title="Sign up free" />
           
           <Button 
             variant="outlined" 
@@ -66,13 +72,12 @@ export const LoginScreen: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
             onClick={handleGoogleLogin}
             disabled={loading}
             icon={<Icon name="login" size="md" />}
-          >
-            {loading ? 'Connecting...' : 'Continue with Google'}
-          </Button>
+            title="Continue with Google"
+          />
         </div>
         
-        <button onClick={handleGoogleLogin} disabled={loading} className="mt-8 text-white font-bold text-base hover:scale-105 transition-transform active:scale-95 disabled:opacity-50">
-          Log in
+        <button onClick={handleGoogleLogin} disabled={loading} className="mt-8 text-white font-bold text-base hover:scale-105 transition-transform active:scale-95 disabled:opacity-50" title="Log in">
+          <Icon name="login" size="md" />
         </button>
       </div>
     </div>

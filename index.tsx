@@ -7,7 +7,9 @@ import { getDatabase } from "firebase/database";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 import firebaseConfig from "./firebase-applet-config.json";
 import { App } from "@/web/App";
+import "@/web/i18n";
 import "./index.css";
+import { AppProvider } from "@/web/contexts/AppContext";
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
@@ -34,7 +36,9 @@ if (container) {
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
-      <App />
+      <AppProvider>
+        <App />
+      </AppProvider>
     </React.StrictMode>
   );
 }

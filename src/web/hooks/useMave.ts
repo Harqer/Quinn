@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getAuth } from 'firebase/auth';
 
-export type MaveMode = 'music' | 'podcast';
+export type MaveMode = 'music' | 'podcast' | 'audiobook';
 
 export interface MaveMessage {
   id: string;
@@ -9,6 +9,11 @@ export interface MaveMessage {
   text: string;
   isAudio?: boolean;
   trackId?: string;
+  type?: string;
+  title?: string;
+  voice?: string;
+  coverUrl?: string;
+  script?: string;
 }
 
 export function useMave() {
@@ -19,6 +24,7 @@ export function useMave() {
   const [thinkingText, setThinkingText] = useState("");
   const wsRef = useRef<WebSocket | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
+  const reconnectAttempts = useRef(0);
 
   const connect = useCallback(async () => {
     try {
@@ -36,6 +42,7 @@ export function useMave() {
 
       ws.onopen = () => {
         setIsConnected(true);
+        reconnectAttempts.current = 0;
         ws.send(JSON.stringify({ type: 'switch_mode', mode }));
       };
 
@@ -47,28 +54,47 @@ export function useMave() {
             setThinkingText(prev => prev + msg.chunk);
           } else if (msg.type === 'agent_update') {
             setThinkingText("");
-            const text = msg.prompts ? `New vibe: ${msg.prompts[0]}` : (msg.script || msg.vision);
+            const rawText = msg.prompts ? `New style: ${msg.prompts[0]}` : (msg.script || msg.vision);
+            const text = rawText && !/firestore|redis|database|deployed|caching|generate|vibe/i.test(rawText) ? rawText : null;
             if (text) {
               setMessages(prev => [{ id: Date.now().toString(), text, sender: 'mave' as const, trackId: msg.trackId }, ...prev].slice(0, 15));
             }
           } else if (msg.type === 'message') {
-            setMessages(prev => [{ id: Date.now().toString(), text: msg.data, sender: 'mave' as const }, ...prev].slice(0, 15));
+            const rawText = msg.data;
+            const text = rawText && !/firestore|redis|database|deployed|caching|generate|vibe/i.test(rawText) ? rawText : null;
+            if (text) {
+              setMessages(prev => [{ id: Date.now().toString(), text, sender: 'mave' as const }, ...prev].slice(0, 15));
+            }
           }
         } catch (err) {
           console.error('Error parsing Mave event', err);
         }
       };
 
-      ws.onclose = () => setIsConnected(false);
+      ws.onclose = () => {
+        setIsConnected(false);
+        const backoff = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 30000);
+        setTimeout(() => {
+          reconnectAttempts.current += 1;
+          connect();
+        }, backoff);
+      };
       wsRef.current = ws;
     } catch (err) {
       console.error('Failed to connect to Mave Studio', err);
     }
   }, [mode]);
 
+  const audioStreamRef = useRef<MediaStream | null>(null);
+
   useEffect(() => {
     connect();
-    return () => wsRef.current?.close();
+    return () => {
+      wsRef.current?.close();
+      if (audioStreamRef.current) {
+        audioStreamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
   }, [connect]);
 
   const switchMode = (newMode: MaveMode) => {
@@ -77,21 +103,87 @@ export function useMave() {
     wsRef.current?.send(JSON.stringify({ type: 'switch_mode', mode: newMode }));
   };
 
-  const sendText = (text: string) => {
-    setMessages(prev => [{ id: Date.now().toString(), text, sender: 'user' as const }, ...prev].slice(0, 15));
+  const sendText = async (text: string) => {
+    const userMsgId = Date.now().toString();
+    setMessages(prev => [{ id: userMsgId, text, sender: 'user' as const }, ...prev].slice(0, 15));
     setThinkingText("");
+
+    if (mode === 'podcast') {
+      try {
+        const response = await fetch('/api/music/podcast/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: text })
+        });
+        if (response.ok) {
+          const reader = response.body?.getReader();
+          const decoder = new TextDecoder();
+          let done = false;
+          let scriptBuffer = '';
+
+          while (!done && reader) {
+            const { value, done: doneReading } = await reader.read();
+            done = doneReading;
+            if (value) {
+              const chunkStr = decoder.decode(value, { stream: true });
+              const lines = chunkStr.split('\n\n');
+              for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                  try {
+                    const data = JSON.parse(line.replace('data: ', ''));
+                    if (data.type === 'chunk' || data.type === 'thought') {
+                      scriptBuffer += data.text;
+                      setThinkingText(scriptBuffer);
+                    } else if (data.type === 'complete') {
+                      setThinkingText("");
+                      setMessages(prev => [{
+                        id: data.track.id || Date.now().toString(),
+                        sender: 'mave' as const,
+                        text: data.track.script,
+                        type: 'podcast_card',
+                        title: data.track.title,
+                        script: data.track.script,
+                        voice: data.track.voice,
+                        coverUrl: data.track.coverUrl
+                      } as any, ...prev].slice(0, 15));
+                    }
+                  } catch (e) {
+                    console.error("Failed to parse SSE data", e);
+                  }
+                }
+              }
+            }
+          }
+          return;
+        }
+      } catch (err) {
+        console.warn('Podcast API endpoint error, falling back to WebSocket stream', err);
+      }
+    }
+
     const type = mode === 'podcast' ? 'text_command' : 'feedback';
     wsRef.current?.send(JSON.stringify({ type, text }));
+  };
+
+  const sendVisionFrame = (image: string) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ type: 'vision', image }));
+    }
   };
 
   const toggleRecording = async () => {
     if (isRecording) {
       recorderRef.current?.stop();
+      if (audioStreamRef.current) {
+        audioStreamRef.current.getTracks().forEach(track => track.stop());
+        audioStreamRef.current = null;
+      }
       setIsRecording(false);
       wsRef.current?.send(JSON.stringify({ type: 'stop_voice' }));
     } else {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioStreamRef.current = stream;
         const recorder = new MediaRecorder(stream);
         recorderRef.current = recorder;
 
@@ -127,7 +219,8 @@ export function useMave() {
     thinkingText,
     switchMode,
     sendText,
+    sendVisionFrame,
     toggleRecording,
     warp
   };
-}
+};

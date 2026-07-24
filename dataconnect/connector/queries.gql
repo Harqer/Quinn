@@ -1,0 +1,82 @@
+query GetUserTracks @auth(level: USER) {
+  tracks(
+    where: { owner: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    name
+    artistName
+    albumName
+    imageUrl
+    createdAt
+  }
+}
+
+query GetCommunityTracks @auth(level: PUBLIC) {
+  tracks(
+    where: { isCommunity: { eq: true } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    name
+    artistName
+    albumName
+    imageUrl
+    createdAt
+    owner {
+      uid
+      displayName
+    }
+  }
+}
+
+query GetCategories @auth(level: PUBLIC) {
+  categories {
+    id
+    name
+    imageUrl
+    type
+  }
+}
+
+query GetPlaylists @auth(level: USER) {
+  playlists(where: { owner: { uid: { eq_expr: "auth.uid" } } }) {
+    id
+    name
+    description
+    imageUrl
+    isPublic
+  }
+}
+
+query GetAlbums @auth(level: PUBLIC) {
+  albums {
+    id
+    name
+    artistName
+    imageUrl
+    releaseYear
+  }
+}
+
+query GetPodcasts @auth(level: PUBLIC) {
+  podcasts {
+    id
+    name
+    publisher
+    imageUrl
+    description
+  }
+}
+
+query GetAudiobooks @auth(level: PUBLIC) {
+  audiobooks {
+    id
+    title
+    author
+    narrator
+    imageUrl
+    duration
+    audioUrl
+  }
+}

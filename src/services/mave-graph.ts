@@ -13,15 +13,17 @@ const MaveState = Annotation.Root({
   directorReasoning: Annotation<string>(),
   musicalPrompts: Annotation<string[]>(),
   podcastScript: Annotation<string>(),
+  audiobookScript: Annotation<string>(),
   userFeedback: Annotation<string>(),
   modality: Annotation<'music' | 'podcast' | 'audiobook' | 'mixed'>(),
   previousInteractionId: Annotation<string>(),
   generatedAudio: Annotation<string>(), // Base64 audio block
+  locale: Annotation<string>(),
 });
 
 // Helper to create model instance with context caching
-const getCachedModel = (modelName: string, temperature: number = 0.7) => {
-  const cacheId = getContextCacheId();
+const getCachedModel = async (modelName: string, temperature: number = 0.7) => {
+  const cacheId = await getContextCacheId();
   return new ChatGoogleGenerativeAI({
     model: modelName,
     apiKey: process.env.GEMINI_API_KEY,
@@ -72,10 +74,10 @@ const visualAnalyzerNode = async (state: typeof MaveState.State, config: any) =>
   await ensureContextCache();
 
   // Use flagship 3.5 model for ultra-fast, high-fidelity visual interpretation
-  const model = getCachedModel("gemini-3.5-flash", 0.1);
+  const model = await getCachedModel("gemini-3.5-flash", 0.1);
 
   const stream = await model.stream([
-    ["system", "Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics. Avoid any technical jargon like 'neon' or 'proxy'. You support 70+ languages and should respond in the same language as the user input if possible."],
+    ["system", `Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics. Avoid any technical jargon like 'neon' or 'proxy'. You support 70+ languages and should respond in the language corresponding to this locale: ${state.locale || 'en'}.`],
     ["human", state.image]
   ]);
 
@@ -94,16 +96,53 @@ const visualAnalyzerNode = async (state: typeof MaveState.State, config: any) =>
   return { visionDescription: fullDescription };
 };
 
-const directorNode = async (state: typeof MaveState.State, config: any) => {
-  const model = getCachedModel("gemini-3.1-pro-preview", 0.5);
-  const feedbackContext = state.userFeedback ? `\nUser Intent: ${state.userFeedback}` : "";
+import { z } from "genkit";
+import { getGenkit } from "./ai.js";
 
+const ModalitySchema = z.object({
+  modality: z.enum(['music', 'podcast', 'audiobook', 'mixed']),
+  reasoning: z.string().describe("Brief reasoning for why this modality was chosen"),
+});
+
+const directorNode = async (state: typeof MaveState.State, config: any) => {
+  const userText = (state.userFeedback || "").toLowerCase();
+  
+  let modality: 'music' | 'podcast' | 'audiobook' | 'mixed' = 'music';
+  let reasoning = "";
+
+  if (userText) {
+    try {
+      const genkitInstance = getGenkit();
+      const modalityPrompt = genkitInstance.definePrompt({
+        name: 'parseModality',
+        model: 'googleai/gemini-3.5-flash',
+        output: { schema: ModalitySchema },
+        system: `You are the orchestration director. Determine the correct media modality based on the user's feedback.
+- 'audiobook': If they ask to read a story, narrate a book, etc.
+- 'podcast': If they ask to host an episode, do commentary, etc.
+- 'mixed': If they ask for both podcast and music.
+- 'music': The default for everything else (creating songs, playing instruments, visual vibes).`,
+      });
+      
+      const response = await modalityPrompt({ prompt: `User Feedback: "${userText}"` });
+      modality = response.output?.modality || 'music';
+      
+      // We can also stream the Director's creative reasoning
+      if (config.configurable?.onChunk) {
+        config.configurable.onChunk({ type: "director_thinking", text: `[Orchestrator] Selected modality: ${modality} (${response.output?.reasoning})\n` });
+      }
+    } catch (e) {
+      logger.warn("[MAVE_GRAPH] Failed to parse modality via Genkit, falling back to music", { error: e });
+    }
+  }
+
+  // Generate the actual creative reasoning stream using LangChain (to maintain the streaming interface)
+  const model = await getCachedModel("gemini-3.1-pro-preview", 0.3);
   const stream = await model.stream([
-    ["system", "You are the Mave Director. Based on the visual vibe and user intent, determine the optimal output modality: 'music' (Lyria Real-Time), 'podcast' (narrative), 'audiobook' (storytelling), or 'mixed'. Provide your reasoning in a natural, fluid tone. Do not use technical terms like 'neon' or 'proxy'. You are a polyglot and support 70+ languages."],
-    ["human", `Visual Vibe: ${state.visionDescription}${feedbackContext}`]
+    ["system", `You are the Mave Orchestra Director. Your primary duty is to analyze visual atmospheres from camera streams, photos, and video feeds, and synthesize high-fidelity musical steering for the Lyria engine. Describe the musical mood, tempo, instrumentation, and emotional textures inspired by the scene in a fluid, inspiring tone. Avoid jargon. You MUST respond in the language corresponding to this locale: ${state.locale || 'en'}.`],
+    ["human", `Visual Atmosphere: ${state.visionDescription}\nSelected Modality: ${modality}\nUser Request: ${state.userFeedback || "Compose real-time music for this atmosphere"}`]
   ]);
 
-  let reasoning = "";
   for await (const chunk of stream) {
     const text = chunk.content.toString();
     reasoning += text;
@@ -111,13 +150,6 @@ const directorNode = async (state: typeof MaveState.State, config: any) => {
       config.configurable.onChunk({ type: "director_thinking", text });
     }
   }
-
-  // Simple heuristic for modality extraction from reasoning, or use a second pass if needed.
-  // For brevity, we'll look for keywords.
-  let modality: 'music' | 'podcast' | 'audiobook' | 'mixed' = 'music';
-  if (reasoning.toLowerCase().includes("audiobook") || reasoning.toLowerCase().includes("story")) modality = 'audiobook';
-  else if (reasoning.toLowerCase().includes("podcast") || reasoning.toLowerCase().includes("narrate")) modality = 'podcast';
-  else if (reasoning.toLowerCase().includes("mixed")) modality = 'mixed';
 
   return { directorReasoning: reasoning, modality };
 };
@@ -143,11 +175,16 @@ const podcastNarratorNode = async (state: typeof MaveState.State, config: any) =
   if (state.modality === 'music') return {};
 
   // Use flagship 3.1 Pro model for natural storytelling and narration
-  const model = getCachedModel("gemini-3.1-pro-preview", 0.7);
+  const model = await getCachedModel("gemini-3.1-pro-preview", 0.7);
   const feedbackContext = state.userFeedback ? `\nUser Input/Feedback: ${state.userFeedback}` : "";
 
+  const isAudiobook = state.modality === 'audiobook';
+  const systemPrompt = isAudiobook 
+    ? `You are Mave, an elite Audiobook Narrator and Author. Based on the visual vibe and user instructions, generate a highly descriptive and immersive story chapter segment (3-5 paragraphs). No technical jargon. You MUST respond in the language corresponding to this locale: ${state.locale || 'en'}.`
+    : `You are Mave, the narrator. Based on the visual vibe and user instructions, generate a short, engaging narrative segment (2-4 sentences) for 'Mave POV'. If user gave feedback, acknowledge it naturally in your tone. No technical jargon. You MUST respond in the language corresponding to this locale: ${state.locale || 'en'}.`;
+
   const stream = await model.stream([
-    ["system", "You are Mave, the narrator. Based on the visual vibe and user instructions, generate a short, engaging narrative segment (2-4 sentences) for 'Mave POV'. If user gave feedback, acknowledge it naturally in your tone. No technical jargon."],
+    ["system", systemPrompt],
     ["human", `Visual Vibe: ${state.visionDescription}${feedbackContext}`]
   ]);
 
@@ -161,6 +198,9 @@ const podcastNarratorNode = async (state: typeof MaveState.State, config: any) =
     }
   }
 
+  if (isAudiobook) {
+    return { audiobookScript: fullScript };
+  }
   return { podcastScript: fullScript };
 };
 

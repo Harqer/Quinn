@@ -1,0 +1,17 @@
+{
+  "15": {
+    "action": "PRUNED",
+    "confidence": "High",
+    "critic_justification": "Finding lacks any concrete evidence or files_involved, failing to cite a concrete file and line number containing the direct policy violation."
+  },
+  "16": {
+    "action": "PRUNED",
+    "confidence": "High",
+    "critic_justification": "Finding lacks any concrete evidence or files_involved, failing to cite a concrete file and line number containing the direct policy violation."
+  },
+  "22": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "MainViewModel.kt at line 463 verifies that startRecording() launches a continuous audio read loop using viewModelScope. This scope outlives the Activity UI lifecycle and can continue recording and transmitting audio silently in the background without a Foreground Service, verifying the policy violation."
+  }
+}

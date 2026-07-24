@@ -1,0 +1,22 @@
+{
+  "table_counts": {
+    "file_origin_table": 206,
+    "field_reference_table": 11878,
+    "method_reference_table": 24789,
+    "proto_reference_table": 7846,
+    "type_reference_table": 6130,
+    "type_reference_list_table": 3343,
+    "kept_class_info_table": 4105,
+    "kept_field_info_table": 11878,
+    "kept_method_info_table": 24789,
+    "keep_constraints_table": 8,
+    "keep_rule_blast_radius_table": 216,
+    "build_info": 1
+  },
+  "kept_classes": 4105,
+  "kept_fields": 11878,
+  "kept_methods": 24789,
+  "total_kept_items": 40772,
+  "keep_rules_count": 216,
+  "global_keep_rules_count": 0
+}

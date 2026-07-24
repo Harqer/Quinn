@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.appfunctions.service.AppFunctionConfiguration
 import com.meta.wearable.dat.core.Wearables
 import com.musically.studio.appfunctions.MaveFunctions
+import com.musically.studio.engage.EngageBroadcastReceiver
 import com.musically.studio.logging.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -33,5 +34,7 @@ class MyApplication : Application(), AppFunctionConfiguration.Provider {
         result.onFailure { error ->
             Timber.e("Failed to initialize DAT: $error")
         }
+
+        EngageBroadcastReceiver.register(this)
     }
 }
