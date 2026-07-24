@@ -1,3 +1,4 @@
+import { getSecret } from "../config/secrets.js";
 import { GoogleGenAI } from "@google/genai";
 import { genkit, z } from "genkit";
 import { googleAI } from "@genkit-ai/googleai";
@@ -28,9 +29,9 @@ export const initAi = async () => {
         location: process.env.GOOGLE_CLOUD_LOCATION || "us-central1"
       }
     } as any);
-  } else if (process.env.GEMINI_API_KEY) {
+  } else if (getSecret("GEMINI_API_KEY")) {
     ai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY,
+      apiKey: getSecret("GEMINI_API_KEY"),
     });
   } else {
     throw new Error("GEMINI_API_KEY or GOOGLE_CLOUD_PROJECT is not set in environment.");
@@ -38,7 +39,7 @@ export const initAi = async () => {
 
   // Initialize Genkit for Prompt Abstraction and Structured Output
   gk = genkit({
-    plugins: [googleAI({ apiKey: process.env.GEMINI_API_KEY })],
+    plugins: [googleAI({ apiKey: getSecret("GEMINI_API_KEY") })],
     model: "googleai/gemini-3.5-flash", 
   });
 

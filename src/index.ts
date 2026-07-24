@@ -5,7 +5,10 @@ import { initAi } from "./services/ai.js";
 import { setupMusicWebSocket } from "./routes/index.js";
 import logger from "./config/logger.js";
 
+import { initSecrets } from "./config/secrets.js";
+
 async function startServer() {
+  await initSecrets();
   const portNum = Number(process.env.PORT) || 8080;
   const server = app.listen(portNum, "0.0.0.0", () => {
     logger.info(`[SERVER] Listening on 0.0.0.0:${portNum}`);

@@ -1,3 +1,4 @@
+import { getSecret } from "../config/secrets.js";
 import { db } from "../config/firebase.js";
 import logger from "../config/logger.js";
 import { getRedis } from "../config/redis.js";
@@ -27,13 +28,13 @@ export class SpotifyService {
           return data.accessToken;
         }
 
-        if (data.refreshToken && process.env.SPOTIFY_CLIENT_ID && process.env.SPOTIFY_CLIENT_SECRET) {
+        if (data.refreshToken && getSecret("SPOTIFY_CLIENT_ID") && getSecret("SPOTIFY_CLIENT_SECRET")) {
           logger.info(`[SPOTIFY] Access token expired. Initiating automatic token refresh...`, { uid });
           const refreshParams = new URLSearchParams({
             grant_type: "refresh_token",
             refresh_token: data.refreshToken,
           });
-          const basicAuth = Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString("base64");
+          const basicAuth = Buffer.from(`${getSecret("SPOTIFY_CLIENT_ID")}:${getSecret("SPOTIFY_CLIENT_SECRET")}`).toString("base64");
 
           const tokenRes = await fetch("https://accounts.spotify.com/api/token", {
             method: "POST",

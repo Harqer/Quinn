@@ -1,17 +1,22 @@
 import { Redis } from "@upstash/redis";
 import logger from "./logger.js";
 
+import { getSecret } from "./secrets.js";
+
 let redis: Redis;
 
 export const initRedis = () => {
-  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+  const redisUrl = getSecret("UPSTASH_REDIS_REST_URL");
+  const redisToken = getSecret("UPSTASH_REDIS_REST_TOKEN");
+  
+  if (!redisUrl || !redisToken) {
     logger.warn("[REDIS] Missing credentials. Redis caching and session storage will be disabled.");
     return;
   }
 
   redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    url: redisUrl,
+    token: redisToken,
   });
 };
 

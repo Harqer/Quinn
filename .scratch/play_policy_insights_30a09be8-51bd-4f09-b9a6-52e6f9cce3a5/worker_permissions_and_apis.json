@@ -1,0 +1,29 @@
+{
+  "domain": "Permissions and APIs",
+  "findings": [
+    {
+      "policy_id": "foreground_services_policy",
+      "issue_summary": "Foreground services are declared and implemented, requiring Play Console declaration.",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/AndroidManifest.xml",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+      ],
+      "evidence": "Manifest declares foregroundServiceType attributes. WearableStreamingService calls startForeground(). MainViewModel calls startForegroundService().",
+      "recommendation": "Play Console Declaration Required: For apps targeting Android 14+, you must complete a Foreground Service declaration in the Play Console (App content section) for each type used, providing a functional description, user impact video, and a specific use case selection."
+    },
+    {
+      "policy_id": "audio_recording_policy",
+      "issue_summary": "App requests broad RECORD_AUDIO permission for occasional, user-initiated vocal input.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/AndroidManifest.xml",
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt"
+      ],
+      "evidence": "MainActivity requests RECORD_AUDIO. WearableStreamingService uses AudioRecord in a recording loop triggered by user interactions.",
+      "recommendation": "Migrate to the Android Microphone Button API to process temporary audio securely."
+    }
+  ]
+}

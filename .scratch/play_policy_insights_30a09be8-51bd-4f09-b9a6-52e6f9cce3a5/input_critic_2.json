@@ -1,0 +1,62 @@
+{
+    "6": {
+        "psl_constant": "PHOTOS",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "**Background Transfer (Disclosure Claimed)**: Evidence found; requires Critic verification.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/CameraPreview.kt",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+        ],
+        "evidence": "In CameraPreview.kt, camera frames are captured automatically every 1.5s and sent off-device via viewModel.sendFrame to maveSessionManager. The WelcomeScreen acts as a gatekeeper with a compliant prominent disclosure AlertDialog.",
+        "recommendation": "Ensure the Play Store Data Safety form declares this background collection, as the prominent disclosure is in place.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "DISCLOSED",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_3.json",
+        "finding_id": "6"
+    },
+    "7": {
+        "psl_constant": "VIDEOS",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "**Background Transfer (Disclosure Claimed)**: Evidence found; requires Critic verification.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+        ],
+        "evidence": "In WearableStreamingService.kt, video streams from the wearable are captured and sent off-device via maveSessionManager.sendVideoFrame. Background camera frame collection is disclosed in the WelcomeScreen gatekeeper.",
+        "recommendation": "Ensure the Play Store Data Safety form declares this background video/frame collection, as the prominent disclosure is in place.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "DISCLOSED",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_3.json",
+        "finding_id": "7"
+    },
+    "8": {
+        "psl_constant": "AUDIO",
+        "policy_id": "data_safety_section",
+        "issue_summary": "**User-Initiated Collection**: Disclosure exempt, but **must be declared** in Play Store form.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt",
+            "app/src/main/java/com/musically/studio/MainActivity.kt"
+        ],
+        "evidence": "In WearableStreamingService.kt, AudioRecord captures microphone data which is emitted and transferred off-device via maveSessionManager.sendAudio. This transfer is user-initiated (e.g., triggered by a 'speak' interaction event via MainViewModel).",
+        "recommendation": "Declare the user-initiated audio collection in the Play Store Data Safety form.",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_3.json",
+        "finding_id": "8"
+    }
+}

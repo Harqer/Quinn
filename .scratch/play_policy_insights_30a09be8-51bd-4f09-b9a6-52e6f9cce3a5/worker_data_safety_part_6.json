@@ -1,0 +1,57 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "OTHER_AUDIO",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": ["/home/shaolin/lyria/dist/assets/PodcastGeneratorScreen-BKtvY9eW.js"],
+      "evidence": "PodcastGeneratorScreen-BKtvY9eW.js line 1-3 sends text prompt and voice selection to /api/music/podcast/generate, but does not transfer any user-provided audio files off-device.",
+      "recommendation": "No changes needed as user audio is not transferred.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "PERSONAL_INFO_OTHER",
+      "policy_id": "data_safety_section",
+      "issue_summary": "**User-Initiated Collection**: Disclosure exempt, but **must be declared** in Play Store form.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/network/ApiClient.kt",
+        "/home/shaolin/lyria/src/routes/auth.ts"
+      ],
+      "evidence": "ApiClient.kt line 85 (saveProfile) sends gender to /api/auth/profile, which auth.ts line 25 saves to Firestore users collection.",
+      "recommendation": "Declare PERSONAL_INFO_OTHER collection in the Play Store Data Safety form.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "DEVICE_ID",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "**Background Transfer (Disclosure Claimed)**: Evidence found; requires Critic verification.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/dist/assets/index-DCIB1zrB.js",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+      ],
+      "evidence": "MainViewModel.kt line 57 enables Firebase Crashlytics collection which transfers Firebase Installation ID. WelcomeScreen.kt line 37 acts as an affirmative gatekeeper AlertDialog.",
+      "recommendation": "Verify disclosure text adequacy in Critic review.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "DISCLOSED",
+      "purpose": "Analytics",
+      "linked_to_user": false
+    }
+  ]
+}

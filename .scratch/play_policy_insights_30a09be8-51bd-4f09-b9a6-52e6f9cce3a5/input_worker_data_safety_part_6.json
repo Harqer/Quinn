@@ -1,0 +1,170 @@
+{
+    "APP_DIR": "/home/shaolin/lyria",
+    "APP_NAME": "app_name",
+    "GOAL_NAME": "data_safety_part_6",
+    "PACKAGE_NAME": "mave-studio",
+    "REPO_ROOT": "/home/shaolin/lyria/.agents/skills/play-policy-insights",
+    "TARGET_SDK": null,
+    "TEMP_DIR": "/home/shaolin/lyria/.scratch/play_policy_insights_30a09be8-51bd-4f09-b9a6-52e6f9cce3a5",
+    "data_sources": {
+        "DEVICE_ID": {
+            "description": "Identifiers that relate to an individual device, browser or app. For example, an IMEI number, MAC address, Widevine Device ID, Firebase installation ID, or advertising identifier.",
+            "findings": [
+                "dist/assets/index-DCIB1zrB.js (Pattern: instanceId)"
+            ]
+        },
+        "OTHER_AUDIO": {
+            "description": "Any other user-created or user-provided audio files.",
+            "findings": [
+                "dist/assets/LibraryScreen-BO2C-U8y.js (Pattern: podcast)",
+                "dist/assets/PodcastGeneratorScreen-BKtvY9eW.js (Pattern: podcast)"
+            ]
+        },
+        "PERSONAL_INFO_OTHER": {
+            "description": "Any other personal information such as date of birth, gender identity, veteran status, etc.",
+            "findings": [
+                "shared/src/androidMain/kotlin/com/musically/studio/network/ApiClient.kt (Pattern: gender)",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/GenderInputScreen.kt (Pattern: gender)",
+                "src/routes/auth.ts (Pattern: gender)"
+            ]
+        }
+    },
+    "disclosure": [
+        "app/src/main/java/com/musically/studio/MainActivity.kt (Pattern: collect)",
+        "dist/assets/PodcastGeneratorScreen-BKtvY9eW.js (Pattern: share)",
+        "dist/assets/index-DCIB1zrB.js (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/audio/PlaybackService.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/network/ApiClient.kt (Pattern: share)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt (Pattern: Accept)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/POVView.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/components/TrackItems.kt (Pattern: share)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/components/atoms/MaveLogo.kt (Pattern: share)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/navigation/AppNavigation.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/navigation/EntryProvider.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/AlbumViewScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/CategoryViewScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/DevicesBottomSheet.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/DevicesScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/DiscoverScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/GenerateCoverScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/LibraryScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/LiveSessionScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/NowPlayingScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/OnboardingScreen.kt (Pattern: share)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/PlaylistViewScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/PodcastSelectionScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/SearchScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/StudioHomeScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/TrackOptionsBottomSheet.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/UserProfileScreen.kt (Pattern: AlertDialog)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/ArtistSelectionScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/BirthdayInputScreen.kt (Pattern: Dialog)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/LoginScreen.kt (Pattern: collect)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/NameTermsScreen.kt (Pattern: Privacy Policy)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt (Pattern: AlertDialog)",
+        "shared/src/androidMain/kotlin/com/musically/studio/utils/FrameProcessor.kt (Pattern: collect)",
+        "src/app.ts (Pattern: collect)",
+        "src/middlewares/auth.ts (Pattern: collect)",
+        "src/repositories/TrackRepository.ts (Pattern: collect)",
+        "src/routes/auth.ts (Pattern: collect)",
+        "src/routes/logs.ts (Pattern: collect)",
+        "src/routes/music.ts (Pattern: share)",
+        "src/routes/reports.ts (Pattern: collect)",
+        "src/routes/spotify.ts (Pattern: collect)",
+        "src/services/MusicService.ts (Pattern: share)",
+        "src/services/SpotifyService.ts (Pattern: collect)"
+    ],
+    "foreground_service": [
+        "shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt (Pattern: startForeground)",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt (Pattern: startForeground)"
+    ],
+    "found_urls": [
+        "https://lyria-musically.web.app/delete-account"
+    ],
+    "network_transmission": {
+        "-": [
+            "app/src/main/java/com/musically/studio/di/NetworkModule.kt (Pattern: HttpClient)",
+            "dist/assets/AlbumView-BjS4RhmM.js (Pattern: fetch)",
+            "dist/assets/DevicesScreen-DBcpxKS0.js (Pattern: fetch)",
+            "dist/assets/PodcastGeneratorScreen-BKtvY9eW.js (Pattern: fetch)",
+            "dist/assets/SearchScreen-BGWjSMj3.js (Pattern: fetch)",
+            "dist/assets/index-DCIB1zrB.js (Pattern: fetch)",
+            "dist/assets/useTracks-RWdTnfz7.js (Pattern: fetch)",
+            "package.json (Pattern: fetch)",
+            "shared/src/androidMain/kotlin/com/musically/studio/engage/EngageWorker.kt (Pattern: HttpClient)",
+            "shared/src/androidMain/kotlin/com/musically/studio/network/ApiClient.kt (Pattern: fetch)",
+            "shared/src/androidMain/kotlin/com/musically/studio/network/MaveSessionManager.kt (Pattern: WebSocket)",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt (Pattern: fetch)",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/DiscoverScreen.kt (Pattern: fetch)",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/LibraryScreen.kt (Pattern: fetch)",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/PodcastSelectionScreen.kt (Pattern: fetch)",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/UserProfileScreen.kt (Pattern: fetch)",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/ArtistSelectionScreen.kt (Pattern: fetch)",
+            "src/app.ts (Pattern: fetch)",
+            "src/index.ts (Pattern: WebSocket)",
+            "src/lib/dataconnect/esm/index.esm.js (Pattern: fetch)",
+            "src/lib/dataconnect/index.cjs.js (Pattern: fetch)",
+            "src/routes/index.ts (Pattern: WebSocket)",
+            "src/routes/music.ts (Pattern: fetch)",
+            "src/routes/spotify.ts (Pattern: fetch)",
+            "src/routes/tracks.ts (Pattern: fetch)",
+            "src/services/CredentialVerifier.ts (Pattern: fetch)",
+            "src/services/MusicService.ts (Pattern: WebSocket)",
+            "src/services/NarrativeService.ts (Pattern: WebSocket)",
+            "src/services/SpotifyService.ts (Pattern: fetch)"
+        ]
+    },
+    "requested_permissions": {
+        "AUDIO": [
+            "android.permission.RECORD_AUDIO"
+        ],
+        "PHOTOS": [
+            "android.permission.CAMERA"
+        ],
+        "VIDEOS": [
+            "android.permission.CAMERA",
+            "android.permission.RECORD_AUDIO"
+        ],
+        "foreground_service": [
+            "android.permission.FOREGROUND_SERVICE"
+        ]
+    },
+    "semantic_files": {
+        "CONFIG": [
+            "vite.config.ts"
+        ],
+        "LEGAL": [
+            "NameTermsScreen.kt"
+        ],
+        "MUSIC": [
+            "GetPlaylistsQuery.kt",
+            "MiniPlayer.kt",
+            "PlaylistViewScreen.kt",
+            "music.ts",
+            "MusicService.ts"
+        ],
+        "OTHER_AUDIO": [
+            "PodcastGeneratorScreen-BKtvY9eW.js",
+            "GetPodcastsQuery.kt",
+            "PodcastSelectionScreen.kt"
+        ],
+        "PHOTOS": [
+            "CameraPreview.kt",
+            "CameraCaptureScreen.kt",
+            "GalleryPickerScreen.kt"
+        ],
+        "USER_ACCOUNT": [
+            "DeleteAccountScreen-B-p3UbjS.js",
+            "LoginScreen-Cm8oWV7o.js",
+            "AuthScreen.kt",
+            "AuthOptionsScreen.kt",
+            "LoginScreen.kt",
+            "auth.ts",
+            "auth.ts"
+        ],
+        "VIDEOS": [
+            "PlaybackService.kt"
+        ]
+    }
+}

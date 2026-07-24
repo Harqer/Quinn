@@ -1,0 +1,43 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "MUSIC",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt",
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt"
+      ],
+      "evidence": "MainActivity uses MediaController to bind to PlaybackService locally. MaveFunctions uses text for AI vibe generation, no music files are transferred. No off-device transmission of user music files was found.",
+      "recommendation": "Maintain local-only processing for user music files.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "USER_ACCOUNT",
+      "policy_id": "data_safety_section",
+      "issue_summary": "User-Initiated Collection",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/di/NetworkModule.kt",
+        "/home/shaolin/lyria/dist/assets/DeleteAccountScreen-B-p3UbjS.js"
+      ],
+      "evidence": "MainActivity receives user credentials (e.g. from GoogleSignIn, Apple SignIn, Verified Email) and passes them to the viewModel for first-party Firebase authentication. DeleteAccountScreen allows the user to delete their account.",
+      "recommendation": "Ensure user account collection is declared in the Play Store Data Safety form.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    }
+  ]
+}

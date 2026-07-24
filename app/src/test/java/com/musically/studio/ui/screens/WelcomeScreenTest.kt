@@ -1,7 +1,9 @@
 package com.musically.studio.ui.screens
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -44,7 +46,7 @@ class WelcomeScreenTest {
     }
 
     @Test
-    fun welcomeScreen_rendersCorrectly() {
+    fun welcomeScreen_privacyDialogDisplayed_whenNotAccepted() {
         composeTestRule.setContent {
             MaveAppTheme {
                 WelcomeScreen(
@@ -54,7 +56,27 @@ class WelcomeScreenTest {
                 )
             }
         }
-        
+
+        composeTestRule.onNodeWithText("Privacy & Data Usage").assertExists()
+        composeTestRule.onNodeWithText("I Agree").assertExists()
+        composeTestRule.onNodeWithText("Decline").assertExists()
         composeTestRule.onRoot().captureRoboImage()
+    }
+
+    @Test
+    fun welcomeScreen_privacyDialogDismissed_whenAccepted() {
+        viewModel.acceptPrivacyPolicy()
+        
+        composeTestRule.setContent {
+            MaveAppTheme {
+                WelcomeScreen(
+                    viewModel = viewModel,
+                    onLoginClick = {},
+                    onSignUpClick = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("Privacy & Data Usage").assertDoesNotExist()
     }
 }

@@ -1,3 +1,4 @@
+import { getSecret } from "../config/secrets.js";
 import { StateGraph, Annotation, START, END } from "@langchain/langgraph";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { GoogleGenAI } from "@google/genai";
@@ -26,7 +27,7 @@ const getCachedModel = async (modelName: string, temperature: number = 0.7) => {
   const cacheId = await getContextCacheId();
   return new ChatGoogleGenerativeAI({
     model: modelName,
-    apiKey: process.env.GEMINI_API_KEY,
+    apiKey: getSecret("GEMINI_API_KEY"),
     temperature: temperature,
     // Support for cached content ID
     // @ts-ignore

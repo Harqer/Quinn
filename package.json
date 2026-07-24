@@ -15,6 +15,7 @@
     "@genkit-ai/googleai": "^1.28.0",
     "@google-cloud/firestore": "^8.6.0",
     "@google-cloud/logging-winston": "^6.0.0",
+    "@google-cloud/secret-manager": "^6.3.0",
     "@google/genai": "^2.12.0",
     "@langchain/google-genai": "^2.2.0",
     "@langchain/langgraph": "^1.4.8",

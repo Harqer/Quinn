@@ -56,6 +56,12 @@ fun WelcomeScreen(
                     Text("I Agree", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                 }
             },
+            dismissButton = {
+                val activity = androidx.compose.ui.platform.LocalContext.current as? android.app.Activity
+                TextButton(onClick = { activity?.finish() }) {
+                    Text("Decline", color = MaterialTheme.colorScheme.error)
+                }
+            },
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         )
     }

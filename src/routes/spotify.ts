@@ -1,3 +1,4 @@
+import { getSecret } from "../config/secrets.js";
 import { Router, Response, Request } from "express";
 import { verifyFirebaseToken, verifyAppCheck, AuthenticatedRequest } from "../middlewares/auth.js";
 import { spotifyService } from "../services/SpotifyService.js";
@@ -25,7 +26,7 @@ router.get("/auth-url", verifyFirebaseToken, verifyAppCheck, async (req: Authent
   const uid = req.user?.uid;
   if (!uid) return res.status(401).json({ error: "Unauthorized" });
 
-  const clientId = process.env.SPOTIFY_CLIENT_ID;
+  const clientId = getSecret("SPOTIFY_CLIENT_ID");
   if (!clientId) return res.status(400).json({ error: "Spotify Client ID not configured." });
 
   const host = req.get("host") || "";
@@ -69,8 +70,8 @@ router.get("/callback", async (req: Request, res: Response) => {
   if (!code || !state) return res.status(400).send("Authorization code or state is missing.");
 
   const uid = state as string;
-  const clientId = process.env.SPOTIFY_CLIENT_ID;
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+  const clientId = getSecret("SPOTIFY_CLIENT_ID");
+  const clientSecret = getSecret("SPOTIFY_CLIENT_SECRET");
 
   if (!clientId || !clientSecret) return res.status(500).send("Spotify credentials not configured.");
 

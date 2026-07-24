@@ -172,6 +172,7 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.appcheck.playintegrity)
 
     // Logging
     implementation(libs.timber)

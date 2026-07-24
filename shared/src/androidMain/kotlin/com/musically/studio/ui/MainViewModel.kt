@@ -35,6 +35,7 @@ import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.musically.studio.logging.CrashlyticsTree
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -55,6 +56,7 @@ class MainViewModel @Inject constructor(
         prefs.edit().putBoolean("has_accepted_privacy_policy", true).apply()
         _hasAcceptedPrivacyPolicy.value = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+        Timber.plant(CrashlyticsTree())
     }
 
     private val _isMusicAccountConnected = MutableStateFlow(false)

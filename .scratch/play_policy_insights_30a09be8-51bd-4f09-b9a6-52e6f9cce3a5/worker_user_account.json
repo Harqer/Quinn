@@ -1,0 +1,15 @@
+{
+  "domain": "User Account and Identity",
+  "findings": [
+    {
+      "policy_id": "login_credentials",
+      "issue_summary": "App displays or contains a login screen, registration wall, or authentication interface.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt"
+      ],
+      "evidence": "MainActivity.kt implements GoogleSignIn and FirebaseAuth, indicating the app has a login wall.",
+      "recommendation": "Administrative Console Requirements: Because your app implements a login flow, you MUST complete two manual setup steps in the Play Console dashboard to pass review:\n1. Reviewer Demo Credentials: Submit active, non-expiring test credentials so Google Play reviewers can access your gated features.\n2. Account Deletion Link: Submit a public-facing web link for account deletion to satisfy Google Play's data deletion policies."
+    }
+  ]
+}

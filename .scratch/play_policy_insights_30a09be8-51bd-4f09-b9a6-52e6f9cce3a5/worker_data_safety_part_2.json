@@ -1,0 +1,58 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "PERFORMANCE_DIAGNOSTICS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "**Silent Background Transfer**: Policy violation. Data is sent without prior disclosure.",
+      "severity": "CRITICAL",
+      "files_involved": [
+        "app/src/main/java/com/musically/studio/MyApplication.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+      ],
+      "evidence": "app/src/main/java/com/musically/studio/MyApplication.kt:30 unconditionally initializes CrashlyticsTree() in onCreate(), transferring performance diagnostics before the WelcomeScreen consent dialog can act as a gatekeeper.",
+      "recommendation": "Delay the initialization of Crashlytics and other telemetry SDKs until after the user has explicitly accepted the Privacy Policy in the WelcomeScreen.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "MISSING",
+      "purpose": "Analytics",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "NAME",
+      "policy_id": "data_safety_section",
+      "issue_summary": "**User-Initiated Collection**: Disclosure exempt, but **must be declared** in Play Store form.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "app/src/main/java/com/musically/studio/MainActivity.kt",
+        "src/services/CredentialVerifier.ts"
+      ],
+      "evidence": "app/src/main/java/com/musically/studio/MainActivity.kt:238 and CredentialVerifier.ts collect and send the user's name to the first-party backend during the user-initiated sign-in flow.",
+      "recommendation": "Declare the collection of Name data in the Play Store Data Safety form as a user-initiated collection.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "PHOTOS",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "app/src/main/java/com/musically/studio/MainActivity.kt"
+      ],
+      "evidence": "The CAMERA permission is requested in MainActivity.kt to capture live video frames for AI music generation, but there is no evidence of collecting or transferring static 'Photos'. This is a false positive.",
+      "recommendation": "No action required for Photos. Ensure that Camera usage is separately declared if video data is transferred.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": false
+    }
+  ]
+}

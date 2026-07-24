@@ -7,6 +7,10 @@ import com.musically.studio.appfunctions.MaveFunctions
 import com.musically.studio.engage.EngageBroadcastReceiver
 import com.musically.studio.logging.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
+import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -24,10 +28,20 @@ class MyApplication : Application(), AppFunctionConfiguration.Provider {
         super.onCreate()
         
         val isDebug = (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        
+        FirebaseApp.initializeApp(this)
+        val firebaseAppCheck = FirebaseAppCheck.getInstance()
+        
         if (isDebug) {
             Timber.plant(Timber.DebugTree())
+            firebaseAppCheck.installAppCheckProviderFactory(DebugAppCheckProviderFactory.getInstance())
         } else {
-            Timber.plant(CrashlyticsTree())
+            firebaseAppCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
+            val prefs = getSharedPreferences("mave_prefs", android.content.Context.MODE_PRIVATE)
+            val hasAcceptedPrivacy = prefs.getBoolean("has_accepted_privacy_policy", false)
+            if (hasAcceptedPrivacy) {
+                Timber.plant(CrashlyticsTree())
+            }
         }
 
         val result = Wearables.initialize(this)

@@ -35,7 +35,7 @@ object TestNetworkModule {
     @Provides
     @Singleton
     fun provideMaveSessionManager(okHttpClient: OkHttpClient): MaveSessionManager {
-        return Mockito.mock(MaveSessionManager::class.java)
+        return FakeMaveSessionManager(okHttpClient)
     }
 
     @Provides

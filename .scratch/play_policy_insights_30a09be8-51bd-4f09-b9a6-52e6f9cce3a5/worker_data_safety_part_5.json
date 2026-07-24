@@ -1,0 +1,59 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "FILES_AND_DOCS",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/DevicesBottomSheet.kt",
+        "/home/shaolin/lyria/dist/assets/index-DCIB1zrB.js"
+      ],
+      "evidence": "The share intent in DevicesBottomSheet sends a static string ('Join my session on Lyria Studio!'), not a user file. localStorage in index.js is local-only.",
+      "recommendation": "No changes needed.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "EMAIL",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/dist/assets/HomeScreen-ChHlF94G.js",
+        "/home/shaolin/lyria/dist/assets/LibraryScreen-BO2C-U8y.js",
+        "/home/shaolin/lyria/dist/assets/SearchScreen-BGWjSMj3.js"
+      ],
+      "evidence": "The email is only used locally to render the user's initial in the UI.",
+      "recommendation": "No changes needed.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "OTHER_AUDIO",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/dist/assets/HomeScreen-ChHlF94G.js"
+      ],
+      "evidence": "The string 'podcasts' is only used as an icon name and UI label, not as a collection of user audio files.",
+      "recommendation": "No changes needed.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    }
+  ]
+}
