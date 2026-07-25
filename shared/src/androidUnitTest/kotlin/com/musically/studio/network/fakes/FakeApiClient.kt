@@ -29,6 +29,8 @@ class FakeApiClient : ApiClient {
     var getAlbumsResult: List<MaveAlbum>? = emptyList()
     var getPodcastsResult: List<MavePodcast>? = emptyList()
     var getAudiobooksResult: List<MaveAudiobook>? = emptyList()
+    var getSpotifyLibraryTracksResult: List<MaveTrack>? = emptyList()
+    var deleteAccountResult = true
 
     override suspend fun bookmarkTrack(trackId: String) = bookmarkTrackResult
     override suspend fun shareVibe(trackId: String) = shareVibeResult
@@ -50,4 +52,6 @@ class FakeApiClient : ApiClient {
     override suspend fun getAlbums() = getAlbumsResult
     override suspend fun getPodcasts() = getPodcastsResult
     override suspend fun getAudiobooks() = getAudiobooksResult
+    override suspend fun getSpotifyLibraryTracks() = getSpotifyLibraryTracksResult
+    override suspend fun deleteAccount() = deleteAccountResult
 }
