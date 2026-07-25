@@ -204,9 +204,15 @@ class MainActivity : ComponentActivity() {
         val permissions = mutableListOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.BLUETOOTH_CONNECT,
             Manifest.permission.POST_NOTIFICATIONS
         )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            permissions.add(Manifest.permission.BLUETOOTH_SCAN)
+            permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
+        } else {
+            permissions.add(Manifest.permission.BLUETOOTH)
+            permissions.add(Manifest.permission.BLUETOOTH_ADMIN)
+        }
         permissionLauncher.launch(permissions.toTypedArray())
     }
 

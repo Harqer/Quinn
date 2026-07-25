@@ -23,6 +23,7 @@ interface ApiClient {
     suspend fun generateCoverMedia(prompt: String, type: String): String?
     suspend fun getTrack(trackId: String): MaveTrack?
     suspend fun getSpotifyStatus(): Boolean
+    suspend fun verifyDigitalCredential(credentialJson: String, nonce: String): String?
     suspend fun getSpotifyPlaylists(): List<MavePlaylist>?
     
     suspend fun getPlaylists(): List<MavePlaylist>?
@@ -108,6 +109,24 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
             .delete()
             .build()
         return executeRequest(request)
+    }
+
+    override suspend fun verifyDigitalCredential(credentialJson: String, nonce: String): String? {
+        val body = """{"credential": "$credentialJson", "nonce": "$nonce"}""".toRequestBody(JSON)
+        val request = Request.Builder()
+            .url("$BASE_URL/auth/verifyDigitalCredential")
+            .post(body)
+            .build()
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val resBody = response.body?.string() ?: return null
+                    JSONObject(resBody).getString("customToken")
+                } else null
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     override suspend fun savePreferences(artists: List<String>): Boolean {
@@ -491,11 +510,10 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
                                 
                                 list.add(MaveTrack(
                                     id = item.optString("id"),
-                                    title = item.optString("name"),
-                                    artist = artistName,
-                                    coverUrl = coverUrl,
-                                    audioUrl = previewUrl.takeIf { it.isNotEmpty() && it != "null" } ?: "",
-                                    duration = item.optInt("duration_ms", 0) / 1000
+                                    name = item.optString("name"),
+                                    artists = listOf(MaveArtist(id = "", name = artistName)),
+                                    album = MaveAlbum(id = "", name = "", images = listOfNotNull(coverUrl.takeIf { it.isNotEmpty() }?.let { MaveImage(url = it) })),
+                                    durationMs = item.optInt("duration_ms", 0).toLong() * 1000
                                 ))
                             }
                         }

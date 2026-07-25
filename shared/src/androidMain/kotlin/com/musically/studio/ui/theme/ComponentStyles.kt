@@ -82,20 +82,17 @@ object MaveStyles {
     val userMessageBubbleStyle = Style {
         shape(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 4.dp))
         background(Color(0xFF2A2A2A))
-        padding(16.dp)
     }
 
     val aiMessageBubbleStyle = Style {
         shape(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 4.dp, bottomEnd = 16.dp))
         background(Color(0xFF1A1A1A))
-        padding(16.dp)
     }
 
     val chatInputRowStyle = Style {
         shape(RoundedCornerShape(16.dp))
         background(colors.surfaceContainerHigh)
         border(1.dp, Color.Gray.copy(alpha = 0.3f))
-        padding(horizontal = 8.dp, vertical = 8.dp)
     }
 
     val sendButtonStyle = Style {
@@ -108,19 +105,16 @@ object MaveStyles {
         shape(RoundedCornerShape(12.dp))
         background(colors.surfaceContainerHigh)
         border(1.dp, Color.Gray.copy(alpha = 0.3f))
-        padding(12.dp)
     }
 
     val deviceCardStyle = Style {
         shape(RoundedCornerShape(12.dp))
         background(colors.surfaceContainerHigh)
         border(1.dp, colors.primary.copy(alpha = 0.3f))
-        padding(20.dp)
     }
     
     val currentDeviceCardStyle = Style {
         shape(RoundedCornerShape(16.dp))
         background(colors.surfaceContainerHigh)
-        padding(16.dp)
     }
 }

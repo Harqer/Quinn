@@ -3,6 +3,7 @@ package com.musically.studio.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -38,7 +39,7 @@ fun ChatScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(LocalMaveColorScheme.currentValue.background),
+            .background(LocalMaveColorScheme.current.background),
         contentAlignment = Alignment.Center
     ) {
         Scaffold(
@@ -103,7 +104,7 @@ fun ChatScreen(
                                 inputValue = ""
                             },
                             interactionSource = interactionSource,
-                            modifier = Modifier.styleable(state = styleState, style = MaveStyles.sendButtonStyle)
+                            modifier = Modifier.styleable(styleState = styleState, style = MaveStyles.sendButtonStyle)
                         ) {
                             Icon(Icons.Default.Send, contentDescription = "Send", tint = Color.Black)
                         }
@@ -112,12 +113,13 @@ fun ChatScreen(
                             Icon(Icons.Default.Mic, contentDescription = "Mic")
                         }
                         IconButton(onClick = { /* CameraX Feature Integration */ }) {
-                            Icon(Icons.Default.PhotoCamera, contentDescription = "Camera", tint = LocalMaveColorScheme.currentValue.onSurface)
+                            Icon(Icons.Default.PhotoCamera, contentDescription = "Camera", tint = LocalMaveColorScheme.current.onSurface)
                         }
                     }
                 }
             }
-            containerColor = Color.Transparent
+        },
+        containerColor = Color.Transparent
         ) { paddingValues ->
             LazyColumn(
                 modifier = Modifier
@@ -173,7 +175,7 @@ fun ChatScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable(interactionSource = trackInteractionSource, indication = null) {}
-                                        .styleable(state = trackStyleState, style = MaveStyles.musicTrackCardStyle), // Styles API compliance
+                                        .styleable(styleState = trackStyleState, style = MaveStyles.musicTrackCardStyle), // Styles API compliance
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Box(modifier = Modifier.size(64.dp).background(Color.DarkGray, RoundedCornerShape(8.dp)))
@@ -234,4 +236,5 @@ fun ChatScreen(
             }
         }
     }
+}
 }

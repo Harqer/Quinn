@@ -14,6 +14,7 @@ import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import androidx.navigation3.runtime.NavMetadataKey
 import androidx.navigation3.runtime.metadata
+import androidx.navigation3.runtime.get
 
 /** An [OverlayScene] that renders an [entry] within a [ModalBottomSheet]. */
 @OptIn(ExperimentalMaterial3Api::class)

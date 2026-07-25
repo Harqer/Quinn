@@ -34,7 +34,7 @@ fun DevicesScreen(
 ) {
     var salonInvitesEnabled by remember { mutableStateOf(true) }
     var showTooltip by remember { mutableStateOf(true) }
-    val colors = LocalMaveColorScheme.currentValue
+    val colors = LocalMaveColorScheme.current
     val devices by viewModel.devices.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -116,7 +116,7 @@ fun DevicesScreen(
                         .clickable(interactionSource = interactionSource, indication = null) { 
                             viewModel.selectDevice(device)
                         }
-                        .styleable(state = styleState, style = MaveStyles.deviceCardStyle)
+                        .styleable(styleState = styleState, style = MaveStyles.deviceCardStyle)
                 ) {
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
@@ -165,6 +165,7 @@ fun DevicesScreen(
                     }
                 }
             }
+        }
         }
     }
 }

@@ -17,6 +17,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.musically.studio.WearableStreamingService
 import com.musically.studio.network.ApiClient
+import com.musically.studio.dataconnect.DefaultConnector
+import com.musically.studio.dataconnect.instance
+import com.musically.studio.dataconnect.execute
 import com.musically.studio.network.MaveSessionManager
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.models.ChatMessage
@@ -463,6 +466,22 @@ class MainViewModel @Inject constructor(
 
     private fun setupWearableCollector() {
         viewModelScope.launch {
+            com.meta.wearable.dat.core.Wearables.devices.collect { datDevices ->
+                val wearableAudioDevices = datDevices.map { device ->
+                    AudioDevice(
+                        id = device.identifier,
+                        name = "Meta Glasses",
+                        subtitle = "Meta Wearable",
+                        type = DeviceType.BLUETOOTH,
+                        isCurrent = false
+                    )
+                }
+                val current = _devices.value.filter { it.subtitle != "Meta Wearable" }
+                _devices.value = current + wearableAudioDevices
+            }
+        }
+
+        viewModelScope.launch {
             WearableStreamingService.isServiceActive.collectLatest { active ->
                 _isWearableConnected.value = active
             }
@@ -798,6 +817,13 @@ class MainViewModel @Inject constructor(
             it.copy(isCurrent = it.id == device.id)
         }
         _devices.value = updatedDevices
+
+        if (device.subtitle == "Meta Wearable") {
+            val intent = Intent(context, WearableStreamingService::class.java).apply {
+                putExtra("DEVICE_ID", device.id)
+            }
+            context.startForegroundService(intent)
+        }
     }
 
     fun fetchVibesByUserId(userId: String) {
@@ -903,6 +929,10 @@ class MainViewModel @Inject constructor(
             if (user != null) {
                 rtdb.getReference("sessions/${user.uid}/state").removeEventListener(listener)
             }
+        }
+    }
+
+    @kotlin.OptIn(androidx.credentials.ExperimentalDigitalCredentialApi::class)
     fun verifyEmail(activity: android.app.Activity) {
         viewModelScope.launch {
             try {
@@ -957,10 +987,10 @@ class MainViewModel @Inject constructor(
                             auth.signInAnonymously().await()
                             
                             // 2. Upsert the user into Cloud SQL via Firebase Data Connect
-                            com.musically.studio.dataconnect.DefaultConnector.instance.upsertUser.execute(
-                                displayName = name ?: "Verified User",
-                                email = email
-                            )
+                            DefaultConnector.instance.upsertUser.execute {
+                                this.displayName = name ?: "Verified User"
+                                this.email = email
+                            }
                             
                             navigateTo(Route.Home)
                         } else {

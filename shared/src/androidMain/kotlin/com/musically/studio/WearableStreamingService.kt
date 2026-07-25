@@ -13,6 +13,7 @@ import com.meta.wearable.dat.camera.types.StreamConfiguration
 import com.meta.wearable.dat.camera.types.VideoQuality
 import com.meta.wearable.dat.core.Wearables
 import com.meta.wearable.dat.core.selectors.AutoDeviceSelector
+import com.meta.wearable.dat.core.selectors.SpecificDeviceSelector
 import com.meta.wearable.dat.core.session.DeviceSession
 import com.meta.wearable.dat.core.session.DeviceSessionState
 import com.meta.wearable.dat.display.Display
@@ -81,7 +82,8 @@ class WearableStreamingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification = createNotification()
         startForeground(1, notification)
-        startWearableSession()
+        val deviceId = intent?.getStringExtra("DEVICE_ID")
+        startWearableSession(deviceId)
         return START_STICKY
     }
 
@@ -103,9 +105,16 @@ class WearableStreamingService : Service() {
             .build()
     }
 
-    private fun startWearableSession() {
+    private fun startWearableSession(deviceId: String?) {
         scope.launch {
-            val result = Wearables.createSession(AutoDeviceSelector())
+            val targetDevice = deviceId?.let { id -> Wearables.devices.value.find { it.identifier == id } }
+
+            val result = if (targetDevice != null) {
+                Wearables.createSession(SpecificDeviceSelector(targetDevice))
+            } else {
+                Wearables.createSession(AutoDeviceSelector())
+            }
+            
             result.onSuccess { session ->
                 activeSession = session
                 

@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.musically.studio.ui.AccountDeletionState
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.TrackItem
@@ -39,9 +40,9 @@ fun UserProfileScreen(
     onSignedOut: () -> Unit = onBack,
     onNavigateToAlbum: (String) -> Unit = {}
 ) {
-    val vibes by viewModel.userVibes.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val deletionState by viewModel.accountDeletionState.collectAsState()
+    val vibes by viewModel.userVibes.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val deletionState by viewModel.accountDeletionState.collectAsStateWithLifecycle()
 
     val isOwnProfile = remember(userId) { userId == viewModel.getUserId() }
 

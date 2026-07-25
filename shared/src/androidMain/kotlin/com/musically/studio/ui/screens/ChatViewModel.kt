@@ -10,9 +10,21 @@ import okhttp3.*
 import org.json.JSONObject
 import com.musically.studio.shared.BuildConfig
 
+data class MaveTrack(
+    val title: String,
+    val artist: String
+)
+
+data class MaveChatMessage(
+    val id: String,
+    val sender: String,
+    val text: String,
+    val tracks: List<MaveTrack>? = null
+)
+
 class ChatViewModel : ViewModel() {
-    private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
-    val messages: StateFlow<List<ChatMessage>> = _messages.asStateFlow()
+    private val _messages = MutableStateFlow<List<MaveChatMessage>>(emptyList())
+    val messages: StateFlow<List<MaveChatMessage>> = _messages.asStateFlow()
 
     private val client = OkHttpClient()
     private var webSocket: WebSocket? = null
@@ -20,7 +32,7 @@ class ChatViewModel : ViewModel() {
     init {
         // Initialize with welcome message
         _messages.value = listOf(
-            ChatMessage(
+            MaveChatMessage(
                 id = "0",
                 sender = "ai",
                 text = "Hi! I'm Mave, your personal audio curator. How can I help you today?"
@@ -50,7 +62,7 @@ class ChatViewModel : ViewModel() {
                     val json = JSONObject(text)
                     if (json.optString("type") == "ai_response") {
                         val aiText = json.optString("text", "")
-                        val aiMsg = ChatMessage(
+                        val aiMsg = MaveChatMessage(
                             id = System.currentTimeMillis().toString(),
                             sender = "ai",
                             text = aiText,
@@ -67,12 +79,13 @@ class ChatViewModel : ViewModel() {
                 super.onClosed(webSocket, code, reason)
             }
         })
+        }
     }
 
     fun sendMessage(text: String) {
         if (text.isBlank()) return
         
-        val userMsg = ChatMessage(
+        val userMsg = MaveChatMessage(
             id = System.currentTimeMillis().toString(),
             sender = "user",
             text = text.trim()
