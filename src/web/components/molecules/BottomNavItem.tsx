@@ -18,7 +18,7 @@ export const BottomNavItem: React.FC<BottomNavItemProps> = ({
   return (
     <button 
       onClick={onClick}
-      className="flex flex-col items-center justify-center gap-1 min-w-[64px] bg-transparent border-none outline-none cursor-pointer p-2 active:scale-95 transition-transform"
+      className={`flex flex-col md:flex-row items-center md:justify-start gap-1 md:gap-4 min-w-[64px] bg-transparent border-none outline-none cursor-pointer p-2 md:p-3 md:rounded-lg md:hover:bg-surface-container active:scale-95 md:active:scale-100 transition-all ${isActive ? 'md:bg-surface-container' : ''}`}
     >
       <Icon 
         name={icon} 

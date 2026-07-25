@@ -1,4 +1,6 @@
 import * as Sentry from "@sentry/browser";
+import { logEvent } from "firebase/analytics";
+import { analytics } from "./firebase";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -23,6 +25,14 @@ export const logger = {
       Sentry.captureException(error, { extra: { message } });
     } else {
       Sentry.captureMessage(`${message}: ${JSON.stringify(error)}`, { level: "error" });
+    }
+  },
+  trackEvent: (eventName: string, params?: Record<string, any>) => {
+    if (!isProduction) {
+      console.log(`[EVENT] ${eventName}`, params || "");
+    }
+    if (analytics) {
+      logEvent(analytics, eventName, params);
     }
   }
 };

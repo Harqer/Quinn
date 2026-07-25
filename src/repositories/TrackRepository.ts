@@ -1,5 +1,7 @@
 import { db, FieldValue } from "../config/firebase.js";
 import { getRedis } from "../config/redis.js";
+import logger from "../config/logger.js";
+import crypto from "crypto";
 
 export interface Track {
   id: string;
@@ -45,7 +47,7 @@ class BatchWriter {
       }
       await batch.commit();
     } catch (e) {
-      console.error("[BatchWriter] Flush failed", e);
+      logger.error("[BatchWriter] Flush failed", e);
     }
   }
 }
@@ -78,7 +80,7 @@ export class TrackRepository {
   }
 
   async createShortLink(trackId: string): Promise<string> {
-    const shortCode = Math.random().toString(36).substring(2, 8);
+    const shortCode = crypto.randomUUID().split("-")[0];
     const linkRef = db.collection("shortlinks").doc(shortCode);
     
     await linkRef.set({

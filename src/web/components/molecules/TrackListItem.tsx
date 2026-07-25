@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography } from '../atoms/Typography';
 import { Icon } from '../atoms/Icon';
 import { Shimmer } from '../atoms/Shimmer';
+import { logger } from '../../lib/logger';
 
 export interface TrackListItemProps {
   title: string;
@@ -22,6 +23,7 @@ export const TrackListItem: React.FC<TrackListItemProps> = ({
   onClick,
   rightElement
 }) => {
+  const [showOptions, setShowOptions] = React.useState(false);
   return (
     <div 
       className="flex items-center justify-between py-2 px-4 hover:bg-surface-container active:bg-surface-container/80 transition-colors cursor-pointer group"
@@ -51,12 +53,8 @@ export const TrackListItem: React.FC<TrackListItemProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center">
-        {rightElement ? rightElement : (
-          <button className="text-text-secondary hover:text-text-primary p-2">
-            <Icon name="more_vert" />
-          </button>
-        )}
+      <div className="flex items-center relative">
+        {rightElement}
       </div>
     </div>
   );

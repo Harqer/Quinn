@@ -36,7 +36,7 @@ fun rememberNavigationState(
         }
     }
 
-    val backStacks = topLevelRoutes.associateWith { key -> rememberNavBackStack(key) }
+    val backStacks: Map<Route, NavBackStack<NavKey>> = topLevelRoutes.associateWith { key: Route -> rememberNavBackStack(key) }
 
     return remember(startRoute, topLevelRoutes) {
         NavigationState(
@@ -70,8 +70,9 @@ fun NavigationState.toEntries(
             rememberSaveableStateHolderNavEntryDecorator<Route>(),
         )
         
+        @Suppress("UNCHECKED_CAST")
         rememberDecoratedNavEntries(
-            backStack = stack as List<Route>,
+            backStack = stack as NavBackStack<Route>,
             entryDecorators = decorators,
             entryProvider = entryProvider
         )

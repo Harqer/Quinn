@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getAuth, deleteUser } from "firebase/auth";
 
 import { Icon } from '../../components/atoms/Icon';
+import { logger } from "../../lib/logger";
 
 export const DeleteAccountScreen: React.FC = () => {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -26,7 +27,7 @@ export const DeleteAccountScreen: React.FC = () => {
       await deleteUser(user);
       setStatus('success');
     } catch (error: any) {
-      console.error('Failed to delete account:', error);
+      logger.error('Failed to delete account:', error);
       setStatus('error');
       if (error.code === 'auth/requires-recent-login') {
         setErrorMessage('This operation is sensitive and requires recent authentication. Please log in again before retrying.');

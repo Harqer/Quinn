@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.shared.R
@@ -25,12 +26,17 @@ import com.musically.studio.ui.models.ChatMessage
 fun TrackItem(
     track: MaveTrack, 
     onClick: () -> Unit = {},
-    onAlbumClick: () -> Unit = {}
+    onAlbumClick: () -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
-    Card(
-        onClick = onClick,
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        modifier = Modifier.fillMaxWidth()
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(
+                onClick = onClick,
+                indication = null,
+                interactionSource = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+            )
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -72,20 +78,19 @@ fun TrackItem(
 fun ChatBubble(
     message: ChatMessage,
     onLike: () -> Unit = {},
-    onBookmark: () -> Unit = {}
+    onBookmark: () -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     val alignment = if (message.isUser) Alignment.End else Alignment.Start
-    val containerColor = if (message.isUser) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.primary
     val contentColor = if (message.isUser) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onPrimary
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = alignment
     ) {
-        Surface(
-            color = containerColor,
-            shape = MaterialTheme.shapes.large,
-            modifier = Modifier.widthIn(max = 300.dp)
+        Box(
+            modifier = Modifier
+                .widthIn(max = 300.dp)
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(

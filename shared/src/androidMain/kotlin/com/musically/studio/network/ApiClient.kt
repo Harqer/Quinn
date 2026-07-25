@@ -33,7 +33,7 @@ interface ApiClient {
 }
 
 class RealApiClient(private val client: OkHttpClient) : ApiClient {
-    private val BASE_URL = "https://musically-studio.run.app/api"
+    private val BASE_URL = com.musically.studio.shared.BuildConfig.API_BASE_URL
     private val JSON = "application/json; charset=utf-8".toMediaType()
 
     override suspend fun bookmarkTrack(trackId: String): Boolean {

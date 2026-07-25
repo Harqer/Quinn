@@ -91,7 +91,19 @@ fun NowPlayingScreen(
                     onToggleShuffle = { viewModel.toggleShuffle() },
                     onToggleRepeat = { viewModel.toggleRepeat() },
                     onLike = { viewModel.bookmarkTrack(track.id) },
-                    onShare = { viewModel.shareTrack(track.id) {} },
+                    onShare = { 
+                        viewModel.shareTrack(track.id) { url ->
+                            url?.let {
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, it)
+                                    type = "text/plain"
+                                }
+                                val shareIntent = Intent.createChooser(sendIntent, null)
+                                localCtx.startActivity(shareIntent)
+                            }
+                        }
+                    },
                     onQueueClick = onQueueClick,
                     onLyricsClick = onLyricsClick
                 )
@@ -113,7 +125,19 @@ fun NowPlayingScreen(
                     onToggleShuffle = { viewModel.toggleShuffle() },
                     onToggleRepeat = { viewModel.toggleRepeat() },
                     onLike = { viewModel.bookmarkTrack(track.id) },
-                    onShare = { viewModel.shareTrack(track.id) {} },
+                    onShare = { 
+                        viewModel.shareTrack(track.id) { url ->
+                            url?.let {
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, it)
+                                    type = "text/plain"
+                                }
+                                val shareIntent = Intent.createChooser(sendIntent, null)
+                                localCtx.startActivity(shareIntent)
+                            }
+                        }
+                    },
                     onQueueClick = onQueueClick,
                     onLyricsClick = onLyricsClick
                 )

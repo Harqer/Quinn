@@ -48,12 +48,17 @@ fun DevicesBottomSheet(
         containerColor = Color(0xFF121212),
         dragHandle = null
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.9f)
-                .navigationBarsPadding()
+        Box(
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.9f),
+            contentAlignment = Alignment.TopCenter
         ) {
+            Column(
+                modifier = Modifier
+                    .widthIn(max = 480.dp)
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+            ) {
             // Header
             Row(
                 modifier = Modifier
@@ -122,6 +127,7 @@ fun DevicesBottomSheet(
             }
 
             FooterControls()
+        }
         }
     }
 }

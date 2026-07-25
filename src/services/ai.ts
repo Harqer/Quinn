@@ -31,7 +31,7 @@ export const initAi = async () => {
     } as any);
   } else if (getSecret("GEMINI_API_KEY")) {
     ai = new GoogleGenAI({
-      apiKey: getSecret("GEMINI_API_KEY"),
+      apiKey: getSecret("GEMINI_API_KEY") as string,
     });
   } else {
     throw new Error("GEMINI_API_KEY or GOOGLE_CLOUD_PROJECT is not set in environment.");
@@ -40,7 +40,7 @@ export const initAi = async () => {
   // Initialize Genkit for Prompt Abstraction and Structured Output
   gk = genkit({
     plugins: [googleAI({ apiKey: getSecret("GEMINI_API_KEY") })],
-    model: "googleai/gemini-3.5-flash", 
+    model: "googleai/gemini-3.6-flash", 
   });
 
   await ensureContextCache();
@@ -69,7 +69,7 @@ export const ensureContextCache = async () => {
     logger.info("[AI] Initializing Context Caching for massive instructions...");
 
     const response = await cacheManager.create({
-      model: "models/gemini-3.5-flash",
+      model: "models/gemini-3.6-flash",
       config: {
         displayName: "mave-core-instructions",
         systemInstruction: {
@@ -156,7 +156,7 @@ export const enhanceImagePrompt = async (userPrompt: string): Promise<string> =>
     const genkitInstance = getGenkit();
     const enhancePrompt = genkitInstance.definePrompt({
       name: 'enhanceImagePrompt',
-      model: 'googleai/gemini-3.5-flash',
+      model: 'googleai/gemini-3.6-flash',
       system: `You are a world-class Executive Art Director for Billboard and Vogue luxury campaigns.
 Your task is to take a user concept and dynamically synthesize a highly detailed, context-aware 5-part visual prompt for Imagen 3 image generation.
 Do NOT use static copy-pasted buzzwords. Analyze the specific mood, subject, and medium of the concept, then construct a cohesive prompt containing:
@@ -194,7 +194,7 @@ export const enhanceVideoPrompt = async (userPrompt: string): Promise<string> =>
     const genkitInstance = getGenkit();
     const enhancePrompt = genkitInstance.definePrompt({
       name: 'enhanceVideoPrompt',
-      model: 'googleai/gemini-3.5-flash',
+      model: 'googleai/gemini-3.6-flash',
       system: `You are a legendary Master Cinematographer and Commercial Video Director.
 Your task is to convert a user concept into an in-depth, 35mm photorealistic video motion prompt for Veo video models.
 Do NOT use static copy-pasted buzzwords. Analyze the user's intent and construct a cohesive, dynamic video motion prompt containing:
@@ -236,7 +236,7 @@ export const parseHandGesture = async (gestureDescription: string) => {
     const genkitInstance = getGenkit();
     const parsePrompt = genkitInstance.definePrompt({
       name: 'parseHandGesture',
-      model: 'googleai/gemini-3.5-flash',
+      model: 'googleai/gemini-3.6-flash',
       output: { schema: HandGestureSchema },
       system: `You are the orchestration controller. You will receive a description of a user's hand gesture or physical motion.
 Map this gesture to a specific music control action, such as modifying pitch, tempo, or adding/removing instruments.

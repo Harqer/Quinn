@@ -119,6 +119,22 @@ kotlin {
             implementation("androidx.media3:media3-exoplayer:1.2.0")
             implementation("androidx.media3:media3-session:1.2.0")
         }
+        
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(libs.junit)
+                implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.mockk)
+                implementation(libs.robolectric)
+                implementation(libs.androidx.test.ext.junit)
+                implementation(libs.androidx.compose.ui.test.junit4)
+                implementation(libs.hilt.testing)
+                implementation(libs.androidx.compose.ui.test.manifest)
+                implementation(libs.roborazzi.main)
+                implementation(libs.roborazzi.compose)
+                implementation(libs.roborazzi.junit)
+            }
+        }
     }
 }
 
@@ -128,6 +144,8 @@ android {
 
     defaultConfig {
         minSdk = 34
+        buildConfigField("String", "API_BASE_URL", "\"https://musically-studio.run.app/api\"")
+        buildConfigField("String", "WS_BASE_URL", "\"wss://musically-studio.run.app/api/music/ws\"")
     }
 
     buildFeatures {

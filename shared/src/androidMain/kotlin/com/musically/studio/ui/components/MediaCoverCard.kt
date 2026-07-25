@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.style.styleable
 import coil.compose.AsyncImage
 
 @Composable
@@ -34,10 +35,8 @@ fun MediaCoverCard(
     onPlayClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-        modifier = modifier // Width is now controlled by the parent or modifier passed in
+    Box(
+        modifier = modifier
     ) {
         Column {
             // Large Square Cover Art

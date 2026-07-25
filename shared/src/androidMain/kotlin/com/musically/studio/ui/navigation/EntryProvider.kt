@@ -23,6 +23,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun maveEntryProvider(
@@ -76,8 +77,17 @@ fun maveEntryProvider(
             onNavigateToLiveSession = { navigator.navigate(Route.LiveSession) },
             onNavigateToDevices = { navigator.navigate(Route.Devices) },
             onNavigateToMore = { 
-                android.widget.Toast.makeText(context, "More coming soon", android.widget.Toast.LENGTH_SHORT).show() 
-            }
+                navigator.navigate(Route.Search)
+            },
+            onNavigateToCategory = { navigator.navigate(Route.CategoryView(it)) },
+            onNavigateToTrack = { trackId ->
+                viewModel.tracks.value.find { it.id == trackId }?.let {
+                    viewModel.playTrack(it)
+                } ?: viewModel.communityTracks.value.find { it.id == trackId }?.let {
+                    viewModel.playTrack(it)
+                }
+            },
+            onNavigateToPlaylist = { navigator.navigate(Route.PlaylistView(it)) }
         )
     }
 
@@ -109,7 +119,7 @@ fun maveEntryProvider(
             onNavigateToCamera = { navigator.navigate(Route.Camera) },
             onNavigateToGallery = { navigator.navigate(Route.Gallery) },
             onMoreOptionsClick = { 
-                android.widget.Toast.makeText(context, "More options coming soon", android.widget.Toast.LENGTH_SHORT).show() 
+                navigator.navigate(Route.LiveSessionOptions)
             }
         )
     }
@@ -154,7 +164,9 @@ fun maveEntryProvider(
             },
             onNavigateToAlbum = { navigator.navigate(Route.AlbumView(it)) },
             onNavigateToPlaylist = { navigator.navigate(Route.PlaylistView(it)) },
-            onNavigateToHome = { navigator.navigate(Route.Home) }
+            onNavigateToHome = { navigator.navigate(Route.Home) },
+            onNavigateToSearch = { navigator.navigate(Route.Search) },
+            onNavigateToAdd = { navigator.navigate(Route.Camera) }
         )
     }
 
@@ -316,10 +328,10 @@ fun maveEntryProvider(
             onCollapse = { navigator.goBack() },
             onMoreOptions = { navigator.navigate(Route.TrackOptions(it)) },
             onQueueClick = { 
-                android.widget.Toast.makeText(context, "Queue coming soon", android.widget.Toast.LENGTH_SHORT).show() 
+                navigator.navigate(Route.Queue)
             },
             onLyricsClick = { 
-                android.widget.Toast.makeText(context, "Lyrics coming soon", android.widget.Toast.LENGTH_SHORT).show() 
+                navigator.navigate(Route.Lyrics(track?.id ?: ""))
             }
         )
     }
@@ -329,6 +341,34 @@ fun maveEntryProvider(
     ) { key ->
         TrackOptionsBottomSheet(
             trackId = key.trackId,
+            viewModel = viewModel,
+            onDismiss = { navigator.goBack() }
+        )
+    }
+
+    entry<Route.Queue>(
+        metadata = BottomSheetSceneStrategy.bottomSheet()
+    ) {
+        QueueBottomSheet(
+            viewModel = viewModel,
+            onDismiss = { navigator.goBack() }
+        )
+    }
+
+    entry<Route.Lyrics>(
+        metadata = BottomSheetSceneStrategy.bottomSheet()
+    ) { key ->
+        LyricsBottomSheet(
+            trackId = key.trackId,
+            viewModel = viewModel,
+            onDismiss = { navigator.goBack() }
+        )
+    }
+
+    entry<Route.LiveSessionOptions>(
+        metadata = BottomSheetSceneStrategy.bottomSheet()
+    ) {
+        LiveSessionOptionsBottomSheet(
             viewModel = viewModel,
             onDismiss = { navigator.goBack() }
         )

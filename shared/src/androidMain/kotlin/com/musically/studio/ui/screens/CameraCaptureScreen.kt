@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.util.Base64
-import android.util.Log
+import timber.log.Timber
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -69,7 +69,7 @@ fun CameraCaptureScreen(
                             imageCapture
                         )
                     } catch (exc: Exception) {
-                        Log.e("CameraCaptureScreen", "Use case binding failed", exc)
+                        Timber.e(exc, "Use case binding failed")
                     }
                 }, executor)
                 previewView
@@ -102,7 +102,7 @@ fun CameraCaptureScreen(
                         }
 
                         override fun onError(exception: ImageCaptureException) {
-                            Log.e("CameraCaptureScreen", "Photo capture failed: ${exception.message}", exception)
+                            Timber.e(exception, "Photo capture failed: ${exception.message}")
                         }
                     }
                 )

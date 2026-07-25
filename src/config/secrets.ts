@@ -1,5 +1,5 @@
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
-import { logger } from "./logger";
+import logger from "./logger";
 
 const client = new SecretManagerServiceClient();
 

@@ -31,6 +31,11 @@ import com.musically.studio.ui.MainViewModel
 import androidx.compose.animation.core.*
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.models.ChatMessage
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.style.Style
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import androidx.compose.foundation.style.styleable
+import com.musically.studio.ui.theme.MaveStyles
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -141,10 +146,16 @@ fun StudioHomeScreen(
             }
         }
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .widthIn(max = 840.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(
                 top = innerPadding.calculateTopPadding() + 16.dp,
@@ -168,18 +179,23 @@ fun StudioHomeScreen(
         }
     }
 }
+}
 
 @Composable
-fun UserMessageBubble(text: String) {
+fun UserMessageBubble(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: Style = Style
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) { it.isEnabled = true }
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.CenterEnd
     ) {
         Box(
             modifier = Modifier
-                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 4.dp))
-                .background(Color(0xFF2A2A2A))
-                .padding(16.dp)
+                .styleable(styleState, MaveStyles.userMessageBubbleStyle, style)
         ) {
             Text(text, color = Color(0xFFE5E2E1))
         }
@@ -187,21 +203,28 @@ fun UserMessageBubble(text: String) {
 }
 
 @Composable
-fun AIMessageBubble(msg: ChatMessage, viewModel: MainViewModel, primaryColor: Color, secondaryColor: Color) {
+fun AIMessageBubble(
+    msg: ChatMessage,
+    viewModel: MainViewModel,
+    primaryColor: Color,
+    secondaryColor: Color,
+    modifier: Modifier = Modifier,
+    style: Style = Style
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) { it.isEnabled = true }
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.CenterStart
     ) {
         Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 4.dp, bottomEnd = 16.dp))
-                .background(Color(0xFF1A1A1A))
                 .border(
                     width = 1.dp,
                     brush = Brush.linearGradient(listOf(primaryColor, secondaryColor)),
                     shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 4.dp, bottomEnd = 16.dp)
                 )
-                .padding(16.dp)
+                .styleable(styleState, MaveStyles.aiMessageBubbleStyle, style)
         ) {
             Text(msg.text, color = Color(0xFFE5E2E1))
             

@@ -31,6 +31,12 @@ import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.theme.MaveBrand
 import com.musically.studio.ui.theme.FormFactorPreviews
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.style.Style
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import androidx.compose.foundation.style.styleable
+import com.musically.studio.ui.theme.MaveStyles
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +48,10 @@ fun DiscoverScreen(
     onNavigateToDevices: () -> Unit = {},
     onNavigateToMore: () -> Unit = {},
     onNavigateToCamera: () -> Unit = {},
-    onNavigateToLiveSession: () -> Unit = {}
+    onNavigateToLiveSession: () -> Unit = {},
+    onNavigateToCategory: (String) -> Unit = {},
+    onNavigateToTrack: (String) -> Unit = {},
+    onNavigateToPlaylist: (String) -> Unit = {}
 ) {
     val communityTracks by viewModel.communityTracks.collectAsStateWithLifecycle()
     val userTracks by viewModel.tracks.collectAsStateWithLifecycle()
@@ -56,6 +65,8 @@ fun DiscoverScreen(
         viewModel.fetchCommunityTracks()
         viewModel.fetchUserTracks()
     }
+
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
@@ -168,7 +179,9 @@ fun DiscoverScreen(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             listItems(communityTracks) { track ->
-                                LargePodcastCard(track = track, onClick = { /* TODO: Navigate to track */ })
+                                LargePodcastCard(track = track, onClick = { 
+                                    onNavigateToTrack(track.id)
+                                })
                             }
                         }
                     }
@@ -199,27 +212,33 @@ fun DiscoverScreen(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 val color1 = try { categories[i].colorHex?.let { hex -> Color(android.graphics.Color.parseColor(hex)) } } catch (e: Exception) { null } ?: colors[(i/2) % colors.size]
+                                val interactionSource1 = remember { MutableInteractionSource() }
+                                val styleState1 = rememberUpdatedStyleState(interactionSource1) { it.isEnabled = true }
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
                                         .aspectRatio(16f/9f)
-                                        .clip(MaterialTheme.shapes.medium)
                                         .background(color1)
-                                        .clickable { }
-                                        .padding(12.dp)
+                                        .clickable(interactionSource = interactionSource1, indication = null) {
+                                            onNavigateToCategory(categories[i].id)
+                                        }
+                                        .styleable(styleState1, MaveStyles.categoryGridItemStyle)
                                 ) {
                                     Text(categories[i].name, color = Color.White, fontWeight = FontWeight.Bold)
                                 }
                                 if (i + 1 < categories.size) {
                                     val color2 = try { categories[i+1].colorHex?.let { hex -> Color(android.graphics.Color.parseColor(hex)) } } catch (e: Exception) { null } ?: colors[((i+1)/2) % colors.size]
+                                    val interactionSource2 = remember { MutableInteractionSource() }
+                                    val styleState2 = rememberUpdatedStyleState(interactionSource2) { it.isEnabled = true }
                                     Box(
                                         modifier = Modifier
                                             .weight(1f)
                                             .aspectRatio(16f/9f)
-                                            .clip(MaterialTheme.shapes.medium)
                                             .background(color2)
-                                            .clickable { }
-                                            .padding(12.dp)
+                                            .clickable(interactionSource = interactionSource2, indication = null) {
+                                                onNavigateToCategory(categories[i+1].id)
+                                            }
+                                            .styleable(styleState2, MaveStyles.categoryGridItemStyle)
                                     ) {
                                         Text(categories[i+1].name, color = Color.White, fontWeight = FontWeight.Bold)
                                     }
@@ -260,7 +279,9 @@ fun DiscoverScreen(
                 }
             } else {
                 gridItems(playlists) { playlist ->
-                    PlaylistRowItem(playlist = playlist, onClick = { /* TODO: Navigate to playlist */ })
+                    PlaylistRowItem(playlist = playlist, onClick = { 
+                        onNavigateToPlaylist(playlist.id)
+                    })
                 }
             }
         }
@@ -312,14 +333,29 @@ fun DiscoverScreenPreview() {
             onNavigateToDevices = {},
             onNavigateToMore = {},
             onNavigateToCamera = {},
-            onNavigateToLiveSession = {}
+            onNavigateToLiveSession = {},
+            onNavigateToCategory = {},
+            onNavigateToTrack = {},
+            onNavigateToPlaylist = {}
         )
     }
 }
 
 @Composable
-fun LargePodcastCard(track: MaveTrack, onClick: () -> Unit = {}) {
-    Column(modifier = Modifier.width(240.dp).clip(MaterialTheme.shapes.medium).clickable { onClick() }) {
+fun LargePodcastCard(
+    track: MaveTrack,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    style: Style = Style
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) { it.isEnabled = true }
+    Column(
+        modifier = modifier
+            .width(240.dp)
+            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .styleable(styleState, MaveStyles.largePodcastCardStyle, style)
+    ) {
         Box(modifier = Modifier.aspectRatio(3f/4f)) {
             AsyncImage(
                 model = track.album.images.firstOrNull()?.url,
@@ -346,12 +382,19 @@ fun LargePodcastCard(track: MaveTrack, onClick: () -> Unit = {}) {
 }
 
 @Composable
-fun TrendingItemRow(track: MaveTrack, onClick: () -> Unit = {}) {
+fun TrendingItemRow(
+    track: MaveTrack,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    style: Style = Style
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) { it.isEnabled = true }
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(horizontal = 24.dp, vertical = 12.dp),
+            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .styleable(styleState, MaveStyles.listRowItemStyle, style),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
@@ -381,12 +424,19 @@ fun TrendingItemRow(track: MaveTrack, onClick: () -> Unit = {}) {
 }
 
 @Composable
-fun PlaylistRowItem(playlist: com.musically.studio.network.MavePlaylist, onClick: () -> Unit = {}) {
+fun PlaylistRowItem(
+    playlist: com.musically.studio.network.MavePlaylist,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    style: Style = Style
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) { it.isEnabled = true }
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(horizontal = 24.dp, vertical = 12.dp),
+            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .styleable(styleState, MaveStyles.listRowItemStyle, style),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(

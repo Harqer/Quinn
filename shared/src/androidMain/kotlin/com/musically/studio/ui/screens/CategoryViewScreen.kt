@@ -34,13 +34,16 @@ fun CategoryViewScreen(
     val allPlaylists by viewModel.playlists.collectAsStateWithLifecycle()
     val playlists = allPlaylists.filter { it.name.contains(categoryId, ignoreCase = true) }.ifEmpty { allPlaylists }
 
+    val categories by viewModel.categories.collectAsStateWithLifecycle()
+    val categoryName = categories.find { it.id == categoryId }?.name ?: categoryId.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+
     Scaffold(
         containerColor = Color(0xFF121212),
         topBar = {
             TopAppBar(
                 title = { 
                     Text(
-                        text = categoryId, // Typically we'd map this ID to a pretty string
+                        text = categoryName,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     ) 
@@ -57,7 +60,7 @@ fun CategoryViewScreen(
         }
     ) { paddingValues ->
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Adaptive(150.dp),
             contentPadding = PaddingValues(
                 top = paddingValues.calculateTopPadding() + 16.dp,
                 bottom = paddingValues.calculateBottomPadding() + 16.dp,

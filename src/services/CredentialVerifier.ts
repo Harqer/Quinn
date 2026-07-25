@@ -8,7 +8,7 @@ const GOOGLE_VC_ISSUER = "https://verifiablecredentials-pa.googleapis.com";
 
 export interface VerifiedCredential {
   email: string;
-  name: string;
+  name?: string;
   email_verified: boolean;
 }
 
@@ -62,7 +62,7 @@ export class CredentialVerifier {
 
       return {
         email: claims.email,
-        name: claims.name || claims.given_name || "Mave User",
+        name: claims.name || claims.given_name || undefined,
         email_verified: claims.email_verified === true
       };
     } catch (err) {

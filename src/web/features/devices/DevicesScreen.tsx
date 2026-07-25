@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import { Icon } from '../../components/atoms/Icon';
+import { logger } from "../../lib/logger";
 
 export interface DevicesScreenProps {
   onBack?: () => void;
@@ -24,7 +25,16 @@ export const DevicesScreen: React.FC<DevicesScreenProps> = ({ onBack }) => {
         setVideoDevices(cams);
         if (cams.length > 0) setActiveCameraId(cams[0].deviceId);
       }).catch((err) => {
-        console.warn('[WEARABLES] MediaDevices enumeration error:', err);
+        logger.warn('[WEARABLES] MediaDevices enumeration error:', err);
+      });
+    }
+
+    if ((navigator as any).getBattery) {
+      (navigator as any).getBattery().then((battery: any) => {
+        setBatteryLevel(Math.floor(battery.level * 100));
+        battery.addEventListener('levelchange', () => {
+          setBatteryLevel(Math.floor(battery.level * 100));
+        });
       });
     }
   }, []);
@@ -40,7 +50,8 @@ export const DevicesScreen: React.FC<DevicesScreenProps> = ({ onBack }) => {
 
       const targetStatus = isMetaConnected ? 'disconnected' : 'connected';
 
-      const response = await fetch('/api/devices/connect', {
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${baseUrl}/api/devices/connect`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -63,7 +74,7 @@ export const DevicesScreen: React.FC<DevicesScreenProps> = ({ onBack }) => {
         setStatusMessage('Meta Wearables Disconnected');
       }
     } catch (err: any) {
-      console.error('[WEARABLES] Connection canceled or failed:', err);
+      logger.error('[WEARABLES] Connection canceled or failed:', err);
       setStatusMessage('Failed to connect to device. Please try again.');
     } finally {
       setIsScanning(false);
@@ -133,6 +144,10 @@ export const DevicesScreen: React.FC<DevicesScreenProps> = ({ onBack }) => {
                 : 'bg-primary text-background hover:bg-primary-hover'
             }`}
             title={isScanning ? 'Scanning...' : isMetaConnected ? 'Disconnect' : 'Connect'}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleMetaConnection();
+            }}
           >
             {isScanning ? <Icon name="search" size="md" /> : isMetaConnected ? <Icon name="bluetooth_disabled" size="md" /> : <Icon name="bluetooth_connected" size="md" />}
           </button>

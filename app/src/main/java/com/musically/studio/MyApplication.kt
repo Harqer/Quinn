@@ -11,6 +11,8 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,6 +32,8 @@ class MyApplication : Application(), AppFunctionConfiguration.Provider {
         val isDebug = (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
         
         FirebaseApp.initializeApp(this)
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+        FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         
         if (isDebug) {

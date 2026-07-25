@@ -3,7 +3,6 @@ import java.io.File
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
@@ -104,17 +103,16 @@ ksp {
 
 dependencies {
     implementation(project(":shared"))
+    implementation(libs.kotlin.reflect)
 
     implementation(libs.mwdat.core)
     implementation(libs.mwdat.camera)
     implementation(libs.mwdat.display)
-    implementation(libs.mwdat.mockdevice)
     implementation(libs.androidx.xr.glimmer)
     implementation(libs.androidx.xr.projected)
     implementation(libs.androidx.appfunctions)
     implementation(libs.androidx.appfunctions.service)
     ksp(libs.androidx.appfunctions.compiler)
-    implementation(kotlin("reflect"))
 
     testImplementation("org.mockito:mockito-core:5.3.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
@@ -173,6 +171,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.appcheck.playintegrity)
+    implementation(libs.firebase.appcheck.debug)
 
     // Logging
     implementation(libs.timber)

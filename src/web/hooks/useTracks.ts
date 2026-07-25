@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
+import { logger } from "../lib/logger";
 
 export interface Track {
   id: string;
@@ -20,8 +21,10 @@ export function useTracks() {
         const auth = getAuth();
         const user = auth.currentUser;
         
+        const baseUrl = import.meta.env.VITE_API_URL || '';
+        
         // Fetch Community Tracks (No auth required)
-        const commRes = await fetch('/api/music/community/tracks');
+        const commRes = await fetch(`${baseUrl}/api/music/community/tracks`);
         if (commRes.ok) {
           const data = await commRes.json();
           setCommunityTracks(data.tracks || []);
@@ -30,7 +33,7 @@ export function useTracks() {
         // Fetch User Tracks (Auth required)
         if (user) {
           const token = await user.getIdToken();
-          const userRes = await fetch('/api/music/user/tracks', {
+          const userRes = await fetch(`${baseUrl}/api/music/user/tracks`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           if (userRes.ok) {
@@ -39,7 +42,7 @@ export function useTracks() {
           }
         }
       } catch (err) {
-        console.error('Failed to fetch tracks:', err);
+        logger.error('Failed to fetch tracks:', err);
       } finally {
         setLoading(false);
       }

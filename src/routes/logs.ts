@@ -2,6 +2,7 @@ import { Router, Response } from "express";
 import { verifyFirebaseToken, verifyAppCheck, AuthenticatedRequest } from "../middlewares/auth.js";
 import { LogGestureSchema, LogBatterySchema } from "../schemas/api.js";
 import { db, FieldValue } from "../config/firebase.js";
+import logger from "../config/logger.js";
 import xss from "xss";
 
 const router = Router();
@@ -20,6 +21,7 @@ router.post("/gesture", verifyFirebaseToken, verifyAppCheck, async (req: Authent
     });
     res.status(201).json({ success: true, id: docRef.id });
   } catch (err) {
+    logger.error("[logs] Failed to log gesture", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -39,6 +41,7 @@ router.post("/battery", verifyFirebaseToken, verifyAppCheck, async (req: Authent
     });
     res.status(201).json({ success: true, id: docRef.id });
   } catch (err) {
+    logger.error("[logs] Failed to log battery", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -54,6 +57,7 @@ router.get("/", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRe
     };
     res.json(logs);
   } catch (err) {
+    logger.error("[logs] Failed to fetch logs", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

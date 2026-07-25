@@ -37,7 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
-import android.widget.Toast
+import timber.log.Timber
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.FirebaseApp
@@ -92,7 +92,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Something went wrong during sign-in. Please try again.", Toast.LENGTH_SHORT).show()
+            Timber.e(e, "Something went wrong during sign-in.")
         }
     }
 
@@ -107,13 +107,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             mainViewModel = viewModel()
             
+            LaunchedEffect(intent) {
+                handleIntent(intent, mainViewModel)
+            }
+            
             LaunchedEffect(Unit) {
                 mainViewModel.authSideEffect.collectLatest { effect ->
                     when (effect) {
                         AuthSideEffect.LaunchGoogleSignIn -> launchGoogleSignIn()
                         AuthSideEffect.LaunchAppleSignIn -> launchAppleSignIn(mainViewModel)
                         AuthSideEffect.LaunchVerifiedEmail -> launchVerifiedEmail(mainViewModel)
-                        AuthSideEffect.LaunchFacebookSignIn -> { /* Facebook sign-in */ }
+
                         // Navigation on sign-out and deletion is handled by UserProfileScreen's
                         // onSignedOut callback which routes to Route.Login. No additional
                         // activity-level action required.
@@ -130,6 +134,26 @@ class MainActivity : ComponentActivity() {
                     hasPermissions = permissionsGranted.value
                 )
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent) // Update the activity's intent
+    }
+
+    private fun handleIntent(intent: Intent, viewModel: MainViewModel) {
+        val destination = intent.getStringExtra("DESTINATION")
+        val prompt = intent.getStringExtra("PROMPT")
+        
+        if (destination == "library") {
+            viewModel.navigateTo(Route.Library)
+        } else if (destination == "home") {
+            viewModel.navigateTo(Route.Home)
+        }
+        
+        if (!prompt.isNullOrBlank()) {
+            viewModel.sendTextCommand(prompt)
         }
     }
 
@@ -172,7 +196,7 @@ class MainActivity : ComponentActivity() {
                 // Navigation will update via isUserLoggedIn check or state observation
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Apple Sign-In failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                Timber.e(e, "Apple Sign-In failed")
             }
     }
 
@@ -237,20 +261,20 @@ class MainActivity : ComponentActivity() {
                     val responseJsonString = credential.credentialJson
                     viewModel.loginWithVerifiedEmail(responseJsonString, nonce) { success, error ->
                          if (success) {
-                             Toast.makeText(this@MainActivity, "Verified Login Success", Toast.LENGTH_SHORT).show()
+                             Timber.i("Verified Login Success")
                          } else {
-                             Toast.makeText(this@MainActivity, error ?: "Verification failed", Toast.LENGTH_SHORT).show()
+                             Timber.e("Verification failed: $error")
                          }
                     }
                 } else {
-                    Toast.makeText(this@MainActivity, "Unexpected credential type", Toast.LENGTH_SHORT).show()
+                    Timber.e("Unexpected credential type")
                 }
             } catch (e: androidx.credentials.exceptions.NoCredentialException) {
-                Toast.makeText(this@MainActivity, "No verified credentials found on device.", Toast.LENGTH_SHORT).show()
+                Timber.e(e, "No verified credentials found on device.")
             } catch (e: GetCredentialException) {
-                Toast.makeText(this@MainActivity, "Verification failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                Timber.e(e, "Verification failed")
             } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Timber.e(e, "Error during verified email login")
             }
         }
     }

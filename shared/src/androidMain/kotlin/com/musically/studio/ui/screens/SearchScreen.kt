@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -21,6 +22,9 @@ import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.atoms.MaveTextField
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.firebase.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +36,7 @@ fun SearchScreen(
 ) {
     var query by remember { mutableStateOf("") }
     val categories by viewModel.categories.collectAsStateWithLifecycle()
-    
+
     val colors = listOf(
         Color(0xFFFF5722), Color(0xFF4CAF50), Color(0xFFE91E63), Color(0xFF2196F3),
         Color(0xFFFFC107), Color(0xFF9C27B0), Color(0xFF00BCD4), Color(0xFF8BC34A),
@@ -74,12 +78,10 @@ fun SearchScreen(
                     value = query,
                     onValueChange = { query = it },
                     placeholder = { Text("What do you want to listen to?", color = Color.Black.copy(alpha = 0.6f)) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.Black) },
-                    trailingIcon = {
-                        IconButton(onClick = onNavigateToCamera) {
-                            Icon(Icons.Default.CameraAlt, contentDescription = "Camera", tint = Color.Black.copy(alpha = 0.6f))
-                        }
+                    leadingIcon = { 
+                        Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.Black)
                     },
+                    trailingIcon = null,
                     modifier = Modifier.fillMaxWidth().height(56.dp),
                     shape = MaterialTheme.shapes.small,
                     colors = OutlinedTextFieldDefaults.colors(

@@ -3,6 +3,7 @@ import { Typography } from '../../components/atoms/Typography';
 import { Icon } from '../../components/atoms/Icon';
 import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, onValue } from 'firebase/database';
+import { logger } from '../../lib/logger';
 
 export const SearchScreen: React.FC = () => {
   const auth = getAuth();
@@ -23,7 +24,7 @@ export const SearchScreen: React.FC = () => {
         setCategories(cats);
       }
     }, (error) => {
-      console.error('Error fetching categories from RTDB:', error);
+      logger.error('Error fetching categories from RTDB', error);
     });
 
     return () => unsubscribe();
@@ -36,12 +37,13 @@ export const SearchScreen: React.FC = () => {
           {userInitial}
         </div>
         <Typography variant="title-lg" className="font-bold flex-1">Search</Typography>
-        <Icon name="camera_alt" size="xl" className="cursor-pointer" onClick={() => console.log('Camera clicked')} />
       </div>
 
       <div className="px-4 sticky top-[72px] bg-background/90 backdrop-blur-md z-10 pb-4 border-b border-surface-container">
         <div className="bg-white rounded-[4px] flex items-center p-2.5 gap-2">
-          <Icon name="search" color="secondary" size="md" className="text-black" />
+
+          <div className="w-[1px] h-5 bg-black/20 mx-1"></div>
+          <Icon name="search" size="md" className="text-black" />
           <input 
             type="text" 
             placeholder="What do you want to listen to?" 
@@ -54,13 +56,16 @@ export const SearchScreen: React.FC = () => {
 
       <div className="px-4 py-4">
         <Typography variant="title-md" className="font-bold mb-4">Browse all</Typography>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {categories.map((cat) => (
             <div 
               key={cat.id} 
               style={{ backgroundColor: cat.colorHex || cat.color || '#777777' }}
               className={`aspect-[1.5] rounded-[4px] p-3 relative overflow-hidden shadow-md cursor-pointer`}
-              onClick={() => console.log('Category clicked', cat.id)}
+              onClick={() => {
+                logger.trackEvent('category_click', { id: cat.id });
+                setSearchQuery(cat.title);
+              }}
             >
               <Typography variant="title-md" className={`font-bold text-white z-10 relative break-words`}>
                 {cat.title}

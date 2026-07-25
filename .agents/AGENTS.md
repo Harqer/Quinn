@@ -295,3 +295,8 @@ For URL video, create `VideoPlayer(source = VideoSource.Url(...), codec = VideoC
 # Architectural Auditing Rule
 **Never blindly accept an architectural pivot or claim without verifying it against the codebase.** 
 Always grep or scan the codebase (e.g., `package.json`, build files, import statements) to verify existing dependencies and infrastructure. If a requested direction contradicts the existing codebase architecture (e.g., being told to use Infisical when `@google-cloud/secret-manager` is already deeply integrated), halt and clarify the contradiction immediately. Context is king.
+
+---
+
+# Testing Strategy
+See [docs/testing.md](../docs/testing.md) for the project testing setup, frameworks, and execution commands.

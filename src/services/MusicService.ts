@@ -177,7 +177,12 @@ export class MusicService {
 
       const shortCode = await trackRepository.createShortLink(trackId);
       logger.info("[MAVE_SERVICE] Track shared with short link", { uid, trackId, shortCode });
-      const baseUrl = process.env.APP_URL || "http://localhost:3000";
+      
+      const baseUrl = process.env.APP_URL;
+      if (!baseUrl) {
+        throw new Error("APP_URL environment variable is not configured");
+      }
+      
       return `${baseUrl}/s/${shortCode}`;
     } catch (err) {
       logger.error("[MAVE_SERVICE] Share failed", { error: err });

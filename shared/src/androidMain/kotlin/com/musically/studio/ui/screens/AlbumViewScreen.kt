@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Brush
 import coil.compose.AsyncImage
 import kotlin.math.abs
+import timber.log.Timber
 import com.musically.studio.shared.R
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.MainViewModel
@@ -110,7 +111,13 @@ fun AlbumViewScreen(
                             imageUrl = albumInfo?.images?.firstOrNull()?.url,
                             isLiked = false,
                             onLikeClick = onLikeClick,
-                            onShareClick = { android.widget.Toast.makeText(context, "Sharing album", android.widget.Toast.LENGTH_SHORT).show() },
+                            onShareClick = { 
+                                val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(android.content.Intent.EXTRA_TEXT, "Check out this album on Mave: https://mave.studio/album/$albumId")
+                                }
+                                context.startActivity(android.content.Intent.createChooser(shareIntent, "Share Album"))
+                            },
                             onMoreClick = { albumTracks.firstOrNull()?.let { onMoreClick(it.id) } },
                             onPlayClick = { albumTracks.firstOrNull()?.let { onTrackClick(it.id) } },
                             modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 16.dp)
@@ -178,7 +185,7 @@ fun AlbumTrackItem(
 fun AlbumViewScreenPreview() {
     MaterialTheme {
         AlbumViewScreen(
-            albumId = "dummy",
+            albumId = "123e4567-e89b-12d3-a456-426614174000",
             viewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
             onNavigateBack = {},
             onTrackClick = {},

@@ -90,16 +90,15 @@ export class NarrativeService {
            return "";
         });
 
-      const stream = await ai.models.generateContentStream({
-        model: "gemini-3.5-flash",
-        contents: instruction,
-        config: {
-          responseModalities: ["AUDIO"],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: {
-                voiceName: voice || (mode === 'audiobook' ? "Kore" : "Aoede")
-              }
+      const stream = await (ai as any).interactions.create({
+        model: "gemini-3.6-flash",
+        input: instruction,
+        stream: true,
+        response_modalities: ["AUDIO"],
+        speech_config: {
+          voice_config: {
+            prebuilt_voice_config: {
+              voice_name: voice || (mode === 'audiobook' ? "Kore" : "Aoede")
             }
           }
         }
@@ -109,21 +108,23 @@ export class NarrativeService {
       let fullAudioBase64 = "";
       let audioMimeType = "audio/wav";
 
-      for await (const chunk of stream as any) {
-        const textChunk = chunk.text;
-        if (textChunk) {
-          fullScript += textChunk;
-          res.write(`data: ${JSON.stringify({ type: 'chunk', text: textChunk })}\n\n`);
+      for await (const chunk of stream) {
+        const delta = chunk.step?.delta;
+        if (delta?.text) {
+          fullScript += delta.text;
+          res.write(`data: ${JSON.stringify({ type: 'chunk', text: delta.text })}\n\n`);
         }
-        const audioPart = chunk.candidates?.[0]?.content?.parts?.find((p: any) => p.inlineData)?.inlineData;
-        if (audioPart) {
-          audioMimeType = audioPart.mimeType || audioMimeType;
-          fullAudioBase64 += audioPart.data;
-          res.write(`data: ${JSON.stringify({ type: 'audio_chunk', data: audioPart.data, mimeType: audioMimeType })}\n\n`);
+        if (delta?.output_audio?.data) {
+          audioMimeType = delta.output_audio.mime_type || audioMimeType;
+          fullAudioBase64 += delta.output_audio.data;
+          res.write(`data: ${JSON.stringify({ type: 'audio_chunk', data: delta.output_audio.data, mimeType: audioMimeType })}\n\n`);
         }
       }
 
-      const script = fullScript.trim() || `Welcome to our story: ${prompt}`;
+      const script = fullScript.trim();
+      if (!script) {
+        throw new Error("Failed to generate script: Empty response");
+      }
       const coverUrl = await coverPromise;
       
       const track = {
@@ -134,7 +135,6 @@ export class NarrativeService {
         script: script,
         voice: voice || (mode === 'audiobook' ? "KORE" : "AOEDE"),
         coverUrl: coverUrl,
-        duration: "0:00",
         audioUrl: fullAudioBase64 ? `data:${audioMimeType};base64,${fullAudioBase64}` : undefined,
         createdAt: new Date().toISOString()
       };
@@ -163,27 +163,27 @@ export class NarrativeService {
            return "";
         });
 
-      const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: instruction,
-        config: {
-          responseModalities: ["AUDIO"],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: {
-                voiceName: voice || (mode === 'audiobook' ? "Kore" : "Aoede")
-              }
+      const interaction = await (ai as any).interactions.create({
+        model: "gemini-3.6-flash",
+        input: instruction,
+        response_modalities: ["AUDIO"],
+        speech_config: {
+          voice_config: {
+            prebuilt_voice_config: {
+              voice_name: voice || (mode === 'audiobook' ? "Kore" : "Aoede")
             }
           }
         }
       });
 
-      const script = response.text?.trim() || `Welcome to our story: ${prompt}`;
+      const script = interaction.output_text?.trim();
+      if (!script) {
+        throw new Error("Failed to generate script: Empty response");
+      }
       
-      const audioPart = response.candidates?.[0]?.content?.parts?.find((p: any) => p.inlineData)?.inlineData;
       let audioUrl;
-      if (audioPart) {
-        audioUrl = `data:${audioPart.mimeType || 'audio/wav'};base64,${audioPart.data}`;
+      if (interaction.output_audio) {
+        audioUrl = `data:${interaction.output_audio.mime_type || 'audio/wav'};base64,${interaction.output_audio.data}`;
       }
       
       const coverUrl = await coverPromise;
@@ -196,7 +196,6 @@ export class NarrativeService {
         script: script,
         voice: voice || (mode === 'audiobook' ? "KORE" : "AOEDE"),
         coverUrl: coverUrl,
-        duration: "0:00",
         audioUrl: audioUrl,
         createdAt: new Date().toISOString()
       };
@@ -216,21 +215,23 @@ export class NarrativeService {
   async generateOmniVisuals(prompt: string, modality: 'video' | 'image' = 'video'): Promise<string | null> {
     try {
       const ai = getAi();
-      const response = await ai.models.generateContent({
+      const interaction = await (ai as any).interactions.create({
         model: "gemini-omni-flash-preview",
-        contents: prompt,
-        // Optional depending on SDK version, requesting specific modality output
-        // @ts-ignore
-        config: {
-           responseModalities: [modality === 'video' ? 'VIDEO' : 'IMAGE']
-        }
+        input: prompt,
+        response_modalities: [modality === 'video' ? 'VIDEO' : 'IMAGE']
       });
 
-      // The response via Interactions API typically returns a file reference (Files API)
-      const parts = response.candidates?.[0]?.content?.parts || [];
-      for (const part of parts) {
-        if (part.fileData && part.fileData.fileUri) {
-          return part.fileData.fileUri;
+      if (interaction.output_file_uri) {
+        return interaction.output_file_uri;
+      }
+      
+      const steps = interaction.steps || [];
+      for (const step of steps) {
+        const parts = step.content || [];
+        for (const part of parts) {
+          if (part.file_data && part.file_data.file_uri) {
+            return part.file_data.file_uri;
+          }
         }
       }
       

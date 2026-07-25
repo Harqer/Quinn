@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
+import { logger } from "../lib/logger";
 
 export interface SpotifyPlaylist {
   id: string;
@@ -20,7 +21,8 @@ export function useSpotify() {
       if (!user) return;
       
       const token = await user.getIdToken();
-      const res = await fetch('/api/spotify/status', {
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${baseUrl}/api/spotify/status`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -33,14 +35,15 @@ export function useSpotify() {
         }
       }
     } catch (err) {
-      console.error('Failed to check Spotify status', err);
+      logger.error('Failed to check Spotify status', err);
       setLoading(false);
     }
   };
 
   const fetchPlaylists = async (token: string) => {
     try {
-      const res = await fetch('/api/spotify/playlists', {
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${baseUrl}/api/spotify/playlists`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -48,7 +51,7 @@ export function useSpotify() {
         setPlaylists(data.items || []);
       }
     } catch (err) {
-      console.error('Failed to fetch Spotify playlists', err);
+      logger.error('Failed to fetch Spotify playlists', err);
     } finally {
       setLoading(false);
     }
@@ -61,7 +64,8 @@ export function useSpotify() {
       if (!user) return;
       
       const token = await user.getIdToken();
-      const res = await fetch('/api/spotify/auth-url', {
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${baseUrl}/api/spotify/auth-url`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -70,7 +74,7 @@ export function useSpotify() {
         window.open(data.url, 'Spotify Auth', 'width=500,height=600');
       }
     } catch (err) {
-      console.error('Failed to get Spotify auth url', err);
+      logger.error('Failed to get Spotify auth url', err);
     }
   };
 

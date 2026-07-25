@@ -5,21 +5,24 @@ import { TrackListItem } from '../../components/molecules/TrackListItem';
 import { EmptyState } from '../../components/molecules/EmptyState';
 import { useAppContext } from '../../contexts/AppContext';
 import { getAuth } from 'firebase/auth';
+import { logger } from "../../lib/logger";
 
 export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const { activeAlbumId: id } = useAppContext();
   const [tracks, setTracks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showOptions, setShowOptions] = useState(false);
 
   useEffect(() => {
     if (id) {
+      const baseUrl = import.meta.env.VITE_API_URL || '';
       // Fetch dynamic tracklist from backend
-      fetch(`/api/music/album/${id}`)
+      fetch(`${baseUrl}/api/music/album/${id}`)
         .then(res => res.json())
         .then(data => {
           setTracks(data.tracks || []);
         })
-        .catch(err => console.error("Failed to fetch album tracks", err))
+        .catch(err => logger.error("Failed to fetch album tracks", err))
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -33,7 +36,8 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         const auth = getAuth();
         const user = auth.currentUser;
         const token = user ? await user.getIdToken() : '';
-        await fetch('/api/spotify/music/save', {
+        const baseUrl = import.meta.env.VITE_API_URL || '';
+        await fetch(`${baseUrl}/api/spotify/music/save`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -43,9 +47,17 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         });
         window.dispatchEvent(new CustomEvent('show-toast', { detail: 'Album saved to library!' }));
       } else if (action === 'share') {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: 'Share link copied!' }));
-      } else {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: 'Options menu' }));
+        const url = `${window.location.origin}/album/${targetId}`;
+        if (navigator.share) {
+          navigator.share({
+            title: 'Mave Album',
+            text: 'Check out this album on Mave!',
+            url: url
+          }).catch(console.error);
+        } else {
+          navigator.clipboard.writeText(url);
+          window.dispatchEvent(new CustomEvent('show-toast', { detail: 'Share link copied to clipboard!' }));
+        }
       }
     } catch (err) {
       window.dispatchEvent(new CustomEvent('show-toast', { detail: 'Failed to complete action' }));
@@ -97,12 +109,10 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
              <button onClick={() => handleAction('share', id)} className="p-2.5 bg-black/40 backdrop-blur-md rounded-full hover:bg-black/60 transition-colors text-white shadow-lg" title="Share">
                 <Icon name="share" size="md" />
              </button>
-             <button onClick={() => handleAction('options', id)} className="p-2.5 bg-black/40 backdrop-blur-md rounded-full hover:bg-black/60 transition-colors text-white shadow-lg" title="More Options">
-                <Icon name="more_vert" size="md" />
-             </button>
+
           </div>
        </div>
-       <div className="flex-1 flex flex-col px-4 pt-4">
+       <div className="flex-1 flex flex-col px-4 pt-4" onClick={() => setShowOptions(false)}>
          {loading ? (
             <div className="flex-1 flex justify-center items-center">
                <Typography variant="body-md">Loading album...</Typography>
@@ -113,7 +123,6 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                 key={track.id}
                 title={track.title} 
                 artist={track.artist || 'Unknown Artist'} 
-                rightElement={<span />}
               />
             ))
          ) : (

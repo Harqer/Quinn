@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Brush
 import coil.compose.AsyncImage
 import kotlin.math.abs
+import timber.log.Timber
 import com.musically.studio.shared.R
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.MainViewModel
@@ -114,7 +115,13 @@ fun PlaylistViewScreen(
                             imageUrl = playlistInfo?.coverUrl ?: playlistTracks.firstOrNull()?.album?.images?.firstOrNull()?.url,
                             isLiked = false,
                             onLikeClick = onLikeClick,
-                            onShareClick = { android.widget.Toast.makeText(context, "Sharing playlist", android.widget.Toast.LENGTH_SHORT).show() },
+                            onShareClick = { 
+                                val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(android.content.Intent.EXTRA_TEXT, "Check out this playlist on Mave: https://mave.studio/playlist/$playlistId")
+                                }
+                                context.startActivity(android.content.Intent.createChooser(shareIntent, "Share Playlist"))
+                            },
                             onMoreClick = { playlistTracks.firstOrNull()?.let { onMoreClick(it.id) } },
                             onPlayClick = { playlistTracks.firstOrNull()?.let { onTrackClick(it.id) } },
                             modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 16.dp)
@@ -187,7 +194,7 @@ fun PlaylistTrackItem(
 fun PlaylistViewScreenPreview() {
     MaterialTheme {
         PlaylistViewScreen(
-            playlistId = "dummy",
+            playlistId = "123e4567-e89b-12d3-a456-426614174000",
             viewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
             onNavigateBack = {},
             onTrackClick = {},

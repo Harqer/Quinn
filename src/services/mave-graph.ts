@@ -74,8 +74,8 @@ const visualAnalyzerNode = async (state: typeof MaveState.State, config: any) =>
   // Ensure context cache is active before large vision task
   await ensureContextCache();
 
-  // Use flagship 3.5 model for ultra-fast, high-fidelity visual interpretation
-  const model = await getCachedModel("gemini-3.5-flash", 0.1);
+  // Use flagship 3.6 model for ultra-fast, high-fidelity visual interpretation
+  const model = await getCachedModel("gemini-3.6-flash", 0.1);
 
   const stream = await model.stream([
     ["system", `Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics. Avoid any technical jargon like 'neon' or 'proxy'. You support 70+ languages and should respond in the language corresponding to this locale: ${state.locale || 'en'}.`],
@@ -116,7 +116,7 @@ const directorNode = async (state: typeof MaveState.State, config: any) => {
       const genkitInstance = getGenkit();
       const modalityPrompt = genkitInstance.definePrompt({
         name: 'parseModality',
-        model: 'googleai/gemini-3.5-flash',
+        model: 'googleai/gemini-3.6-flash',
         output: { schema: ModalitySchema },
         system: `You are the orchestration director. Determine the correct media modality based on the user's feedback.
 - 'audiobook': If they ask to read a story, narrate a book, etc.

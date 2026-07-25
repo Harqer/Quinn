@@ -1,5 +1,8 @@
 import React from 'react';
 import { Typography } from '../../components/atoms/Typography';
+import { useNavigate } from '../../App';
+import { useAppContext } from '../../contexts/AppContext';
+import { logger } from '../../lib/logger';
 import { Icon } from '../../components/atoms/Icon';
 import { TrackListItem } from '../../components/molecules/TrackListItem';
 import { useTracks } from '../../hooks/useTracks';
@@ -11,8 +14,16 @@ export const LibraryScreen: React.FC = () => {
   const auth = getAuth();
   const user = auth.currentUser;
   const userInitial = user?.displayName ? user.displayName[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'M');
+  const navigate = useNavigate();
+  const { setActiveAlbumId } = useAppContext();
 
   const displayTracks = userTracks;
+
+  const handleTrackClick = (id: string) => {
+    logger.info('User navigating to track/album from library', { id });
+    setActiveAlbumId(id);
+    navigate('album');
+  };
 
   return (
     <div className="flex flex-col h-full w-full bg-background overflow-y-auto pb-32">
@@ -22,18 +33,9 @@ export const LibraryScreen: React.FC = () => {
         </div>
         <Typography variant="headline" className="font-bold tracking-tight flex-1">Your Library</Typography>
         <div className="flex gap-4 text-white">
-          <Icon name="search" size="xl" className="cursor-pointer" onClick={() => console.log('Search clicked')} />
-          <Icon name="add" size="xl" className="cursor-pointer" onClick={() => console.log('Add clicked')} />
+          <Icon name="search" size="xl" className="cursor-pointer" onClick={() => navigate('search')} />
         </div>
       </div>
-      
-      <div className="flex gap-2 px-4 py-4 overflow-x-auto scrollbar-hide">
-        <FilterPill icon="queue_music" title="Playlists" onClick={() => console.log('Filter Playlists')} />
-        <FilterPill icon="person" title="Artists" onClick={() => console.log('Filter Artists')} />
-        <FilterPill icon="album" title="Albums" onClick={() => console.log('Filter Albums')} />
-        <FilterPill icon="podcasts" title="Podcasts & Shows" onClick={() => console.log('Filter Podcasts')} />
-      </div>
-
       <div className="px-4 py-2 flex items-center justify-between text-white mb-2">
         <div className="flex items-center gap-2">
            <Icon name="swap_vert" size="md" />
@@ -49,12 +51,13 @@ export const LibraryScreen: React.FC = () => {
       ) : displayTracks.length > 0 ? (
         <div className="flex flex-col px-0 gap-0">
           {displayTracks.map(track => (
-            <TrackListItem 
-              key={track.id}
-              title={track.title} 
-              artist={track.artist || 'Unknown Artist'} 
-              rightElement={<span />}
-            />
+            <div key={track.id} onClick={() => handleTrackClick(track.id)}>
+              <TrackListItem 
+                title={track.title} 
+                artist={track.artist || 'Unknown Artist'} 
+                rightElement={<span />}
+              />
+            </div>
           ))}
         </div>
       ) : (

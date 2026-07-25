@@ -153,29 +153,6 @@ fun LiveSessionScreen(
                 tonalElevation = 8.dp
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        FilledTonalButton(
-                            onClick = onNavigateToCamera,
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color(0xFF1E2430))
-                        ) {
-                            Icon(Icons.Default.PhotoCamera, contentDescription = null,
-                                modifier = Modifier.size(16.dp), tint = Color(0xFF9EAABF))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Camera", style = MaterialTheme.typography.labelMedium, color = Color(0xFF9EAABF))
-                        }
-                        FilledTonalButton(
-                            onClick = onNavigateToGallery,
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color(0xFF1E2430))
-                        ) {
-                            Icon(Icons.Default.PhotoLibrary, contentDescription = null,
-                                modifier = Modifier.size(16.dp), tint = Color(0xFF9EAABF))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Gallery", style = MaterialTheme.typography.labelMedium, color = Color(0xFF9EAABF))
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -199,6 +176,16 @@ fun LiveSessionScreen(
                                 focusedTextColor = Color.White,
                                 unfocusedTextColor = Color.White
                             ),
+                            leadingIcon = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    IconButton(onClick = onNavigateToCamera) {
+                                        Icon(Icons.Default.PhotoCamera, contentDescription = "Camera", tint = Color(0xFF9EAABF))
+                                    }
+                                    IconButton(onClick = onNavigateToGallery) {
+                                        Icon(Icons.Default.Add, contentDescription = "Upload", tint = Color(0xFF9EAABF))
+                                    }
+                                }
+                            },
                             trailingIcon = {
                                 if (inputText.isNotBlank()) {
                                     IconButton(onClick = {
@@ -238,23 +225,25 @@ fun LiveSessionScreen(
             } else if (messages.isEmpty() && thinkingText.isBlank()) {
                 SessionWaitingState()
             } else {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                    reverseLayout = true,
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = paddingValues.calculateTopPadding() + 8.dp,
-                        bottom = paddingValues.calculateBottomPadding() + 8.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    if (thinkingText.isNotBlank()) {
-                        item { ThinkingBubble(text = thinkingText) }
-                    }
-                    items(messages, key = { it.hashCode() }) { message ->
-                        ChatBubble(message = message, viewModel = viewModel)
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxHeight().widthIn(max = 840.dp).fillMaxWidth(),
+                        reverseLayout = true,
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = paddingValues.calculateTopPadding() + 8.dp,
+                            bottom = paddingValues.calculateBottomPadding() + 8.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (thinkingText.isNotBlank()) {
+                            item { ThinkingBubble(text = thinkingText) }
+                        }
+                        items(messages, key = { it.hashCode() }) { message ->
+                            ChatBubble(message = message, viewModel = viewModel)
+                        }
                     }
                 }
             }

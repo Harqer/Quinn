@@ -94,10 +94,32 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  overflow: hidden;
+}
+
+#root {
+  flex: 1;
+  display: flex;
+  width: 100%;
+  height: 100%;
 }
 
 @keyframes shimmer {
   100% {
     transform: translateX(100%);
   }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #4D4D4D;
+  border: 3px solid #121212;
+  border-radius: 6px;
 }

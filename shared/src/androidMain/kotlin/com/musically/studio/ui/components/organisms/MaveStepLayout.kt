@@ -49,14 +49,22 @@ fun MaveStepLayout(
             }
         }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues)
-                .imePadding()
-                .padding(horizontal = 24.dp),
-            content = content
-        )
+                .imePadding(),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Column(
+                modifier = Modifier
+                    .widthIn(max = 600.dp)
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                content = content
+            )
+        }
     }
 }

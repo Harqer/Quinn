@@ -56,4 +56,36 @@ object MaveStyles {
         background(colors.surfaceContainerHighest)
         minHeight(64.dp)
     }
+
+    val filterPillStyle = Style {
+        shape(RoundedCornerShape(16.dp))
+        background(Color.White.copy(alpha = 0.1f))
+    }
+
+    val largePodcastCardStyle = Style {
+        shape(RoundedCornerShape(8.dp))
+        background(Color.Transparent)
+    }
+
+    val listRowItemStyle = Style {
+        background(Color.Transparent)
+    }
+    
+    val libraryRowItemStyle = Style {
+        background(Color.Transparent)
+    }
+
+    val categoryGridItemStyle = Style {
+        shape(RoundedCornerShape(8.dp))
+    }
+
+    val userMessageBubbleStyle = Style {
+        shape(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 4.dp))
+        background(Color(0xFF2A2A2A))
+    }
+
+    val aiMessageBubbleStyle = Style {
+        shape(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 4.dp, bottomEnd = 16.dp))
+        background(Color(0xFF1A1A1A))
+    }
 }

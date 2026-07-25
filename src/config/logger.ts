@@ -8,10 +8,17 @@ const logger = winston.createLogger({
     winston.format.json()
   ),
   transports: [
-    new LoggingWinston({
-      prefix: "musically-backend",
-      logName: "musically_logs",
-    })
+    process.env.NODE_ENV === "production"
+      ? new LoggingWinston({
+          prefix: "musically-backend",
+          logName: "musically_logs",
+        })
+      : new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.simple()
+          )
+        })
   ],
 });
 

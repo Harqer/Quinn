@@ -44,6 +44,7 @@ import com.musically.studio.ui.components.MiniPlayer
 import com.musically.studio.ui.screens.NowPlayingScreen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,10 +87,22 @@ fun MaveApp(
             }
         }
     }
+    
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collectLatest { route ->
+            navigator.navigate(route)
+        }
+    }
 
     val currentRoute = navigationState.backStacks[navigationState.topLevelRoute]?.last() ?: navigationState.topLevelRoute
     val showNavSuite = currentRoute in listOf(Route.Home, Route.Discover, Route.Search, Route.Podcast, Route.Library, Route.Devices) || currentRoute is Route.AlbumView || currentRoute is Route.UserProfile
     
+    val layoutType = if (showNavSuite) {
+        androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+    } else {
+        androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.None
+    }
+
     val entryProvider = maveEntryProvider(
         viewModel = viewModel,
         navigator = navigator,
@@ -99,120 +112,116 @@ fun MaveApp(
         },
         onLikeClick = { id -> viewModel.bookmarkTrack(id) },
         onDownloadClick = { id -> 
-            android.widget.Toast.makeText(context, "Downloading $id...", android.widget.Toast.LENGTH_SHORT).show()
+            val track = viewModel.tracks.value.find { it.id == id } ?: viewModel.communityTracks.value.find { it.id == id }
+            val url = "https://mave.studio/api/v1/tracks/\${track?.id}/audio"
+            val request = android.app.DownloadManager.Request(android.net.Uri.parse(url))
+                .setTitle(track?.name ?: "Unknown Track")
+                .setDescription("Downloading track")
+                .setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            val downloadManager = context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
+            downloadManager.enqueue(request)
         }
     )
 
-    if (showNavSuite) {
-        NavigationSuiteScaffold(
-            navigationSuiteItems = {
-                item(
-                    icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                    label = { Text("Studio") },
-                    selected = currentRoute == Route.Home,
-                    onClick = { navigator.navigate(Route.Home) }
-                )
-                item(
-                    icon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    label = { Text("Discover") },
-                    selected = currentRoute == Route.Discover,
-                    onClick = { navigator.navigate(Route.Discover) }
-                )
-                item(
-                    icon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    label = { Text("Search") },
-                    selected = currentRoute == Route.Search,
-                    onClick = { navigator.navigate(Route.Search) }
-                )
-                item(
-                    icon = { Icon(Icons.Default.LibraryMusic, contentDescription = null) },
-                    label = { Text("Library") },
-                    selected = currentRoute == Route.Library,
-                    onClick = { navigator.navigate(Route.Library) }
-                )
-                item(
-                    icon = { Icon(Icons.Default.Podcasts, contentDescription = null) },
-                    label = { Text("Podcasts") },
-                    selected = currentRoute == Route.Podcast,
-                    onClick = { navigator.navigate(Route.Podcast) }
-                )
-                item(
-                    icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                    label = { Text("Profile") },
-                    selected = currentRoute is Route.UserProfile,
-                    onClick = { navigator.navigate(Route.UserProfile(viewModel.getUserId())) }
-                )
-            }
-        ) {
-            BottomSheetScaffold(
-                scaffoldState = scaffoldState,
-                sheetPeekHeight = if (currentPlayingTrack != null) 72.dp else 0.dp,
-                sheetDragHandle = null,
-                sheetContent = {
-                    if (currentPlayingTrack != null) {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            NowPlayingScreen(
-                                track = currentPlayingTrack,
-                                viewModel = viewModel,
-                                modality = currentModality,
-                                onCollapse = {
+    NavigationSuiteScaffold(
+        layoutType = layoutType,
+        navigationSuiteItems = {
+            item(
+                icon = { Icon(Icons.Default.Home, contentDescription = null) },
+                label = { Text("Studio") },
+                selected = currentRoute == Route.Home,
+                onClick = { navigator.navigate(Route.Home) }
+            )
+            item(
+                icon = { Icon(Icons.Default.Search, contentDescription = null) },
+                label = { Text("Discover") },
+                selected = currentRoute == Route.Discover,
+                onClick = { navigator.navigate(Route.Discover) }
+            )
+            item(
+                icon = { Icon(Icons.Default.Search, contentDescription = null) },
+                label = { Text("Search") },
+                selected = currentRoute == Route.Search,
+                onClick = { navigator.navigate(Route.Search) }
+            )
+            item(
+                icon = { Icon(Icons.Default.LibraryMusic, contentDescription = null) },
+                label = { Text("Library") },
+                selected = currentRoute == Route.Library,
+                onClick = { navigator.navigate(Route.Library) }
+            )
+            item(
+                icon = { Icon(Icons.Default.Podcasts, contentDescription = null) },
+                label = { Text("Podcasts") },
+                selected = currentRoute == Route.Podcast,
+                onClick = { navigator.navigate(Route.Podcast) }
+            )
+            item(
+                icon = { Icon(Icons.Default.Person, contentDescription = null) },
+                label = { Text("Profile") },
+                selected = currentRoute is Route.UserProfile,
+                onClick = { navigator.navigate(Route.UserProfile(viewModel.getUserId())) }
+            )
+        }
+    ) {
+        BottomSheetScaffold(
+            scaffoldState = scaffoldState,
+            sheetPeekHeight = if (currentPlayingTrack != null) 72.dp else 0.dp,
+            sheetDragHandle = null,
+            sheetContent = {
+                if (currentPlayingTrack != null) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        NowPlayingScreen(
+                            track = currentPlayingTrack,
+                            viewModel = viewModel,
+                            modality = currentModality,
+                            onCollapse = {
+                                coroutineScope.launch {
+                                    scaffoldState.bottomSheetState.partialExpand()
+                                }
+                            },
+                            onMoreOptions = { navigator.navigate(Route.TrackOptions(currentPlayingTrack!!.id)) },
+                            onQueueClick = { 
+                                navigator.navigate(Route.Queue)
+                            },
+                            onLyricsClick = { 
+                                navigator.navigate(Route.Lyrics(currentPlayingTrack!!.id))
+                            }
+                        )
+                        if (scaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
+                            MiniPlayer(
+                                track = currentPlayingTrack!!,
+                                isPlaying = isPlaying,
+                                onPlayPauseClick = { viewModel.togglePlayPause() },
+                                onClick = {
                                     coroutineScope.launch {
-                                        scaffoldState.bottomSheetState.partialExpand()
+                                        scaffoldState.bottomSheetState.expand()
                                     }
-                                },
-                                onMoreOptions = { navigator.navigate(Route.TrackOptions(currentPlayingTrack!!.id)) },
-                                onQueueClick = { 
-                                    android.widget.Toast.makeText(context, "Queue coming soon", android.widget.Toast.LENGTH_SHORT).show() 
-                                },
-                                onLyricsClick = { 
-                                    android.widget.Toast.makeText(context, "Lyrics coming soon", android.widget.Toast.LENGTH_SHORT).show() 
                                 }
                             )
-                            if (scaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
-                                MiniPlayer(
-                                    track = currentPlayingTrack!!,
-                                    isPlaying = isPlaying,
-                                    onPlayPauseClick = { viewModel.togglePlayPause() },
-                                    onClick = {
-                                        coroutineScope.launch {
-                                            scaffoldState.bottomSheetState.expand()
-                                        }
-                                    }
-                                )
-                            }
                         }
-                    } else {
-                        Box(modifier = Modifier.height(1.dp))
                     }
-                }
-            ) { paddingValues ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        // .consumeWindowInsets(paddingValues) - REMOVED for edge-to-edge adaptive layouts
-                        .imePadding()
-                ) {
-                    
-                    NavDisplay(
-                        entries = navigationState.toEntries(entryProvider),
-                        onBack = { navigator.goBack() },
-                        transitionSpec = maveTransitionSpec(),
-                        popTransitionSpec = mavePopTransitionSpec(),
-                        sceneStrategies = sceneStrategies
-                    )
+                } else {
+                    Box(modifier = Modifier.height(1.dp))
                 }
             }
-        }
-    } else {
-        Box(modifier = Modifier.fillMaxSize().imePadding()) {
-            NavDisplay(
-                entries = navigationState.toEntries(entryProvider),
-                onBack = { navigator.goBack() },
-                transitionSpec = maveTransitionSpec(),
-                popTransitionSpec = mavePopTransitionSpec(),
-                sceneStrategies = sceneStrategies
-            )
+        ) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    // .consumeWindowInsets(paddingValues) - REMOVED for edge-to-edge adaptive layouts
+                    .imePadding()
+            ) {
+                
+                NavDisplay(
+                    entries = navigationState.toEntries(entryProvider),
+                    onBack = { navigator.goBack() },
+                    transitionSpec = maveTransitionSpec(),
+                    popTransitionSpec = mavePopTransitionSpec(),
+                    sceneStrategies = sceneStrategies
+                )
+            }
         }
     }
 }

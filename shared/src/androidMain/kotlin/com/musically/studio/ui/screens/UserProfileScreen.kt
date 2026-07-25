@@ -3,8 +3,10 @@ package com.musically.studio.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -21,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.musically.studio.ui.AccountDeletionState
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.TrackItem
@@ -187,7 +190,10 @@ fun UserProfileScreen(
         )
     }
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -210,13 +216,14 @@ fun UserProfileScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent
-                )
+                ),
+                scrollBehavior = scrollBehavior
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(300.dp),
             modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = PaddingValues(
                 start = 16.dp,
                 end = 16.dp,
@@ -225,8 +232,12 @@ fun UserProfileScreen(
             )
         ) {
             // Profile header
-            item {
-                MaveLogo(size = 120)
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    MaveLogo(size = 120)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Studio Creator",
@@ -240,12 +251,17 @@ fun UserProfileScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(32.dp))
+                }
             }
 
             // Own profile account management section
             if (isOwnProfile) {
-                item {
-                    Text(
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
                         text = "Account",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onBackground,
@@ -371,11 +387,12 @@ fun UserProfileScreen(
                         }
                         Spacer(modifier = Modifier.height(24.dp))
                     }
+                    }
                 }
             }
 
             // Vibes section header
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
                     text = if (isOwnProfile) "My Vibes" else "Public Vibes",
                     style = MaterialTheme.typography.titleMedium,
@@ -387,11 +404,11 @@ fun UserProfileScreen(
 
             // Vibes list
             if (isLoading && vibes.isEmpty()) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             } else if (vibes.isEmpty()) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     Text(
                         text = "No public vibes found.",
                         style = MaterialTheme.typography.bodyLarge,
@@ -409,7 +426,7 @@ fun UserProfileScreen(
             }
 
             // Bottom padding for mini-player
-            item { Spacer(modifier = Modifier.height(80.dp)) }
+            item(span = { GridItemSpan(maxLineSpan) }) { Spacer(modifier = Modifier.height(80.dp)) }
         }
     }
 }

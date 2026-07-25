@@ -25,7 +25,7 @@ open class MaveSessionManager(
     private var backoffTime = 1000L
     private val MAX_BACKOFF = 30000L
 
-    fun connect() {
+    open fun connect() {
         if (webSocket != null) return
         isIntentionalClose = false
         internalConnect()
@@ -38,7 +38,7 @@ open class MaveSessionManager(
                 throw SecurityException("Authentication token is missing or invalid.")
             }
             val request = Request.Builder()
-                .url("wss://musically-studio.run.app/api/music/ws?token=$token")
+                .url("${com.musically.studio.shared.BuildConfig.WS_BASE_URL}?token=$token")
                 .build()
 
             webSocket = client.newWebSocket(request, object : WebSocketListener() {
@@ -84,14 +84,14 @@ open class MaveSessionManager(
         }
     }
 
-    fun sendEvent(type: String, data: Map<String, Any>) {
+    open fun sendEvent(type: String, data: Map<String, Any>) {
         val json = JSONObject()
         json.put("type", type)
         data.forEach { (key, value) -> json.put(key, value) }
         webSocket?.send(json.toString())
     }
 
-    fun sendPrompts(prompts: List<Map<String, Any>>) {
+    open fun sendPrompts(prompts: List<Map<String, Any>>) {
         val json = JSONObject()
         json.put("type", "setWeightedPrompts")
         val promptsArray = org.json.JSONArray()
@@ -104,20 +104,20 @@ open class MaveSessionManager(
         webSocket?.send(json.toString())
     }
 
-    fun play() = webSocket?.send("""{"type":"play"}""")
-    fun pause() = webSocket?.send("""{"type":"pause"}""")
-    fun stop() = webSocket?.send("""{"type":"stop"}""")
-    fun next() = webSocket?.send("""{"type":"next"}""")
-    fun previous() = webSocket?.send("""{"type":"previous"}""")
+    open fun play() = webSocket?.send("""{"type":"play"}""")
+    open fun pause() = webSocket?.send("""{"type":"pause"}""")
+    open fun stop() = webSocket?.send("""{"type":"stop"}""")
+    open fun next() = webSocket?.send("""{"type":"next"}""")
+    open fun previous() = webSocket?.send("""{"type":"previous"}""")
 
-    fun sendAudio(base64: String) {
+    open fun sendAudio(base64: String) {
         val json = JSONObject()
         json.put("type", "audio")
         json.put("data", base64)
         webSocket?.send(json.toString())
     }
 
-    fun sendVideoFrame(frameBytes: ByteArray) {
+    open fun sendVideoFrame(frameBytes: ByteArray) {
         val base64 = android.util.Base64.encodeToString(frameBytes, android.util.Base64.NO_WRAP)
         val json = JSONObject()
         json.put("type", "vision")
@@ -125,7 +125,7 @@ open class MaveSessionManager(
         webSocket?.send(json.toString())
     }
 
-    fun disconnect() {
+    open fun disconnect() {
         isIntentionalClose = true
         reconnectJob?.cancel()
         webSocket?.close(1000, "User logout")

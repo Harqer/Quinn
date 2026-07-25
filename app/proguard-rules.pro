@@ -4,7 +4,6 @@
 -keep public class com.meta.wearable.dat.core.** { public *; }
 -keep public class com.meta.wearable.dat.camera.** { public *; }
 -keep public class com.meta.wearable.dat.display.** { public *; }
--keep public class com.meta.wearable.dat.mockdevice.** { public *; }
 
 # Data Models for Serialization (Gson)
 # We keep the names of these classes and their fields to ensure JSON mapping works.

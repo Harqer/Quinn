@@ -1,5 +1,8 @@
 import React from 'react';
 import { Carousel } from '../../components/organisms/Carousel';
+import { useNavigate } from '../../App';
+import { useAppContext } from '../../contexts/AppContext';
+import { logger } from '../../lib/logger';
 import { Card } from '../../components/molecules/Card';
 import { Typography } from '../../components/atoms/Typography';
 import { Icon } from '../../components/atoms/Icon';
@@ -13,10 +16,18 @@ export const HomeScreen: React.FC = () => {
   const auth = getAuth();
   const user = auth.currentUser;
   const userInitial = user?.displayName ? user.displayName[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'M');
+  const navigate = useNavigate();
+  const { setActiveAlbumId } = useAppContext();
+
+  const handleTrackClick = (id: string) => {
+    logger.info('User navigating to track/album', { id });
+    setActiveAlbumId(id);
+    navigate('album');
+  };
 
   return (
     <div className="flex flex-col h-full w-full bg-background overflow-y-auto pb-32">
-      <div className="flex flex-col gap-4 px-4 pt-12 pb-2 sticky top-0 bg-background/90 backdrop-blur-md z-10">
+      <div className="flex flex-col gap-4 md:gap-6 px-4 md:px-6 pt-12 md:pt-6 pb-2 sticky top-0 bg-background/90 backdrop-blur-md z-10">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-black overflow-hidden shadow-inner flex-shrink-0">
             {userInitial}
@@ -25,9 +36,7 @@ export const HomeScreen: React.FC = () => {
             Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {user?.displayName?.split(' ')[0] || 'User'}
           </Typography>
           <div className="flex gap-2">
-            <button className="bg-surface px-4 py-1.5 rounded-full text-sm font-medium text-text-primary flex items-center justify-center" title="All" onClick={() => console.log('Filter All')}><Icon name="all_inclusive" size="sm" /></button>
-            <button className="bg-surface-container px-4 py-1.5 rounded-full text-sm font-medium text-text-primary flex items-center justify-center" title="Music" onClick={() => console.log('Filter Music')}><Icon name="music_note" size="sm" /></button>
-            <button className="bg-surface-container px-4 py-1.5 rounded-full text-sm font-medium text-text-primary flex items-center justify-center" title="Podcasts" onClick={() => console.log('Filter Podcasts')}><Icon name="podcasts" size="sm" /></button>
+            {/* Removed filter pills since genre filtering is not supported by the backend yet */}
           </div>
         </div>
       </div>
@@ -38,10 +47,10 @@ export const HomeScreen: React.FC = () => {
         </div>
       ) : (
         <>
-          <div className="px-4 py-2">
-            <div className="grid grid-cols-2 gap-2">
+          <div className="px-4 md:px-6 py-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-6">
               {(userTracks.length > 0 ? userTracks : communityTracks).slice(0, 6).map(track => (
-                <div key={`recent-${track.id}`} className="bg-surface-container hover:bg-surface rounded-[4px] flex items-center gap-2 overflow-hidden cursor-pointer transition-colors" onClick={() => console.log('Recent track clicked', track.id)}>
+                <div key={`recent-${track.id}`} className="bg-surface-container hover:bg-surface rounded-[4px] flex items-center gap-2 overflow-hidden cursor-pointer transition-colors" onClick={() => handleTrackClick(track.id)}>
                   {track.albumArtUrl ? (
                     <img src={track.albumArtUrl} alt={track.title} className="w-14 h-14 object-cover" />
                   ) : (
@@ -58,11 +67,11 @@ export const HomeScreen: React.FC = () => {
           <Carousel title="Made for you">
             {userTracks.length > 0 ? (
               userTracks.slice(0, 5).map(track => (
-                <Card key={track.id} title={track.title} subtitle={track.artist} imageUrl={track.albumArtUrl} onClick={() => console.log('Card clicked', track.id)} />
+                <Card key={track.id} title={track.title} subtitle={track.artist} imageUrl={track.albumArtUrl} onClick={() => handleTrackClick(track.id)} />
               ))
             ) : (
               communityTracks.slice(0, 5).map(track => (
-                <Card key={track.id} title={track.title} subtitle={track.artist} imageUrl={track.albumArtUrl} onClick={() => console.log('Card clicked', track.id)} />
+                <Card key={track.id} title={track.title} subtitle={track.artist} imageUrl={track.albumArtUrl} onClick={() => handleTrackClick(track.id)} />
               ))
             )}
           </Carousel>
@@ -74,7 +83,7 @@ export const HomeScreen: React.FC = () => {
                 title={track.title} 
                 subtitle={track.artist} 
                 imageUrl={track.albumArtUrl}
-                onClick={() => console.log('Community Card clicked', track.id)}
+                onClick={() => handleTrackClick(track.id)}
               />
             ))}
           </Carousel>
@@ -87,7 +96,7 @@ export const HomeScreen: React.FC = () => {
                   title={track.title} 
                   subtitle={track.artist || 'Unknown Artist'} 
                   imageUrl={track.albumArtUrl}
-                  onClick={() => console.log('Recent played Card clicked', track.id)}
+                  onClick={() => handleTrackClick(track.id)}
                 />
               ))}
             </Carousel>

@@ -8,6 +8,7 @@ import { useMave } from '../../hooks/useMave';
 import maveLogoDark from '../../assets/mave_brand_dark.png';
 import maveLogoLight from '../../assets/mave_brand_light.png';
 import { EmptyState } from '../../components/molecules/EmptyState';
+import { useAppContext } from '../../contexts/AppContext';
 
 /**
  * Mave Brand Logo Component.
@@ -45,10 +46,17 @@ export const MainDashboard: React.FC = () => {
     thinkingText,
     switchMode,
     sendText,
+    sendPlaybackCommand,
     sendVisionFrame,
     toggleRecording,
     warp
   } = useMave();
+
+  const { setPlaybackCommandSender } = useAppContext();
+
+  useEffect(() => {
+    setPlaybackCommandSender(() => sendPlaybackCommand);
+  }, [sendPlaybackCommand, setPlaybackCommandSender]);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -95,6 +103,50 @@ export const MainDashboard: React.FC = () => {
     setInputText("");
   };
 
+  const handleCameraSnapshot = () => {
+    if (canvasRef.current) {
+      const base64Frame = canvasRef.current.toDataURL('image/jpeg', 0.8).split(',')[1];
+      sendVisionFrame(base64Frame);
+      showToast('Snapshot sent to Mave!');
+      if ('vibrate' in navigator) navigator.vibrate(20);
+    }
+  };
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = (reader.result as string).split(',')[1];
+        sendVisionFrame(base64);
+        showToast('Image uploaded and sent to Mave!');
+      };
+      reader.readAsDataURL(file);
+    } else if (file.type.startsWith('video/')) {
+      const video = document.createElement('video');
+      video.src = URL.createObjectURL(file);
+      video.onloadeddata = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+          sendVisionFrame(base64);
+          showToast('Video processed and sent to Mave!');
+        }
+        URL.revokeObjectURL(video.src);
+      };
+    } else {
+      showToast('Unsupported file type');
+    }
+  };
+
   const handleAction = async (action: 'like' | 'bookmark', trackId?: string) => {
     if (!trackId) return;
     if ('vibrate' in navigator) navigator.vibrate([50, 50, 50]);
@@ -114,7 +166,8 @@ export const MainDashboard: React.FC = () => {
         }
       }
 
-      const response = await fetch(endpoint, {
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${baseUrl}${endpoint}`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -246,6 +299,28 @@ export const MainDashboard: React.FC = () => {
       {/* Bottom Bar */}
       <div className="p-8 bg-[#121212] border-t border-white/5">
         <div className="max-w-5xl mx-auto flex gap-6 items-center bg-[#282828] p-3 rounded-full shadow-2xl border border-white/10 hover:border-white/20 transition-all">
+          <div className="flex gap-2 border-r border-white/10 pr-4 pl-2">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 transition-all"
+            >
+              <span className="material-icons-round text-xl">add</span>
+            </button>
+            <input 
+              type="file" 
+              ref={fileInputRef}
+              className="hidden" 
+              accept="image/*,video/*" 
+              onChange={handleFileUpload} 
+            />
+            <button
+              onClick={handleCameraSnapshot}
+              className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 transition-all"
+            >
+              <span className="material-icons-round text-xl">photo_camera</span>
+            </button>
+          </div>
+          
           <button
             onClick={toggleRecording}
             className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
@@ -254,6 +329,7 @@ export const MainDashboard: React.FC = () => {
           >
             <span className="material-icons-round text-2xl">mic</span>
           </button>
+          
           <input
             type="text"
             value={inputText}

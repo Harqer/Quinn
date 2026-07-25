@@ -114,6 +114,12 @@ class MainViewModel @Inject constructor(
     private val _navigationEvent = MutableSharedFlow<Route>(extraBufferCapacity = 1)
     val navigationEvent = _navigationEvent.asSharedFlow()
 
+    fun navigateTo(route: Route) {
+        viewModelScope.launch {
+            _navigationEvent.emit(route)
+        }
+    }
+
     // Auth Side Effects
     private val _authSideEffect = MutableSharedFlow<AuthSideEffect>(extraBufferCapacity = 1)
     val authSideEffect = _authSideEffect.asSharedFlow()
@@ -268,11 +274,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun triggerFacebookSignIn() {
-        viewModelScope.launch {
-            _authSideEffect.emit(AuthSideEffect.LaunchFacebookSignIn)
-        }
-    }
+
 
     fun loginWithVerifiedEmail(credentialJson: String, nonce: String, callback: (Boolean, String?) -> Unit) {
         _isLoading.value = true
@@ -888,7 +890,7 @@ sealed interface AuthSideEffect {
     data object LaunchGoogleSignIn : AuthSideEffect
     data object LaunchAppleSignIn : AuthSideEffect
     data object LaunchVerifiedEmail : AuthSideEffect
-    data object LaunchFacebookSignIn : AuthSideEffect
+
     data object SignedOut : AuthSideEffect
     data object AccountDeleted : AuthSideEffect
 }

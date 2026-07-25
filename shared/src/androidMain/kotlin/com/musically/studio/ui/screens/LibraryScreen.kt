@@ -39,9 +39,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.draw.clip
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
+import timber.log.Timber
 
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.musically.studio.ui.theme.FormFactorPreviews
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.style.Style
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import androidx.compose.foundation.style.styleable
+import androidx.compose.runtime.remember
+import com.musically.studio.ui.theme.MaveStyles
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +57,9 @@ fun LibraryScreen(
     onNavigateToNowPlaying: (String) -> Unit,
     onNavigateToAlbum: (String) -> Unit,
     onNavigateToHome: () -> Unit,
-    onNavigateToPlaylist: (String) -> Unit
+    onNavigateToPlaylist: (String) -> Unit,
+    onNavigateToSearch: () -> Unit,
+    onNavigateToAdd: () -> Unit
 ) {
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
@@ -66,6 +75,8 @@ fun LibraryScreen(
         viewModel.fetchUserTracks()
     }
 
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val selectedFilterState = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
@@ -91,10 +102,10 @@ fun LibraryScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO */ }) {
+                    IconButton(onClick = onNavigateToSearch) {
                         Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
                     }
-                    IconButton(onClick = { /* TODO */ }) {
+                    IconButton(onClick = onNavigateToAdd) {
                         Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
                     }
                 },
@@ -130,24 +141,26 @@ fun LibraryScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.padding(bottom = 16.dp)
                         ) {
-                            item { FilterPill("Playlists") }
-                            item { FilterPill("Artists") }
-                            item { FilterPill("Albums") }
-                            item { FilterPill("Podcasts & Shows") }
+                            item { FilterPill("Playlists", isSelected = selectedFilterState.value == "Playlists", onClick = { selectedFilterState.value = if (selectedFilterState.value == "Playlists") null else "Playlists" }) }
+                            item { FilterPill("Albums", isSelected = selectedFilterState.value == "Albums", onClick = { selectedFilterState.value = if (selectedFilterState.value == "Albums") null else "Albums" }) }
                         }
                     }
-                    items(playlists) { playlist ->
-                        LibraryPlaylistItem(
-                            playlist = playlist,
-                            onClick = { onNavigateToPlaylist("playlist_${playlist.id}") }
-                        )
+                    if (selectedFilterState.value == null || selectedFilterState.value == "Playlists") {
+                        items(playlists) { playlist ->
+                            LibraryPlaylistItem(
+                                playlist = playlist,
+                                onClick = { onNavigateToPlaylist("playlist_${playlist.id}") }
+                            )
+                        }
                     }
-                    items(albums.size) { index ->
-                        val album = albums[index]
-                        LibraryAlbumItem(
-                            album = album,
-                            onClick = { onNavigateToAlbum("album_${album.id}") }
-                        )
+                    if (selectedFilterState.value == null || selectedFilterState.value == "Albums") {
+                        items(albums.size) { index ->
+                            val album = albums[index]
+                            LibraryAlbumItem(
+                                album = album,
+                                onClick = { onNavigateToAlbum("album_${album.id}") }
+                            )
+                        }
                     }
                 }
             }
@@ -156,12 +169,22 @@ fun LibraryScreen(
 }
 
 @Composable
-fun LibraryAlbumItem(album: com.musically.studio.network.MaveAlbum, onClick: () -> Unit) {
+fun LibraryAlbumItem(
+    album: com.musically.studio.network.MaveAlbum,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    style: Style = Style
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) {
+        it.isEnabled = true
+    }
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .styleable(styleState, MaveStyles.libraryRowItemStyle, style),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -198,12 +221,22 @@ fun LibraryAlbumItem(album: com.musically.studio.network.MaveAlbum, onClick: () 
 }
 
 @Composable
-fun LibraryPlaylistItem(playlist: com.musically.studio.network.MavePlaylist, onClick: () -> Unit) {
+fun LibraryPlaylistItem(
+    playlist: com.musically.studio.network.MavePlaylist,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    style: Style = Style
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) {
+        it.isEnabled = true
+    }
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .styleable(styleState, MaveStyles.libraryRowItemStyle, style),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -277,13 +310,24 @@ private fun EmptyLibraryState(onNavigateToHome: () -> Unit) {
 }
 
 @Composable
-fun FilterPill(text: String, onClick: () -> Unit = {}) {
+fun FilterPill(
+    text: String,
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    style: Style = Style
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) {
+        it.isEnabled = true
+    }
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.White.copy(alpha = 0.1f))
-            .clickable { onClick() }
+            .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
+            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp)
+            .styleable(styleState, MaveStyles.filterPillStyle, style)
     ) {
         Text(text, color = Color.White, style = MaterialTheme.typography.bodyMedium)
     }
@@ -298,7 +342,9 @@ fun LibraryScreenPreview() {
             onNavigateToNowPlaying = {},
             onNavigateToAlbum = {},
             onNavigateToHome = {},
-            onNavigateToPlaylist = {}
+            onNavigateToPlaylist = {},
+            onNavigateToSearch = {},
+            onNavigateToAdd = {}
         )
     }
 }

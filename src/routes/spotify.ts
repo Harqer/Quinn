@@ -3,6 +3,7 @@ import { Router, Response, Request } from "express";
 import { verifyFirebaseToken, verifyAppCheck, AuthenticatedRequest } from "../middlewares/auth.js";
 import { spotifyService } from "../services/SpotifyService.js";
 import { db } from "../config/firebase.js";
+import logger from "../config/logger.js";
 import xss from "xss";
 
 const router = Router();
@@ -116,6 +117,7 @@ router.get("/callback", async (req: Request, res: Response) => {
       </html>
     `);
   } catch (err) {
+    logger.error("[spotify] Callback error", err);
     res.status(500).send("Internal Server Error");
   }
 });
@@ -130,8 +132,13 @@ router.get("/playlists", verifyFirebaseToken, verifyAppCheck, async (req: Authen
   const response = await fetch("https://api.spotify.com/v1/me/playlists?limit=50", {
     headers: { "Authorization": `Bearer ${token}` }
   });
-  if (response.ok) res.json(await response.json());
-  else res.status(response.status).json({ error: "Failed to fetch playlists" });
+  if (response.ok) {
+    res.json(await response.json());
+  } else {
+    const errorBody = await response.text();
+    logger.error("[spotify] Failed to fetch playlists", { status: response.status, errorBody });
+    res.status(response.status).json({ error: "Failed to fetch playlists" });
+  }
 });
 
 router.post("/podcast/save", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {

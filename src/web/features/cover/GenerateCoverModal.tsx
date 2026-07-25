@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '../../components/atoms/Typography';
 import { Icon } from '../../components/atoms/Icon';
+import { logger } from "../../lib/logger";
 
 const TypewriterText: React.FC<{ text: string, speed?: number }> = ({ text, speed = 40 }) => {
   const [displayed, setDisplayed] = useState('');
@@ -54,7 +55,8 @@ export const GenerateCoverModal: React.FC<GenerateCoverModalProps> = ({
     setIsGenerating(true);
     try {
       const finalPrompt = prompt.trim() || `${selectedPreset} aesthetic for track ${trackTitle}`;
-      const response = await fetch('/api/music/generate', {
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${baseUrl}/api/music/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -74,7 +76,7 @@ export const GenerateCoverModal: React.FC<GenerateCoverModalProps> = ({
         onCoverGenerated(generatedUrl, coverType);
       }
     } catch (err) {
-      console.error('Failed to generate cover', err);
+      logger.error('Failed to generate cover', err);
     } finally {
       setIsGenerating(false);
     }

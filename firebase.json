@@ -35,5 +35,15 @@
   },
   "database": {
     "rules": "database.rules.json"
+  },
+  "auth": {
+    "providers": {
+      "anonymous": true,
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Mave Studio",
+        "supportEmail": "support@mave.app"
+      }
+    }
   }
 }

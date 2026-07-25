@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getAuth } from 'firebase/auth';
+import { logger } from "../lib/logger";
 
 export type MaveMode = 'music' | 'podcast' | 'audiobook';
 
@@ -33,9 +34,15 @@ export function useMave() {
       if (!user) return;
 
       const token = await user.getIdToken();
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = new URL('/api/music/ws', window.location.origin);
-      wsUrl.protocol = protocol;
+      
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      
+      // If baseUrl is provided (e.g. https://api.example.com), use it to determine the WS URL
+      const isSecure = baseUrl ? baseUrl.startsWith('https') : window.location.protocol === 'https:';
+      const protocol = isSecure ? 'wss:' : 'ws:';
+      const hostOrigin = baseUrl ? baseUrl.replace(/^https?:\/\//, '') : window.location.host;
+      
+      const wsUrl = new URL(`/api/music/ws`, `${protocol}//${hostOrigin}`);
       wsUrl.searchParams.set('token', token);
 
       const ws = new WebSocket(wsUrl.toString());
@@ -67,7 +74,7 @@ export function useMave() {
             }
           }
         } catch (err) {
-          console.error('Error parsing Mave event', err);
+          logger.error('Error parsing Mave event', err);
         }
       };
 
@@ -81,7 +88,7 @@ export function useMave() {
       };
       wsRef.current = ws;
     } catch (err) {
-      console.error('Failed to connect to Mave Studio', err);
+      logger.error('Failed to connect to Mave Studio', err);
     }
   }, [mode]);
 
@@ -110,7 +117,8 @@ export function useMave() {
 
     if (mode === 'podcast') {
       try {
-        const response = await fetch('/api/music/podcast/generate', {
+        const baseUrl = import.meta.env.VITE_API_URL || '';
+        const response = await fetch(`${baseUrl}/api/music/podcast/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt: text })
@@ -148,7 +156,7 @@ export function useMave() {
                       } as any, ...prev].slice(0, 15));
                     }
                   } catch (e) {
-                    console.error("Failed to parse SSE data", e);
+                    logger.error("Failed to parse SSE data", e);
                   }
                 }
               }
@@ -157,12 +165,18 @@ export function useMave() {
           return;
         }
       } catch (err) {
-        console.warn('Podcast API endpoint error, falling back to WebSocket stream', err);
+        logger.warn('Podcast API endpoint error, falling back to WebSocket stream', err);
       }
     }
 
     const type = mode === 'podcast' ? 'text_command' : 'feedback';
     wsRef.current?.send(JSON.stringify({ type, text }));
+  };
+
+  const sendPlaybackCommand = (commandType: string) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ type: commandType }));
+    }
   };
 
   const sendVisionFrame = (image: string) => {
@@ -202,7 +216,7 @@ export function useMave() {
         setIsRecording(true);
         wsRef.current?.send(JSON.stringify({ type: 'start_voice' }));
       } catch (err) {
-        console.error('Microphone access denied', err);
+        logger.error('Microphone access denied', err);
       }
     }
   };
@@ -219,6 +233,7 @@ export function useMave() {
     thinkingText,
     switchMode,
     sendText,
+    sendPlaybackCommand,
     sendVisionFrame,
     toggleRecording,
     warp

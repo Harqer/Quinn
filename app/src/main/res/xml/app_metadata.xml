@@ -1,8 +1,8 @@
 <AppFunctionAppMetadata xmlns:appfn="http://schemas.android.com/apk/androidx.appfunctions"
     appfn:description="This app manages a high-fidelity AI Music Studio, user libraries, and content discovery.
     Operational Patterns:
-    - Always call 'strikeVibe' to initiate a new session before using 'warpMusic'.
     - Use 'openLibrary' and 'openHome' to switch between major app navigational sections.
+    - Prefer 'searchForContent' over navigating manually when the user wants to find a specific track.
     Constraints:
-    - Playback commands like 'warpMusic' require an active generative session."
+    - Text prompts for 'strikeVibe' should be descriptive of musical atmospheres."
     appfn:displayDescription="@string/app_name" />

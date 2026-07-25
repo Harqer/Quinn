@@ -57,7 +57,7 @@ fun WelcomeScreen(
                 }
             },
             dismissButton = {
-                val activity = androidx.compose.ui.platform.LocalContext.current as? android.app.Activity
+                val activity = androidx.activity.compose.LocalActivity.current
                 TextButton(onClick = { activity?.finish() }) {
                     Text("Decline", color = MaterialTheme.colorScheme.error)
                 }
@@ -68,13 +68,7 @@ fun WelcomeScreen(
 
     Scaffold(containerColor = Color(0xFF121212)) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
-            model = "https://lh3.googleusercontent.com/aida-public/AB6AXuDkStbOBQ4sccmT9egT0jR8eujGoi4_MYyolBqw03Dwk6iIfxEc3a1iulaO4Jv9ApLoHaAhSBU9UnZKndnJAAHN0MKm5ywQhmRYX6K1IQYpHvg8_oXSA3-para9CAQjJy3_CEJs63DssaVOqzHnm2GmSeR-Kx8LqC_SIn4n_d_6LQY5b4FE5NgsLXmVR13UJ6z037OJ1nScbCWUcMuI3ySfq5qaciVP4h7gRIh-Z__r72VqTM51QFcyGDvI1MCPWL7LduI",
-            contentDescription = "Background Collage",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize(),
-            alpha = 0.8f
-        )
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -117,12 +111,7 @@ fun WelcomeScreen(
                 style = MaveStyles.outlinedButton
             )
             Spacer(modifier = Modifier.height(12.dp))
-            MaveButton(
-                text = "Continue with Facebook",
-                onClick = { viewModel.triggerFacebookSignIn() },
-                modifier = Modifier.fillMaxWidth(),
-                style = MaveStyles.outlinedButton
-            )
+
             Spacer(modifier = Modifier.height(12.dp))
             MaveButton(
                 text = "Continue with Apple",
