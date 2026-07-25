@@ -14,14 +14,14 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.musically.studio</string>
 	<key>CFBundleName</key>
-	<string>Musically Studio</string>
+	<string>Mave Studio</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Musically Studio requires camera access to stream live POV frames from Meta Wearables for AI visual atmosphere &amp; music generation.</string>
+	<string>Mave Studio requires camera access to stream live POV frames from Meta Wearables for AI visual atmosphere &amp; music generation.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Musically Studio requires microphone access for real-time audio interaction with Gemini AI.</string>
+	<string>Mave Studio requires microphone access for real-time audio interaction with Gemini AI.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Musically Studio uses Bluetooth to discover and stream with Meta Wearables smart glasses.</string>
+	<string>Mave Studio uses Bluetooth to discover and stream with Meta Wearables smart glasses.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Musically Studio uses Bluetooth to communicate with Meta Wearables smart glasses.</string>
+	<string>Mave Studio uses Bluetooth to communicate with Meta Wearables smart glasses.</string>
 </dict>
 </plist>

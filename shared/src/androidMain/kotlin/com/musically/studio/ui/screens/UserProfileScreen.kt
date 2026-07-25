@@ -14,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.PersonOff
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -38,7 +39,8 @@ fun UserProfileScreen(
     viewModel: MainViewModel,
     onBack: () -> Unit,
     onSignedOut: () -> Unit = onBack,
-    onNavigateToAlbum: (String) -> Unit = {}
+    onNavigateToAlbum: (String) -> Unit = {},
+    onNavigateToSettings: () -> Unit = {}
 ) {
     val vibes by viewModel.userVibes.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
@@ -213,6 +215,17 @@ fun UserProfileScreen(
                             contentDescription = "Back",
                             tint = MaterialTheme.colorScheme.onBackground
                         )
+                    }
+                },
+                actions = {
+                    if (isOwnProfile) {
+                        IconButton(onClick = onNavigateToSettings) {
+                            Icon(
+                                Icons.Default.Settings,
+                                contentDescription = "Settings",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

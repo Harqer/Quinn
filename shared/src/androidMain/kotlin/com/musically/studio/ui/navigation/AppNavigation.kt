@@ -109,7 +109,7 @@ fun MaveApp(
         navigator = navigator,
         onAcknowledgePermissions = onAcknowledgePermissions,
         onMenuClick = {
-            // Menu handled by NavigationSuiteScaffold
+            navigator.navigate(Route.UserProfile("me"))
         },
         onLikeClick = { id -> viewModel.bookmarkTrack(id) },
         onDownloadClick = { id -> 

@@ -466,18 +466,22 @@ class MainViewModel @Inject constructor(
 
     private fun setupWearableCollector() {
         viewModelScope.launch {
-            com.meta.wearable.dat.core.Wearables.devices.collect { datDevices ->
-                val wearableAudioDevices = datDevices.map { device ->
-                    AudioDevice(
-                        id = device.identifier,
-                        name = "Meta Glasses",
-                        subtitle = "Meta Wearable",
-                        type = DeviceType.BLUETOOTH,
-                        isCurrent = false
-                    )
+            try {
+                com.meta.wearable.dat.core.Wearables.devices.collect { datDevices ->
+                    val wearableAudioDevices = datDevices.map { device ->
+                        AudioDevice(
+                            id = device.identifier,
+                            name = "Meta Glasses",
+                            subtitle = "Meta Wearable",
+                            type = DeviceType.BLUETOOTH,
+                            isCurrent = false
+                        )
+                    }
+                    val current = _devices.value.filter { it.subtitle != "Meta Wearable" }
+                    _devices.value = current + wearableAudioDevices
                 }
-                val current = _devices.value.filter { it.subtitle != "Meta Wearable" }
-                _devices.value = current + wearableAudioDevices
+            } catch (e: Exception) {
+                Timber.e(e, "Wearables SDK not initialized or failed (expected in tests)")
             }
         }
 

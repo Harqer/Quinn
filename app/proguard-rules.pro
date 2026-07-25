@@ -1,4 +1,4 @@
-# Musically Production Proguard Rules
+# Mave Production Proguard Rules
 
 # Meta Wearables SDK - Refined public API & native bridging keep rules
 -keep public class com.meta.wearable.dat.core.** { public *; }

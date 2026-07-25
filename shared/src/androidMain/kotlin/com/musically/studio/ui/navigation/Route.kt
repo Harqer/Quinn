@@ -21,6 +21,7 @@ sealed interface Route : NavKey {
     @Serializable data object Gallery : Route
     @Serializable data class PlaylistView(val playlistId: String) : Route
     @Serializable data class CategoryView(val categoryId: String) : Route
+    @Serializable data object Settings : Route
     // Onboarding Sequence
     @Serializable data object Welcome : Route
     @Serializable data object AuthOptions : Route

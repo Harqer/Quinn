@@ -70,7 +70,7 @@ fun maveEntryProvider(
     entry<Route.Home> {
         MaveHomeScreen(
             viewModel = viewModel,
-            onNavigateToSettings = onMenuClick,
+            onNavigateToProfile = onMenuClick,
             onTrackClick = { trackId ->
                 viewModel.tracks.value.find { it.id == trackId }?.let {
                     viewModel.playTrack(it)
@@ -242,7 +242,17 @@ fun maveEntryProvider(
                 // Clear back-stack to Login so the user cannot back-navigate after sign-out/deletion
                 navigator.navigate(Route.Login)
             },
-            onNavigateToAlbum = { navigator.navigate(Route.AlbumView(it)) }
+            onNavigateToAlbum = { navigator.navigate(Route.AlbumView(it)) },
+            onNavigateToSettings = { navigator.navigate(Route.Settings) }
+        )
+    }
+
+    entry<Route.Settings>(
+        metadata = maveVerticalTransitionMetadata()
+    ) {
+        SettingsScreen(
+            viewModel = viewModel,
+            onBack = { navigator.goBack() }
         )
     }
 

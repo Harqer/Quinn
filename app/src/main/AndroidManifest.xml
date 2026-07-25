@@ -87,14 +87,14 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="musically" />
+                <data android:scheme="mave" />
             </intent-filter>
         </activity>
 
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.musically.studio.provider"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

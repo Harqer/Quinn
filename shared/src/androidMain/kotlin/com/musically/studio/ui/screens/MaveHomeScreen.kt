@@ -28,7 +28,7 @@ import java.util.Calendar
 @Composable
 fun MaveHomeScreen(
     viewModel: MainViewModel,
-    onNavigateToSettings: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
     onTrackClick: (String) -> Unit
 ) {
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
@@ -58,7 +58,7 @@ fun MaveHomeScreen(
                                 .size(32.dp)
                                 .clip(CircleShape)
                                 .background(Color(0xFF1DB954))
-                                .clickable { onNavigateToSettings() },
+                                .clickable { onNavigateToProfile() },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
