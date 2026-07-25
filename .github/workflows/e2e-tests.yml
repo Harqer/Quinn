@@ -35,11 +35,11 @@ jobs:
     # Firebase Test Lab (Robo Test)
     # Automatically crawls the UI for crashes and broken flows.
     - name: Run Firebase Robo Test
-      uses: FirebaseExtended/action-hosting-deploy@v0
-      # You would typically use the gcloud CLI to trigger a Robo test:
-      # run: |
-      #   gcloud auth activate-service-account --key-file=service-account.json
-      #   gcloud firebase test android run \
-      #     --type robo \
-      #     --app app/build/outputs/apk/debug/app-debug.apk \
-      #     --device model=Pixel3,version=30,locale=en,orientation=portrait
+      run: |
+        echo "To enable Firebase Test Lab, uncomment the lines below and add your SERVICE_ACCOUNT_JSON to GitHub Secrets."
+        # echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > service-account.json
+        # gcloud auth activate-service-account --key-file=service-account.json
+        # gcloud firebase test android run \
+        #   --type robo \
+        #   --app app/build/outputs/apk/debug/app-debug.apk \
+        #   --device model=Pixel3,version=30,locale=en,orientation=portrait
