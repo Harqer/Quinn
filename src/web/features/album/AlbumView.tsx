@@ -6,22 +6,21 @@ import { EmptyState } from '../../components/molecules/EmptyState';
 import { useAppContext } from '../../contexts/AppContext';
 import { getAuth } from 'firebase/auth';
 import { logger } from "../../lib/logger";
+import { musicService, Track } from '../../services/MusicService';
+import { usePlayerContext } from '../../contexts/PlayerContext';
 
 export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const { activeAlbumId: id } = useAppContext();
-  const [tracks, setTracks] = useState<any[]>([]);
+  const [tracks, setTracks] = useState<Track[]>([]);
   const [loading, setLoading] = useState(true);
   const [showOptions, setShowOptions] = useState(false);
+  const { playTrack } = usePlayerContext();
 
   useEffect(() => {
     if (id) {
-      const baseUrl = import.meta.env.VITE_API_URL || '';
-      // Fetch dynamic tracklist from backend
-      fetch(`${baseUrl}/api/music/album/${id}`)
-        .then(res => res.json())
-        .then(data => {
-          setTracks(data.tracks || []);
-        })
+      setLoading(true);
+      musicService.getAlbumTracks(id)
+        .then(setTracks)
         .catch(err => logger.error("Failed to fetch album tracks", err))
         .finally(() => setLoading(false));
     } else {
@@ -119,11 +118,12 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             </div>
          ) : tracks.length > 0 ? (
             tracks.map(track => (
-              <TrackListItem 
-                key={track.id}
-                title={track.title} 
-                artist={track.artist || 'Unknown Artist'} 
-              />
+              <div key={track.id} onClick={() => playTrack(track)}>
+                <TrackListItem 
+                  title={track.title} 
+                  artist={track.artist || 'Unknown Artist'} 
+                />
+              </div>
             ))
          ) : (
             <EmptyState 

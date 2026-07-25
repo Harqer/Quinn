@@ -10,7 +10,7 @@ import { App } from "@/web/App";
 import "@/web/i18n";
 import "./index.css";
 import { AppProvider } from "@/web/contexts/AppContext";
-
+import { PlayerProvider } from "@/web/contexts/PlayerContext";
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
@@ -37,7 +37,9 @@ if (container) {
   root.render(
     <React.StrictMode>
       <AppProvider>
-        <App />
+        <PlayerProvider>
+          <App />
+        </PlayerProvider>
       </AppProvider>
     </React.StrictMode>
   );

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.PhoneAndroid
@@ -56,7 +57,7 @@ fun MaveApp(
     val adaptiveInfo = currentWindowAdaptiveInfo()
     val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
 
-    val topLevelRoutes = setOf<Route>(Route.Home, Route.Search, Route.Podcast, Route.Devices, Route.Library)
+    val topLevelRoutes = setOf<Route>(Route.Home, Route.Search, Route.Chat, Route.Podcast, Route.Devices, Route.Library)
     val startRoute: Route = Route.Welcome
 
     val sceneStrategies: List<androidx.navigation3.scene.SceneStrategy<Route>> = listOf(
@@ -95,7 +96,7 @@ fun MaveApp(
     }
 
     val currentRoute = navigationState.backStacks[navigationState.topLevelRoute]?.last() ?: navigationState.topLevelRoute
-    val showNavSuite = currentRoute in listOf(Route.Home, Route.Discover, Route.Search, Route.Podcast, Route.Library, Route.Devices) || currentRoute is Route.AlbumView || currentRoute is Route.UserProfile
+    val showNavSuite = currentRoute in listOf(Route.Home, Route.Discover, Route.Search, Route.Chat, Route.Podcast, Route.Library, Route.Devices) || currentRoute is Route.AlbumView || currentRoute is Route.UserProfile
     
     val layoutType = if (showNavSuite) {
         androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
@@ -137,6 +138,12 @@ fun MaveApp(
                 label = { Text("Search") },
                 selected = currentRoute == Route.Search,
                 onClick = { navigator.navigate(Route.Search) }
+            )
+            item(
+                icon = { Icon(Icons.Default.AutoAwesome, contentDescription = null) },
+                label = { Text("Mave") },
+                selected = currentRoute == Route.Chat,
+                onClick = { navigator.navigate(Route.Chat) }
             )
             item(
                 icon = { Icon(Icons.Default.Podcasts, contentDescription = null) },

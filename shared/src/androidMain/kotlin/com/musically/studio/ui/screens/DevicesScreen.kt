@@ -4,12 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,7 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.musically.studio.ui.MainViewModel
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,183 +26,212 @@ fun DevicesScreen(
     viewModel: MainViewModel,
     onBack: () -> Unit
 ) {
-    var isMetaConnected by remember { mutableStateOf(false) }
-    var isScanning by remember { mutableStateOf(false) }
-    var hudProjectionMode by remember { mutableStateOf(false) }
-    var statusMessage by remember { mutableStateOf("") }
-    
-    val containerColor = if (hudProjectionMode) Color.Black else Color(0xFF121212)
-    val textColor = if (hudProjectionMode) Color(0xFF9BBFFF) else Color.White
-    val coroutineScope = rememberCoroutineScope()
-    
+    var salonInvitesEnabled by remember { mutableStateOf(true) }
+    var showTooltip by remember { mutableStateOf(true) }
+
     Scaffold(
-        containerColor = containerColor,
         topBar = {
             TopAppBar(
-                title = {
-                    Column {
-                        Text("Devices & Meta Wearables", color = textColor, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                        Text("Ray-Ban Meta Smart Glasses & Intelligent Eyewear", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp)
-                    }
-                },
+                title = { Text("Your devices", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = textColor)
+                        Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White)
                     }
                 },
-                actions = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(end = 16.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .background(
-                                    if (isMetaConnected) MaterialTheme.colorScheme.primary else Color.Gray,
-                                    CircleShape
-                                )
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            if (isMetaConnected) "CONNECTED" else "DISCONNECTED",
-                            color = textColor,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF121212)
+                )
             )
-        }
+        },
+        containerColor = Color(0xFF121212)
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp),
+            contentPadding = PaddingValues(bottom = 100.dp)
         ) {
-            // Main Connection Card
-            Text("CURRENT DEVICE", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            val cardBg = if (isMetaConnected) Color(0xFF282828) else Color(0xFF1E1E1E)
-            val cardBorder = if (isMetaConnected) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f) else Color(0xFF333333)
-            
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(cardBg)
-                    .border(1.dp, cardBorder, RoundedCornerShape(16.dp))
-                    .clickable {
-                        isScanning = true
-                        statusMessage = if (isMetaConnected) "Disconnecting..." else "Connecting to Meta Wearables..."
-                        coroutineScope.launch {
-                            kotlinx.coroutines.delay(1500)
-                            isMetaConnected = !isMetaConnected
-                            isScanning = false
-                            statusMessage = if (isMetaConnected) "Ray-Ban Meta Smart Glasses Connected Successfully!" else "Meta Wearables Disconnected"
+            item {
+                Text("Current device", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFF282828), RoundedCornerShape(8.dp))
+                        .border(1.dp, Color.Gray.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.Smartphone, contentDescription = null, tint = Color(0xFF1DB954))
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column {
+                        Text("This phone", color = Color.White, fontWeight = FontWeight.Bold)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Speaker, contentDescription = null, tint = Color(0xFF1DB954), modifier = Modifier.size(14.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Speakers", color = Color(0xFF1DB954), fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(if (isMetaConnected) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f) else Color(0xFF333333)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    // Placeholder for Glasses Icon
-                    Text("👓", fontSize = 24.sp)
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("Ray-Ban Meta Smart Glasses", color = textColor, fontWeight = FontWeight.Bold)
-                    Text(
-                        if (isMetaConnected) "Connected • Battery 85%" else "Tap to scan and pair via Bluetooth / WebRTC",
-                        color = textColor.copy(alpha = 0.7f),
-                        fontSize = 12.sp
-                    )
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(if (isMetaConnected) Color(0xFF333333) else MaterialTheme.colorScheme.primary)
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isScanning) {
-                        CircularProgressIndicator(
-                            color = if (isMetaConnected) textColor else Color.Black,
-                            modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Text(if (isMetaConnected) "DISC" else "CONN", color = if (isMetaConnected) textColor else Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
                 }
             }
-            if (statusMessage.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(statusMessage, color = MaterialTheme.colorScheme.primary, fontSize = 12.sp, fontWeight = FontWeight.Medium)
-            }
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            // HUD Projection
-            Text("GLASSES PROJECTION & DISPLAY", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFF1E1E1E))
-                    .border(1.dp, Color(0xFF333333), RoundedCornerShape(16.dp))
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Visibility, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Glimmer HUD Projection Mode", color = textColor, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+
+            item {
+                Text("Select a device", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 32.dp, bottom = 16.dp))
+                
+                // Laptop
+                DeviceItem(
+                    icon = { Icon(Icons.Default.LaptopMac, contentDescription = null, tint = Color.Gray) },
+                    name = "Alexandra's Laptop"
+                )
+                
+                // Bureau
+                DeviceItem(
+                    icon = { Icon(Icons.Default.SpeakerGroup, contentDescription = null, tint = Color.Gray) },
+                    name = "Bureau",
+                    subtitle = "Google Cast"
+                )
+                
+                // Salon
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                        .background(Color(0xFF282828), RoundedCornerShape(12.dp))
+                        .border(1.dp, Color(0xFF9C27B0).copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+                        .padding(20.dp)
+                ) {
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                            Icon(Icons.Default.SpeakerGroup, contentDescription = null, tint = Color.Gray)
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text("Salon", color = Color.White, fontWeight = FontWeight.Medium)
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.Cast, contentDescription = null, tint = Color(0xFF1DB954), modifier = Modifier.size(12.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("Connecting...", color = Color(0xFF1DB954), fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                                }
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .background(Color.DarkGray, CircleShape)
+                                        .border(1.dp, Color.Gray, CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(Icons.Default.Person, contentDescription = null, tint = Color.LightGray, modifier = Modifier.size(16.dp))
+                                }
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color.Gray)
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                        
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                "Multiple people can join and control this speaker",
+                                color = Color.Gray,
+                                fontSize = 14.sp,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Switch(
+                                checked = salonInvitesEnabled,
+                                onCheckedChange = { salonInvitesEnabled = it },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color.White,
+                                    checkedTrackColor = Color(0xFF1DB954),
+                                    uncheckedThumbColor = Color.White,
+                                    uncheckedTrackColor = Color.DarkGray
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        Button(
+                            onClick = { },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1DB954)),
+                            shape = RoundedCornerShape(50)
+                        ) {
+                            Text("Invite", color = Color.Black, fontWeight = FontWeight.Bold)
+                        }
+                        
+                        if (showTooltip) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color(0xFF2E77ED), RoundedCornerShape(8.dp))
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    "Invite nearby friends to queue songs and control what's playing on this speaker",
+                                    color = Color.White,
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                IconButton(onClick = { showTooltip = false }, modifier = Modifier.size(24.dp)) {
+                                    Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White, modifier = Modifier.size(16.dp))
+                                }
+                            }
+                        }
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text("Sets pure black additive background (#000000) optimized for display glasses HUD projection.", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp)
                 }
-                Spacer(modifier = Modifier.width(16.dp))
-                Switch(
-                    checked = hudProjectionMode,
-                    onCheckedChange = { hudProjectionMode = it },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = MaterialTheme.colorScheme.primary
-                    )
+                
+                // Commode
+                DeviceItem(
+                    icon = { Icon(Icons.Default.SpeakerGroup, contentDescription = null, tint = Color.Gray) },
+                    name = "Commode",
+                    subtitle = "Google Cast"
+                )
+
+                // Meta Wearables
+                DeviceItem(
+                    icon = { Text("👓", fontSize = 24.sp) },
+                    name = "Ray-Ban Meta",
+                    subtitle = "Bluetooth"
                 )
             }
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            // Camera & Sensors
-            Text("HARDWARE CAMERA & SENSORS", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFF1E1E1E))
-                    .border(1.dp, Color(0xFF333333), RoundedCornerShape(16.dp))
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(Icons.Default.Videocam, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                Spacer(modifier = Modifier.width(16.dp))
-                Text("Camera permissions active. Connect Ray-Ban Meta glasses to stream live video feeds into Mave Lyria.", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp)
+        }
+    }
+}
+
+@Composable
+fun DeviceItem(
+    icon: @Composable () -> Unit,
+    name: String,
+    subtitle: String? = null
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { }
+            .padding(vertical = 12.dp, horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        icon()
+        Spacer(modifier = Modifier.width(16.dp))
+        Column {
+            Text(name, color = Color.White, fontWeight = FontWeight.Medium)
+            if (subtitle != null) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (subtitle.contains("Cast")) {
+                        Icon(Icons.Default.Cast, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(12.dp))
+                    } else if (subtitle.contains("Bluetooth")) {
+                        Icon(Icons.Default.Bluetooth, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(12.dp))
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(subtitle, color = Color.Gray, fontSize = 12.sp)
+                }
             }
         }
     }

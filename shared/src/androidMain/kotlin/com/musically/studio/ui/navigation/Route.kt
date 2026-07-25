@@ -10,6 +10,7 @@ sealed interface Route : NavKey {
     @Serializable data object Home : Route
     @Serializable data object Discover : Route
     @Serializable data object Search : Route
+    @Serializable data object Chat : Route
     @Serializable data object Library : Route
     @Serializable data object Podcast : Route
     @Serializable data object Devices : Route

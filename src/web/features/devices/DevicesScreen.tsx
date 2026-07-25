@@ -1,212 +1,163 @@
-import React, { useState, useEffect } from 'react';
-import { getAuth } from 'firebase/auth';
+import React, { useState } from 'react';
 import { Icon } from '../../components/atoms/Icon';
-import { logger } from "../../lib/logger";
 
 export interface DevicesScreenProps {
   onBack?: () => void;
 }
 
 export const DevicesScreen: React.FC<DevicesScreenProps> = ({ onBack }) => {
-  const [isMetaConnected, setIsMetaConnected] = useState<boolean>(false);
-  const [batteryLevel, setBatteryLevel] = useState<number>(85);
-  const [hudProjectionMode, setHudProjectionMode] = useState<boolean>(() => {
-    return localStorage.getItem('mave_hud_mode') === 'true';
-  });
-  const [isScanning, setIsScanning] = useState<boolean>(false);
-  const [activeCameraId, setActiveCameraId] = useState<string>('');
-  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
-  const [statusMessage, setStatusMessage] = useState<string>('');
-
-  useEffect(() => {
-    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-      navigator.mediaDevices.enumerateDevices().then((devices) => {
-        const cams = devices.filter((d) => d.kind === 'videoinput');
-        setVideoDevices(cams);
-        if (cams.length > 0) setActiveCameraId(cams[0].deviceId);
-      }).catch((err) => {
-        logger.warn('[WEARABLES] MediaDevices enumeration error:', err);
-      });
-    }
-
-    if ((navigator as any).getBattery) {
-      (navigator as any).getBattery().then((battery: any) => {
-        setBatteryLevel(Math.floor(battery.level * 100));
-        battery.addEventListener('levelchange', () => {
-          setBatteryLevel(Math.floor(battery.level * 100));
-        });
-      });
-    }
-  }, []);
-
-  const toggleMetaConnection = async () => {
-    setIsScanning(true);
-    setStatusMessage(isMetaConnected ? 'Disconnecting...' : 'Connecting to Meta Wearables...');
-
-    try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      const token = user ? await user.getIdToken() : '';
-
-      const targetStatus = isMetaConnected ? 'disconnected' : 'connected';
-
-      const baseUrl = import.meta.env.VITE_API_URL || '';
-      const response = await fetch(`${baseUrl}/api/devices/connect`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({ deviceId: 'meta_glasses', status: targetStatus })
-      });
-
-      if (!response.ok) {
-        throw new Error('Device connection failed');
-      }
-
-      const data = await response.json();
-      
-      setIsMetaConnected(data.status === 'connected');
-      if (data.status === 'connected') {
-        setBatteryLevel(data.batteryLevel);
-        setStatusMessage('Ray-Ban Meta Smart Glasses Connected Successfully!');
-      } else {
-        setStatusMessage('Meta Wearables Disconnected');
-      }
-    } catch (err: any) {
-      logger.error('[WEARABLES] Connection canceled or failed:', err);
-      setStatusMessage('Failed to connect to device. Please try again.');
-    } finally {
-      setIsScanning(false);
-    }
-  };
-
-  const toggleHudProjection = () => {
-    const nextVal = !hudProjectionMode;
-    setHudProjectionMode(nextVal);
-    localStorage.setItem('mave_hud_mode', String(nextVal));
-  };
+  const [salonInvitesEnabled, setSalonInvitesEnabled] = useState(true);
+  const [showTooltip, setShowTooltip] = useState(true);
 
   return (
-    <div className={`flex flex-col h-full w-full ${hudProjectionMode ? 'bg-[#000000] text-[#9bbfff]' : 'bg-background text-text-primary'} p-6 overflow-y-auto`}>
-      {/* Top Header */}
-      <div className="flex items-center justify-between pb-6 border-b border-outline/20">
-        <div className="flex items-center gap-3">
-          {onBack && (
-            <button
-              onClick={onBack}
-              className="p-2 rounded-full hover:bg-surface-container/60 transition-colors"
-              aria-label="Go back"
-            >
-              <Icon name="arrow_back" />
-            </button>
-          )}
-          <div>
-            <h1 className="text-xl font-bold tracking-tight">Devices & Meta Wearables</h1>
-            <p className="text-xs text-text-secondary">Ray-Ban Meta Smart Glasses & Intelligent Eyewear</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className={`w-2.5 h-2.5 rounded-full ${isMetaConnected ? 'bg-primary' : 'bg-text-secondary/40'}`}></span>
-          <span className="text-xs font-semibold uppercase tracking-wider">{isMetaConnected ? 'Connected' : 'Disconnected'}</span>
-        </div>
-      </div>
+    <div className="flex flex-col items-center min-h-full p-4 bg-[#121212] text-white">
+      {/* Page Title for Desktop/Tablet */}
+      <section className="hidden md:block w-full max-w-md mt-10 mb-8">
+        <h1 className="text-6xl font-bold tracking-tight">Devices</h1>
+      </section>
 
-      {/* Main Connection Card */}
-      <div className="mt-6 space-y-4">
-        <div className="text-xs font-bold uppercase tracking-wider text-text-secondary">Current Device</div>
+      {/* Main Container */}
+      <main className="w-full max-w-md bg-[#121212] md:rounded-3xl overflow-hidden md:shadow-2xl md:border border-zinc-800 flex flex-col h-full md:h-[850px]">
         
-        <div 
-          onClick={toggleMetaConnection}
-          className={`p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-            isMetaConnected 
-              ? 'bg-surface-container border-primary/40 shadow-lg shadow-primary/10' 
-              : 'bg-surface border-outline/30 hover:border-outline/60'
-          }`}
-        >
-          <div className="flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isMetaConnected ? 'bg-primary/20 text-primary' : 'bg-surface-container text-text-secondary'}`}>
-              <Icon name="glasses" size="xl" />
-            </div>
-            <div>
-              <h2 className="text-base font-bold">Ray-Ban Meta Smart Glasses</h2>
-              <p className="text-xs text-text-secondary">
-                {isMetaConnected ? `Connected • Battery ${batteryLevel}%` : 'Tap to scan and pair via Bluetooth / WebRTC'}
-              </p>
-            </div>
-          </div>
+        {/* Header */}
+        <header className="p-4 flex items-center justify-between sticky top-0 bg-[#121212] z-10">
+          <button aria-label="Close" className="p-2 hover:bg-white/10 rounded-full transition-colors" onClick={onBack}>
+            <Icon name="close" />
+          </button>
+          <span className="font-bold text-sm">Your devices</span>
+          <div className="w-8"></div>
+        </header>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-4 pb-20 custom-scrollbar">
           
-          <button 
-            disabled={isScanning}
-            className={`p-2.5 rounded-xl transition-colors flex items-center justify-center ${
-              isMetaConnected 
-                ? 'bg-outline/30 hover:bg-outline/50 text-text-primary' 
-                : 'bg-primary text-background hover:bg-primary-hover'
-            }`}
-            title={isScanning ? 'Scanning...' : isMetaConnected ? 'Disconnect' : 'Connect'}
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleMetaConnection();
-            }}
-          >
-            {isScanning ? <Icon name="search" size="md" /> : isMetaConnected ? <Icon name="bluetooth_disabled" size="md" /> : <Icon name="bluetooth_connected" size="md" />}
-          </button>
-        </div>
-
-        {statusMessage && (
-          <p className="text-xs font-medium text-primary px-1">{statusMessage}</p>
-        )}
-      </div>
-
-      {/* HUD Projection & Jetpack Glimmer Additive Theme Settings */}
-      <div className="mt-8 space-y-4">
-        <div className="text-xs font-bold uppercase tracking-wider text-text-secondary">Glasses Projection & Display</div>
-
-        <div className="p-5 rounded-2xl bg-surface border border-outline/30 flex items-center justify-between">
-          <div className="space-y-1">
-            <div className="text-sm font-bold flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-base">visibility</span>
-              Glimmer HUD Projection Mode
+          {/* Current Device */}
+          <section className="mt-4">
+            <h2 className="text-xl font-bold mb-4">Current device</h2>
+            <div className="bg-[#282828] rounded-lg p-4 flex items-center gap-4 border border-zinc-700/50">
+              <div className="text-primary">
+                <Icon name="smartphone" />
+              </div>
+              <div>
+                <p className="font-bold">This phone</p>
+                <div className="flex items-center gap-1 text-primary text-xs font-semibold">
+                  <Icon name="speaker" className="text-[14px]" />
+                  <span>Speakers</span>
+                </div>
+              </div>
             </div>
-            <p className="text-xs text-text-secondary max-w-[280px]">
-              Sets pure black additive background (#000000) optimized for display glasses HUD projection.
-            </p>
-          </div>
-          <button
-            onClick={toggleHudProjection}
-            className={`w-12 h-6 rounded-full transition-colors relative p-1 ${hudProjectionMode ? 'bg-primary' : 'bg-outline/40'}`}
-          >
-            <div className={`w-4 h-4 rounded-full bg-white transition-transform ${hudProjectionMode ? 'translate-x-6' : 'translate-x-0'}`}></div>
-          </button>
+          </section>
+
+          {/* Available Devices */}
+          <section className="mt-8">
+            <h2 className="text-sm font-bold mb-4">Select a device</h2>
+            
+            {/* Laptop */}
+            <div className="flex items-center gap-4 py-3 cursor-pointer hover:bg-white/5 rounded-lg px-2 transition-colors">
+              <div className="text-[#b3b3b3]">
+                <Icon name="laptop_mac" />
+              </div>
+              <p className="font-medium text-text-primary">Alexandra's Laptop</p>
+            </div>
+
+            {/* Bureau */}
+            <div className="flex items-center gap-4 py-3 cursor-pointer hover:bg-white/5 rounded-lg px-2 transition-colors">
+              <div className="text-[#b3b3b3]">
+                <Icon name="speaker_group" />
+              </div>
+              <div>
+                <p className="font-medium text-text-primary">Bureau</p>
+                <div className="flex items-center gap-1 text-[#b3b3b3] text-xs">
+                  <Icon name="cast" className="text-[12px]" />
+                  <span>Google Cast</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Salon Active Example */}
+            <div className="mt-4 bg-[#282828] rounded-xl p-5 relative border border-purple-500/30">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="text-[#b3b3b3]">
+                    <Icon name="speaker_group" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-white">Salon</p>
+                    <div className="flex items-center gap-1 text-primary text-xs font-semibold">
+                      <Icon name="cast" className="text-[12px]" />
+                      <span>Connecting...</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full border border-zinc-600 bg-surface-variant flex items-center justify-center">
+                    <Icon name="person" className="text-[16px] text-text-secondary" />
+                  </div>
+                  <Icon name="chevron_right" className="text-[#b3b3b3]" />
+                </div>
+              </div>
+              
+              <div className="mt-6 flex items-center justify-between">
+                <p className="text-sm text-[#b3b3b3] max-w-[200px]">Multiple people can join and control this speaker</p>
+                
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    className="sr-only peer" 
+                    checked={salonInvitesEnabled}
+                    onChange={(e) => setSalonInvitesEnabled(e.target.checked)}
+                  />
+                  <div className="w-11 h-6 bg-zinc-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                </label>
+              </div>
+              
+              <button className="mt-4 bg-primary text-black font-bold py-2 px-6 rounded-full text-sm hover:scale-105 transition-transform">
+                Invite
+              </button>
+
+              {/* Blue Tooltip */}
+              {showTooltip && (
+                <div className="mt-4 relative bg-[#2e77ed] text-white p-3 rounded-lg text-xs flex items-center justify-between">
+                  <div className="absolute top-[-10px] left-[20px] w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-b-[#2e77ed]"></div>
+                  <p>Invite nearby friends to queue songs and control what's playing on this speaker</p>
+                  <button className="ml-2 hover:bg-white/20 p-1 rounded-full" onClick={() => setShowTooltip(false)}>
+                    <Icon name="close" className="text-[16px]" />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Commode */}
+            <div className="flex items-center gap-4 py-3 mt-2 cursor-pointer hover:bg-white/5 rounded-lg px-2 transition-colors">
+              <div className="text-[#b3b3b3]">
+                <Icon name="speaker_group" />
+              </div>
+              <div>
+                <p className="font-medium text-text-primary">Commode</p>
+                <div className="flex items-center gap-1 text-[#b3b3b3] text-xs">
+                  <Icon name="cast" className="text-[12px]" />
+                  <span>Google Cast</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Meta Wearables Device */}
+            <div className="flex items-center gap-4 py-3 mt-2 cursor-pointer hover:bg-white/5 rounded-lg px-2 transition-colors">
+              <div className="text-[#b3b3b3]">
+                <Icon name="glasses" />
+              </div>
+              <div>
+                <p className="font-medium text-text-primary">Ray-Ban Meta</p>
+                <div className="flex items-center gap-1 text-[#b3b3b3] text-xs">
+                  <Icon name="bluetooth" className="text-[12px]" />
+                  <span>Bluetooth</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
         </div>
-      </div>
-
-      {/* Camera & Audio Hardware Streams */}
-      <div className="mt-8 space-y-4">
-        <div className="text-xs font-bold uppercase tracking-wider text-text-secondary">Hardware Camera & Sensors</div>
-
-        {videoDevices.length > 0 ? (
-          <div className="p-4 rounded-2xl bg-surface border border-outline/30 space-y-3">
-            <label className="text-xs font-bold text-text-secondary">Active Smart Glasses Video Source:</label>
-            <select
-              value={activeCameraId}
-              onChange={(e) => setActiveCameraId(e.target.value)}
-              className="w-full p-2.5 text-xs bg-surface-container border border-outline/40 rounded-xl text-text-primary focus:outline-none focus:border-primary"
-            >
-              {videoDevices.map((cam, idx) => (
-                <option key={cam.deviceId || idx} value={cam.deviceId}>
-                  {cam.label || `Smart Glasses Camera ${idx + 1}`}
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : (
-          <div className="p-4 rounded-2xl bg-surface border border-outline/30 text-xs text-text-secondary flex items-center gap-3">
-            <span className="material-symbols-outlined text-primary">videocam</span>
-            <span>Camera permissions active. Connect Ray-Ban Meta glasses to stream live video feeds into Mave Lyria.</span>
-          </div>
-        )}
-      </div>
+      </main>
     </div>
   );
 };

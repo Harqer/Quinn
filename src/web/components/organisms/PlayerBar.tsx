@@ -11,7 +11,10 @@ export interface PlayerBarProps {
   artistName?: string;
   albumArtUrl?: string;
   isPlaying?: boolean;
+  currentTime?: number;
+  duration?: number;
   onPlayPause?: (e: React.MouseEvent) => void;
+  onSeek?: (time: number) => void;
   onShuffle?: (e: React.MouseEvent) => void;
   onSkipPrevious?: (e: React.MouseEvent) => void;
   onSkipNext?: (e: React.MouseEvent) => void;
@@ -24,7 +27,10 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({
   artistName = "",
   albumArtUrl,
   isPlaying = false,
+  currentTime = 0,
+  duration = 0,
   onPlayPause,
+  onSeek,
   onShuffle,
   onSkipPrevious,
   onSkipNext,
@@ -33,17 +39,14 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({
   const isEmpty = !trackName || trackName === "Not playing";
   const { isQueueVisible, setIsQueueVisible, globalVolume, setGlobalVolume } = useAppContext();
   const navigate = useNavigate();
-  const [progress, setProgress] = React.useState(0);
-
-  React.useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isPlaying && !isEmpty) {
-      interval = setInterval(() => {
-        setProgress(p => p >= 100 ? 0 : p + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying, isEmpty]);
+  
+  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
+  
+  const formatTime = (secs: number) => {
+    const mins = Math.floor(secs / 60);
+    const remaining = Math.floor(secs % 60);
+    return `${mins}:${remaining.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div 
@@ -119,11 +122,21 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({
           </button>
         </div>
         <div className="flex items-center gap-2 w-full text-xs text-text-secondary font-medium">
-          <span>0:{(progress % 60).toString().padStart(2, '0')}</span>
-          <div className="h-1 flex-1 bg-surface-container rounded-full overflow-hidden group cursor-pointer">
-            <div className="h-full bg-white group-hover:bg-primary transition-colors" style={{ width: `${progress}%` }}></div>
+          <span>{formatTime(currentTime)}</span>
+          <div 
+            className="h-1 flex-1 bg-surface-container rounded-full overflow-hidden group cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!isEmpty && onSeek && duration > 0) {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+                onSeek((x / rect.width) * duration);
+              }
+            }}
+          >
+            <div className="h-full bg-white group-hover:bg-primary transition-colors" style={{ width: `${progressPercent}%` }}></div>
           </div>
-          <span>3:24</span>
+          <span>{formatTime(duration)}</span>
         </div>
       </div>
 
@@ -240,7 +253,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({
       {/* Mobile Progress Bar (Absolute bottom) */}
       {!isEmpty && (
         <div className="absolute bottom-0 left-2 right-2 h-[2px] bg-surface rounded-full overflow-hidden md:hidden">
-           <div className="h-full bg-primary rounded-full shadow-[0_0_8px_rgba(29,185,84,0.5)] transition-all duration-1000" style={{ width: `${progress}%` }} />
+           <div className="h-full bg-primary rounded-full shadow-[0_0_8px_rgba(29,185,84,0.5)] transition-all duration-1000" style={{ width: `${progressPercent}%` }} />
         </div>
       )}
     </div>

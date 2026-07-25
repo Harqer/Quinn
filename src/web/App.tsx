@@ -10,12 +10,14 @@ const AlbumView = lazy(() => import('./features/album/AlbumView').then(m => ({ d
 const PodcastGeneratorScreen = lazy(() => import('./features/podcast/PodcastGeneratorScreen').then(m => ({ default: m.PodcastGeneratorScreen })));
 const DevicesScreen = lazy(() => import('./features/devices/DevicesScreen').then(m => ({ default: m.DevicesScreen })));
 const DeleteAccountScreen = lazy(() => import('./features/auth/DeleteAccountScreen').then(m => ({ default: m.DeleteAccountScreen })));
+const ChatScreen = lazy(() => import('./features/chat/ChatScreen').then(m => ({ default: m.ChatScreen })));
 
 import { BottomNav } from './components/organisms/BottomNav';
 import { PlayerBar } from './components/organisms/PlayerBar';
 import { useAppContext } from './contexts/AppContext';
+import { PlayerProvider, usePlayerContext } from './contexts/PlayerContext';
 
-type Route = 'welcome' | 'login' | 'home' | 'search' | 'library' | 'album' | 'podcast' | 'devices' | 'delete-account';
+type Route = 'welcome' | 'login' | 'home' | 'search' | 'library' | 'album' | 'podcast' | 'devices' | 'delete-account' | 'chat';
 
 export const NavigationContext = createContext<(route: Route) => void>(() => {});
 export const useNavigate = () => useContext(NavigationContext);
@@ -23,7 +25,6 @@ export const useNavigate = () => useContext(NavigationContext);
 export const App: React.FC = () => {
   const [route, setRoute] = useState<Route>('welcome');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const { currentTrack, isPlaying, setIsPlaying } = useAppContext();
 
   useEffect(() => {
     const auth = getAuth();
@@ -53,8 +54,8 @@ export const App: React.FC = () => {
     setRoute('home');
   };
 
-  const showBottomNav = ['home', 'search', 'library', 'podcast', 'devices'].includes(route);
-  const showPlayerBar = ['home', 'search', 'library', 'album', 'podcast', 'devices'].includes(route);
+  const showBottomNav = ['home', 'search', 'library', 'podcast', 'devices', 'chat'].includes(route);
+  const showPlayerBar = ['home', 'search', 'library', 'album', 'podcast', 'devices', 'chat'].includes(route);
 
   return (
     <NavigationContext.Provider value={setRoute}>
@@ -83,6 +84,7 @@ export const App: React.FC = () => {
               {route === 'devices' && <DevicesScreen onBack={() => setRoute('home')} />}
               {route === 'album' && <AlbumView onBack={() => setRoute('home')} />}
               {route === 'delete-account' && <DeleteAccountScreen />}
+              {route === 'chat' && <ChatScreen />}
             </Suspense>
           </div>
         </main>
@@ -94,27 +96,39 @@ export const App: React.FC = () => {
         )}
         
         {showPlayerBar && (
-          <footer 
-            onClick={() => setRoute('album')} 
-            className="fixed bottom-[60px] md:bottom-0 left-0 right-0 h-[72px] md:h-[92px] bg-black px-2 md:px-6 flex items-center justify-between z-40 cursor-pointer hover:bg-surface-container transition-colors border-t border-surface-container md:border-t-0"
-          >
-            <PlayerBar 
-              trackName={currentTrack?.title}
-              artistName={currentTrack?.artist}
-              albumArtUrl={currentTrack?.albumArtUrl}
-              isPlaying={isPlaying}
-              onPlayPause={(e) => {
-                e.stopPropagation();
-                setIsPlaying(!isPlaying);
-              }}
-              onShuffle={() => useAppContext().sendPlaybackCommand('toggle_shuffle')}
-              onSkipPrevious={() => useAppContext().sendPlaybackCommand('skip_previous')}
-              onSkipNext={() => useAppContext().sendPlaybackCommand('skip_next')}
-              onRepeat={() => useAppContext().sendPlaybackCommand('toggle_repeat')}
-            />
-          </footer>
+          <PlayerBarWrapper onAlbumClick={() => setRoute('album')} />
         )}
       </div>
     </NavigationContext.Provider>
+  );
+};
+
+const PlayerBarWrapper: React.FC<{ onAlbumClick: () => void }> = ({ onAlbumClick }) => {
+  const { currentTrack, playerState, currentTime, duration, togglePlayPause, seek } = usePlayerContext();
+  const { sendPlaybackCommand } = useAppContext();
+  
+  return (
+    <footer 
+      onClick={onAlbumClick} 
+      className="fixed bottom-[60px] md:bottom-0 left-0 right-0 h-[72px] md:h-[92px] bg-black px-2 md:px-6 flex items-center justify-between z-40 cursor-pointer hover:bg-surface-container transition-colors border-t border-surface-container md:border-t-0"
+    >
+      <PlayerBar 
+        trackName={currentTrack?.title}
+        artistName={currentTrack?.artist}
+        albumArtUrl={currentTrack?.albumArtUrl}
+        isPlaying={playerState === 'playing'}
+        currentTime={currentTime}
+        duration={duration}
+        onSeek={seek}
+        onPlayPause={(e) => {
+          e.stopPropagation();
+          togglePlayPause();
+        }}
+        onShuffle={() => sendPlaybackCommand('toggle_shuffle')}
+        onSkipPrevious={() => sendPlaybackCommand('skip_previous')}
+        onSkipNext={() => sendPlaybackCommand('skip_next')}
+        onRepeat={() => sendPlaybackCommand('toggle_repeat')}
+      />
+    </footer>
   );
 };

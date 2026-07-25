@@ -132,6 +132,18 @@ fun maveEntryProvider(
         )
     }
 
+    entry<Route.Chat>(
+        metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
+            Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
+                androidx.compose.material3.Text("Chat") 
+            }
+        }
+    ) {
+        ChatScreen(
+            onNavigateBack = { navigator.goBack() }
+        )
+    }
+
     entry<Route.Library>(
         metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
             Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
