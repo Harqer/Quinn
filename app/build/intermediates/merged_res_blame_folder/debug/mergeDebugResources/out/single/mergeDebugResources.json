@@ -1,146 +1,58 @@
 [
     {
-        "merged": "com.musically.studio.app-debug-80:/menu_bottom_nav_menu.xml.flat",
-        "source": "com.musically.studio.app-main-82:/menu/bottom_nav_menu.xml"
+        "merged": "com.musically.studio.app-debug-116:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.musically.studio.app-main-118:/mipmap-xxhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/mipmap-xxxhdpi-v4_ic_launcher.png.flat",
-        "source": "com.musically.studio.app-main-82:/mipmap-xxxhdpi-v4/ic_launcher.png"
+        "merged": "com.musically.studio.app-debug-116:/xml_provider_paths.xml.flat",
+        "source": "com.musically.studio.app-main-118:/xml/provider_paths.xml"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/layout_home_.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/home_.xml"
+        "merged": "com.musically.studio.app-debug-116:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.musically.studio.app-main-118:/mipmap-hdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/layout_song_share.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/song_share.xml"
+        "merged": "com.musically.studio.app-debug-116:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.musically.studio.app-main-118:/mipmap-xxxhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/mipmap-xhdpi-v4_ic_launcher.png.flat",
-        "source": "com.musically.studio.app-main-82:/mipmap-xhdpi-v4/ic_launcher.png"
+        "merged": "com.musically.studio.app-debug-116:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.musically.studio.app-main-118:/mipmap-xxxhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/layout_item_chat_message.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/item_chat_message.xml"
+        "merged": "com.musically.studio.app-debug-116:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.musically.studio.app-main-118:/mipmap-xhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/layout_signup_1.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/signup_1.xml"
+        "merged": "com.musically.studio.app-debug-116:/drawable_mave_brand_light.png.flat",
+        "source": "com.musically.studio.app-main-118:/drawable/mave_brand_light.png"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/mipmap-mdpi-v4_ic_launcher.png.flat",
-        "source": "com.musically.studio.app-main-82:/mipmap-mdpi-v4/ic_launcher.png"
+        "merged": "com.musically.studio.app-debug-116:/xml_app_metadata.xml.flat",
+        "source": "com.musically.studio.app-main-118:/xml/app_metadata.xml"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/xml_provider_paths.xml.flat",
-        "source": "com.musically.studio.app-main-82:/xml/provider_paths.xml"
+        "merged": "com.musically.studio.app-debug-116:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.musically.studio.app-main-118:/mipmap-xxhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/mipmap-xxhdpi-v4_ic_launcher_round.png.flat",
-        "source": "com.musically.studio.app-main-82:/mipmap-xxhdpi-v4/ic_launcher_round.png"
+        "merged": "com.musically.studio.app-debug-116:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.musically.studio.app-main-118:/mipmap-hdpi/ic_launcher.png"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/layout_start.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/start.xml"
+        "merged": "com.musically.studio.app-debug-116:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.musically.studio.app-main-118:/mipmap-mdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/layout_library.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/library.xml"
+        "merged": "com.musically.studio.app-debug-116:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.musically.studio.app-main-118:/mipmap-xhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/layout_signup_4.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/signup_4.xml"
+        "merged": "com.musically.studio.app-debug-116:/drawable_mave_brand_dark.png.flat",
+        "source": "com.musically.studio.app-main-118:/drawable/mave_brand_dark.png"
     },
     {
-        "merged": "com.musically.studio.app-debug-80:/layout_album_radio.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/album_radio.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/mipmap-hdpi-v4_ic_launcher.png.flat",
-        "source": "com.musically.studio.app-main-82:/mipmap-hdpi-v4/ic_launcher.png"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/mipmap-xhdpi-v4_ic_launcher_round.png.flat",
-        "source": "com.musically.studio.app-main-82:/mipmap-xhdpi-v4/ic_launcher_round.png"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_signup_2.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/signup_2.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_user_librar.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/user_librar.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/mipmap-xxhdpi-v4_ic_launcher.png.flat",
-        "source": "com.musically.studio.app-main-82:/mipmap-xxhdpi-v4/ic_launcher.png"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/mipmap-mdpi-v4_ic_launcher_round.png.flat",
-        "source": "com.musically.studio.app-main-82:/mipmap-mdpi-v4/ic_launcher_round.png"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/mipmap-hdpi-v4_ic_launcher_round.png.flat",
-        "source": "com.musically.studio.app-main-82:/mipmap-hdpi-v4/ic_launcher_round.png"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_item_spotify_track.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/item_spotify_track.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_search.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/search.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_track_view.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/track_view.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_choose_arti.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/choose_arti.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_listening_o.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/listening_o.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/drawable_album_view.xml.flat",
-        "source": "com.musically.studio.app-main-82:/drawable/album_view.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_signup_3.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/signup_3.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/mipmap-xxxhdpi-v4_ic_launcher_round.png.flat",
-        "source": "com.musically.studio.app-main-82:/mipmap-xxxhdpi-v4/ic_launcher_round.png"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/drawable_album_contr.xml.flat",
-        "source": "com.musically.studio.app-main-82:/drawable/album_contr.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_settings.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/settings.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_scanning_fo.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/scanning_fo.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_album_view.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/album_view.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_playlist_se.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/playlist_se.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/layout_chose_podca.xml.flat",
-        "source": "com.musically.studio.app-main-82:/layout/chose_podca.xml"
-    },
-    {
-        "merged": "com.musically.studio.app-debug-80:/drawable_track_.xml.flat",
-        "source": "com.musically.studio.app-main-82:/drawable/track_.xml"
+        "merged": "com.musically.studio.app-debug-116:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.musically.studio.app-main-118:/mipmap-mdpi/ic_launcher.png"
     }
 ]

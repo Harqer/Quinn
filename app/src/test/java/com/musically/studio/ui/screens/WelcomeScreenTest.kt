@@ -57,7 +57,7 @@ class WelcomeScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Privacy & Data Usage").assertExists()
+        composeTestRule.onNodeWithText("Prominent Disclosure & Consent").assertExists()
         composeTestRule.onNodeWithText("I Agree").assertExists()
         composeTestRule.onNodeWithText("Decline").assertExists()
         composeTestRule.onRoot().captureRoboImage()

@@ -137,27 +137,38 @@ class WearableStreamingService : Service() {
     private suspend fun attachCapabilities(session: DeviceSession) {
         session.addDisplay(DisplayConfiguration()).onSuccess { display ->
             activeDisplay = display
-            
-            
             updateWearableUi("", "") // Initial UI render
-            
-            val config = StreamConfiguration(VideoQuality.MEDIUM, 24, false)
-            session.addStream(config).onSuccess { stream ->
-                activeStream = stream
-                stream.start().onSuccess {
-                    scope.launch {
-                        stream.videoStream.collect { frame ->
-                            val bytes = ByteArray(frame.buffer.remaining())
-                            frame.buffer.get(bytes)
-                            _cameraFrames.emit(bytes)
-                        }
-                    }
-                }
+            startStream(session)
+        }
+    }
+
+    private suspend fun startStream(session: DeviceSession) {
+        val config = StreamConfiguration(VideoQuality.MEDIUM, 24, false)
+        session.addStream(config).onSuccess { stream ->
+            activeStream = stream
+            stream.start().onSuccess {
+                startFrameCollection(stream)
+            }
+        }
+    }
+
+    private fun startFrameCollection(stream: Stream) {
+        scope.launch {
+            stream.videoStream.collect { frame ->
+                val bytes = ByteArray(frame.buffer.remaining())
+                frame.buffer.get(bytes)
+                _cameraFrames.emit(bytes)
             }
         }
     }
 
     fun updateWearableUi(songTitle: String, geminiResponse: String) {
+        val onMic = { emitInteraction("MIC") }
+        val onMusicNote = { emitInteraction("MUSIC_NOTE") }
+        val onSkipPrevious = { emitInteraction("SKIP_PREVIOUS") }
+        val onPlayPause = { emitInteraction("PLAY_PAUSE") }
+        val onSkipNext = { emitInteraction("SKIP_NEXT") }
+
         scope.launch {
             activeDisplay?.sendContent {
                 flexBox {
@@ -166,14 +177,14 @@ class WearableStreamingService : Service() {
                     }
 
                     flexBox(direction = Direction.ROW) {
-                        button("", ButtonStyle.PRIMARY, IconName.SPEECH_BUBBLE, { emitInteraction("MIC") }, 0f, 0f, Alignment.CENTER)
-                        button("", ButtonStyle.PRIMARY, IconName.MUSIC_NOTE, { emitInteraction("MUSIC_NOTE") }, 0f, 0f, Alignment.CENTER)
+                        button("", ButtonStyle.PRIMARY, IconName.SPEECH_BUBBLE, onMic, 0f, 0f, Alignment.CENTER)
+                        button("", ButtonStyle.PRIMARY, IconName.MUSIC_NOTE, onMusicNote, 0f, 0f, Alignment.CENTER)
                     }
 
                     flexBox(direction = Direction.ROW) {
-                        button("", ButtonStyle.PRIMARY, IconName.TRIANGLE_LEFT_VERTICAL_LINE, { emitInteraction("SKIP_PREVIOUS") }, 0f, 0f, Alignment.CENTER)
-                        button("", ButtonStyle.PRIMARY, IconName.TRIANGLE_RIGHT, { emitInteraction("PLAY_PAUSE") }, 0f, 0f, Alignment.CENTER)
-                        button("", ButtonStyle.PRIMARY, IconName.TRIANGLE_RIGHT_VERTICAL_LINE, { emitInteraction("SKIP_NEXT") }, 0f, 0f, Alignment.CENTER)
+                        button("", ButtonStyle.PRIMARY, IconName.TRIANGLE_LEFT_VERTICAL_LINE, onSkipPrevious, 0f, 0f, Alignment.CENTER)
+                        button("", ButtonStyle.PRIMARY, IconName.TRIANGLE_RIGHT, onPlayPause, 0f, 0f, Alignment.CENTER)
+                        button("", ButtonStyle.PRIMARY, IconName.TRIANGLE_RIGHT_VERTICAL_LINE, onSkipNext, 0f, 0f, Alignment.CENTER)
                     }
                 }
             }

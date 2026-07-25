@@ -3,12 +3,15 @@ import java.io.File
 
 plugins {
     alias(libs.plugins.android.application)
+    id("org.jetbrains.kotlin.android")
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     id("jacoco")
     alias(libs.plugins.roborazzi)
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 val localProperties = Properties().apply {
@@ -170,6 +173,7 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.crashlytics)
+    implementation("com.google.firebase:firebase-analytics")
     implementation(libs.firebase.appcheck.playintegrity)
     implementation(libs.firebase.appcheck.debug)
 

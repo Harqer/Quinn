@@ -1,7 +1,8 @@
 package com.musically.studio.appfunctions
 
+import android.content.Context
+import android.content.Intent
 import androidx.appfunctions.AppFunctionContext
-import com.musically.studio.network.MaveSessionManager
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -9,13 +10,14 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
+import org.mockito.ArgumentMatchers.any
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class MaveFunctionsTest {
 
     @Mock
-    private lateinit var sessionManager: MaveSessionManager
+    private lateinit var applicationContext: Context
 
     @Mock
     private lateinit var appFunctionContext: AppFunctionContext
@@ -25,61 +27,36 @@ class MaveFunctionsTest {
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        maveFunctions = MaveFunctions(sessionManager)
+        maveFunctions = MaveFunctions(applicationContext)
     }
 
     @Test
     fun testStrikeVibe() = runTest {
         maveFunctions.strikeVibe(appFunctionContext, "Chill lofi beats")
-        verify(sessionManager).connect()
-        verify(sessionManager).sendEvent("feedback", mapOf("text" to "Chill lofi beats"))
+        verify(applicationContext).startActivity(any(Intent::class.java))
     }
 
     @Test
-    fun testWarpMusic() = runTest {
-        maveFunctions.warpMusic(appFunctionContext, 120, 0.8f)
-        verify(sessionManager).connect()
-        verify(sessionManager).sendEvent(
-            "steering_action",
-            mapOf("params" to mapOf("bpm" to 120, "density" to 0.8f))
-        )
-    }
-    
-    @Test
-    fun testWarpMusic_PartialParams() = runTest {
-        maveFunctions.warpMusic(appFunctionContext, null, 0.5f)
-        verify(sessionManager).connect()
-        verify(sessionManager).sendEvent(
-            "steering_action",
-            mapOf("params" to mapOf("density" to 0.5f))
-        )
-    }
-
-    @Test
-    fun testNarratePOV() = runTest {
-        maveFunctions.narratePOV(appFunctionContext)
-        verify(sessionManager).connect()
-        verify(sessionManager).sendEvent("text_command", mapOf("text" to "Narrate my surroundings"))
+    fun testGeneratePodcast() = runTest {
+        maveFunctions.generatePodcast(appFunctionContext, "AI history")
+        verify(applicationContext).startActivity(any(Intent::class.java))
     }
 
     @Test
     fun testSearchForContent() = runTest {
         maveFunctions.searchForContent(appFunctionContext, "Podcasts about AI")
-        verify(sessionManager).connect()
-        verify(sessionManager).sendEvent("text_command", mapOf("text" to "Search for Podcasts about AI"))
+        verify(applicationContext).startActivity(any(Intent::class.java))
     }
 
     @Test
     fun testOpenLibrary() = runTest {
         maveFunctions.openLibrary(appFunctionContext)
-        verify(sessionManager).connect()
-        verify(sessionManager).sendEvent("navigation", mapOf("destination" to "library"))
+        verify(applicationContext).startActivity(any(Intent::class.java))
     }
 
     @Test
     fun testOpenHome() = runTest {
         maveFunctions.openHome(appFunctionContext)
-        verify(sessionManager).connect()
-        verify(sessionManager).sendEvent("navigation", mapOf("destination" to "home"))
+        verify(applicationContext).startActivity(any(Intent::class.java))
     }
 }

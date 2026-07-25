@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.musically.studio.app-mergeDebugResources-78:/values-v18/values-v18.xml",
+            "outputFile": "com.musically.studio.app-mergeDebugResources-114:/values-v18/values-v18.xml",
             "map": [
                 {
-                    "source": "/home/shaolin/.gradle/caches/9.1.0/transforms/ee4c87719b02d45734753392e9db686a/transformed/appcompat-1.6.1/res/values-v18/values-v18.xml",
+                    "source": "/home/shaolin/.gradle/caches/9.5.0/transforms/da886653b5490faf7c6e55db8761d58b/transformed/appcompat-1.7.1/res/values-v18/values-v18.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

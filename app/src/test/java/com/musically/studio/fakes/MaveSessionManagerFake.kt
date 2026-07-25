@@ -22,11 +22,11 @@ class MaveSessionManagerFake(client: OkHttpClient = OkHttpClient()) : MaveSessio
         // No-op for tests
     }
 
-    override fun play() {}
-    override fun pause() {}
-    override fun stop() {}
-    override fun next() {}
-    override fun previous() {}
+    override fun play(): Boolean? = true
+    override fun pause(): Boolean? = true
+    override fun stop(): Boolean? = true
+    override fun next(): Boolean? = true
+    override fun previous(): Boolean? = true
 
     override fun sendAudio(base64: String) {}
     override fun sendVideoFrame(frameBytes: ByteArray) {}

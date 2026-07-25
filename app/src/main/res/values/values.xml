@@ -17,6 +17,7 @@
     <string name="google_app_id" translatable="false">1:759854762539:android:e931c1265d228fa84cf86e</string>
     <string name="google_storage_bucket" translatable="false">mave-studio.firebasestorage.app</string>
     <string name="project_id" translatable="false">mave-studio</string>
+    <string name="google_api_key" translatable="false">759854762539-dummy.apps.googleusercontent.com</string>
     <string name="title_home">Home</string>
     <string name="title_library">Your Library</string>
     <string name="title_search">Search</string>

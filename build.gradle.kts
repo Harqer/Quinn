@@ -12,9 +12,9 @@ plugins {
     id("com.google.firebase.crashlytics") version "3.0.2" apply false
 }
 
-subprojects {
-    val buildDir = File("/tmp/lyria-build/${project.name}")
-    buildDir.mkdirs()
-    layout.buildDirectory.set(buildDir)
-}
 
+
+
+allprojects {
+    layout.buildDirectory.set(file("/tmp/lyria_build/${project.name}"))
+}

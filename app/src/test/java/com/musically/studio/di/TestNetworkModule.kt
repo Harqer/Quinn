@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.musically.studio.network.ApiClient
 import com.musically.studio.network.FakeApiClient
+import com.musically.studio.fakes.MaveSessionManagerFake
 import com.musically.studio.network.MaveSessionManager
 import dagger.Module
 import dagger.Provides
@@ -35,7 +36,7 @@ object TestNetworkModule {
     @Provides
     @Singleton
     fun provideMaveSessionManager(okHttpClient: OkHttpClient): MaveSessionManager {
-        return FakeMaveSessionManager(okHttpClient)
+        return MaveSessionManagerFake(okHttpClient)
     }
 
     @Provides

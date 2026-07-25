@@ -29,6 +29,8 @@ import androidx.core.content.ContextCompat
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
+import android.view.View
+
 @Composable
 fun CameraCaptureScreen(
     onImageCaptured: (String) -> Unit,
@@ -40,42 +42,64 @@ fun CameraCaptureScreen(
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
 
+    val onCaptureClick: () -> Unit = click@{
+        val capture = imageCapture ?: return@click
+        val executor = ContextCompat.getMainExecutor(context)
+        capture.takePicture(
+            executor,
+            object : ImageCapture.OnImageCapturedCallback() {
+                override fun onCaptureSuccess(image: ImageProxy) {
+                    val base64 = imageProxyToBase64(image)
+                    image.close()
+                    onImageCaptured(base64)
+                }
+
+                override fun onError(exception: ImageCaptureException) {
+                    Timber.e(exception, "Photo capture failed: ${exception.message}")
+                }
+            }
+        )
+    }
+
+    val factoryView: (Context) -> View = { ctx ->
+        val previewView = PreviewView(ctx)
+        val executor = ContextCompat.getMainExecutor(ctx)
+        
+        cameraProviderFuture.addListener({
+            val cameraProvider = cameraProviderFuture.get()
+            val preview = androidx.camera.core.Preview.Builder().build().also {
+                it.setSurfaceProvider(previewView.surfaceProvider)
+            }
+
+            val imageCaptureBuilder = ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            
+            imageCapture = imageCaptureBuilder.build()
+
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(
+                    lifecycleOwner,
+                    cameraSelector,
+                    preview,
+                    imageCapture
+                )
+            } catch (exc: Exception) {
+                Timber.e(exc, "Use case binding failed")
+            }
+        }, executor)
+        previewView
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
-            factory = { ctx ->
-                val previewView = PreviewView(ctx)
-                val executor = ContextCompat.getMainExecutor(ctx)
-                
-                cameraProviderFuture.addListener({
-                    val cameraProvider = cameraProviderFuture.get()
-                    val preview = androidx.camera.core.Preview.Builder().build().also {
-                        it.setSurfaceProvider(previewView.surfaceProvider)
-                    }
-
-                    val imageCaptureBuilder = ImageCapture.Builder()
-                        .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                    
-                    imageCapture = imageCaptureBuilder.build()
-
-                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-                    try {
-                        cameraProvider.unbindAll()
-                        cameraProvider.bindToLifecycle(
-                            lifecycleOwner,
-                            cameraSelector,
-                            preview,
-                            imageCapture
-                        )
-                    } catch (exc: Exception) {
-                        Timber.e(exc, "Use case binding failed")
-                    }
-                }, executor)
-                previewView
-            }
+            factory = factoryView
         )
 
+        val closeIconColor = Color.White
         // Close button
         IconButton(
             onClick = onClose,
@@ -84,29 +108,13 @@ fun CameraCaptureScreen(
                 .align(Alignment.TopStart)
                 .statusBarsPadding()
         ) {
-            Icon(Icons.Default.Close, contentDescription = "Close Camera", tint = Color.White)
+            Icon(Icons.Default.Close, contentDescription = "Close Camera", tint = closeIconColor)
         }
 
+        val captureIcon = Icons.Default.PhotoCamera
         // Capture button
         FloatingActionButton(
-            onClick = {
-                val capture = imageCapture ?: return@FloatingActionButton
-                val executor = ContextCompat.getMainExecutor(context)
-                capture.takePicture(
-                    executor,
-                    object : ImageCapture.OnImageCapturedCallback() {
-                        override fun onCaptureSuccess(image: ImageProxy) {
-                            val base64 = imageProxyToBase64(image)
-                            image.close()
-                            onImageCaptured(base64)
-                        }
-
-                        override fun onError(exception: ImageCaptureException) {
-                            Timber.e(exception, "Photo capture failed: ${exception.message}")
-                        }
-                    }
-                )
-            },
+            onClick = onCaptureClick,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 48.dp)
@@ -114,7 +122,7 @@ fun CameraCaptureScreen(
             containerColor = Color.White,
             contentColor = Color.Black
         ) {
-            Icon(Icons.Default.PhotoCamera, contentDescription = "Take Photo")
+            Icon(captureIcon, contentDescription = "Take Photo")
         }
     }
 }

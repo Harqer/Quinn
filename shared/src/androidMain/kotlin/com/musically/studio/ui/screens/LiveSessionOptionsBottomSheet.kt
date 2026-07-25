@@ -35,28 +35,36 @@ fun LiveSessionOptionsBottomSheet(
             )
             Spacer(modifier = Modifier.height(16.dp))
             
-            ListItem(
-                headlineContent = { Text("Share Session", color = MaterialTheme.colorScheme.onSurface) },
-                leadingContent = { Icon(Icons.Default.Share, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
-                modifier = Modifier.clickable { 
-                    val sendIntent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, "Check out my live music session on Mave!")
-                        type = "text/plain"
-                    }
-                    val shareIntent = Intent.createChooser(sendIntent, null)
-                    context.startActivity(shareIntent)
-                    onDismiss()
+            val onShare: () -> Unit = {
+                val sendIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, "Check out my live music session on Mave!")
+                    type = "text/plain"
                 }
+                context.startActivity(Intent.createChooser(sendIntent, null))
+                onDismiss()
+            }
+
+            val headlineShare = "Share Session"
+            val shareIcon = Icons.Default.Share
+            ListItem(
+                headlineContent = { Text(headlineShare, color = MaterialTheme.colorScheme.onSurface) },
+                leadingContent = { Icon(shareIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+                modifier = Modifier.clickable(onClick = onShare)
             )
+            
+            val onClear: () -> Unit = {
+                viewModel.stopLiveSession()
+                viewModel.startLiveSession()
+                onDismiss()
+            }
+
+            val headlineClear = "Clear History"
+            val clearIcon = Icons.Default.Clear
             ListItem(
-                headlineContent = { Text("Clear History", color = MaterialTheme.colorScheme.error) },
-                leadingContent = { Icon(Icons.Default.Clear, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
-                modifier = Modifier.clickable { 
-                    viewModel.stopLiveSession()
-                    viewModel.startLiveSession()
-                    onDismiss()
-                }
+                headlineContent = { Text(headlineClear, color = MaterialTheme.colorScheme.error) },
+                leadingContent = { Icon(clearIcon, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
+                modifier = Modifier.clickable(onClick = onClear)
             )
             Spacer(modifier = Modifier.height(24.dp))
         }

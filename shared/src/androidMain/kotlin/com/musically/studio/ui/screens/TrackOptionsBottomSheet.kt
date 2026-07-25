@@ -42,39 +42,48 @@ fun TrackOptionsBottomSheet(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 
+                val headlineAdd = "Add to playlist"
+                val addIcon = Icons.Default.Add
                 ListItem(
-                    headlineContent = { Text("Add to playlist", color = MaterialTheme.colorScheme.onSurface) },
-                    leadingContent = { Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    headlineContent = { Text(headlineAdd, color = MaterialTheme.colorScheme.onSurface) },
+                    leadingContent = { Icon(addIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                     modifier = Modifier.clickable { 
                         viewModel.addToPlaylist(track.id)
                         onDismiss()
                     }
                 )
+
+                val headlineArtist = "View artist"
+                val personIcon = Icons.Default.Person
                 ListItem(
-                    headlineContent = { Text("View artist", color = MaterialTheme.colorScheme.onSurface) },
-                    leadingContent = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    headlineContent = { Text(headlineArtist, color = MaterialTheme.colorScheme.onSurface) },
+                    leadingContent = { Icon(personIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                     modifier = Modifier.clickable { 
                         viewModel.viewArtist(context, track)
                         onDismiss()
                     }
                 )
-                ListItem(
-                    headlineContent = { Text("Share vibe", color = MaterialTheme.colorScheme.onSurface) },
-                    leadingContent = { Icon(Icons.Default.Share, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    modifier = Modifier.clickable { 
-                        viewModel.shareTrack(track.id) { url ->
-                            if (url != null) {
-                                val sendIntent = Intent().apply {
-                                    action = Intent.ACTION_SEND
-                                    putExtra(Intent.EXTRA_TEXT, "Check out this vibe on Mave: $url")
-                                    type = "text/plain"
-                                }
-                                val shareIntent = Intent.createChooser(sendIntent, null)
-                                context.startActivity(shareIntent)
+                
+                val onShare: () -> Unit = {
+                    viewModel.shareTrack(track.id) { url ->
+                        if (url != null) {
+                            val sendIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, "Check out this vibe on Mave: $url")
+                                type = "text/plain"
                             }
+                            context.startActivity(Intent.createChooser(sendIntent, null))
                         }
-                        onDismiss()
                     }
+                    onDismiss()
+                }
+
+                val headlineShare = "Share vibe"
+                val shareIcon = Icons.Default.Share
+                ListItem(
+                    headlineContent = { Text(headlineShare, color = MaterialTheme.colorScheme.onSurface) },
+                    leadingContent = { Icon(shareIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    modifier = Modifier.clickable(onClick = onShare)
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
