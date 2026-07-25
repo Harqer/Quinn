@@ -98,31 +98,18 @@ fun WelcomeScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
             MaveButton(
-                text = "Sign up free",
+                text = "Sign up",
                 onClick = onSignUpClick,
                 modifier = Modifier.fillMaxWidth(),
                 style = MaveStyles.primaryButton
             )
             Spacer(modifier = Modifier.height(12.dp))
             MaveButton(
-                text = "Continue with Google",
-                onClick = { viewModel.triggerGoogleSignIn() },
+                text = "Log in",
+                onClick = onLoginClick,
                 modifier = Modifier.fillMaxWidth(),
                 style = MaveStyles.outlinedButton
             )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Spacer(modifier = Modifier.height(12.dp))
-            MaveButton(
-                text = "Continue with Apple",
-                onClick = { viewModel.triggerAppleSignIn() },
-                modifier = Modifier.fillMaxWidth(),
-                style = MaveStyles.outlinedButton
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            TextButton(onClick = onLoginClick) {
-                Text("Log in", color = Color.White, fontWeight = FontWeight.Bold)
-            }
         }
     }
 }

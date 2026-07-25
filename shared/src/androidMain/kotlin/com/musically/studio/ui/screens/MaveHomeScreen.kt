@@ -1,0 +1,297 @@
+package com.musically.studio.ui.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.musically.studio.network.MaveTrack
+import com.musically.studio.ui.MainViewModel
+import java.util.Calendar
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MaveHomeScreen(
+    viewModel: MainViewModel,
+    onNavigateToSettings: () -> Unit = {},
+    onTrackClick: (String) -> Unit
+) {
+    val userTracks by viewModel.userTracks.collectAsStateWithLifecycle()
+    val communityTracks by viewModel.communityTracks.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    
+    val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    val greeting = when {
+        hour < 12 -> "Good morning"
+        hour < 18 -> "Good afternoon"
+        else -> "Good evening"
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchUserTracks()
+        viewModel.fetchCommunityTracks()
+    }
+
+    Scaffold(
+        containerColor = Color(0xFF121212),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF1DB954))
+                                .clickable { onNavigateToSettings() },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "M",
+                                color = Color.Black,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "$greeting",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF121212).copy(alpha = 0.9f)
+                )
+            )
+        }
+    ) { paddingValues ->
+        if (isLoading && userTracks.isEmpty() && communityTracks.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Color(0xFF1DB954))
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(bottom = 120.dp)
+            ) {
+                // Recent Grid
+                val recentTracks = (if (userTracks.isNotEmpty()) userTracks else communityTracks).take(6)
+                if (recentTracks.isNotEmpty()) {
+                    item {
+                        RecentTracksGrid(
+                            tracks = recentTracks,
+                            onTrackClick = onTrackClick
+                        )
+                    }
+                }
+
+                // Made for you Carousel
+                val madeForYouTracks = if (userTracks.isNotEmpty()) userTracks.take(5) else communityTracks.take(5)
+                if (madeForYouTracks.isNotEmpty()) {
+                    item {
+                        MaveCarousel(
+                            title = "Made for you",
+                            tracks = madeForYouTracks,
+                            onTrackClick = onTrackClick
+                        )
+                    }
+                }
+
+                // Community Vibes Carousel
+                if (communityTracks.isNotEmpty()) {
+                    item {
+                        MaveCarousel(
+                            title = "Community Vibes",
+                            tracks = communityTracks,
+                            onTrackClick = onTrackClick
+                        )
+                    }
+                }
+
+                // Recently Played Carousel (only if user has tracks)
+                if (userTracks.isNotEmpty()) {
+                    item {
+                        MaveCarousel(
+                            title = "Recently played",
+                            tracks = userTracks,
+                            onTrackClick = onTrackClick
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RecentTracksGrid(
+    tracks: List<MaveTrack>,
+    onTrackClick: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        val rows = tracks.chunked(2)
+        rows.forEach { rowTracks ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                rowTracks.forEach { track ->
+                    RecentTrackItem(
+                        track = track,
+                        modifier = Modifier.weight(1f),
+                        onClick = { onTrackClick(track.id) }
+                    )
+                }
+                // Fill empty space if odd number
+                if (rowTracks.size == 1) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RecentTrackItem(
+    track: MaveTrack,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .height(56.dp)
+            .clip(RoundedCornerShape(4.dp))
+            .background(Color(0xFF282828))
+            .clickable(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val imageUrl = track.albumArtUrl ?: track.album.images.firstOrNull()?.url
+        if (imageUrl != null) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = track.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(56.dp)
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .background(Color.DarkGray)
+            )
+        }
+        Text(
+            text = track.title.ifEmpty { track.name },
+            color = Color.White,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.Bold,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+    }
+}
+
+@Composable
+fun MaveCarousel(
+    title: String,
+    tracks: List<MaveTrack>,
+    onTrackClick: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp)
+    ) {
+        Text(
+            text = title,
+            color = Color.White,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp, bottom = 12.dp)
+        )
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(tracks) { track ->
+                MaveCard(
+                    track = track,
+                    onClick = { onTrackClick(track.id) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MaveCard(
+    track: MaveTrack,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(140.dp)
+            .clickable(onClick = onClick)
+    ) {
+        val imageUrl = track.albumArtUrl ?: track.album.images.firstOrNull()?.url
+        Box(
+            modifier = Modifier
+                .size(140.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.DarkGray)
+        ) {
+            if (imageUrl != null) {
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = track.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = track.title.ifEmpty { track.name },
+            color = Color.White,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            text = track.artist.ifEmpty { track.artists.firstOrNull()?.name ?: "" },
+            color = Color(0xFFA7A7A7),
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 4.dp)
+        )
+    }
+}

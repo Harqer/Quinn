@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LibraryMusic
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Podcasts
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomSheetScaffold
@@ -56,7 +56,7 @@ fun MaveApp(
     val adaptiveInfo = currentWindowAdaptiveInfo()
     val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
 
-    val topLevelRoutes = setOf<Route>(Route.Home, Route.Discover, Route.Search, Route.Podcast, Route.Library)
+    val topLevelRoutes = setOf<Route>(Route.Home, Route.Search, Route.Podcast, Route.Devices, Route.Library)
     val startRoute: Route = Route.Welcome
 
     val sceneStrategies: List<androidx.navigation3.scene.SceneStrategy<Route>> = listOf(
@@ -128,15 +128,9 @@ fun MaveApp(
         navigationSuiteItems = {
             item(
                 icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                label = { Text("Studio") },
+                label = { Text("Home") },
                 selected = currentRoute == Route.Home,
                 onClick = { navigator.navigate(Route.Home) }
-            )
-            item(
-                icon = { Icon(Icons.Default.Search, contentDescription = null) },
-                label = { Text("Discover") },
-                selected = currentRoute == Route.Discover,
-                onClick = { navigator.navigate(Route.Discover) }
             )
             item(
                 icon = { Icon(Icons.Default.Search, contentDescription = null) },
@@ -145,22 +139,22 @@ fun MaveApp(
                 onClick = { navigator.navigate(Route.Search) }
             )
             item(
-                icon = { Icon(Icons.Default.LibraryMusic, contentDescription = null) },
-                label = { Text("Library") },
-                selected = currentRoute == Route.Library,
-                onClick = { navigator.navigate(Route.Library) }
-            )
-            item(
                 icon = { Icon(Icons.Default.Podcasts, contentDescription = null) },
-                label = { Text("Podcasts") },
+                label = { Text("Podcast") },
                 selected = currentRoute == Route.Podcast,
                 onClick = { navigator.navigate(Route.Podcast) }
             )
             item(
-                icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                label = { Text("Profile") },
-                selected = currentRoute is Route.UserProfile,
-                onClick = { navigator.navigate(Route.UserProfile(viewModel.getUserId())) }
+                icon = { Icon(Icons.Default.PhoneAndroid, contentDescription = null) },
+                label = { Text("Devices") },
+                selected = currentRoute == Route.Devices,
+                onClick = { navigator.navigate(Route.Devices) }
+            )
+            item(
+                icon = { Icon(Icons.Default.LibraryMusic, contentDescription = null) },
+                label = { Text("Library") },
+                selected = currentRoute == Route.Library,
+                onClick = { navigator.navigate(Route.Library) }
             )
         }
     ) {

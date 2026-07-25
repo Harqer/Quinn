@@ -51,12 +51,30 @@ fun SearchScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "Search",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(androidx.compose.foundation.shape.CircleShape)
+                                .background(Color(0xFF1DB954))
+                                .clickable { onNavigateToCamera() /* Settings in real app */ },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "M",
+                                color = Color.Black,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Search",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF121212)),
                 scrollBehavior = scrollBehavior
@@ -116,15 +134,25 @@ fun SearchScreen(
                             Box(
                                 modifier = Modifier
                                     .aspectRatio(1.5f)
-                                    .background(color, MaterialTheme.shapes.medium)
+                                    .clip(MaterialTheme.shapes.small)
+                                    .background(color)
                                     .clickable { onNavigateToCategory(category.id) }
-                                    .padding(16.dp)
                             ) {
                                 Text(
                                     text = category.name,
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold,
-                                    style = MaterialTheme.typography.bodyLarge
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier.padding(12.dp)
+                                )
+                                // Decorative angled box
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.BottomEnd)
+                                        .offset(x = 16.dp, y = 8.dp)
+                                        .size(64.dp)
+                                        .androidx.compose.ui.draw.rotate(25f)
+                                        .background(Color.Black.copy(alpha = 0.2f), MaterialTheme.shapes.small)
                                 )
                             }
                         }

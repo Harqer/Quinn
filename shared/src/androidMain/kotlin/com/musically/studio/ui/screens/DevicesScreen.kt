@@ -1,135 +1,210 @@
 package com.musically.studio.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Bluetooth
-import androidx.compose.material.icons.filled.DeviceUnknown
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import android.content.Intent
-import android.provider.Settings
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.musically.studio.shared.R
+import androidx.compose.ui.unit.sp
 import com.musically.studio.ui.MainViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DevicesScreen(
     viewModel: MainViewModel,
-    onNavigateBack: () -> Unit
+    onBack: () -> Unit
 ) {
-    val isWearableConnected by viewModel.isWearableConnected.collectAsState()
-    val context = LocalContext.current
-
+    var isMetaConnected by remember { mutableStateOf(false) }
+    var isScanning by remember { mutableStateOf(false) }
+    var hudProjectionMode by remember { mutableStateOf(false) }
+    var statusMessage by remember { mutableStateOf("") }
+    
+    val containerColor = if (hudProjectionMode) Color.Black else Color(0xFF121212)
+    val textColor = if (hudProjectionMode) Color(0xFF9BBFFF) else Color.White
+    val coroutineScope = rememberCoroutineScope()
+    
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = containerColor,
         topBar = {
             TopAppBar(
-                title = { 
-                    Text(stringResource(id = R.string.connect_to_a_device), color = MaterialTheme.colorScheme.onBackground) 
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back), tint = MaterialTheme.colorScheme.onBackground)
+                title = {
+                    Column {
+                        Text("Devices & Meta Wearables", color = textColor, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                        Text("Ray-Ban Meta Smart Glasses & Intelligent Eyewear", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                )
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = textColor)
+                    }
+                },
+                actions = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(end = 16.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .background(
+                                    if (isMetaConnected) MaterialTheme.colorScheme.primary else Color.Gray,
+                                    CircleShape
+                                )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            if (isMetaConnected) "CONNECTED" else "DISCONNECTED",
+                            color = textColor,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor)
             )
         }
-    ) { paddingValues ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            Text(
-                text = stringResource(id = R.string.current_device),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold
-            )
-            
+            // Main Connection Card
+            Text("CURRENT DEVICE", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
+            
+            val cardBg = if (isMetaConnected) Color(0xFF282828) else Color(0xFF1E1E1E)
+            val cardBorder = if (isMetaConnected) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f) else Color(0xFF333333)
             
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(cardBg)
+                    .border(1.dp, cardBorder, RoundedCornerShape(16.dp))
                     .clickable {
-                        viewModel.setWearableConnected(context, !isWearableConnected)
+                        isScanning = true
+                        statusMessage = if (isMetaConnected) "Disconnecting..." else "Connecting to Meta Wearables..."
+                        coroutineScope.launch {
+                            kotlinx.coroutines.delay(1500)
+                            isMetaConnected = !isMetaConnected
+                            isScanning = false
+                            statusMessage = if (isMetaConnected) "Ray-Ban Meta Smart Glasses Connected Successfully!" else "Meta Wearables Disconnected"
+                        }
                     }
-                    .padding(16.dp),
+                    .padding(20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.DeviceUnknown,
-                    contentDescription = stringResource(id = R.string.glasses_content_desc),
-                    tint = if (isWearableConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(32.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(if (isMetaConnected) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f) else Color(0xFF333333)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Placeholder for Glasses Icon
+                    Text("👓", fontSize = 24.sp)
+                }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
+                    Text("Ray-Ban Meta Smart Glasses", color = textColor, fontWeight = FontWeight.Bold)
                     Text(
-                        text = stringResource(id = R.string.ray_ban_meta_smart_glasses),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = if (isWearableConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = if (isWearableConnected) stringResource(id = R.string.connected) else stringResource(id = R.string.disconnected),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        if (isMetaConnected) "Connected • Battery 85%" else "Tap to scan and pair via Bluetooth / WebRTC",
+                        color = textColor.copy(alpha = 0.7f),
+                        fontSize = 12.sp
                     )
                 }
+                Spacer(modifier = Modifier.width(16.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(if (isMetaConnected) Color(0xFF333333) else MaterialTheme.colorScheme.primary)
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isScanning) {
+                        CircularProgressIndicator(
+                            color = if (isMetaConnected) textColor else Color.Black,
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(if (isMetaConnected) "DISC" else "CONN", color = if (isMetaConnected) textColor else Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
             }
-
+            if (statusMessage.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(statusMessage, color = MaterialTheme.colorScheme.primary, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+            }
+            
             Spacer(modifier = Modifier.height(32.dp))
             
-            Text(
-                text = stringResource(id = R.string.other_devices),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold
-            )
-            
+            // HUD Projection
+            Text("GLASSES PROJECTION & DISPLAY", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
-            
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { 
-                        context.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS))
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color(0xFF1E1E1E))
+                    .border(1.dp, Color(0xFF333333), RoundedCornerShape(16.dp))
+                    .padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Visibility, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Glimmer HUD Projection Mode", color = textColor, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
-                    .padding(vertical = 12.dp),
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text("Sets pure black additive background (#000000) optimized for display glasses HUD projection.", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp)
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Switch(
+                    checked = hudProjectionMode,
+                    onCheckedChange = { hudProjectionMode = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            // Camera & Sensors
+            Text("HARDWARE CAMERA & SENSORS", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color(0xFF1E1E1E))
+                    .border(1.dp, Color(0xFF333333), RoundedCornerShape(16.dp))
+                    .padding(20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.Bluetooth,
-                    contentDescription = stringResource(id = R.string.bluetooth_content_desc),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(24.dp)
-                )
+                Icon(Icons.Default.Videocam, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = stringResource(id = R.string.bluetooth_or_airplay),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+                Text("Camera permissions active. Connect Ray-Ban Meta glasses to stream live video feeds into Mave Lyria.", color = textColor.copy(alpha = 0.7f), fontSize = 12.sp)
             }
         }
     }

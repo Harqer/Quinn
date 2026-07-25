@@ -61,35 +61,19 @@ fun maveEntryProvider(
     }
 
     entry<Route.Home> {
-        StudioHomeScreen(
-            viewModel = viewModel,
-            onNavigateToSettings = onMenuClick
-        )
-    }
-
-    entry<Route.Discover> {
-        val context = androidx.compose.ui.platform.LocalContext.current
-        DiscoverScreen(
+        MaveHomeScreen(
             viewModel = viewModel,
             onNavigateToSettings = onMenuClick,
-            onNavigateToCamera = { navigator.navigate(Route.Camera) },
-            onNavigateToLibrary = { navigator.navigate(Route.Library) },
-            onNavigateToLiveSession = { navigator.navigate(Route.LiveSession) },
-            onNavigateToDevices = { navigator.navigate(Route.Devices) },
-            onNavigateToMore = { 
-                navigator.navigate(Route.Search)
-            },
-            onNavigateToCategory = { navigator.navigate(Route.CategoryView(it)) },
-            onNavigateToTrack = { trackId ->
+            onTrackClick = { trackId ->
                 viewModel.tracks.value.find { it.id == trackId }?.let {
                     viewModel.playTrack(it)
                 } ?: viewModel.communityTracks.value.find { it.id == trackId }?.let {
                     viewModel.playTrack(it)
                 }
-            },
-            onNavigateToPlaylist = { navigator.navigate(Route.PlaylistView(it)) }
+            }
         )
     }
+        // Discover logic removed, handled by Home/Search
 
     entry<Route.Camera> {
         CameraCaptureScreen(
@@ -142,9 +126,9 @@ fun maveEntryProvider(
     entry<Route.Podcast>(
         metadata = maveVerticalTransitionMetadata()
     ) {
-        PodcastSelectionScreen(
+        PodcastGeneratorScreen(
             viewModel = viewModel,
-            onDone = { navigator.goBack() }
+            onNavigateToSettings = onMenuClick
         )
     }
 
@@ -171,11 +155,15 @@ fun maveEntryProvider(
     }
 
     entry<Route.Devices>(
-        metadata = BottomSheetSceneStrategy.bottomSheet()
+        metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
+            Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
+                androidx.compose.material3.Text("Devices") 
+            }
+        }
     ) {
-        DevicesBottomSheet(
+        DevicesScreen(
             viewModel = viewModel,
-            onDismiss = { navigator.goBack() }
+            onBack = { navigator.goBack() }
         )
     }
 

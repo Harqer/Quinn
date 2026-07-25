@@ -23,7 +23,7 @@ import com.musically.studio.ui.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PodcastSelectionScreen(
+fun PodcastOnboardingScreen(
     viewModel: MainViewModel,
     onDone: () -> Unit
 ) {

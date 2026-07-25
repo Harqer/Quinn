@@ -105,62 +105,65 @@ fun LibraryScreen(
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
                     }
-                    IconButton(onClick = onNavigateToAdd) {
-                        Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
-                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF121212)),
                 scrollBehavior = scrollBehavior
             )
         }
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .consumeWindowInsets(innerPadding)
+                .padding(innerPadding)
         ) {
-            if (isLoading && playlists.isEmpty() && albums.isEmpty()) {
+            // Sort/Filter Row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Search, // Replace with SwapVert icon if available
+                        contentDescription = "Sort",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Recently played",
+                        color = Color.White,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Icon(
+                    imageVector = Icons.Default.Menu, // FormatListBulleted equivalent
+                    contentDescription = "View as list",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+            if (isLoading && tracks.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
-            } else if (playlists.isEmpty() && albums.isEmpty()) {
+            } else if (tracks.isEmpty()) {
                 EmptyLibraryState(onNavigateToHome = onNavigateToHome)
             } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(300.dp),
+                LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        start = innerPadding.calculateStartPadding(androidx.compose.ui.unit.LayoutDirection.Ltr) + 16.dp,
-                        end = innerPadding.calculateEndPadding(androidx.compose.ui.unit.LayoutDirection.Ltr) + 16.dp,
-                        top = innerPadding.calculateTopPadding() + 8.dp,
-                        bottom = innerPadding.calculateBottomPadding() + 100.dp
-                    )
+                    contentPadding = PaddingValues(bottom = 120.dp)
                 ) {
-                    item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            item { FilterPill("Playlists", isSelected = selectedFilterState.value == "Playlists", onClick = { selectedFilterState.value = if (selectedFilterState.value == "Playlists") null else "Playlists" }) }
-                            item { FilterPill("Albums", isSelected = selectedFilterState.value == "Albums", onClick = { selectedFilterState.value = if (selectedFilterState.value == "Albums") null else "Albums" }) }
-                        }
-                    }
-                    if (selectedFilterState.value == null || selectedFilterState.value == "Playlists") {
-                        items(playlists) { playlist ->
-                            LibraryPlaylistItem(
-                                playlist = playlist,
-                                onClick = { onNavigateToPlaylist("playlist_${playlist.id}") }
-                            )
-                        }
-                    }
-                    if (selectedFilterState.value == null || selectedFilterState.value == "Albums") {
-                        items(albums.size) { index ->
-                            val album = albums[index]
-                            LibraryAlbumItem(
-                                album = album,
-                                onClick = { onNavigateToAlbum("album_${album.id}") }
-                            )
-                        }
+                    items(tracks) { track ->
+                        TrackItem(
+                            track = track,
+                            onClick = { onNavigateToNowPlaying(track.id) },
+                            onAlbumClick = { onNavigateToAlbum(track.album.id) }
+                        )
                     }
                 }
             }

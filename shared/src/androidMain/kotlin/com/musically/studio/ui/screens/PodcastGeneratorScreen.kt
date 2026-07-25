@@ -39,7 +39,7 @@ import com.musically.studio.ui.theme.MaveStyles
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StudioHomeScreen(
+fun PodcastGeneratorScreen(
     viewModel: MainViewModel,
     onNavigateToSettings: () -> Unit = {}
 ) {
