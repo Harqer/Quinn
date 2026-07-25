@@ -31,7 +31,7 @@ fun MaveHomeScreen(
     onNavigateToSettings: () -> Unit = {},
     onTrackClick: (String) -> Unit
 ) {
-    val userTracks by viewModel.userTracks.collectAsStateWithLifecycle()
+    val tracks by viewModel.tracks.collectAsStateWithLifecycle()
     val communityTracks by viewModel.communityTracks.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     
@@ -83,7 +83,7 @@ fun MaveHomeScreen(
             )
         }
     ) { paddingValues ->
-        if (isLoading && userTracks.isEmpty() && communityTracks.isEmpty()) {
+        if (isLoading && tracks.isEmpty() && communityTracks.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = Color(0xFF1DB954))
             }
@@ -95,7 +95,7 @@ fun MaveHomeScreen(
                 contentPadding = PaddingValues(bottom = 120.dp)
             ) {
                 // Recent Grid
-                val recentTracks = (if (userTracks.isNotEmpty()) userTracks else communityTracks).take(6)
+                val recentTracks = (if (tracks.isNotEmpty()) tracks else communityTracks).take(6)
                 if (recentTracks.isNotEmpty()) {
                     item {
                         RecentTracksGrid(
@@ -106,7 +106,7 @@ fun MaveHomeScreen(
                 }
 
                 // Made for you Carousel
-                val madeForYouTracks = if (userTracks.isNotEmpty()) userTracks.take(5) else communityTracks.take(5)
+                val madeForYouTracks = if (tracks.isNotEmpty()) tracks.take(5) else communityTracks.take(5)
                 if (madeForYouTracks.isNotEmpty()) {
                     item {
                         MaveCarousel(
@@ -129,11 +129,11 @@ fun MaveHomeScreen(
                 }
 
                 // Recently Played Carousel (only if user has tracks)
-                if (userTracks.isNotEmpty()) {
+                if (tracks.isNotEmpty()) {
                     item {
                         MaveCarousel(
                             title = "Recently played",
-                            tracks = userTracks,
+                            tracks = tracks,
                             onTrackClick = onTrackClick
                         )
                     }
@@ -191,7 +191,7 @@ fun RecentTrackItem(
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val imageUrl = track.albumArtUrl ?: track.album.images.firstOrNull()?.url
+        val imageUrl = track.album.images.firstOrNull()?.url
         if (imageUrl != null) {
             AsyncImage(
                 model = imageUrl,
@@ -207,7 +207,7 @@ fun RecentTrackItem(
             )
         }
         Text(
-            text = track.title.ifEmpty { track.name },
+            text = track.name,
             color = Color.White,
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
@@ -234,7 +234,7 @@ fun MaveCarousel(
             color = Color.White,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 16.dp, bottom = 12.dp)
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
         )
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
@@ -260,7 +260,7 @@ fun MaveCard(
             .width(140.dp)
             .clickable(onClick = onClick)
     ) {
-        val imageUrl = track.albumArtUrl ?: track.album.images.firstOrNull()?.url
+        val imageUrl = track.album.images.firstOrNull()?.url
         Box(
             modifier = Modifier
                 .size(140.dp)
@@ -278,7 +278,7 @@ fun MaveCard(
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = track.title.ifEmpty { track.name },
+            text = track.name,
             color = Color.White,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
@@ -286,7 +286,7 @@ fun MaveCard(
             overflow = TextOverflow.Ellipsis
         )
         Text(
-            text = track.artist.ifEmpty { track.artists.firstOrNull()?.name ?: "" },
+            text = track.artists.firstOrNull()?.name ?: "",
             color = Color(0xFFA7A7A7),
             style = MaterialTheme.typography.bodySmall,
             maxLines = 2,

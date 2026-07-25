@@ -16,6 +16,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -151,7 +153,7 @@ fun SearchScreen(
                                         .align(Alignment.BottomEnd)
                                         .offset(x = 16.dp, y = 8.dp)
                                         .size(64.dp)
-                                        .androidx.compose.ui.draw.rotate(25f)
+                                        .rotate(25f)
                                         .background(Color.Black.copy(alpha = 0.2f), MaterialTheme.shapes.small)
                                 )
                             }
