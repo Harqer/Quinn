@@ -5,7 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -196,7 +198,7 @@ fun ChatScreen(
                         Column(
                             modifier = Modifier
                                 .weight(1f, fill = false)
-                                .background(Color(0xFF282828), RoundedCornerShape(16.dp).copy(topStart = RoundedCornerShape(0.dp)))
+                                .background(Color(0xFF282828), RoundedCornerShape(16.dp).copy(topStart = CornerSize(0.dp)))
                                 .padding(16.dp)
                         ) {
                             Text(msg.text, color = Color.White, fontSize = 16.sp)
@@ -258,7 +260,7 @@ fun ChatScreen(
                         Column(horizontalAlignment = Alignment.End) {
                             Box(
                                 modifier = Modifier
-                                    .background(Color(0xFF1DB954).copy(alpha = 0.2f), RoundedCornerShape(16.dp).copy(topEnd = RoundedCornerShape(0.dp)))
+                                    .background(Color(0xFF1DB954).copy(alpha = 0.2f), RoundedCornerShape(16.dp).copy(topEnd = CornerSize(0.dp)))
                                     .padding(16.dp)
                             ) {
                                 Text(msg.text, color = Color(0xFF1DB954), fontSize = 16.sp)
