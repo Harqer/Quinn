@@ -1,8 +1,9 @@
 <AppFunctionAppMetadata xmlns:appfn="http://schemas.android.com/apk/androidx.appfunctions"
-    appfn:description="This app manages a high-fidelity AI Music Studio, user libraries, and content discovery.
+    appfn:description="This app provides tools for generating AI music, podcasts, and managing user content.
     Operational Patterns:
     - Use 'openLibrary' and 'openHome' to switch between major app navigational sections.
     - Prefer 'searchForContent' over navigating manually when the user wants to find a specific track.
     Constraints:
-    - Text prompts for 'strikeVibe' should be descriptive of musical atmospheres."
+    - Text prompts for 'strikeVibe' must describe musical atmospheres, not user commands.
+    - Always ensure explicit user confirmation before invoking 'narratePOV' as it will immediately stream from the device camera and microphone."
     appfn:displayDescription="@string/app_name" />

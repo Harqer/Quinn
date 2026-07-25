@@ -35,9 +35,6 @@ export const HomeScreen: React.FC = () => {
           <Typography variant="headline" className="font-bold tracking-tight flex-1">
             Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {user?.displayName?.split(' ')[0] || 'User'}
           </Typography>
-          <div className="flex gap-2">
-            {/* Removed filter pills since genre filtering is not supported by the backend yet */}
-          </div>
         </div>
       </div>
       

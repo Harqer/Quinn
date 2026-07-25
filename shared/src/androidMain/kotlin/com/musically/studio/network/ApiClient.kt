@@ -18,7 +18,7 @@ interface ApiClient {
     suspend fun getVibesByUserId(userId: String): List<MaveTrack>?
     suspend fun reportTarget(targetId: String, targetType: String, reason: String): Boolean
     suspend fun getCommunityTracks(): List<MaveTrack>?
-    suspend fun verifyDigitalCredential(credentialJson: String, nonce: String): String?
+
     suspend fun generateMusicPrompts(imageB64: String): List<String>?
     suspend fun generateCoverMedia(prompt: String, type: String): String?
     suspend fun getTrack(trackId: String): MaveTrack?
@@ -30,6 +30,8 @@ interface ApiClient {
     suspend fun getAlbums(): List<MaveAlbum>?
     suspend fun getPodcasts(): List<MavePodcast>?
     suspend fun getAudiobooks(): List<MaveAudiobook>?
+    suspend fun getSpotifyLibraryTracks(): List<MaveTrack>?
+    suspend fun deleteAccount(): Boolean
 }
 
 class RealApiClient(private val client: OkHttpClient) : ApiClient {
@@ -94,6 +96,16 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
             .url("$BASE_URL/auth/profile")
             .header("Authorization", "Bearer $token")
             .post(body)
+            .build()
+        return executeRequest(request)
+    }
+
+    override suspend fun deleteAccount(): Boolean {
+        val token = TokenManager.getValidToken() ?: return false
+        val request = Request.Builder()
+            .url("$BASE_URL/auth/delete")
+            .header("Authorization", "Bearer $token")
+            .delete()
             .build()
         return executeRequest(request)
     }
@@ -211,29 +223,7 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
         } catch (e: Exception) { null }
     }
 
-    override suspend fun verifyDigitalCredential(credentialJson: String, nonce: String): String? {
-        val json = JSONObject().apply {
-            put("credentialJson", credentialJson)
-            put("nonce", nonce)
-        }
-        val body = json.toString().toRequestBody(JSON)
-        val request = Request.Builder()
-            .url("$BASE_URL/auth/verify-credential")
-            .post(body)
-            .build()
 
-        return try {
-            client.newCall(request).execute().use { response ->
-                if (response.isSuccessful) {
-                    val respJson = JSONObject(response.body?.string() ?: "{}")
-                    respJson.optString("token")
-                } else null
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Credential verification failed")
-            null
-        }
-    }
 
     private fun executeRequest(request: Request): Boolean {
         return try {
@@ -472,5 +462,47 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
             Timber.e(e, "Error fetching audiobooks via Data Connect")
             null
         }
+    }
+
+    override suspend fun getSpotifyLibraryTracks(): List<MaveTrack>? {
+        val token = TokenManager.getValidToken() ?: return null
+        val request = Request.Builder()
+            .url("$BASE_URL/spotify/library")
+            .header("Authorization", "Bearer $token")
+            .get()
+            .build()
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        val json = JSONObject(body)
+                        val items = json.optJSONArray("items")
+                        val list = mutableListOf<MaveTrack>()
+                        if (items != null) {
+                            for (i in 0 until items.length()) {
+                                val item = items.getJSONObject(i)
+                                val album = item.optJSONObject("album")
+                                val images = album?.optJSONArray("images")
+                                val coverUrl = if (images != null && images.length() > 0) images.getJSONObject(0).optString("url") else ""
+                                val artists = item.optJSONArray("artists")
+                                val artistName = if (artists != null && artists.length() > 0) artists.getJSONObject(0).optString("name") else "Unknown Artist"
+                                val previewUrl = item.optString("preview_url")
+                                
+                                list.add(MaveTrack(
+                                    id = item.optString("id"),
+                                    title = item.optString("name"),
+                                    artist = artistName,
+                                    coverUrl = coverUrl,
+                                    audioUrl = previewUrl.takeIf { it.isNotEmpty() && it != "null" } ?: "",
+                                    duration = item.optInt("duration_ms", 0) / 1000
+                                ))
+                            }
+                        }
+                        list
+                    } else null
+                } else null
+            }
+        } catch (e: Exception) { null }
     }
 }

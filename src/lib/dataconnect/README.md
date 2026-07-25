@@ -18,6 +18,8 @@ This README will guide you through the process of using the generated JavaScript
 - [**Mutations**](#mutations)
   - [*CreateTrack*](#createtrack)
   - [*UpsertUser*](#upsertuser)
+  - [*CreatePlaylist*](#createplaylist)
+  - [*AddTrackToPlaylist*](#addtracktoplaylist)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `default`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -999,6 +1001,230 @@ console.log(data.user_upsert);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.user_upsert);
+});
+```
+
+## CreatePlaylist
+You can execute the `CreatePlaylist` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+createPlaylist(vars: CreatePlaylistVariables): MutationPromise<CreatePlaylistData, CreatePlaylistVariables>;
+
+interface CreatePlaylistRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreatePlaylistVariables): MutationRef<CreatePlaylistData, CreatePlaylistVariables>;
+}
+export const createPlaylistRef: CreatePlaylistRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+createPlaylist(dc: DataConnect, vars: CreatePlaylistVariables): MutationPromise<CreatePlaylistData, CreatePlaylistVariables>;
+
+interface CreatePlaylistRef {
+  ...
+  (dc: DataConnect, vars: CreatePlaylistVariables): MutationRef<CreatePlaylistData, CreatePlaylistVariables>;
+}
+export const createPlaylistRef: CreatePlaylistRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the createPlaylistRef:
+```typescript
+const name = createPlaylistRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `CreatePlaylist` mutation requires an argument of type `CreatePlaylistVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface CreatePlaylistVariables {
+  name: string;
+  description?: string | null;
+}
+```
+### Return Type
+Recall that executing the `CreatePlaylist` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `CreatePlaylistData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface CreatePlaylistData {
+  playlist_insert: Playlist_Key;
+}
+```
+### Using `CreatePlaylist`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, createPlaylist, CreatePlaylistVariables } from '@musically/dataconnect';
+
+// The `CreatePlaylist` mutation requires an argument of type `CreatePlaylistVariables`:
+const createPlaylistVars: CreatePlaylistVariables = {
+  name: ..., 
+  description: ..., // optional
+};
+
+// Call the `createPlaylist()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await createPlaylist(createPlaylistVars);
+// Variables can be defined inline as well.
+const { data } = await createPlaylist({ name: ..., description: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await createPlaylist(dataConnect, createPlaylistVars);
+
+console.log(data.playlist_insert);
+
+// Or, you can use the `Promise` API.
+createPlaylist(createPlaylistVars).then((response) => {
+  const data = response.data;
+  console.log(data.playlist_insert);
+});
+```
+
+### Using `CreatePlaylist`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, createPlaylistRef, CreatePlaylistVariables } from '@musically/dataconnect';
+
+// The `CreatePlaylist` mutation requires an argument of type `CreatePlaylistVariables`:
+const createPlaylistVars: CreatePlaylistVariables = {
+  name: ..., 
+  description: ..., // optional
+};
+
+// Call the `createPlaylistRef()` function to get a reference to the mutation.
+const ref = createPlaylistRef(createPlaylistVars);
+// Variables can be defined inline as well.
+const ref = createPlaylistRef({ name: ..., description: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = createPlaylistRef(dataConnect, createPlaylistVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.playlist_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.playlist_insert);
+});
+```
+
+## AddTrackToPlaylist
+You can execute the `AddTrackToPlaylist` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+addTrackToPlaylist(vars: AddTrackToPlaylistVariables): MutationPromise<AddTrackToPlaylistData, AddTrackToPlaylistVariables>;
+
+interface AddTrackToPlaylistRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AddTrackToPlaylistVariables): MutationRef<AddTrackToPlaylistData, AddTrackToPlaylistVariables>;
+}
+export const addTrackToPlaylistRef: AddTrackToPlaylistRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+addTrackToPlaylist(dc: DataConnect, vars: AddTrackToPlaylistVariables): MutationPromise<AddTrackToPlaylistData, AddTrackToPlaylistVariables>;
+
+interface AddTrackToPlaylistRef {
+  ...
+  (dc: DataConnect, vars: AddTrackToPlaylistVariables): MutationRef<AddTrackToPlaylistData, AddTrackToPlaylistVariables>;
+}
+export const addTrackToPlaylistRef: AddTrackToPlaylistRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the addTrackToPlaylistRef:
+```typescript
+const name = addTrackToPlaylistRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `AddTrackToPlaylist` mutation requires an argument of type `AddTrackToPlaylistVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface AddTrackToPlaylistVariables {
+  playlistId: string;
+  trackId: string;
+}
+```
+### Return Type
+Recall that executing the `AddTrackToPlaylist` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `AddTrackToPlaylistData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface AddTrackToPlaylistData {
+  playlistEntry_insert: PlaylistEntry_Key;
+}
+```
+### Using `AddTrackToPlaylist`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, addTrackToPlaylist, AddTrackToPlaylistVariables } from '@musically/dataconnect';
+
+// The `AddTrackToPlaylist` mutation requires an argument of type `AddTrackToPlaylistVariables`:
+const addTrackToPlaylistVars: AddTrackToPlaylistVariables = {
+  playlistId: ..., 
+  trackId: ..., 
+};
+
+// Call the `addTrackToPlaylist()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await addTrackToPlaylist(addTrackToPlaylistVars);
+// Variables can be defined inline as well.
+const { data } = await addTrackToPlaylist({ playlistId: ..., trackId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await addTrackToPlaylist(dataConnect, addTrackToPlaylistVars);
+
+console.log(data.playlistEntry_insert);
+
+// Or, you can use the `Promise` API.
+addTrackToPlaylist(addTrackToPlaylistVars).then((response) => {
+  const data = response.data;
+  console.log(data.playlistEntry_insert);
+});
+```
+
+### Using `AddTrackToPlaylist`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, addTrackToPlaylistRef, AddTrackToPlaylistVariables } from '@musically/dataconnect';
+
+// The `AddTrackToPlaylist` mutation requires an argument of type `AddTrackToPlaylistVariables`:
+const addTrackToPlaylistVars: AddTrackToPlaylistVariables = {
+  playlistId: ..., 
+  trackId: ..., 
+};
+
+// Call the `addTrackToPlaylistRef()` function to get a reference to the mutation.
+const ref = addTrackToPlaylistRef(addTrackToPlaylistVars);
+// Variables can be defined inline as well.
+const ref = addTrackToPlaylistRef({ playlistId: ..., trackId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = addTrackToPlaylistRef(dataConnect, addTrackToPlaylistVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.playlistEntry_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.playlistEntry_insert);
 });
 ```
 

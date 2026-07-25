@@ -1,0 +1,56 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "DEVICE_ID",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+      ],
+      "evidence": "DeviceInfo (AudioDeviceInfo) is used locally to determine audio sink, not transmitted off-device.",
+      "recommendation": "No action required.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "RACE_ETHNICITY",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/ChatViewModel.kt"
+      ],
+      "evidence": "The search pattern matched 'printStackTrace()' inside error handling. No race or ethnicity data is collected or transmitted.",
+      "recommendation": "No action required.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "OTHER_APP_PERFORMANCE",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "src/routes/music.ts"
+      ],
+      "evidence": "The term 'heartbeat' refers to WebSocket ping/pong connections to keep the connection alive, not diagnostic app performance data.",
+      "recommendation": "No action required.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    }
+  ]
+}

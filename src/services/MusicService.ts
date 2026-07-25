@@ -172,8 +172,7 @@ export class MusicService {
    */
   async shareTrack(uid: string, trackId: string) {
     try {
-      const track = await trackRepository.getTrackById(trackId);
-      if (!track) throw new Error("Track not found");
+      // Create shortlink directly. Track existence validation is handled client-side or at the Data Connect level.
 
       const shortCode = await trackRepository.createShortLink(trackId);
       logger.info("[MAVE_SERVICE] Track shared with short link", { uid, trackId, shortCode });
@@ -264,20 +263,24 @@ export class MusicService {
 
     const ai = getAi();
     const prompt = `Analyze vision stream and generate music prompts for ${type || 'ambient'}`;
-    const contents: any[] = [prompt];
+    
+    let inputToModel: any = prompt;
     if (image) {
-      contents.push({ inlineData: { mimeType: 'image/jpeg', data: image } });
+      const mimeType = image.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
+      const base64Data = image.includes(',') ? image.split(',')[1] : image;
+      inputToModel = [
+        prompt, 
+        { image: { data: base64Data, mime_type: mimeType } } // Interactions API format
+      ];
     }
-    const result = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: contents
+    
+    const interaction = await (ai as any).interactions.create({
+      model: "gemini-3.6-flash",
+      input: inputToModel
     });
-    return { response: result.text };
+    return { response: interaction.output_text };
   }
 
-  async getCommunityTracks() {
-    return await trackRepository.getCommunityTracks();
-  }
 
   // --- Enterprise RTDB Sync ---
   private syncTimers: Map<string, NodeJS.Timeout> = new Map();

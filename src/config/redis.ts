@@ -1,44 +1,51 @@
-import { Redis } from "@upstash/redis";
+import Redis from "ioredis";
 import logger from "./logger.js";
-
 import { getSecret } from "./secrets.js";
 
-let redis: Redis;
+let redis: Redis | null = null;
 
 export const initRedis = () => {
-  const redisUrl = getSecret("UPSTASH_REDIS_REST_URL");
-  const redisToken = getSecret("UPSTASH_REDIS_REST_TOKEN");
+  const host = getSecret("REDIS_HOST") || process.env.REDIS_HOST;
+  const port = parseInt(getSecret("REDIS_PORT") || process.env.REDIS_PORT || "6379", 10);
+  const password = getSecret("REDIS_PASSWORD") || process.env.REDIS_PASSWORD;
   
-  if (!redisUrl || !redisToken) {
-    logger.warn("[REDIS] Missing credentials. Redis caching and session storage will be disabled.");
+  if (!host) {
+    logger.warn("[REDIS] Missing REDIS_HOST. Redis caching and session storage will be disabled.");
     return;
   }
 
   redis = new Redis({
-    url: redisUrl,
-    token: redisToken,
+    host,
+    port,
+    password,
+    tls: password ? {} : undefined, // Often Memorystore uses TLS when auth is enabled
+    retryStrategy: (times) => Math.min(times * 50, 2000)
+  });
+
+  redis.on("error", (err) => {
+    logger.error("[REDIS] Connection error", { error: err.message });
   });
 };
 
 export const getRedis = () => {
-  if (!redis) initRedis();
+  if (redis === undefined) initRedis(); // initialize on first use if not explicitly initialized
   return redis;
 };
 
 /**
- * Saves Mave session state using Redis JSON.
+ * Saves Mave session state using Redis.
  */
 export const saveMaveSession = async (sessionId: string, state: any) => {
   const client = getRedis();
   if (!client) return;
-  await client.set(`session:${sessionId}`, JSON.stringify(state), { ex: 86400 }); // 24h TTL
+  await client.set(`session:${sessionId}`, JSON.stringify(state), "EX", 86400); // 24h TTL
 };
 
 export const getMaveSession = async (sessionId: string): Promise<any | null> => {
   const client = getRedis();
   if (!client) return null;
   const data = await client.get(`session:${sessionId}`);
-  return data ? JSON.parse(data as string) : null;
+  return data ? JSON.parse(data) : null;
 };
 
 /**
@@ -47,12 +54,12 @@ export const getMaveSession = async (sessionId: string): Promise<any | null> => 
 export const cacheVisionResult = async (imageHash: string, description: string) => {
   const client = getRedis();
   if (!client) return;
-  await client.set(`vision:${imageHash}`, description, { ex: 3600 });
+  await client.set(`vision:${imageHash}`, description, "EX", 3600);
 };
 
 export const getCachedVisionResult = async (imageHash: string): Promise<string | null> => {
   const client = getRedis();
   if (!client) return null;
   const result = await client.get(`vision:${imageHash}`);
-  return result as string | null;
+  return result;
 };

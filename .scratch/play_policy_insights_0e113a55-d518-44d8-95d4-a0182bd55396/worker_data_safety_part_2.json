@@ -1,0 +1,63 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "PHOTOS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "**Background Transfer (Disclosure Claimed)**: Evidence found; requires Critic verification.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/CameraPreview.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/navigation/EntryProvider.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+      ],
+      "evidence": "CameraPreview.kt and WearableStreamingService stream frames automatically in the background, which are sent off-device. WelcomeScreen.kt contains a gatekeeper AlertDialog explicitly disclosing this background camera usage before app usage.",
+      "recommendation": "Ensure the wording of the disclosure in WelcomeScreen meets all Play Store requirements for prominent disclosure.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "DISCLOSED",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "VIDEOS",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "app/src/main/java/com/musically/studio/MainActivity.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/audio/PlaybackService.kt"
+      ],
+      "evidence": "The traced classes (MediaController, MediaRecorder, ExoPlayer) handle audio playback and microphone voice recording. They do not capture or transmit user video files.",
+      "recommendation": "No action required; the provided evidence for VIDEOS is a false positive.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "AUDIO",
+      "policy_id": "data_safety_section",
+      "issue_summary": "**User-Initiated Collection**: Disclosure exempt, but **must be declared** in Play Store form.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "app/src/main/java/com/musically/studio/MainActivity.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/LiveSessionScreen.kt"
+      ],
+      "evidence": "WearableStreamingService.kt uses AudioRecord (MIC) to capture user voice and transmits it off-device to a first-party server. This is explicitly initiated by the user tapping a microphone button or wearable interaction.",
+      "recommendation": "Declare audio collection in the Play Store Data Safety form. Prominent disclosure is exempt since the recording is explicitly user-initiated.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    }
+  ]
+}

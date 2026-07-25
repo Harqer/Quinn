@@ -32,20 +32,25 @@ fun WelcomeScreen(
     onLoginClick: () -> Unit
 ) {
     val hasAcceptedPrivacyPolicy by viewModel.hasAcceptedPrivacyPolicy.collectAsState()
+    val hasDeclinedPrivacyPolicy by viewModel.hasDeclinedPrivacyPolicy.collectAsState()
 
-    if (!hasAcceptedPrivacyPolicy) {
+    if (!hasAcceptedPrivacyPolicy && !hasDeclinedPrivacyPolicy) {
         AlertDialog(
             onDismissRequest = { /* Cannot dismiss without explicitly accepting or denying */ },
+            properties = androidx.compose.ui.window.DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false
+            ),
             title = {
                 Text(
-                    text = "Privacy & Data Usage",
+                    text = "Prominent Disclosure & Consent",
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
-                    text = "Mave uses your camera in the background during active sessions to capture visual context for generating AI music. The camera frames are sent to our servers for processing.\n\nWe also collect crash reports to improve app stability.\n\nBy continuing, you agree to these data practices.",
+                    text = "Mave collects and transmits camera and microphone data to enable real-time AI music generation during active sessions.\n\nMave also collects crash logs to improve app stability.\n\nTap 'I Agree' to consent to this data collection.",
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
@@ -57,8 +62,7 @@ fun WelcomeScreen(
                 }
             },
             dismissButton = {
-                val activity = androidx.activity.compose.LocalActivity.current
-                TextButton(onClick = { activity?.finish() }) {
+                TextButton(onClick = { viewModel.declinePrivacyPolicy() }) {
                     Text("Decline", color = MaterialTheme.colorScheme.error)
                 }
             },
@@ -97,18 +101,34 @@ fun WelcomeScreen(
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(32.dp))
+            if (hasDeclinedPrivacyPolicy) {
+                Text(
+                    text = "Mave requires your consent to provide its core generative audio experience.",
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                TextButton(onClick = { viewModel.resetPrivacyPolicy() }) {
+                    Text("Review Consent", color = MaterialTheme.colorScheme.primary)
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            
             MaveButton(
                 text = "Sign up",
                 onClick = onSignUpClick,
                 modifier = Modifier.fillMaxWidth(),
-                style = MaveStyles.primaryButton
+                style = MaveStyles.primaryButton,
+                enabled = hasAcceptedPrivacyPolicy
             )
             Spacer(modifier = Modifier.height(12.dp))
             MaveButton(
                 text = "Log in",
                 onClick = onLoginClick,
                 modifier = Modifier.fillMaxWidth(),
-                style = MaveStyles.outlinedButton
+                style = MaveStyles.outlinedButton,
+                enabled = hasAcceptedPrivacyPolicy
             )
         }
     }

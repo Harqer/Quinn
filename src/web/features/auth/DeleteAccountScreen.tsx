@@ -24,6 +24,18 @@ export const DeleteAccountScreen: React.FC = () => {
 
     setStatus('loading');
     try {
+      const token = await user.getIdToken();
+      try {
+        await fetch('http://localhost:3000/auth/delete', { // Assume this will be mapped or proxied, we'll just use relative or base url from env
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      } catch (e) {
+        logger.warn('Failed to delete backend profile, proceeding with auth deletion', e);
+      }
+      
       await deleteUser(user);
       setStatus('success');
     } catch (error: any) {

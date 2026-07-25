@@ -1,0 +1,40 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "CRASH_LOGS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "**Silent Background Transfer**: Policy violation. Data is sent without prior disclosure.",
+      "severity": "CRITICAL",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+      ],
+      "evidence": "FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true) is called unconditionally in MyApplication.onCreate() (line 35), before the gatekeeper AlertDialog in WelcomeScreen can acquire user consent.",
+      "recommendation": "Remove setCrashlyticsCollectionEnabled(true) from MyApplication.onCreate() and only enable it after the user taps 'I Agree' in the WelcomeScreen.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "MISSING",
+      "purpose": "Analytics",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "PERFORMANCE_DIAGNOSTICS",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt"
+      ],
+      "evidence": "Timber.DebugTree() and DebugAppCheckProviderFactory are local-only development diagnostics. No off-device transmission of performance diagnostics is observed based on the provided evidence.",
+      "recommendation": "No action required.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": false
+    }
+  ]
+}

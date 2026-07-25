@@ -1,5 +1,4 @@
 import { initializeApp, getApps } from "firebase-admin/app";
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
 import { getAppCheck } from "firebase-admin/app-check";
 import { getDatabase } from "firebase-admin/database";
@@ -14,11 +13,10 @@ if (!getApps().length) {
   });
 }
 
-export const db = getFirestore();
 export const auth = getAuth();
 export const appCheck = getAppCheck();
 export const rtdb = getDatabase();
-export { firebaseConfig, FieldValue };
+export { firebaseConfig };
 
 export function getRtdbShard(sessionId: string) {
   let hash = 0;

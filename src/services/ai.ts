@@ -83,7 +83,7 @@ export const ensureContextCache = async () => {
     const ttlSeconds = 3600;
     
     if (redis) {
-      await redis.set("gemini_context_cache_id", newCacheId, { ex: ttlSeconds });
+      await redis.set("gemini_context_cache_id", newCacheId, "EX", ttlSeconds);
     }
     
     logger.info("[AI] Context Cache Synchronized", { cacheId: newCacheId, expires: new Date(Date.now() + (ttlSeconds * 1000)).toLocaleTimeString() });
@@ -252,15 +252,15 @@ Be precise and return ONLY the JSON object.`,
 };
 
 /**
- * Google Cloud AI Model Garden Registry for Image & Video Generation.
+ * Models for Image & Video Generation.
  */
 export const MODEL_GARDEN_REGISTRY = {
   IMAGE: {
-    LATEST: "imagen-3.0-generate-002",
-    FLASH: "imagen-3.0-fast-generate-001"
+    LATEST: "gemini-3-pro-image",
+    FLASH: "gemini-3.1-flash-image"
   },
   VIDEO: {
-    LATEST: "veo-2.0-generate-001",
+    LATEST: "gemini-omni-flash-preview",
     FLASH: "gemini-omni-flash-preview"
   }
 };
@@ -284,48 +284,55 @@ export const generateCoverMedia = async (
 
   try {
     const aiInstance = getAi();
-    // Primary invocation via Google Cloud AI Model Garden endpoint
-    const response = await (aiInstance as any).models.generateImages({
+    // Primary invocation via Interactions API
+    const response = await (aiInstance as any).interactions.create({
       model: modelName,
-      prompt: enhancedPrompt,
-      config: {
-        numberOfImages: 1,
-        aspectRatio: "1:1",
-        outputMimeType: type === 'cover_art' ? "image/jpeg" : "image/png"
-      }
+      input: enhancedPrompt,
+      response_modalities: [type === 'cover_art' ? "IMAGE" : "VIDEO"]
     });
 
-    const imageBytes = response?.generatedImages?.[0]?.image?.imageBytes;
+    const imageBytes = response.output_image?.data;
+    const mimeType = response.output_image?.mime_type || (type === 'cover_art' ? "image/jpeg" : "image/png");
+    
+    // For video, we might get output_file_uri or output_video.
+    if (type === 'video_motion' && response.output_file_uri) {
+      logger.info("[INTERACTIONS_API] Cover Media Generated (Video URI)", { model: modelName, type });
+      return { url: response.output_file_uri, prompt: enhancedPrompt, modelUsed: modelName };
+    }
+
     if (imageBytes) {
-      const url = `data:image/jpeg;base64,${imageBytes}`;
-      logger.info("[GOOGLE_CLOUD_AI_GARDEN] Cover Media Generated", { model: modelName, type, promptLength: enhancedPrompt.length });
+      const url = `data:${mimeType};base64,${imageBytes}`;
+      logger.info("[INTERACTIONS_API] Cover Media Generated", { model: modelName, type, promptLength: enhancedPrompt.length });
       return { url, prompt: enhancedPrompt, modelUsed: modelName };
     }
   } catch (err) {
-    logger.warn("[GOOGLE_CLOUD_AI_GARDEN] Primary model call failed, trying Flash model fallback", { primaryModel: modelName, error: err });
+    logger.warn("[INTERACTIONS_API] Primary model call failed, trying Flash model fallback", { primaryModel: modelName, error: err });
     
     // Fallback to Flash model variant if primary call fails
     try {
       const fallbackModel = type === 'cover_art' ? MODEL_GARDEN_REGISTRY.IMAGE.FLASH : MODEL_GARDEN_REGISTRY.VIDEO.FLASH;
       const aiInstance = getAi();
-      const response = await (aiInstance as any).models.generateImages({
+      const response = await (aiInstance as any).interactions.create({
         model: fallbackModel,
-        prompt: enhancedPrompt,
-        config: {
-          numberOfImages: 1,
-          aspectRatio: "1:1",
-          outputMimeType: type === 'cover_art' ? "image/jpeg" : "image/png"
-        }
+        input: enhancedPrompt,
+        response_modalities: [type === 'cover_art' ? "IMAGE" : "VIDEO"]
       });
 
-      const imageBytes = response?.generatedImages?.[0]?.image?.imageBytes;
+      const imageBytes = response.output_image?.data;
+      const mimeType = response.output_image?.mime_type || (type === 'cover_art' ? "image/jpeg" : "image/png");
+      
+      if (type === 'video_motion' && response.output_file_uri) {
+        logger.info("[INTERACTIONS_API] Flash Fallback Cover Media Generated (Video URI)", { model: fallbackModel, type });
+        return { url: response.output_file_uri, prompt: enhancedPrompt, modelUsed: fallbackModel };
+      }
+
       if (imageBytes) {
-        const url = `data:image/jpeg;base64,${imageBytes}`;
-        logger.info("[GOOGLE_CLOUD_AI_GARDEN] Flash Fallback Cover Media Generated", { model: fallbackModel, type });
+        const url = `data:${mimeType};base64,${imageBytes}`;
+        logger.info("[INTERACTIONS_API] Flash Fallback Cover Media Generated", { model: fallbackModel, type });
         return { url, prompt: enhancedPrompt, modelUsed: fallbackModel };
       }
     } catch (fallbackErr) {
-      logger.warn("[GOOGLE_CLOUD_AI_GARDEN] Fallback model call failed", { error: fallbackErr });
+      logger.warn("[INTERACTIONS_API] Fallback model call failed", { error: fallbackErr });
       throw new Error(`Media generation failed: ${fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr)}`);
     }
   }

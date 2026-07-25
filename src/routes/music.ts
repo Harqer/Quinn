@@ -73,51 +73,8 @@ router.post("/share", verifyFirebaseToken, verifyAppCheck, async (req: Authentic
   }
 });
 
-router.post("/playlist/add", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
-  const { trackId, playlistId } = req.body;
-  if (!trackId) return res.status(400).json({ error: "trackId is required" });
 
-  try {
-    const bookmarkId = await trackRepository.bookmarkTrack(req.user!.uid, trackId);
-    res.json({ success: true, id: bookmarkId, playlistId: playlistId || "favorites", message: "Added to playlist" });
-  } catch (err) {
-    logger.error("Failed to add to playlist", { error: err });
-    res.status(500).json({ error: "Failed to add to playlist" });
-  }
-});
 
-router.post("/bookmark", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
-  const { trackId } = req.body;
-  if (!trackId) return res.status(400).json({ error: "trackId is required" });
-
-  try {
-    const bookmarkId = await trackRepository.bookmarkTrack(req.user!.uid, trackId);
-    res.status(201).json({ id: bookmarkId, message: "Track bookmarked" });
-  } catch (err) {
-    logger.error("Failed to bookmark track", { error: err });
-    res.status(500).json({ error: "Failed to bookmark track" });
-  }
-});
-
-router.get("/community/tracks", verifyAppCheck, async (req, res) => {
-  try {
-    const tracks = await musicService.getCommunityTracks();
-    res.json({ tracks });
-  } catch (err) {
-    logger.error("Failed to fetch community tracks", { error: err });
-    res.status(500).json({ error: "Failed to fetch tracks" });
-  }
-});
-
-router.get("/user/tracks", verifyFirebaseToken, async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const tracks = await trackRepository.getUserTracks(req.user!.uid);
-    res.json({ tracks });
-  } catch (err) {
-    logger.error("Failed to fetch user tracks", { error: err });
-    res.status(500).json({ error: "Failed to fetch user tracks" });
-  }
-});
 
 // WebSocket Server for Mave Studio Engine (Music & Podcast)
 export const setupMusicWebSocket = (wss: WebSocketServer) => {

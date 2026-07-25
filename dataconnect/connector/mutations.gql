@@ -25,3 +25,24 @@ mutation UpsertUser(
     email: $email
   })
 }
+
+mutation CreatePlaylist(
+  $name: String!,
+  $description: String
+) @auth(level: USER) {
+  playlist_insert(data: {
+    name: $name,
+    description: $description,
+    owner: { uid_expr: "auth.uid" }
+  })
+}
+
+mutation AddTrackToPlaylist(
+  $playlistId: String!,
+  $trackId: String!
+) @auth(level: USER) {
+  playlistEntry_insert(data: {
+    playlistId: $playlistId,
+    trackId: $trackId
+  })
+}

@@ -78,7 +78,7 @@ export const SearchScreen: React.FC = () => {
               {categories.map((cat) => (
                 <div 
                   key={cat.id} 
-                  style={{ backgroundColor: cat.colorHex }}
+
                   className={`aspect-[1.5] rounded-[4px] p-3 relative overflow-hidden shadow-md cursor-pointer`}
                   onClick={() => {
                     logger.trackEvent('category_click', { id: cat.id });

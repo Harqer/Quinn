@@ -10,6 +10,15 @@ export type DateString = string;
 
 
 
+export interface AddTrackToPlaylistData {
+  playlistEntry_insert: PlaylistEntry_Key;
+}
+
+export interface AddTrackToPlaylistVariables {
+  playlistId: string;
+  trackId: string;
+}
+
 export interface Album_Key {
   id: string;
   __typename?: 'Album_Key';
@@ -23,6 +32,15 @@ export interface Audiobook_Key {
 export interface Category_Key {
   id: string;
   __typename?: 'Category_Key';
+}
+
+export interface CreatePlaylistData {
+  playlist_insert: Playlist_Key;
+}
+
+export interface CreatePlaylistVariables {
+  name: string;
+  description?: string | null;
 }
 
 export interface CreateTrackData {
@@ -177,6 +195,30 @@ export const upsertUserRef: UpsertUserRef;
 
 export function upsertUser(vars?: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
 export function upsertUser(dc: DataConnect, vars?: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+
+interface CreatePlaylistRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreatePlaylistVariables): MutationRef<CreatePlaylistData, CreatePlaylistVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreatePlaylistVariables): MutationRef<CreatePlaylistData, CreatePlaylistVariables>;
+  operationName: string;
+}
+export const createPlaylistRef: CreatePlaylistRef;
+
+export function createPlaylist(vars: CreatePlaylistVariables): MutationPromise<CreatePlaylistData, CreatePlaylistVariables>;
+export function createPlaylist(dc: DataConnect, vars: CreatePlaylistVariables): MutationPromise<CreatePlaylistData, CreatePlaylistVariables>;
+
+interface AddTrackToPlaylistRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AddTrackToPlaylistVariables): MutationRef<AddTrackToPlaylistData, AddTrackToPlaylistVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: AddTrackToPlaylistVariables): MutationRef<AddTrackToPlaylistData, AddTrackToPlaylistVariables>;
+  operationName: string;
+}
+export const addTrackToPlaylistRef: AddTrackToPlaylistRef;
+
+export function addTrackToPlaylist(vars: AddTrackToPlaylistVariables): MutationPromise<AddTrackToPlaylistData, AddTrackToPlaylistVariables>;
+export function addTrackToPlaylist(dc: DataConnect, vars: AddTrackToPlaylistVariables): MutationPromise<AddTrackToPlaylistData, AddTrackToPlaylistVariables>;
 
 interface GetUserTracksRef {
   /* Allow users to create refs without passing in DataConnect */

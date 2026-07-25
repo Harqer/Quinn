@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { auth, appCheck, db } from "../config/firebase.js";
+import { auth, appCheck } from "../config/firebase.js";
+import { getRedis } from "../config/redis.js";
 import logger from "../config/logger.js";
 
 export interface AuthenticatedRequest extends Request {
@@ -89,18 +90,22 @@ export const checkDailyQuota = async (
   }
 
   const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  const redis = getRedis();
 
   try {
-    const doc = await db.collection("user_quotas").doc(uid).get();
-    const data = doc.exists ? (doc.data() as { count: number; lastUpdated: string }) : null;
-    let currentQuota = { count: 0, lastUpdated: today };
-
-    if (data && data.lastUpdated === today) {
-      currentQuota = { count: data.count || 0, lastUpdated: today };
+    if (!redis) {
+      // If Redis is not configured, we allow requests to pass (or we could deny them).
+      logger.warn("[QUOTA] Redis unavailable, bypassing quota check.");
+      return next();
     }
 
+    const quotaKey = `quota:${uid}:${today}`;
+    const currentCount = await redis.get(quotaKey);
+    const count = currentCount ? parseInt(currentCount, 10) : 0;
+
     const DAILY_LIMIT = req.user?.isGuest ? 5 : 50;
-    if (currentQuota.count >= DAILY_LIMIT) {
+    
+    if (count >= DAILY_LIMIT) {
       logger.warn(`[QUOTA] User exceeded daily generation limit.`, { uid, limit: DAILY_LIMIT, isGuest: req.user?.isGuest });
       res.status(429).json({
         error: {
@@ -113,12 +118,18 @@ export const checkDailyQuota = async (
       return;
     }
 
-    currentQuota.count += 1;
-    await db.collection("user_quotas").doc(uid).set(currentQuota);
+    // Increment and set expiry for 24 hours if it's the first request
+    const pipeline = redis.pipeline();
+    pipeline.incr(quotaKey);
+    if (count === 0) {
+      pipeline.expire(quotaKey, 86400); // 24 hours
+    }
+    await pipeline.exec();
+    
     next();
   } catch (err) {
     logger.error("[QUOTA] Error checking daily quota limits:", { error: err });
-    // In production, log quota service unavailability
+    // In production, log quota service unavailability and allow request to pass to not break app
     next();
   }
 };

@@ -12,6 +12,8 @@ import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
+import androidx.navigation3.runtime.NavMetadataKey
+import androidx.navigation3.runtime.metadata
 
 /** An [OverlayScene] that renders an [entry] within a [ModalBottomSheet]. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +52,7 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         val lastEntry = entries.lastOrNull() ?: return null
-        val bottomSheetProperties = lastEntry.metadata[BottomSheetKey] as? ModalBottomSheetProperties ?: return null
+        val bottomSheetProperties = lastEntry.metadata[BottomSheetKey] ?: return null
         return BottomSheetScene(
             key = lastEntry.contentKey,
             previousEntries = entries.dropLast(1),
@@ -62,12 +64,14 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
     }
 
     companion object {
-        private const val BottomSheetKey = "BottomSheetKey"
+        object BottomSheetKey : NavMetadataKey<ModalBottomSheetProperties>
 
         /**
          * Function to mark this entry as something that should be displayed within a [ModalBottomSheet].
          */
         fun bottomSheet(modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties()) =
-            mapOf(BottomSheetKey to modalBottomSheetProperties)
+            metadata {
+                put(BottomSheetKey, modalBottomSheetProperties)
+            }
     }
 }

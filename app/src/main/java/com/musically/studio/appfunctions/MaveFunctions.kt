@@ -28,10 +28,10 @@ class MaveFunctions @Inject constructor(
     }
 
     /**
-     * Generate music based on a natural language vibe description.
+     * Create an AI-generated music track based on a natural language vibe description.
      *
      * @param context The execution context.
-     * @param text Musical atmosphere description to generate.
+     * @param text Musical atmosphere description.
      */
     @AppFunction(isDescribedByKDoc = true)
     suspend fun strikeVibe(context: AppFunctionContext, text: String) {
@@ -39,8 +39,19 @@ class MaveFunctions @Inject constructor(
     }
 
     /**
-     * Start real-time AI narration of the user's environment.
-     * Required workflow: Call this to initiate a voice and camera streaming session.
+     * Generate an AI podcast episode based on a topic description.
+     *
+     * @param context The execution context.
+     * @param topic Topic or script for the podcast generation.
+     */
+    @AppFunction(isDescribedByKDoc = true)
+    suspend fun generatePodcast(context: AppFunctionContext, topic: String) {
+        launchMainActivity(prompt = "Generate a podcast about $topic")
+    }
+
+    /**
+     * Stream real-time AI narration of the user's camera environment.
+     * Required workflow: Ask for user confirmation before starting the stream to protect privacy.
      *
      * @param context The execution context.
      */
@@ -52,10 +63,10 @@ class MaveFunctions @Inject constructor(
     }
 
     /**
-     * Search for a track or podcast by query string.
+     * Search for a track or podcast.
      *
      * @param context The execution context.
-     * @param query Search string for track or podcast name.
+     * @param query The search query string.
      */
     @AppFunction(isDescribedByKDoc = true)
     suspend fun searchForContent(context: AppFunctionContext, query: String) {
@@ -63,7 +74,7 @@ class MaveFunctions @Inject constructor(
     }
 
     /**
-     * Navigate to the library of saved tracks and podcasts.
+     * Open the library of saved tracks and podcasts.
      *
      * @param context The execution context.
      */
@@ -73,7 +84,7 @@ class MaveFunctions @Inject constructor(
     }
     
     /**
-     * Navigate to the home screen showing community and user tracks.
+     * Open the home screen showing community and user tracks.
      *
      * @param context The execution context.
      */

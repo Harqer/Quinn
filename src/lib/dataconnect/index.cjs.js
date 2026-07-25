@@ -35,6 +35,34 @@ exports.upsertUser = function upsertUser(dcOrVars, vars) {
 }
 ;
 
+const createPlaylistRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreatePlaylist', inputVars);
+}
+createPlaylistRef.operationName = 'CreatePlaylist';
+exports.createPlaylistRef = createPlaylistRef;
+
+exports.createPlaylist = function createPlaylist(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createPlaylistRef(dcInstance, inputVars));
+}
+;
+
+const addTrackToPlaylistRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'AddTrackToPlaylist', inputVars);
+}
+addTrackToPlaylistRef.operationName = 'AddTrackToPlaylist';
+exports.addTrackToPlaylistRef = addTrackToPlaylistRef;
+
+exports.addTrackToPlaylist = function addTrackToPlaylist(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(addTrackToPlaylistRef(dcInstance, inputVars));
+}
+;
+
 const getUserTracksRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();

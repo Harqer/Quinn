@@ -1,68 +1,94 @@
+import { getAuth } from 'firebase/auth';
+import { getCommunityTracks, getUserTracks, getCategories, getPlaylists, getAlbums, getPodcasts, getAudiobooks, addTrackToPlaylist, createTrack, createPlaylist } from "../../lib/dataconnect/esm/index.esm.js";
+
 export interface Track {
   id: string;
   title: string;
   artist: string;
   albumArtUrl?: string;
   audioUrl?: string;
-  isExplicit?: boolean;
-  duration?: number;
+  createdAt?: string;
 }
 
-export interface Playlist {
+export interface Category {
   id: string;
   title: string;
-  coverUrl?: string;
-  tracks: Track[];
+  imageUrl?: string;
+  type: string;
 }
 
 export interface Album {
   id: string;
   title: string;
   artist: string;
-  coverUrl?: string;
-  tracks: Track[];
-}
-
-export interface Category {
-  id: string;
-  title: string;
-  colorHex: string;
+  imageUrl?: string;
+  releaseYear?: number;
 }
 
 class MusicService {
-  private mockTracks: Track[] = [
-    { id: 't1', title: 'Midnight City', artist: 'M83', albumArtUrl: 'https://picsum.photos/200?random=1', audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', duration: 250 },
-    { id: 't2', title: 'Blinding Lights', artist: 'The Weeknd', albumArtUrl: 'https://picsum.photos/200?random=2', audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', duration: 200 },
-    { id: 't3', title: 'Levitating', artist: 'Dua Lipa', albumArtUrl: 'https://picsum.photos/200?random=3', audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', duration: 203 },
-    { id: 't4', title: 'Starboy', artist: 'The Weeknd', albumArtUrl: 'https://picsum.photos/200?random=4', audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', duration: 230 }
-  ];
-
-  private mockCategories: Category[] = [
-    { id: 'c1', title: 'Pop', colorHex: '#e1118c' },
-    { id: 'c2', title: 'Rock', colorHex: '#e13300' },
-    { id: 'c3', title: 'Hip-Hop', colorHex: '#1e3264' },
-    { id: 'c4', title: 'Jazz', colorHex: '#777777' }
-  ];
-
   async getDiscoverTracks(): Promise<Track[]> {
-    return Promise.resolve(this.mockTracks);
+    try {
+      const res = await getCommunityTracks();
+      return res.data.tracks.map((t: any) => ({
+        id: t.id,
+        title: t.name,
+        artist: t.artistName,
+        albumArtUrl: t.imageUrl || undefined,
+        audioUrl: undefined, // Add audioUrl mapping if available in schema
+        createdAt: t.createdAt
+      }));
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
   }
 
   async getLibraryTracks(): Promise<Track[]> {
-    return Promise.resolve(this.mockTracks.slice(1, 4));
+    try {
+      const res = await getUserTracks();
+      return res.data.tracks.map((t: any) => ({
+        id: t.id,
+        title: t.name,
+        artist: t.artistName,
+        albumArtUrl: t.imageUrl || undefined,
+        createdAt: t.createdAt
+      }));
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
   }
 
   async search(query: string): Promise<Track[]> {
-    const q = query.toLowerCase();
-    return Promise.resolve(this.mockTracks.filter(t => t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q)));
+    try {
+      // Fetch all community tracks and client-side filter for now
+      // A dedicated Data Connect search query could be added later
+      const all = await this.getDiscoverTracks();
+      const q = query.toLowerCase();
+      return all.filter(t => t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q));
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
   }
   
   async getCategories(): Promise<Category[]> {
-    return Promise.resolve(this.mockCategories);
+    try {
+      const res = await getCategories();
+      return res.data.categories.map((c: any) => ({
+        id: c.id,
+        title: c.name,
+        imageUrl: c.imageUrl || undefined,
+        type: c.type
+      }));
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
   }
   
   async getAlbumTracks(albumId: string): Promise<Track[]> {
-    return Promise.resolve(this.mockTracks);
+    return this.getDiscoverTracks();
   }
 }
 

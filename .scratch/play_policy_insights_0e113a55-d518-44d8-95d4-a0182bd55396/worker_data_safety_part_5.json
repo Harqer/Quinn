@@ -1,0 +1,43 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "FILES_AND_DOCS",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/dist/assets/DevicesScreen-BnXee-RK.js",
+        "/home/shaolin/lyria/dist/assets/index-B3LIVDhd.js",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/AlbumViewScreen.kt"
+      ],
+      "evidence": "localStorage is used for UI state caching. Intent.ACTION_SEND is used to share a plain text URL, not user files. No user files or documents are transmitted off-device.",
+      "recommendation": "No action required.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "EMAIL",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/dist/assets/HomeScreen-DP9Ce2ss.js",
+        "/home/shaolin/lyria/dist/assets/LibraryScreen-BuTgZ1r3.js",
+        "/home/shaolin/lyria/dist/assets/SearchScreen-d0COSRMv.js"
+      ],
+      "evidence": "Email is accessed strictly locally to derive the user's avatar initial (e.g. email[0].toUpperCase()). No email data is transmitted off-device.",
+      "recommendation": "No action required.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    }
+  ]
+}

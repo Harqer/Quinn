@@ -43,8 +43,15 @@ fun maveEntryProvider(
     }
 
     entry<Route.AuthOptions> {
+        val activity = androidx.activity.compose.LocalActivity.current
         AuthOptionsScreen(
-            onEmailClick = { navigator.navigate(Route.EmailInput) },
+            onEmailClick = { 
+                if (activity != null) {
+                    viewModel.verifyEmail(activity)
+                } else {
+                    navigator.navigate(Route.EmailInput)
+                }
+            },
             onGoogleClick = { viewModel.triggerGoogleSignIn() },
             onAppleClick = { viewModel.triggerAppleSignIn() },
             onLoginClick = { navigator.navigate(Route.Login) },

@@ -10,7 +10,7 @@ import { getAuth } from 'firebase/auth';
 import { EmptyState } from '../../components/molecules/EmptyState';
 
 export const LibraryScreen: React.FC = () => {
-  const { userTracks, communityTracks, loading } = useTracks();
+  const { userTracks, communityTracks, spotifyTracks, loading } = useTracks();
   const auth = getAuth();
   const user = auth.currentUser;
   const userInitial = user?.displayName ? user.displayName[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'M');
@@ -50,12 +50,41 @@ export const LibraryScreen: React.FC = () => {
         </div>
       ) : displayTracks.length > 0 ? (
         <div className="flex flex-col px-0 gap-0">
+          <Typography variant="label-md" className="px-4 py-2 text-primary font-bold">Mave Studio Tracks</Typography>
           {displayTracks.map(track => (
             <div key={track.id} onClick={() => handleTrackClick(track.id)}>
               <TrackListItem 
                 title={track.title} 
                 artist={track.artist || 'Unknown Artist'} 
                 rightElement={<span />}
+              />
+            </div>
+          ))}
+
+          {spotifyTracks && spotifyTracks.length > 0 && (
+            <>
+              <Typography variant="label-md" className="px-4 py-2 mt-4 text-[#1DB954] font-bold">Spotify Top Tracks</Typography>
+              {spotifyTracks.map((item: any) => (
+                <div key={item.id}>
+                  <TrackListItem 
+                    title={item.name} 
+                    artist={item.artists?.[0]?.name || 'Unknown Artist'} 
+                    rightElement={<Icon name="open_in_new" size="sm" className="opacity-50" />}
+                  />
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      ) : spotifyTracks.length > 0 ? (
+        <div className="flex flex-col px-0 gap-0">
+          <Typography variant="label-md" className="px-4 py-2 mt-4 text-[#1DB954] font-bold">Spotify Top Tracks</Typography>
+          {spotifyTracks.map((item: any) => (
+            <div key={item.id}>
+              <TrackListItem 
+                title={item.name} 
+                artist={item.artists?.[0]?.name || 'Unknown Artist'} 
+                rightElement={<Icon name="open_in_new" size="sm" className="opacity-50" />}
               />
             </div>
           ))}

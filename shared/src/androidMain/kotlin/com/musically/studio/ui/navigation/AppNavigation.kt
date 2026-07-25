@@ -211,8 +211,6 @@ fun MaveApp(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    // .consumeWindowInsets(paddingValues) - REMOVED for edge-to-edge adaptive layouts
-                    .imePadding()
             ) {
                 
                 NavDisplay(

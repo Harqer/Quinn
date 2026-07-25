@@ -6,10 +6,8 @@ import { fileURLToPath } from "url";
 import { rateLimit } from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
 import Redis from "ioredis";
-import { spotifyRouter, musicRouter, logsRouter, reportsRouter, authRouter, tracksRouter } from "./routes/index.js";
-import { trackRepository, globalBatchWriter } from "./repositories/TrackRepository.js";
+import { musicRouter } from "./routes/index.js";
 import { getRedis } from "./config/redis.js";
-import { db, FieldValue } from "./config/firebase.js";
 import logger from "./config/logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -65,43 +63,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/spotify", spotifyRouter);
 app.use("/api/music", musicRouter);
-app.use("/api/logs", logsRouter);
-app.use("/api/reports", reportsRouter);
-app.use("/api/auth", authRouter);
-app.use("/api/tracks", tracksRouter);
 
-// URL Redirect Service (Sub-100ms via Redis)
+// URL Redirect Service
 app.get("/s/:shortCode", async (req, res) => {
-  const { shortCode } = req.params;
-  const redis = getRedis();
-  
-  if (redis) {
-    const trackId = await redis.get(`shortlink:${shortCode}`);
-    if (trackId) {
-      // Async log the click via batch writer to preserve sub-100ms response time
-      globalBatchWriter.addOperation('set', db.collection("analytics").doc(), { type: 'redirect_click', shortCode, timestamp: FieldValue.serverTimestamp() });
-      return res.redirect(301, `/vibe/${trackId}`);
-    }
-  }
-
-  // Cache miss - fallback to Firestore
-  try {
-    const snapshot = await db.collection("shortlinks").doc(shortCode).get();
-    if (snapshot.exists) {
-      const trackId = snapshot.data()?.trackId;
-      if (redis && trackId) {
-        await redis.set(`shortlink:${shortCode}`, trackId);
-      }
-      globalBatchWriter.addOperation('set', db.collection("analytics").doc(), { type: 'redirect_click', shortCode, timestamp: FieldValue.serverTimestamp() });
-      return res.redirect(301, `/vibe/${trackId}`);
-    }
-  } catch (err) {
-    logger.error("[REDIRECT_SERVICE] Error fetching shortlink", { error: err });
-  }
-  
-  // No track found
   res.redirect(302, "/");
 });
 

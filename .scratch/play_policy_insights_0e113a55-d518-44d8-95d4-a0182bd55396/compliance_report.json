@@ -1,0 +1,108 @@
+{
+    "data_safety_mismatches": [],
+    "findings": [
+        {
+            "evidence": "In /home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt at line 849 and /home/shaolin/lyria/src/web/features/auth/DeleteAccountScreen.tsx at line 27, the code triggers a standard Firebase auth user deletion but fails to send a remote network API call to clean up the backend user records stored in the Firestore 'users' collection (created in /home/shaolin/lyria/src/routes/auth.ts).\n\n**Critic Verification**: Codebase evidence in MainViewModel.kt and DeleteAccountScreen.tsx shows Firebase Auth deletion via user.delete(), but no accompanying network call or backend hook exists to delete the user's profile document from the Firestore 'users' collection. (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+                "/home/shaolin/lyria/src/web/features/auth/DeleteAccountScreen.tsx"
+            ],
+            "finding_id": "22",
+            "issue_summary": "App handles user accounts, but the deletion mechanism is a partial deletion trap.",
+            "policy_id": "account_deletion",
+            "recommendation": "Implement in-app deletion: Expand the in-app deletion process to completely wipe remote database records (e.g. Firestore user document), not just sign out or delete the Firebase Auth credential.",
+            "severity": "IMPORTANT"
+        },
+        {
+            "evidence": "WearableStreamingService and PlaybackService are declared as foreground services in AndroidManifest.xml, and startForeground() is called in WearableStreamingService.kt.\n\n**Critic Verification**: Automatically verified (bypassed critic review). (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/AndroidManifest.xml",
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt"
+            ],
+            "finding_id": "19",
+            "issue_summary": "Foreground services are declared correctly but require Play Console declarations.",
+            "policy_id": "foreground_services_policy",
+            "recommendation": "Play Console Declaration Required: For apps targeting Android 14+, you must complete a Foreground Service declaration in the Play Console (App content section) for each type used, providing a functional description, user impact video, and a specific use case selection.",
+            "severity": "SUGGESTION"
+        },
+        {
+            "evidence": "Login flows implemented in /home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/LoginScreen.kt at line 43.\n\n**Critic Verification**: LoginScreen.kt clearly implements an authentication flow. This confirms the policy requirement to provide reviewer credentials and an account deletion link in the Play Console. (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/LoginScreen.kt"
+            ],
+            "finding_id": "21",
+            "issue_summary": "App displays or contains a login screen, registration wall, or authentication interface.",
+            "policy_id": "login_credentials",
+            "recommendation": "Administrative Console Requirements: Because your app implements a login flow, you MUST complete two manual setup steps in the Play Console dashboard to pass review:\n1. Reviewer Demo Credentials: Submit active, non-expiring test credentials so Google Play reviewers can access your gated features.\n2. Account Deletion Link: Submit a public-facing web link for account deletion to satisfy Google Play's data deletion policies.",
+            "severity": "IMPORTANT"
+        },
+        {
+            "evidence": "FirebaseAnalytics.setAnalyticsCollectionEnabled(true) is called unconditionally in onCreate(), starting telemetry collection before any privacy policy consent.\n\n**Critic Verification**: FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true) is called unconditionally in MyApplication.onCreate(), which executes on app launch before the privacy consent dialog in WelcomeScreen can be shown. (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt"
+            ],
+            "finding_id": "9",
+            "issue_summary": "**Silent Background Transfer**: Policy violation. Data is sent without prior disclosure.",
+            "policy_id": "prominent_disclosure_policy",
+            "recommendation": "Gate Firebase Analytics initialization behind the has_accepted_privacy_policy flag, similar to Crashlytics.",
+            "severity": "CRITICAL"
+        },
+        {
+            "evidence": "FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true) is called unconditionally in MyApplication.onCreate() (line 35), before the gatekeeper AlertDialog in WelcomeScreen can acquire user consent.\n\n**Critic Verification**: FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true) is executed unconditionally in MyApplication.onCreate() upon application startup, starting crash log collection before the user has a chance to accept the privacy policy in WelcomeScreen. (Confidence: High)",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt",
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+            ],
+            "finding_id": "10",
+            "issue_summary": "**Silent Background Transfer**: Policy violation. Data is sent without prior disclosure.",
+            "policy_id": "prominent_disclosure_policy",
+            "recommendation": "Remove setCrashlyticsCollectionEnabled(true) from MyApplication.onCreate() and only enable it after the user taps 'I Agree' in the WelcomeScreen.",
+            "severity": "CRITICAL"
+        }
+    ],
+    "manual_review": [],
+    "metadata": {
+        "app_id": "mave-studio",
+        "overall_compliance": "Non-compliant",
+        "scan_date": "2026-07-24T23:09:30.772681"
+    },
+    "suggested_declaration": {
+        "collected_data": [
+            {
+                "data_type": "App interactions",
+                "linked_to_user": true,
+                "purpose": "Analytics"
+            },
+            {
+                "data_type": "Voice or sound recordings",
+                "linked_to_user": true,
+                "purpose": "App functionality"
+            },
+            {
+                "data_type": "Crash logs",
+                "linked_to_user": false,
+                "purpose": "Analytics"
+            },
+            {
+                "data_type": "Name",
+                "linked_to_user": true,
+                "purpose": "App functionality"
+            },
+            {
+                "data_type": "Other info",
+                "linked_to_user": true,
+                "purpose": "App functionality"
+            },
+            {
+                "data_type": "Photos",
+                "linked_to_user": true,
+                "purpose": "App functionality"
+            },
+            {
+                "data_type": "User IDs",
+                "linked_to_user": true,
+                "purpose": "App functionality"
+            }
+        ]
+    }
+}

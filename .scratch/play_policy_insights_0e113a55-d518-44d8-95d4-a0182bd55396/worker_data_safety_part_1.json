@@ -1,0 +1,61 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "USER_ACCOUNT",
+      "policy_id": "data_safety_section",
+      "issue_summary": "User-Initiated Collection",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/di/NetworkModule.kt",
+        "/home/shaolin/lyria/dist/assets/DeleteAccountScreen-CuEGidf9.js"
+      ],
+      "evidence": "User logs in and account data is transferred to Firebase Auth. Initiated explicitly by user.",
+      "recommendation": "Declare in Play Store Data Safety form.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "NAME",
+      "policy_id": "data_safety_section",
+      "issue_summary": "User-Initiated Collection",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+        "/home/shaolin/lyria/src/services/CredentialVerifier.ts"
+      ],
+      "evidence": "Name is extracted during user-initiated Verified Credentials login and sent to the service.",
+      "recommendation": "Declare in Play Store Data Safety form.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "PHOTOS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "Background Transfer (Disclosure Claimed)",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+      ],
+      "evidence": "WearableStreamingService collects camera frames and streams them off-device. WelcomeScreen.kt displays a compliant prominent disclosure dialog acting as a gatekeeper.",
+      "recommendation": "Maintain the prominent disclosure as a gatekeeper prior to data collection.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "DISCLOSED",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    }
+  ]
+}

@@ -81,8 +81,8 @@ val connector: DefaultConnector = DefaultConnector.getInstance(
 
 The `default` Data Connect connector defines
 7 queries and
-2 mutations,
-a total of 9 operations.
+4 mutations,
+a total of 11 operations.
 Each of these operations is exposed
 as a property of [DefaultConnector].
 
@@ -93,8 +93,8 @@ which can be accessed via the [DefaultConnector.getAlbums] property.
 
 
 An example of the property for a mutation
-is the mutation named "CreateTrack",
-which can be accessed via the [DefaultConnector.createTrack] property.
+is the mutation named "AddTrackToPlaylist",
+which can be accessed via the [DefaultConnector.addTrackToPlaylist] property.
 
 
 ### DefaultConnector - The `dataConnect` Property

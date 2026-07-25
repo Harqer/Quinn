@@ -1,0 +1,57 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "AUDIO",
+      "policy_id": "data_safety_section",
+      "issue_summary": "**User-Initiated Collection**: Disclosure exempt, but **must be declared** in Play Store form.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+      ],
+      "evidence": "AudioRecord captures voice when explicitly triggered by the user and streams it to the first-party WebSocket backend.",
+      "recommendation": "Ensure AUDIO is declared in the Data Safety form since it is transferred off-device.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "MUSIC",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt"
+      ],
+      "evidence": "MediaController and PlaybackService handle local playback. No code found that transfers music files off-device.",
+      "recommendation": "No action needed. Local processing does not require data safety declaration.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "APP_INTERACTIONS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "**Silent Background Transfer**: Policy violation. Data is sent without prior disclosure.",
+      "severity": "CRITICAL",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt"
+      ],
+      "evidence": "FirebaseAnalytics.setAnalyticsCollectionEnabled(true) is called unconditionally in onCreate(), starting telemetry collection before any privacy policy consent.",
+      "recommendation": "Gate Firebase Analytics initialization behind the has_accepted_privacy_policy flag, similar to Crashlytics.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "MISSING",
+      "purpose": "Analytics",
+      "linked_to_user": true
+    }
+  ]
+}

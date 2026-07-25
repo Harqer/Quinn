@@ -19,6 +19,10 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   override val dataConnect: com.google.firebase.dataconnect.FirebaseDataConnect
 
   
+    public val addTrackToPlaylist: AddTrackToPlaylistMutation
+  
+    public val createPlaylist: CreatePlaylistMutation
+  
     public val createTrack: CreateTrackMutation
   
     public val getAlbums: GetAlbumsQuery
@@ -80,6 +84,14 @@ private class DefaultConnectorImpl(
   override val dataConnect: com.google.firebase.dataconnect.FirebaseDataConnect
 ) : DefaultConnector {
   
+    override val addTrackToPlaylist by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      AddTrackToPlaylistMutationImpl(this)
+    }
+  
+    override val createPlaylist by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      CreatePlaylistMutationImpl(this)
+    }
+  
     override val createTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
       CreateTrackMutationImpl(this)
     }
@@ -124,7 +136,9 @@ private class DefaultConnectorImpl(
   @com.google.firebase.dataconnect.ExperimentalFirebaseDataConnect
   override fun mutations(): List<com.google.firebase.dataconnect.generated.GeneratedMutation<DefaultConnector, *, *>> =
     listOf(
-      createTrack,
+      addTrackToPlaylist,
+        createPlaylist,
+        createTrack,
         upsertUser,
         
     )
@@ -272,6 +286,36 @@ private open class DefaultConnectorGeneratedMutationImpl<Data, Variables>(
     "connector=$connector)"
 }
 
+
+
+private class AddTrackToPlaylistMutationImpl(
+  connector: DefaultConnector
+):
+  AddTrackToPlaylistMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      AddTrackToPlaylistMutation.Data,
+      AddTrackToPlaylistMutation.Variables
+  >(
+    connector,
+    AddTrackToPlaylistMutation.Companion.operationName,
+    AddTrackToPlaylistMutation.Companion.dataDeserializer,
+    AddTrackToPlaylistMutation.Companion.variablesSerializer,
+  )
+
+
+private class CreatePlaylistMutationImpl(
+  connector: DefaultConnector
+):
+  CreatePlaylistMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      CreatePlaylistMutation.Data,
+      CreatePlaylistMutation.Variables
+  >(
+    connector,
+    CreatePlaylistMutation.Companion.operationName,
+    CreatePlaylistMutation.Companion.dataDeserializer,
+    CreatePlaylistMutation.Companion.variablesSerializer,
+  )
 
 
 private class CreateTrackMutationImpl(

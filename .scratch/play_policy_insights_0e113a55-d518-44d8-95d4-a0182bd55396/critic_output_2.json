@@ -1,0 +1,20 @@
+{
+    "4": {
+        "action": "VERIFIED",
+        "confidence": "High",
+        "critic_justification": "CameraPreview silently sends frames every 1.5s while active, and WearableStreamingService can send frames continuously. The gatekeeper AlertDialog in WelcomeScreen is non-dismissible, but it is invalid because it is isolated to WelcomeScreen. Users can bypass it entirely via intents (e.g., DESTINATION=home) or as returning users, allowing data collection without disclosure.",
+        "issue_summary": "Background Transfer Gatekeeper Invalid (Bypassable)",
+        "severity": "CRITICAL",
+        "recommendation": "The gatekeeper is flawed because the hasAcceptedPrivacyPolicy check is isolated to WelcomeScreen. Move this check to a global level (e.g., MaveApp or MainActivity) so it cannot be bypassed via deep links or returning users."
+    },
+    "6": {
+        "action": "VERIFIED",
+        "confidence": "High",
+        "critic_justification": "Evidence in LiveSessionScreen.kt confirms that audio recording is explicitly initiated by the user tapping a FloatingActionButton, which calls recordVoice(). The audio is then streamed off-device via maveSessionManager.sendAudio(). This confirms the collection is user-initiated and off-device."
+    },
+    "7": {
+        "action": "VERIFIED",
+        "confidence": "High",
+        "critic_justification": "Verified the same user-initiated audio streaming behavior as Finding 6. The UI provides a clear explicit trigger for voice capture."
+    }
+}

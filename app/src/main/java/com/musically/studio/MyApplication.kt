@@ -31,20 +31,26 @@ class MyApplication : Application(), AppFunctionConfiguration.Provider {
         
         val isDebug = (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
         
+        val prefs = getSharedPreferences("mave_prefs", android.content.Context.MODE_PRIVATE)
+        val hasAcceptedPrivacy = prefs.getBoolean("has_accepted_privacy_policy", false)
+        
         FirebaseApp.initializeApp(this)
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-        FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         
         if (isDebug) {
             Timber.plant(Timber.DebugTree())
             firebaseAppCheck.installAppCheckProviderFactory(DebugAppCheckProviderFactory.getInstance())
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+            FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(false)
         } else {
             firebaseAppCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
-            val prefs = getSharedPreferences("mave_prefs", android.content.Context.MODE_PRIVATE)
-            val hasAcceptedPrivacy = prefs.getBoolean("has_accepted_privacy_policy", false)
             if (hasAcceptedPrivacy) {
+                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+                FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
                 Timber.plant(CrashlyticsTree())
+            } else {
+                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+                FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(false)
             }
         }
 

@@ -23,9 +23,6 @@ export const LoginScreen: React.FC<{ onLogin: () => void, initialMode?: 'login' 
     }
   };
 
-  const handleAppleLogin = () => {
-    setError('Apple login is not configured yet. Please use Google.');
-  };
 
   return (
     <div className="font-sans h-full flex flex-col items-center justify-start p-6 bg-[#121414] text-white w-full overflow-y-auto relative">

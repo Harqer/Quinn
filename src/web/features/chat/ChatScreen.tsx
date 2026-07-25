@@ -9,33 +9,70 @@ interface Message {
   tracks?: Array<{ title: string; artist: string; coverUrl?: string }>;
 }
 
+import { getAuth } from 'firebase/auth';
+
 export const ChatScreen: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      sender: 'ai',
-      text: "Hi! I've been analyzing your recent listening habits. Based on your love for synth-heavy tracks, I think you'll enjoy this new release.",
-      tracks: [
-        { title: 'Neon Dreams', artist: 'Cyberwave Collective' }
-      ]
-    },
-    {
-      id: '2',
-      sender: 'user',
-      text: "That sounds exactly like what I need. Can you find more like this but maybe with a slower tempo?"
-    },
-    {
-      id: '3',
-      sender: 'ai',
-      text: "Sure thing. Here are a few \"Slow-Synth\" tracks that match that vibe perfectly:",
-      tracks: [
-        { title: 'Midnight City Lights', artist: 'Digital Sunset' },
-        { title: 'Echoes of Tomorrow', artist: 'Vapor Theory' }
-      ]
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    let ws: WebSocket;
+    
+    const connectWs = async () => {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const baseUrl = import.meta.env.VITE_WS_URL || `${protocol}//${window.location.host}`;
+      const wsUrl = `${baseUrl.replace(/\/$/, '')}/api/music/ws`;
+      
+      const auth = getAuth();
+      const user = auth.currentUser;
+      let tokenParam = '';
+      if (user) {
+        try {
+          const token = await user.getIdToken();
+          tokenParam = `?token=${token}`;
+        } catch(e) {}
+      }
+      
+      ws = new WebSocket(`${wsUrl}${tokenParam}`);
+      
+      ws.onopen = () => {
+        console.log("WebSocket connected to Mave Engine");
+      };
+      
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'ai_response') {
+            const aiResponse: Message = {
+              id: Date.now().toString(),
+              sender: 'ai',
+              text: data.text || '',
+              tracks: data.tracks
+            };
+            setMessages(prev => [...prev, aiResponse]);
+          }
+        } catch (err) {
+          console.error("Error parsing WS message", err);
+        }
+      };
+
+      ws.onclose = () => {
+        console.log("WebSocket disconnected");
+      };
+
+      wsRef.current = ws;
+    };
+
+    connectWs();
+
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -44,24 +81,22 @@ export const ChatScreen: React.FC = () => {
   const handleSend = () => {
     if (!inputValue.trim()) return;
     
+    const text = inputValue.trim();
     const newUserMsg: Message = {
       id: Date.now().toString(),
       sender: 'user',
-      text: inputValue.trim()
+      text
     };
     
     setMessages(prev => [...prev, newUserMsg]);
     setInputValue('');
     
-    // Mock AI response
-    setTimeout(() => {
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        sender: 'ai',
-        text: "I found this based on your request! Enjoy."
-      };
-      setMessages(prev => [...prev, aiResponse]);
-    }, 1000);
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ type: 'user_message', text }));
+    } else {
+      console.error("WebSocket is not connected");
+      // Could show an error toast here instead of injecting a fake message
+    }
   };
 
   return (
@@ -81,7 +116,7 @@ export const ChatScreen: React.FC = () => {
       <main className="flex-1 overflow-y-auto chat-container pt-[64px] pb-[100px] px-4 flex flex-col space-y-4">
         {/* Welcome Message */}
         <div className="flex flex-col items-center justify-center py-8 text-center opacity-60">
-          <Icon name="graphic_eq" className="text-primary text-[48px] mb-2" fill />
+          <Icon name="graphic_eq" className="text-primary text-[48px] mb-2" />
           <Typography variant="body-sm">Your personal audio curator. Ready to discover?</Typography>
         </div>
 
@@ -102,7 +137,7 @@ export const ChatScreen: React.FC = () => {
                       <Typography variant="body-sm" className="text-text-secondary">{msg.tracks[0].artist}</Typography>
                     </div>
                     <button className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-lg shadow-primary/20">
-                      <Icon name="play_arrow" fill />
+                      <Icon name="play_arrow" />
                     </button>
                   </div>
                 )}
@@ -160,14 +195,36 @@ export const ChatScreen: React.FC = () => {
           
           {inputValue.trim() ? (
              <button onClick={handleSend} className="w-10 h-10 flex items-center justify-center bg-primary text-on-primary rounded-full transition-all shadow-lg shadow-primary/20 flex-shrink-0">
-               <Icon name="send" fill />
+               <Icon name="send" />
              </button>
           ) : (
             <div className="flex items-center flex-shrink-0">
               <button className="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-surface-container-highest rounded-full transition-colors">
                 <Icon name="mic" />
               </button>
-              <button className="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-surface-container-highest rounded-full transition-colors">
+              <button onClick={() => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*,video/*';
+                input.onchange = async (e: any) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    const base64 = ev.target?.result;
+                    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+                      wsRef.current.send(JSON.stringify({ type: 'vision', image: base64 }));
+                      setMessages(prev => [...prev, {
+                        id: Date.now().toString(),
+                        sender: 'user',
+                        text: `[Sent media for analysis]`
+                      }]);
+                    }
+                  };
+                  reader.readAsDataURL(file);
+                };
+                input.click();
+              }} className="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-surface-container-highest rounded-full transition-colors">
                 <Icon name="photo_camera" />
               </button>
             </div>

@@ -52,11 +52,25 @@ class MainViewModel @Inject constructor(
     private val _hasAcceptedPrivacyPolicy = MutableStateFlow(prefs.getBoolean("has_accepted_privacy_policy", false))
     val hasAcceptedPrivacyPolicy: StateFlow<Boolean> = _hasAcceptedPrivacyPolicy.asStateFlow()
 
+    private val _hasDeclinedPrivacyPolicy = MutableStateFlow(prefs.getBoolean("has_declined_privacy_policy", false))
+    val hasDeclinedPrivacyPolicy: StateFlow<Boolean> = _hasDeclinedPrivacyPolicy.asStateFlow()
+
     fun acceptPrivacyPolicy() {
         prefs.edit().putBoolean("has_accepted_privacy_policy", true).apply()
         _hasAcceptedPrivacyPolicy.value = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         Timber.plant(CrashlyticsTree())
+    }
+
+    fun declinePrivacyPolicy() {
+        prefs.edit().putBoolean("has_declined_privacy_policy", true).apply()
+        _hasDeclinedPrivacyPolicy.value = true
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+    }
+
+    fun resetPrivacyPolicy() {
+        prefs.edit().putBoolean("has_declined_privacy_policy", false).apply()
+        _hasDeclinedPrivacyPolicy.value = false
     }
 
     private val _isMusicAccountConnected = MutableStateFlow(false)
@@ -485,6 +499,7 @@ class MainViewModel @Inject constructor(
 
     /** Starts the live real-time Mave session (WebSocket + RTDB sync). */
     fun startLiveSession() {
+        if (!_hasAcceptedPrivacyPolicy.value) return
         if (_isLiveSessionActive.value) return
         _isLiveSessionActive.value = true
         maveSessionManager.connect()
@@ -520,6 +535,7 @@ class MainViewModel @Inject constructor(
 
     @SuppressLint("MissingPermission")
     fun recordVoice(context: Context?) {
+        if (!_hasAcceptedPrivacyPolicy.value) return
         if (_isRecording.value) {
             stopRecording()
         } else {
@@ -710,10 +726,9 @@ class MainViewModel @Inject constructor(
     fun fetchUserTracks() {
         viewModelScope.launch {
             _isLoading.value = true
-            val result = apiClient.getUserTracks()
-            if (result != null) {
-                _tracks.value = result
-            }
+            val maveTracks = apiClient.getUserTracks() ?: emptyList()
+            val spotifyTracks = apiClient.getSpotifyLibraryTracks() ?: emptyList()
+            _tracks.value = maveTracks + spotifyTracks
             _isLoading.value = false
         }
     }
@@ -838,6 +853,12 @@ class MainViewModel @Inject constructor(
                 val uid = user.uid
                 rtdb.getReference("sessions/$uid").removeValue().await()
                 Timber.i("RTDB session data cleared for uid=$uid")
+                
+                // 1.5. Delete remote Firestore backend account profile.
+                val backendDeleted = apiClient.deleteAccount()
+                if (!backendDeleted) {
+                    Timber.w("Could not delete backend profile for uid=$uid, proceeding with auth deletion anyway")
+                }
 
                 // 2. Disconnect live session and stop all ongoing services.
                 stopLiveSession()
@@ -882,7 +903,118 @@ class MainViewModel @Inject constructor(
             if (user != null) {
                 rtdb.getReference("sessions/${user.uid}/state").removeEventListener(listener)
             }
+    fun verifyEmail(activity: android.app.Activity) {
+        viewModelScope.launch {
+            try {
+                val nonce = generateSecureRandomNonce()
+                
+                val openId4vpRequest = """
+    {
+      "requests": [
+        {
+          "protocol": "openid4vp-v1-unsigned",
+          "data": {
+            "response_type": "vp_token",
+            "response_mode": "dc_api",
+            "nonce": "$nonce",
+            "dcql_query": {
+              "credentials": [
+                {
+                  "id": "user_info_query",
+                  "format": "dc+sd-jwt",
+                   "meta": { 
+                      "vct_values": ["UserInfoCredential"] 
+                   },
+                  "claims": [ 
+                    {"path": ["email"]}, 
+                    {"path": ["name"]},  
+                    {"path": ["given_name"]},
+                    {"path": ["family_name"]},
+                    {"path": ["picture"]},
+                    {"path": ["hd"]},
+                    {"path": ["email_verified"]}
+                  ]
+                }
+              ]
+            }
+          }
         }
+      ]
+    }
+    """
+                val getDigitalCredentialOption = androidx.credentials.GetDigitalCredentialOption(requestJson = openId4vpRequest)
+                val request = androidx.credentials.GetCredentialRequest(listOf(getDigitalCredentialOption))
+                
+                val credentialManager = androidx.credentials.CredentialManager.create(context)
+                val result = credentialManager.getCredential(activity, request)
+                when (val credential = result.credential) {
+                    is androidx.credentials.DigitalCredential -> {
+                        val responseJsonString = credential.credentialJson
+                        val (email, name) = parseSdJwtEmailAndName(responseJsonString)
+                        
+                        if (email != null) {
+                            // 1. Sign in anonymously to get a Firebase Session
+                            auth.signInAnonymously().await()
+                            
+                            // 2. Upsert the user into Cloud SQL via Firebase Data Connect
+                            com.musically.studio.dataconnect.DefaultConnector.instance.upsertUser.execute(
+                                displayName = name ?: "Verified User",
+                                email = email
+                            )
+                            
+                            navigateTo(Route.Home)
+                        } else {
+                            Timber.e("Could not parse email from digital credential.")
+                        }
+                    }
+                    else -> {
+                        Timber.e("Unexpected credential type: ${credential::class.java}")
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error getting verified email credential")
+            }
+        }
+    }
+
+    private fun parseSdJwtEmailAndName(responseJsonString: String): Pair<String?, String?> {
+        try {
+            val responseData = org.json.JSONObject(responseJsonString)
+            val vpToken = responseData.optJSONObject("vp_token") ?: return Pair(null, null)
+            val credentialId = vpToken.keys().next()
+            val rawSdJwt = vpToken.getJSONArray(credentialId).getString(0)
+            
+            val parts = rawSdJwt.split("~")
+            var email: String? = null
+            var name: String? = null
+            
+            for (i in 1 until parts.size - 1) {
+                val disclosureBase64 = parts[i]
+                if (disclosureBase64.isBlank()) continue
+                try {
+                    val decoded = String(android.util.Base64.decode(disclosureBase64, android.util.Base64.URL_SAFE))
+                    val jsonArray = org.json.JSONArray(decoded)
+                    if (jsonArray.length() == 3) {
+                        val claimName = jsonArray.getString(1)
+                        val claimValue = jsonArray.getString(2)
+                        if (claimName == "email") email = claimValue
+                        if (claimName == "name" || claimName == "given_name") name = claimValue
+                    }
+                } catch (e: Exception) {
+                    // Ignore malformed disclosures
+                }
+            }
+            return Pair(email, name)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to parse SD-JWT")
+            return Pair(null, null)
+        }
+    }
+
+    private fun generateSecureRandomNonce(): String {
+        val bytes = ByteArray(32)
+        java.security.SecureRandom().nextBytes(bytes)
+        return android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP or android.util.Base64.URL_SAFE)
     }
 }
 
