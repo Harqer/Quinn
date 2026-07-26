@@ -49,7 +49,7 @@ fun LoginScreen(
         }
     }
 
-    Scaffold(containerColor = Color(0xFF121212)) { paddingValues ->
+    Scaffold(containerColor = com.musically.studio.ui.theme.MaveBackground) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             Column(
                 modifier = Modifier
@@ -128,7 +128,7 @@ fun LoginScreen(
             Button(
                 onClick = { doLogin() },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1ED760)),
+                colors = ButtonDefaults.buttonColors(containerColor = com.musically.studio.ui.theme.MaveGreenLight),
                 shape = CircleShape,
                 // Disabled when fields are empty OR a login is already in flight
                 enabled = isFormValid && !isLoading

@@ -12,24 +12,10 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.DigitalCredential
 import androidx.credentials.GetDigitalCredentialOption
 import androidx.credentials.exceptions.GetCredentialException
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ContentTransform
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LibraryMusic
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Podcasts
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.*
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -43,12 +29,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.OAuthProvider
+import com.musically.studio.R
+import com.musically.studio.engage.EngageBroadcastReceiver
 import com.musically.studio.ui.AuthSideEffect
 import com.musically.studio.ui.MainViewModel
-import com.musically.studio.ui.components.MiniPlayer
-import com.musically.studio.ui.navigation.*
-import com.musically.studio.ui.screens.*
-import com.musically.studio.ui.screens.onboarding.*
+import com.musically.studio.ui.navigation.MaveApp
+import com.musically.studio.ui.navigation.Route
 import com.musically.studio.ui.theme.MaveAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -65,13 +51,13 @@ import com.musically.studio.audio.PlaybackService
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private var permissionsGranted = mutableStateOf(false)
+    private val permissionsGranted = mutableStateOf(false)
     private lateinit var mainViewModel: MainViewModel
     private var controllerFuture: ListenableFuture<MediaController>? = null
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
+    ) { permissions: Map<String, Boolean> ->
         val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
         val audioGranted = permissions[Manifest.permission.RECORD_AUDIO] ?: false
         if (cameraGranted && audioGranted) {
@@ -81,7 +67,7 @@ class MainActivity : ComponentActivity() {
 
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result ->
+    ) { result: androidx.activity.result.ActivityResult ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
             val account = task.getResult(com.google.android.gms.common.api.ApiException::class.java)
@@ -100,12 +86,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         window.isNavigationBarContrastEnforced = false
-        FirebaseApp.initializeApp(this)
         
-        com.musically.studio.engage.EngageBroadcastReceiver.register(this)
+        EngageBroadcastReceiver.register(this)
         
         setContent {
-            mainViewModel = viewModel()
+            mainViewModel = viewModel<MainViewModel>()
             
             LaunchedEffect(intent) {
                 handleIntent(intent, mainViewModel)
@@ -181,7 +166,7 @@ class MainActivity : ComponentActivity() {
 
     private fun launchGoogleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.google_api_key)) 
+            .requestIdToken(getString(R.string.google_web_client_id)) 
             .requestEmail()
             .build()
         val client = GoogleSignIn.getClient(this, gso)
@@ -206,13 +191,8 @@ class MainActivity : ComponentActivity() {
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.POST_NOTIFICATIONS
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            permissions.add(Manifest.permission.BLUETOOTH_SCAN)
-            permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
-        } else {
-            permissions.add(Manifest.permission.BLUETOOTH)
-            permissions.add(Manifest.permission.BLUETOOTH_ADMIN)
-        }
+        permissions.add(Manifest.permission.BLUETOOTH_SCAN)
+        permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
         permissionLauncher.launch(permissions.toTypedArray())
     }
 

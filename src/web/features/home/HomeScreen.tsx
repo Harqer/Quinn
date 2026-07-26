@@ -3,7 +3,6 @@ import { Carousel } from '../../components/organisms/Carousel';
 import { useNavigate } from '../../App';
 import { useAppContext } from '../../contexts/AppContext';
 import { logger } from '../../lib/logger';
-import { Card } from '../../components/molecules/Card';
 import { Typography } from '../../components/atoms/Typography';
 import { Icon } from '../../components/atoms/Icon';
 import { useTracks } from '../../hooks/useTracks';
@@ -62,39 +61,88 @@ export const HomeScreen: React.FC = () => {
           </div>
           
           <Carousel title="Made for you">
-            {userTracks.length > 0 ? (
-              userTracks.slice(0, 5).map(track => (
-                <Card key={track.id} title={track.title} subtitle={track.artist} imageUrl={track.albumArtUrl} onClick={() => handleTrackClick(track.id)} />
-              ))
-            ) : (
-              communityTracks.slice(0, 5).map(track => (
-                <Card key={track.id} title={track.title} subtitle={track.artist} imageUrl={track.albumArtUrl} onClick={() => handleTrackClick(track.id)} />
-              ))
-            )}
+            {(userTracks.length > 0 ? userTracks : communityTracks).slice(0, 5).map(track => (
+              <div 
+                key={track.id}
+                className="flex flex-col gap-2 w-[120px] flex-shrink-0 cursor-pointer group" 
+                onClick={() => handleTrackClick(track.id)}
+              >
+                <div className="w-full aspect-square bg-surface-container flex items-center justify-center shadow-lg overflow-hidden relative rounded-[4px]">
+                  {track.albumArtUrl ? (
+                    <img src={track.albumArtUrl} alt={track.title} loading="lazy" className="w-full h-full object-cover" />
+                  ) : (
+                    <Shimmer className="w-full h-full" />
+                  )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors pointer-events-none" />
+                </div>
+                <div className="flex flex-col">
+                  <Typography variant="body-md" className="truncate font-bold">
+                    {track.title}
+                  </Typography>
+                  {track.artist && (
+                    <Typography variant="body-sm" color="secondary" className="truncate">
+                      {track.artist}
+                    </Typography>
+                  )}
+                </div>
+              </div>
+            ))}
           </Carousel>
           
           <Carousel title="Community Vibes">
             {communityTracks.map(track => (
-              <Card 
-                key={track.id} 
-                title={track.title} 
-                subtitle={track.artist} 
-                imageUrl={track.albumArtUrl}
+              <div 
+                key={track.id}
+                className="flex flex-col gap-2 w-[120px] flex-shrink-0 cursor-pointer group" 
                 onClick={() => handleTrackClick(track.id)}
-              />
+              >
+                <div className="w-full aspect-square bg-surface-container flex items-center justify-center shadow-lg overflow-hidden relative rounded-[4px]">
+                  {track.albumArtUrl ? (
+                    <img src={track.albumArtUrl} alt={track.title} loading="lazy" className="w-full h-full object-cover" />
+                  ) : (
+                    <Shimmer className="w-full h-full" />
+                  )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors pointer-events-none" />
+                </div>
+                <div className="flex flex-col">
+                  <Typography variant="body-md" className="truncate font-bold">
+                    {track.title}
+                  </Typography>
+                  {track.artist && (
+                    <Typography variant="body-sm" color="secondary" className="truncate">
+                      {track.artist}
+                    </Typography>
+                  )}
+                </div>
+              </div>
             ))}
           </Carousel>
 
           {userTracks.length > 0 && (
             <Carousel title="Recently played">
               {userTracks.map(track => (
-                <Card 
-                  key={track.id} 
-                  title={track.title} 
-                  subtitle={track.artist || 'Unknown Artist'} 
-                  imageUrl={track.albumArtUrl}
+                <div 
+                  key={track.id}
+                  className="flex flex-col gap-2 w-[120px] flex-shrink-0 cursor-pointer group" 
                   onClick={() => handleTrackClick(track.id)}
-                />
+                >
+                  <div className="w-full aspect-square bg-surface-container flex items-center justify-center shadow-lg overflow-hidden relative rounded-[4px]">
+                    {track.albumArtUrl ? (
+                      <img src={track.albumArtUrl} alt={track.title} loading="lazy" className="w-full h-full object-cover" />
+                    ) : (
+                      <Shimmer className="w-full h-full" />
+                    )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors pointer-events-none" />
+                  </div>
+                  <div className="flex flex-col">
+                    <Typography variant="body-md" className="truncate font-bold">
+                      {track.title}
+                    </Typography>
+                    <Typography variant="body-sm" color="secondary" className="truncate">
+                      {track.artist || 'Unknown Artist'}
+                    </Typography>
+                  </div>
+                </div>
               ))}
             </Carousel>
           )}

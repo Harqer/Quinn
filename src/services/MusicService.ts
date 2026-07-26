@@ -19,105 +19,127 @@ export interface MaveEvent {
   isThinking?: boolean;
   reasoning?: string;
   modality?: string;
+  coverArtUrl?: string;
+  videoMotionUrl?: string;
   interactionId?: string;
   playbackState?: any;
 }
+
+const visionLocks = new Map<string, Promise<any>>();
 
 export class MusicService {
   /**
    * Processes vision event with Gemini Thinking SDK streaming and RTDB state sync.
    * Professional Grade: Interleaves WebSocket delivery with RTDB source-of-truth updates.
+   * Uses a per-session lock to ensure sequential processing of vision streams.
    */
   async processVisionEvent(ws: WebSocket, image: string, sessionId: string) {
-    try {
-      const previousState = await this.safeGetSession(sessionId) || {};
+    const existingLock = visionLocks.get(sessionId) || Promise.resolve();
 
-      // Real-time piping of chunks from the graph nodes
-      const config = {
-        configurable: {
-          onChunk: (chunk: { type: string; text: string }) => {
-            const isThinking = chunk.type === "vision_thinking";
-            const eventType = isThinking ? "mave_thinking" : "mave_chunk";
+    const newLock = existingLock.then(async () => {
+      try {
+        const previousState = await this.safeGetSession(sessionId) || {};
 
-            // 1. Direct pipe to active WebSocket for absolute minimal latency
-            this.safeSend(ws, {
-              type: eventType,
-              chunk: chunk.text,
-              isThinking
+        // Real-time piping of chunks from the graph nodes
+        const config = {
+          configurable: {
+            onChunk: (chunk: { type: string; text: string }) => {
+              // Forward everything from the graph directly as "thinking" for natural feedback
+              this.safeSend(ws, {
+                type: "mave_thinking",
+                chunk: chunk.text,
+                isThinking: true
+              });
+
+              // Synchronize to RTDB for multi-surface consistency
+              this.syncToRtdb(sessionId, { chunk: chunk.text, isThinking: true });
+            }
+          }
+        };
+
+        // Execute graph as a stream to handle node-level parallelism
+        const stream = await maveGraph.stream({
+          ...previousState,
+          image
+        }, config);
+
+        let finalState = { ...previousState };
+
+        for await (const update of stream) {
+          if (update.visualAnalyzer) {
+            const vision = update.visualAnalyzer.visionDescription;
+            this.safeSend(ws, { type: "agent_update", vision });
+            await this.syncToRtdb(sessionId, { vision, isThinking: false });
+            finalState.visionDescription = vision;
+          }
+
+          if (update.director) {
+            const reasoning = update.director.directorReasoning;
+            const modality = update.director.modality;
+            this.safeSend(ws, { type: "agent_update", reasoning, modality });
+            await this.syncToRtdb(sessionId, { reasoning, modality, isThinking: false });
+            finalState.directorReasoning = reasoning;
+            finalState.modality = modality;
+          }
+
+          if (update.musicDirector) {
+            const prompts = update.musicDirector.musicalPrompts;
+            const audio = update.musicDirector.generatedAudio;
+            const prevId = update.musicDirector.previousInteractionId;
+
+            // 1. Send metadata (prompts) to RTDB for persistent session state
+            await this.syncToRtdb(sessionId, {
+              prompts,
+              isThinking: false,
+              interactionId: prevId
             });
 
-            // 2. Synchronize to RTDB for multi-surface consistency and state persistence
-            this.syncToRtdb(sessionId, { chunk: chunk.text, isThinking });
+            // 2. Send structured audio block via WebSocket for low-latency playback
+            this.safeSend(ws, {
+              type: "agent_update",
+              prompts,
+              chunk: audio, // Forward structured audio as a "chunk"
+              interactionId: prevId
+            });
+
+            finalState.musicalPrompts = prompts;
+            finalState.previousInteractionId = prevId;
+          }
+
+          if (update.podcastNarrator) {
+            const script = update.podcastNarrator.podcastScript;
+            this.safeSend(ws, { type: "agent_update", script });
+            await this.syncToRtdb(sessionId, { script, isThinking: false });
+            finalState.podcastScript = script;
+          }
+
+          if (update.mediaGenerator) {
+            const cover = update.mediaGenerator.coverArtUrl;
+            const video = update.mediaGenerator.videoMotionUrl;
+            if (cover) {
+              this.safeSend(ws, { type: "cover_art_update", coverArtUrl: cover });
+              await this.syncToRtdb(sessionId, { coverArtUrl: cover, isThinking: false });
+              finalState.coverArtUrl = cover;
+            }
+            if (video) {
+              this.safeSend(ws, { type: "video_motion_update", videoMotionUrl: video });
+              await this.syncToRtdb(sessionId, { videoMotionUrl: video, isThinking: false });
+              finalState.videoMotionUrl = video;
+            }
           }
         }
-      };
 
-      // Execute graph as a stream to handle node-level parallelism
-      const stream = await maveGraph.stream({
-        ...previousState,
-        image
-      }, config);
-
-      let finalState = { ...previousState };
-
-      for await (const update of stream) {
-        if (update.visualAnalyzer) {
-          const vision = update.visualAnalyzer.visionDescription;
-          this.safeSend(ws, { type: "agent_update", vision });
-          await this.syncToRtdb(sessionId, { vision, isThinking: false });
-          finalState.visionDescription = vision;
-        }
-
-        if (update.director) {
-          const reasoning = update.director.directorReasoning;
-          const modality = update.director.modality;
-          this.safeSend(ws, { type: "agent_update", reasoning, modality });
-          await this.syncToRtdb(sessionId, { reasoning, modality, isThinking: false });
-          finalState.directorReasoning = reasoning;
-          finalState.modality = modality;
-        }
-
-        if (update.musicDirector) {
-          const prompts = update.musicDirector.musicalPrompts;
-          const audio = update.musicDirector.generatedAudio;
-          const prevId = update.musicDirector.previousInteractionId;
-
-          // 1. Send metadata (prompts) to RTDB for persistent session state
-          await this.syncToRtdb(sessionId, {
-            prompts,
-            isThinking: false,
-            interactionId: prevId
-          });
-
-          // 2. Send structured audio block via WebSocket for low-latency playback
-          this.safeSend(ws, {
-            type: "agent_update",
-            prompts,
-            chunk: audio, // Forward structured audio as a "chunk"
-            interactionId: prevId
-          });
-
-          finalState.musicalPrompts = prompts;
-          finalState.previousInteractionId = prevId;
-
-          // (Legacy support: removed session?.setWeightedPrompts as we use ephemeral tokens now)
-        }
-
-        if (update.podcastNarrator) {
-          const script = update.podcastNarrator.podcastScript;
-          this.safeSend(ws, { type: "agent_update", script });
-          await this.syncToRtdb(sessionId, { script, isThinking: false });
-          finalState.podcastScript = script;
-        }
+        await this.safeSaveSession(sessionId, finalState);
+        return finalState;
+      } catch (err) {
+        logger.error("[MAVE_SERVICE] Failed to process vision event", { error: err });
+        this.safeSend(ws, { type: "error", error: "AI Orchestration failed" });
+        throw err;
       }
+    });
 
-      await this.safeSaveSession(sessionId, finalState);
-      return finalState;
-    } catch (err) {
-      logger.error("[MAVE_SERVICE] Failed to process vision event", { error: err });
-      this.safeSend(ws, { type: "error", error: "AI Orchestration failed" });
-      throw err;
-    }
+    visionLocks.set(sessionId, newLock);
+    return newLock;
   }
 
   /**
@@ -126,10 +148,38 @@ export class MusicService {
   async generateMusicLiveToken(ws: WebSocket, sessionId: string) {
     try {
       logger.info("[MAVE_SERVICE] Generating Ephemeral Token for Gemini Live API", { sessionId });
-      
+
+      const tools = [
+        {
+          function_declarations: [
+            {
+              name: "generate_visual_media",
+              description: "Generate an album cover or a music video loop for the current musical vibe.",
+              parameters: {
+                type: "object",
+                properties: {
+                  intent: {
+                    type: "string",
+                    enum: ["cover_art", "video_motion"],
+                    description: "Whether to generate a static cover art or a cinematic video loop."
+                  },
+                  creative_pitch: {
+                    type: "string",
+                    description: "A natural language description of the visual style to be generated."
+                  }
+                },
+                required: ["intent"]
+              }
+            }
+          ]
+        }
+      ];
+
       const token = await generateLiveEphemeralToken(
         "gemini-3.1-flash-live-preview",
-        "You are Mave, the Executive Creative Director, Master Musical Orchestrator..."
+        "You are Mave, the Executive Creative Director, Master Musical Orchestrator. You are in a live bidirectional session with the user. Your role is to reason about their environment and musical requests. You can trigger music and visual production via your internal reasoning or by calling the generate_visual_media tool.",
+        undefined,
+        tools
       );
 
       this.safeSend(ws, {
@@ -172,8 +222,6 @@ export class MusicService {
    */
   async shareTrack(uid: string, trackId: string) {
     try {
-      // Create shortlink directly. Track existence validation is handled client-side or at the Data Connect level.
-
       const shortCode = await trackRepository.createShortLink(trackId);
       logger.info("[MAVE_SERVICE] Track shared with short link", { uid, trackId, shortCode });
       
@@ -195,7 +243,6 @@ export class MusicService {
    */
   async applySteering(params: { bpm?: number, density?: number, brightness?: number, mutes?: string[] }, sessionId: string) {
     try {
-
       const config: any = {};
       if (params.bpm) config.bpm = params.bpm;
       if (params.density) config.density = params.density;
@@ -205,9 +252,6 @@ export class MusicService {
         config.mute_drums = params.mutes.includes("drums");
         config.mute_bass = params.mutes.includes("bass");
       }
-
-      // Client directly updates the Gemini Live connection with new config;
-      // Here we just persist the updated config for cluster-wide consistency and sync.
 
       // Persistence: Update session state in Redis for cluster-wide consistency
       const state = await this.safeGetSession(sessionId) || {};
@@ -245,8 +289,6 @@ export class MusicService {
       await this.syncToRtdb(sessionId, updatePayload);
       await this.safeSaveSession(sessionId, result);
 
-      // (Legacy support: removed session?.setWeightedPrompts as we use ephemeral tokens now)
-
       return result;
     } catch (err) {
       logger.error("[MAVE_SERVICE] Failed to handle feedback", { error: err });
@@ -263,7 +305,8 @@ export class MusicService {
 
     const ai = getAi();
     const prompt = `Analyze vision stream and generate music prompts for ${type || 'ambient'}`;
-    
+    const { LYRIA_REGISTRY } = await import("./ai.js");
+
     let inputToModel: any = prompt;
     if (image) {
       const mimeType = image.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
@@ -275,7 +318,7 @@ export class MusicService {
     }
     
     const interaction = await (ai as any).interactions.create({
-      model: "gemini-3.6-flash",
+      model: LYRIA_REGISTRY.FULL_TRACK,
       input: inputToModel
     });
     return { response: interaction.output_text };

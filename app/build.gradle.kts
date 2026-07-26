@@ -22,9 +22,9 @@ val localProperties = Properties().apply {
 }
 
 val mwdatApplicationId: String =
-    System.getenv("MWDAT_APPLICATION_ID") ?: (localProperties.getProperty("mwdat_application_id") ?: "1727526605052408")
+    System.getenv("MWDAT_APPLICATION_ID") ?: localProperties.getProperty("mwdat_application_id") ?: ""
 val mwdatClientToken: String =
-    System.getenv("MWDAT_CLIENT_TOKEN") ?: (localProperties.getProperty("mwdat_client_token") ?: "AR|1727526605052408|909d8c639703f725fb94099504a0bafb")
+    System.getenv("MWDAT_CLIENT_TOKEN") ?: localProperties.getProperty("mwdat_client_token") ?: ""
 
 android {
     namespace = "com.musically.studio"
@@ -117,8 +117,8 @@ dependencies {
     implementation(libs.androidx.appfunctions.service)
     ksp(libs.androidx.appfunctions.compiler)
 
-    testImplementation("org.mockito:mockito-core:5.3.1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
 
     // AndroidX & Material UI Components
     implementation(libs.google.material)
@@ -165,15 +165,15 @@ dependencies {
     implementation(libs.androidx.camera.compose)
     implementation(libs.androidx.camera.extensions)
 
-    implementation("androidx.media3:media3-exoplayer:1.2.0")
-    implementation("androidx.media3:media3-session:1.2.0")
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.session)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.database)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.crashlytics)
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.firebase.analytics)
     implementation(libs.firebase.appcheck.playintegrity)
     implementation(libs.firebase.appcheck.debug)
 

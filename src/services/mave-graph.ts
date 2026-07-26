@@ -19,6 +19,8 @@ const MaveState = Annotation.Root({
   modality: Annotation<'music' | 'podcast' | 'audiobook' | 'mixed'>(),
   previousInteractionId: Annotation<string>(),
   generatedAudio: Annotation<string>(), // Base64 audio block
+  coverArtUrl: Annotation<string>(),
+  videoMotionUrl: Annotation<string>(),
   locale: Annotation<string>(),
 });
 
@@ -40,7 +42,7 @@ const getCachedModel = async (modelName: string, temperature: number = 0.7) => {
  */
 const createMusicInteraction = async (input: string, image?: string, previousId?: string) => {
     const ai = getAi();
-    const model = previousId ? "lyria-realtime-exp" : "lyria-3-pro-preview";
+    const model = previousId ? LYRIA_REGISTRY.REALTIME : LYRIA_REGISTRY.FULL_TRACK;
 
     const contents: any[] = [{ type: "text", text: input }];
     if (image) contents.push({ type: "image", data: image, mime_type: "image/jpeg" });
@@ -97,62 +99,79 @@ const visualAnalyzerNode = async (state: typeof MaveState.State, config: any) =>
   return { visionDescription: fullDescription };
 };
 
-import { z } from "genkit";
-import { getGenkit } from "./ai.js";
-
-const ModalitySchema = z.object({
-  modality: z.enum(['music', 'podcast', 'audiobook', 'mixed']),
-  reasoning: z.string().describe("Brief reasoning for why this modality was chosen"),
-});
+import { getGenkit, LYRIA_REGISTRY } from "./ai.js";
 
 const directorNode = async (state: typeof MaveState.State, config: any) => {
   const userText = (state.userFeedback || "").toLowerCase();
   
   let modality: 'music' | 'podcast' | 'audiobook' | 'mixed' = 'music';
+  let visualIntent: 'none' | 'cover_art' | 'video_motion' = 'none';
   let reasoning = "";
 
-  if (userText) {
-    try {
-      const genkitInstance = getGenkit();
-      const modalityPrompt = genkitInstance.definePrompt({
-        name: 'parseModality',
-        model: 'googleai/gemini-3.6-flash',
-        output: { schema: ModalitySchema },
-        system: `You are the orchestration director. Determine the correct media modality based on the user's feedback.
-- 'audiobook': If they ask to read a story, narrate a book, etc.
-- 'podcast': If they ask to host an episode, do commentary, etc.
-- 'mixed': If they ask for both podcast and music.
-- 'music': The default for everything else (creating songs, playing instruments, visual vibes).`,
-      });
-      
-      const response = await modalityPrompt({ prompt: `User Feedback: "${userText}"` });
-      modality = response.output?.modality || 'music';
-      
-      // We can also stream the Director's creative reasoning
-      if (config.configurable?.onChunk) {
-        config.configurable.onChunk({ type: "director_thinking", text: `[Orchestrator] Selected modality: ${modality} (${response.output?.reasoning})\n` });
-      }
-    } catch (e) {
-      logger.warn("[MAVE_GRAPH] Failed to parse modality via Genkit, falling back to music", { error: e });
-    }
-  }
+  // ensure context cache is active for the director's persona
+  await ensureContextCache();
 
-  // Generate the actual creative reasoning stream using LangChain (to maintain the streaming interface)
-  const model = await getCachedModel("gemini-3.1-pro-preview", 0.3);
+  // Use the 3.1 Pro model for high-fidelity creative orchestration reasoning
+  const model = await getCachedModel("gemini-3.1-pro-preview", 0.4);
+
   const stream = await model.stream([
-    ["system", `You are the Mave Orchestra Director. Your primary duty is to analyze visual atmospheres from camera streams, photos, and video feeds, and synthesize high-fidelity musical steering for the Lyria engine. Describe the musical mood, tempo, instrumentation, and emotional textures inspired by the scene in a fluid, inspiring tone. Avoid jargon. You MUST respond in the language corresponding to this locale: ${state.locale || 'en'}.`],
-    ["human", `Visual Atmosphere: ${state.visionDescription}\nSelected Modality: ${modality}\nUser Request: ${state.userFeedback || "Compose real-time music for this atmosphere"}`]
+    ["system", `You are the Mave Orchestra Director. Your role is to reason about the visual atmosphere and user intent to orchestrate a world-class audio-visual experience.
+Reason naturally about what you see and what the user wants.
+If the user feedback starts with "Production Request:", prioritize fulfilling that specific media generation intent.
+If the user asks for a song, vibe, or instrument, set the modality to 'music'.
+If the user asks for a story or narration, set it to 'audiobook' or 'podcast'.
+If the user asks for cover art or a music video, identify that intent.
+
+At the end of your response, you MUST include a JSON block with the final orchestration parameters:
+\`\`\`json
+{
+  "modality": "music" | "podcast" | "audiobook" | "mixed",
+  "visualIntent": "none" | "cover_art" | "video_motion"
+}
+\`\`\`
+Speak naturally to the user about your creative choices. Support 70+ languages. Locale: ${state.locale || 'en'}.`],
+    ["human", `Visual Atmosphere: ${state.visionDescription}\nUser Feedback: ${state.userFeedback || "Compose real-time music for this atmosphere"}`]
   ]);
 
+  let fullResponse = "";
+  let isJsonDetected = false;
   for await (const chunk of stream) {
     const text = chunk.content.toString();
-    reasoning += text;
+    fullResponse += text;
+
+    // Direct pipe of natural reasoning and dialogue to the user
+    // We attempt to stop streaming if we detect the start of the JSON block
     if (config.configurable?.onChunk) {
-      config.configurable.onChunk({ type: "director_thinking", text });
+      if (!isJsonDetected && fullResponse.includes("```json")) {
+        isJsonDetected = true;
+        // Emit only the part before the JSON block
+        const preJson = text.split("```json")[0];
+        if (preJson) {
+           config.configurable.onChunk({ type: "mave_thinking", text: preJson });
+        }
+      } else if (!isJsonDetected) {
+        config.configurable.onChunk({ type: "mave_thinking", text });
+      }
     }
   }
 
-  return { directorReasoning: reasoning, modality };
+  // Parse the JSON block from the natural response
+  const jsonMatch = fullResponse.match(/```json\n([\s\S]*?)\n```/);
+  if (jsonMatch) {
+    try {
+      const params = JSON.parse(jsonMatch[1]);
+      modality = params.modality || 'music';
+      visualIntent = params.visualIntent || 'none';
+      // Clean up the response for the reasoning field if needed
+      reasoning = fullResponse.replace(jsonMatch[0], "").trim();
+    } catch (e) {
+      logger.warn("[MAVE_GRAPH] Failed to parse params from reasoning", { error: e });
+    }
+  } else {
+    reasoning = fullResponse;
+  }
+
+  return { directorReasoning: reasoning, modality, visualIntent };
 };
 
 const musicDirectorNode = async (state: typeof MaveState.State, config: any) => {
@@ -195,7 +214,7 @@ const podcastNarratorNode = async (state: typeof MaveState.State, config: any) =
     fullScript += text;
 
     if (config.configurable?.onChunk) {
-      config.configurable.onChunk({ type: "director_thinking", text });
+      config.configurable.onChunk({ type: "mave_thinking", text });
     }
   }
 
@@ -205,21 +224,51 @@ const podcastNarratorNode = async (state: typeof MaveState.State, config: any) =
   return { podcastScript: fullScript };
 };
 
+const mediaGeneratorNode = async (state: any, config: any) => {
+  const intent = (state as any).visualIntent;
+  if (!intent || intent === 'none') return {};
+
+  logger.info("[MAVE_GRAPH] Generating visual media from music context", { intent });
+  const { generateCoverMedia } = await import("./ai.js");
+
+  const prompts = (state as any).musicalPrompts;
+  const vision = state.visionDescription;
+
+  const visualPrompt = prompts && prompts.length > 0
+    ? `Musical Vibe: ${prompts.join(', ')}. Scene: ${vision}`
+    : `Scene: ${vision}. Create a visual atmosphere matching this POV.`;
+
+  try {
+    const result = await generateCoverMedia(visualPrompt, intent === 'cover_art' ? 'cover_art' : 'video_motion', 'latest');
+
+    if (intent === 'cover_art') {
+        return { coverArtUrl: result.url };
+    } else {
+        return { videoMotionUrl: result.url };
+    }
+  } catch (e) {
+    logger.warn("[MAVE_GRAPH] Visual media generation failed", { error: e });
+    return {};
+  }
+};
+
 /**
- * Orchestrator Graph (Mave v3.0)
- * Parallelizes Music and Narrative generation nodes to hit < 200ms latency targets.
- * Optimized with Google Context Caching and real-time chunk streaming.
+ * Orchestrator Graph (Mave v3.2)
+ * Parallelizes Music and Narrative generation nodes.
+ * Adds sequential visual media generation node.
  */
 const workflow = new StateGraph(MaveState)
   .addNode("visualAnalyzer", visualAnalyzerNode)
   .addNode("director", directorNode)
   .addNode("musicDirector", musicDirectorNode)
   .addNode("podcastNarrator", podcastNarratorNode)
+  .addNode("mediaGenerator", mediaGeneratorNode)
   .addEdge(START, "visualAnalyzer")
   .addEdge("visualAnalyzer", "director")
   .addEdge("director", "musicDirector")
   .addEdge("director", "podcastNarrator")
-  .addEdge("musicDirector", END)
-  .addEdge("podcastNarrator", END);
+  .addEdge("musicDirector", "mediaGenerator")
+  .addEdge("podcastNarrator", "mediaGenerator")
+  .addEdge("mediaGenerator", END);
 
 export const maveGraph = workflow.compile();

@@ -34,7 +34,7 @@ fun NotificationScreen(
             Box(
                 modifier = Modifier
                     .size(120.dp)
-                    .background(Color(0xFF2E2E2E), shape = RoundedCornerShape(24.dp)),
+                    .background(com.musically.studio.ui.theme.MaveSurfaceVariant5, shape = RoundedCornerShape(24.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

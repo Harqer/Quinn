@@ -17,7 +17,6 @@ play-services-auth = "21.6.0"
 hilt = "2.60.1"
 mockk = "1.14.11"
 robolectric = "4.16.1"
-jacoco = "0.8.12"
 junit = "4.13.2"
 kotlin = "2.1.10"
 ksp = "2.1.10-1.0.30"
@@ -39,8 +38,12 @@ timber = "5.0.1"
 firebase-bom = "34.16.0"
 roborazzi = "1.70.0"
 uiautomator = "2.3.0"
-engage-core = "1.5.12"
+engageCore = "1.6.0"
 workManager = "2.11.2"
+androidxPalette = "1.0.0"
+firebaseDataconnect = "16.0.0-beta01"
+mockito = "5.3.1"
+mockito-kotlin = "5.0.0"
 
 [libraries]
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -57,8 +60,13 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 firebase-database = { group = "com.google.firebase", name = "firebase-database" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity" }
 firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug" }
+
+media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version = "1.2.0" }
+media3-ui = { group = "androidx.media3", name = "media3-ui", version = "1.2.0" }
+media3-session = { group = "androidx.media3", name = "media3-session", version = "1.2.0" }
 
 androidx-identity = { group = "androidx.credentials", name = "credentials", version.ref = "androidxCredentials" }
 androidx-identity-play = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "androidxCredentials" }
@@ -94,12 +102,9 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
-androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
-androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTest" }
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestExt" }
 androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidxTestEspresso" }
-androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 hilt-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
@@ -116,17 +121,14 @@ roborazzi-main = { group = "io.github.takahirom.roborazzi", name = "roborazzi", 
 roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
 roborazzi-junit = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
-engage-core = { group = "com.google.android.engage", name = "engage-core", version.ref = "engage-core" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
+androidx-palette-ktx = { group = "androidx.palette", name = "palette-ktx", version.ref = "androidxPalette" }
+firebase-dataconnect = { group = "com.google.firebase", name = "firebase-dataconnect", version.ref = "firebaseDataconnect" }
+engage-core = { group = "com.google.android.engage", name = "engage-core", version.ref = "engageCore" }
 
 # Compose Multiplatform — shared UI (commonMain)
-# These come from the JetBrains Compose Multiplatform BOM / gradle catalog
-cmp-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
-cmp-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
-cmp-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform" }
-cmp-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
-cmp-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
-
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
@@ -136,7 +138,6 @@ compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMu
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }

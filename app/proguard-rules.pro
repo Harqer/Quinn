@@ -12,9 +12,20 @@
 }
 -keep,allowobfuscation class com.musically.studio.network.**
 
+# ViewModels and UI State (Shared Module)
+-keep class com.musically.studio.ui.** { *; }
+
 # Interactions API Models (if any are added later to src/types)
 -keepattributes Signature, InnerClasses, EnclosingMethod
 -keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
 -keepattributes RuntimeVisibleTypeAnnotations, AnnotationDefault
+
+# Spotify Auth SDK
+-keep class com.spotify.sdk.android.auth.** { *; }
+-keep interface com.spotify.sdk.android.auth.** { *; }
+
+# Timber
+-keep class timber.log.** { *; }
+-dontwarn timber.log.**
 
 

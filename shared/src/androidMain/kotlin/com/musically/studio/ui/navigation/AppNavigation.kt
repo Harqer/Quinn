@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
+import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowWidthSizeClass
@@ -115,7 +116,7 @@ fun MaveApp(
         onDownloadClick = { id -> 
             val track = viewModel.tracks.value.find { it.id == id } ?: viewModel.communityTracks.value.find { it.id == id }
             val url = "https://mave.studio/api/v1/tracks/\${track?.id}/audio"
-            val request = android.app.DownloadManager.Request(android.net.Uri.parse(url))
+            val request = android.app.DownloadManager.Request(url.toUri())
                 .setTitle(track?.name ?: "Unknown Track")
                 .setDescription("Downloading track")
                 .setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)

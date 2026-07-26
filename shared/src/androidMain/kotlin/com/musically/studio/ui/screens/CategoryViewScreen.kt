@@ -38,7 +38,7 @@ fun CategoryViewScreen(
     val categoryName = categories.find { it.id == categoryId }?.name ?: categoryId.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 
     Scaffold(
-        containerColor = Color(0xFF121212),
+        containerColor = com.musically.studio.ui.theme.MaveBackground,
         topBar = {
             TopAppBar(
                 title = { 
@@ -54,7 +54,7 @@ fun CategoryViewScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF121212)
+                    containerColor = com.musically.studio.ui.theme.MaveBackground
                 )
             )
         }

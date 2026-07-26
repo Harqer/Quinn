@@ -1,7 +1,13 @@
 package com.musically.studio.audio
 
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.net.Uri
+import androidx.core.net.toUri
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.datasource.BaseDataSource
@@ -14,8 +20,10 @@ import androidx.media3.session.MediaSessionService
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import com.musically.studio.network.MaveSessionManager
+import com.musically.studio.network.GeminiLiveManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.merge
 import timber.log.Timber
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
@@ -27,6 +35,9 @@ class PlaybackService : MediaSessionService() {
 
     @Inject
     lateinit var maveSessionManager: MaveSessionManager
+
+    @Inject
+    lateinit var geminiLiveManager: GeminiLiveManager
 
     private var mediaSession: MediaSession? = null
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -51,9 +62,9 @@ class PlaybackService : MediaSessionService() {
             .setCallback(CustomMediaSessionCallback())
             .build()
             
-        // Collect audio bytes and write them to the pipe
+        // Collect audio bytes and write them to the pipe from both sources
         scope.launch {
-            maveSessionManager.audioStream.collect { bytes ->
+            merge(maveSessionManager.audioStream, geminiLiveManager.audioOutput).collect { bytes ->
                 try {
                     pipedOutputStream.write(bytes)
                     pipedOutputStream.flush()
@@ -66,7 +77,7 @@ class PlaybackService : MediaSessionService() {
         // Prepare the ExoPlayer with a custom DataSource reading from the pipe
         val factory = DataSource.Factory { FlowDataSource(pipedInputStream) }
         val mediaSource = ProgressiveMediaSource.Factory(factory)
-            .createMediaSource(MediaItem.fromUri(Uri.parse("mave://stream")))
+            .createMediaSource(MediaItem.fromUri("mave://stream".toUri()))
             
         player.setMediaSource(mediaSource)
         player.prepare()
@@ -88,8 +99,27 @@ class PlaybackService : MediaSessionService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val notification = Notification.Builder(this, "playback_channel")
+            .setContentTitle("Mave Studio")
+            .setContentText("Playing generated vibe...")
+            .setSmallIcon(android.R.drawable.ic_media_play)
+            .setOngoing(true)
+            .build()
+        
+        startForeground(2, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+        
         super.onStartCommand(intent, flags, startId)
         return START_STICKY
+    }
+
+    private fun createNotificationChannel() {
+        val channel = NotificationChannel(
+            "playback_channel",
+            "Mave Playback",
+            NotificationManager.IMPORTANCE_LOW
+        )
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(channel)
     }
 
     override fun onDestroy() {
@@ -123,6 +153,11 @@ class FlowDataSource(private val inputStream: java.io.InputStream) : BaseDataSou
     override fun read(buffer: ByteArray, offset: Int, length: Int): Int {
         if (length == 0) return 0
         return try {
+            // Check availability to prevent coroutine blocking on the producer side if ExoPlayer stalls
+            if (inputStream.available() <= 0 && opened) {
+                // Return 0 or small read to let the player loop; blocking read() is the primary cause of deadlocks in this pattern
+                return 0 
+            }
             val bytesRead = inputStream.read(buffer, offset, length)
             if (bytesRead == -1) {
                 C.RESULT_END_OF_INPUT
@@ -135,7 +170,7 @@ class FlowDataSource(private val inputStream: java.io.InputStream) : BaseDataSou
         }
     }
 
-    override fun getUri(): Uri? = Uri.parse("mave://stream")
+    override fun getUri(): Uri? = "mave://stream".toUri()
 
     override fun close() {
         if (opened) {

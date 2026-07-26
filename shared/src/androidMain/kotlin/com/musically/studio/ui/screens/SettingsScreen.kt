@@ -20,7 +20,7 @@ fun SettingsScreen(
     onBack: () -> Unit
 ) {
     Scaffold(
-        containerColor = Color(0xFF121212),
+        containerColor = com.musically.studio.ui.theme.MaveBackground,
         topBar = {
             TopAppBar(
                 title = { Text("Settings", color = Color.White, fontWeight = FontWeight.Bold) },
@@ -30,7 +30,7 @@ fun SettingsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF121212).copy(alpha = 0.9f)
+                    containerColor = com.musically.studio.ui.theme.MaveBackground.copy(alpha = 0.9f)
                 )
             )
         }

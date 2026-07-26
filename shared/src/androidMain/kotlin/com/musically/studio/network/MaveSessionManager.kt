@@ -3,7 +3,10 @@ package com.musically.studio.network
 import timber.log.Timber
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.*
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
@@ -19,6 +22,12 @@ open class MaveSessionManager(
 
     private val _audioStream = MutableSharedFlow<ByteArray>(extraBufferCapacity = 100)
     open val audioStream = _audioStream.asSharedFlow()
+
+    private val _coverArtUrl = MutableStateFlow<String?>(null)
+    open val coverArtUrl: StateFlow<String?> = _coverArtUrl.asStateFlow()
+
+    private val _videoMotionUrl = MutableStateFlow<String?>(null)
+    open val videoMotionUrl: StateFlow<String?> = _videoMotionUrl.asStateFlow()
 
     private var reconnectJob: Job? = null
     private var isIntentionalClose = false
@@ -48,6 +57,15 @@ open class MaveSessionManager(
                 }
 
                 override fun onMessage(webSocket: WebSocket, text: String) {
+                    try {
+                        val json = JSONObject(text)
+                        when (json.optString("type")) {
+                            "cover_art_update" -> _coverArtUrl.value = json.optString("coverArtUrl")
+                            "video_motion_update" -> _videoMotionUrl.value = json.optString("videoMotionUrl")
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e, "Error parsing WebSocket message")
+                    }
                     scope.launch { _events.emit(text) }
                 }
 
@@ -130,5 +148,6 @@ open class MaveSessionManager(
         reconnectJob?.cancel()
         webSocket?.close(1000, "User logout")
         webSocket = null
+        scope.coroutineContext.cancelChildren() // CRITICAL: Stop background reconnects/emissions
     }
 }

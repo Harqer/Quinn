@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.core.graphics.toColorInt
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -73,7 +74,7 @@ fun DiscoverScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            containerColor = Color(0xFF121414),
+            containerColor = com.musically.studio.ui.theme.MaveBackgroundVariant,
             topBar = {
                 TopAppBar(
                     title = {
@@ -89,12 +90,12 @@ fun DiscoverScreen(
                     actions = {
                         Surface(
                             shape = MaterialTheme.shapes.small,
-                            color = Color(0xFF1E2020)
+                            color = com.musically.studio.ui.theme.MaveDarkSurface
                         ) {
                             Row(modifier = Modifier.padding(4.dp)) {
                                 Button(
                                     onClick = { viewModel.fetchCommunityTracks() },
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF37393A), contentColor = Color.White)
+                                    colors = ButtonDefaults.buttonColors(containerColor = com.musically.studio.ui.theme.MaveSurfaceVariant6, contentColor = Color.White)
                                 ) {
                                     Text("Discover", fontWeight = FontWeight.Bold)
                                 }
@@ -104,7 +105,7 @@ fun DiscoverScreen(
                             }
                         }
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF121414)),
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = com.musically.studio.ui.theme.MaveBackgroundVariant),
                     scrollBehavior = scrollBehavior
                 )
             },
@@ -112,7 +113,7 @@ fun DiscoverScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFF121414).copy(alpha = 0.9f))
+                    .background(com.musically.studio.ui.theme.MaveBackgroundVariant.copy(alpha = 0.9f))
                     .imePadding()
                     .padding(24.dp)
                     .navigationBarsPadding()
@@ -203,7 +204,7 @@ fun DiscoverScreen(
                         )
                     }
                     
-                    val colors = listOf(Color(0xFFFF9800), Color(0xFF2196F3), Color(0xFF9C27B0))
+                    val colors = listOf(com.musically.studio.ui.theme.MaveOrange500, com.musically.studio.ui.theme.MaveBlue500, com.musically.studio.ui.theme.MavePurple700)
                     
                     Column(modifier = Modifier.padding(it).padding(bottom = 24.dp)) {
                         for (i in categories.indices step 2) {
@@ -211,7 +212,7 @@ fun DiscoverScreen(
                                 modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                val color1 = try { categories[i].colorHex?.let { hex -> Color(android.graphics.Color.parseColor(hex)) } } catch (e: Exception) { null } ?: colors[(i/2) % colors.size]
+                                val color1 = try { categories[i].colorHex?.let { hex -> Color(hex.toColorInt()) } } catch (e: Exception) { null } ?: colors[(i/2) % colors.size]
                                 val interactionSource1 = remember { MutableInteractionSource() }
                                 val styleState1 = rememberUpdatedStyleState(interactionSource1) { it.isEnabled = true }
                                 Box(
@@ -227,7 +228,7 @@ fun DiscoverScreen(
                                     Text(categories[i].name, color = Color.White, fontWeight = FontWeight.Bold)
                                 }
                                 if (i + 1 < categories.size) {
-                                    val color2 = try { categories[i+1].colorHex?.let { hex -> Color(android.graphics.Color.parseColor(hex)) } } catch (e: Exception) { null } ?: colors[((i+1)/2) % colors.size]
+                                    val color2 = try { categories[i+1].colorHex?.let { hex -> Color(hex.toColorInt()) } } catch (e: Exception) { null } ?: colors[((i+1)/2) % colors.size]
                                     val interactionSource2 = remember { MutableInteractionSource() }
                                     val styleState2 = rememberUpdatedStyleState(interactionSource2) { it.isEnabled = true }
                                     Box(
@@ -344,8 +345,8 @@ fun DiscoverScreenPreview() {
 @Composable
 fun LargePodcastCard(
     track: MaveTrack,
-    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     style: Style = Style
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -384,8 +385,8 @@ fun LargePodcastCard(
 @Composable
 fun TrendingItemRow(
     track: MaveTrack,
-    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     style: Style = Style
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -426,8 +427,8 @@ fun TrendingItemRow(
 @Composable
 fun PlaylistRowItem(
     playlist: com.musically.studio.network.MavePlaylist,
-    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     style: Style = Style
 ) {
     val interactionSource = remember { MutableInteractionSource() }

@@ -68,7 +68,7 @@ fun GalleryPickerScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF0D0F10)),
+            .background(com.musically.studio.ui.theme.MaveGray800),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -78,14 +78,14 @@ fun GalleryPickerScreen(
             Icon(
                 Icons.Default.PhotoLibrary,
                 contentDescription = null,
-                tint = Color(0xFF4A5260),
+                tint = com.musically.studio.ui.theme.MaveGray600,
                 modifier = Modifier.size(64.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "Opening gallery…",
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color(0xFF9EAABF),
+                color = com.musically.studio.ui.theme.MaveBlueGray400,
                 textAlign = TextAlign.Center
             )
         }
@@ -103,14 +103,9 @@ fun GalleryPickerScreen(
 
 private fun uriToBase64(context: Context, uri: Uri): String? {
     return try {
-        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val source = ImageDecoder.createSource(context.contentResolver, uri)
-            ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
-                decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
-            }
-        } else {
-            @Suppress("DEPRECATION")
-            MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+        val source = ImageDecoder.createSource(context.contentResolver, uri)
+        val bitmap = ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+            decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
         }
         val outputStream = ByteArrayOutputStream()
         val scaled = scaleBitmap(bitmap, 1024)

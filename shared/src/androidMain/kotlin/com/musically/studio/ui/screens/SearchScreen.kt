@@ -16,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.core.graphics.toColorInt
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
@@ -40,16 +41,16 @@ fun SearchScreen(
     val categories by viewModel.categories.collectAsStateWithLifecycle()
 
     val colors = listOf(
-        Color(0xFFFF5722), Color(0xFF4CAF50), Color(0xFFE91E63), Color(0xFF2196F3),
-        Color(0xFFFFC107), Color(0xFF9C27B0), Color(0xFF00BCD4), Color(0xFF8BC34A),
-        Color(0xFFCDDC39), Color(0xFFFF9800), Color(0xFF673AB7), Color(0xFF3F51B5)
+        com.musically.studio.ui.theme.MaveDeepOrange500, com.musically.studio.ui.theme.MaveGreen500, com.musically.studio.ui.theme.MavePink500, com.musically.studio.ui.theme.MaveBlue500,
+        com.musically.studio.ui.theme.MaveAmber500, com.musically.studio.ui.theme.MavePurple700, com.musically.studio.ui.theme.MaveCyanMaterial500, com.musically.studio.ui.theme.MaveLightGreen500,
+        com.musically.studio.ui.theme.MaveLime500, com.musically.studio.ui.theme.MaveOrange500, com.musically.studio.ui.theme.MaveDeepPurple500, com.musically.studio.ui.theme.MaveIndigo500
     )
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        containerColor = Color(0xFF121212),
+        containerColor = com.musically.studio.ui.theme.MaveBackground,
         topBar = {
             TopAppBar(
                 title = {
@@ -58,7 +59,7 @@ fun SearchScreen(
                             modifier = Modifier
                                 .size(32.dp)
                                 .clip(androidx.compose.foundation.shape.CircleShape)
-                                .background(Color(0xFF1DB954))
+                                .background(com.musically.studio.ui.theme.MaveBrand)
                                 .clickable { onNavigateToCamera() /* Settings in real app */ },
                             contentAlignment = Alignment.Center
                         ) {
@@ -78,7 +79,7 @@ fun SearchScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF121212)),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = com.musically.studio.ui.theme.MaveBackground),
                 scrollBehavior = scrollBehavior
             )
         }
@@ -132,7 +133,7 @@ fun SearchScreen(
                     ) {
                         items(categories.size) { index ->
                             val category = categories[index]
-                            val color = try { category.colorHex?.let { Color(android.graphics.Color.parseColor(it)) } } catch(e: Exception) { null } ?: colors[index % colors.size]
+                            val color = try { category.colorHex?.let { Color(it.toColorInt()) } } catch(e: Exception) { null } ?: colors[index % colors.size]
                             Box(
                                 modifier = Modifier
                                     .aspectRatio(1.5f)

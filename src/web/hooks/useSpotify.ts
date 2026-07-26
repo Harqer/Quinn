@@ -9,6 +9,21 @@ export interface SpotifyPlaylist {
   owner: { display_name: string };
 }
 
+const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
+  const user = getAuth().currentUser;
+  if (!user) throw new Error('Unauthenticated');
+  const token = await user.getIdToken();
+  const baseUrl = import.meta.env.VITE_API_URL || '';
+  return fetch(`${baseUrl}${endpoint}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...options.headers
+    }
+  });
+};
+
 export function useSpotify() {
   const [playlists, setPlaylists] = useState<SpotifyPlaylist[]>([]);
   const [isConnected, setIsConnected] = useState(false);
@@ -16,23 +31,12 @@ export function useSpotify() {
 
   const checkStatus = async () => {
     try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (!user) return;
-      
-      const token = await user.getIdToken();
-      const baseUrl = import.meta.env.VITE_API_URL || '';
-      const res = await fetch(`${baseUrl}/api/spotify/status`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const res = await apiFetch('/api/spotify/status');
       if (res.ok) {
         const data = await res.json();
         setIsConnected(data.connected);
-        if (data.connected) {
-          fetchPlaylists(token);
-        } else {
-          setLoading(false);
-        }
+        if (data.connected) fetchPlaylists();
+        else setLoading(false);
       }
     } catch (err) {
       logger.error('Failed to check Spotify status', err);
@@ -40,12 +44,9 @@ export function useSpotify() {
     }
   };
 
-  const fetchPlaylists = async (token: string) => {
+  const fetchPlaylists = async () => {
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || '';
-      const res = await fetch(`${baseUrl}/api/spotify/playlists`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const res = await apiFetch('/api/spotify/playlists');
       if (res.ok) {
         const data = await res.json();
         setPlaylists(data.items || []);
@@ -59,16 +60,7 @@ export function useSpotify() {
 
   const connectSpotify = async () => {
     try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (!user) return;
-      
-      const token = await user.getIdToken();
-      const baseUrl = import.meta.env.VITE_API_URL || '';
-      const res = await fetch(`${baseUrl}/api/spotify/auth-url`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
+      const res = await apiFetch('/api/spotify/auth-url');
       if (res.ok) {
         const data = await res.json();
         window.open(data.url, 'Spotify Auth', 'width=500,height=600');
@@ -78,17 +70,38 @@ export function useSpotify() {
     }
   };
 
+  const getLibraryTracks = async () => {
+    try {
+      const res = await apiFetch('/api/spotify/library');
+      if (!res.ok) throw new Error('Failed to fetch spotify library tracks');
+      return (await res.json()).items || [];
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const addTrackToPlaylist = async (trackUri: string, type: 'music' | 'podcast' | 'audiobook' = 'music') => {
+    try {
+      const res = await apiFetch('/api/spotify/playlist/add', {
+        method: 'POST',
+        body: JSON.stringify({ trackUri, type })
+      });
+      return res.ok;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
+
   useEffect(() => {
     checkStatus();
-
     const handleMessage = (event: MessageEvent) => {
-      if (event.data?.type === 'OAUTH_AUTH_SUCCESS') {
-        checkStatus();
-      }
+      if (event.data?.type === 'OAUTH_AUTH_SUCCESS') checkStatus();
     };
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  return { playlists, isConnected, loading, connectSpotify };
+  return { playlists, isConnected, loading, connectSpotify, getLibraryTracks, addTrackToPlaylist };
 }

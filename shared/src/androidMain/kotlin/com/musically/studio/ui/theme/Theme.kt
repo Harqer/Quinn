@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val MaveColorScheme = darkColorScheme(
-    primary = MaveBrand,
+    primary = MavePrimary,
     onPrimary = MaveBackground,
     secondary = MaveOnSurfaceVariant,
     background = MaveBackground,
@@ -35,7 +35,7 @@ fun MaveAppTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    val colorScheme = if (dynamicColor) {
         val context = LocalContext.current
         if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
     } else {
@@ -67,4 +67,6 @@ object MaveTheme {
     val spacing: MaveSpacing
         @Composable
         get() = LocalMaveSpacing.current
+
+    val styles: MaveStyles = MaveStyles
 }

@@ -46,11 +46,11 @@ fun PodcastGeneratorScreen(
     var promptText by remember { mutableStateOf("") }
     
     // Lumina Synth Design System Colors
-    val surfaceColor = Color(0xFF121212)
-    val backgroundColor = Color(0xFF0A0A0A)
-    val primaryElectricViolet = Color(0xFF8B5CF6)
-    val secondaryNeonCyan = Color(0xFF06B6D4)
-    val onSurfaceColor = Color(0xFFE5E2E1)
+    val surfaceColor = com.musically.studio.ui.theme.MaveBackground
+    val backgroundColor = com.musically.studio.ui.theme.MaveGray900
+    val primaryElectricViolet = com.musically.studio.ui.theme.MavePurple500
+    val secondaryNeonCyan = com.musically.studio.ui.theme.MaveCyan500
+    val onSurfaceColor = com.musically.studio.ui.theme.MaveGray200
     
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     
@@ -197,7 +197,7 @@ fun UserMessageBubble(
             modifier = Modifier
                 .styleable(styleState, MaveStyles.userMessageBubbleStyle, style)
         ) {
-            Text(text, color = Color(0xFFE5E2E1))
+            Text(text, color = com.musically.studio.ui.theme.MaveGray200)
         }
     }
 }
@@ -226,7 +226,7 @@ fun AIMessageBubble(
                 )
                 .styleable(styleState, MaveStyles.aiMessageBubbleStyle, style)
         ) {
-            Text(msg.text, color = Color(0xFFE5E2E1))
+            Text(msg.text, color = com.musically.studio.ui.theme.MaveGray200)
             
             if (msg.trackId != null) {
                 var realTrack by remember(msg.trackId) { mutableStateOf<MaveTrack?>(null) }
@@ -240,7 +240,7 @@ fun AIMessageBubble(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(8.dp))
-                            .background(Color(0xFF252525))
+                            .background(com.musically.studio.ui.theme.MaveSurfaceVariant2)
                             .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -263,7 +263,7 @@ fun AIMessageBubble(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(8.dp))
-                            .background(Color(0xFF252525))
+                            .background(com.musically.studio.ui.theme.MaveSurfaceVariant2)
                             .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {

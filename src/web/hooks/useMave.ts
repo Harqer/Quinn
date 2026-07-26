@@ -23,6 +23,8 @@ export function useMave() {
   const [isConnected, setIsConnected] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [thinkingText, setThinkingText] = useState("");
+  const [coverArtUrl, setCoverArtUrl] = useState<string | null>(null);
+  const [videoMotionUrl, setVideoMotionUrl] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const reconnectAttempts = useRef(0);
@@ -61,11 +63,15 @@ export function useMave() {
             setThinkingText(prev => prev + msg.chunk);
           } else if (msg.type === 'agent_update') {
             setThinkingText("");
-            const rawText = msg.prompts ? `New style: ${msg.prompts[0]}` : (msg.script || msg.vision);
-            const text = rawText && !/firestore|redis|database|deployed|caching|generate|vibe/i.test(rawText) ? rawText : null;
+            const rawText = msg.prompts ? msg.prompts[0] : (msg.script || msg.vision);
+            const text = rawText && !/firestore|redis|database|deployed|caching|vibe/i.test(rawText) ? rawText : null;
             if (text) {
               setMessages(prev => [{ id: Date.now().toString(), text, sender: 'mave' as const, trackId: msg.trackId }, ...prev].slice(0, 15));
             }
+          } else if (msg.type === 'cover_art_update') {
+            setCoverArtUrl(msg.coverArtUrl);
+          } else if (msg.type === 'video_motion_update') {
+            setVideoMotionUrl(msg.videoMotionUrl);
           } else if (msg.type === 'message') {
             const rawText = msg.data;
             const text = rawText && !/firestore|redis|database|deployed|caching|generate|vibe/i.test(rawText) ? rawText : null;
@@ -231,6 +237,8 @@ export function useMave() {
     isConnected,
     isRecording,
     thinkingText,
+    coverArtUrl,
+    videoMotionUrl,
     switchMode,
     sendText,
     sendPlaybackCommand,

@@ -95,6 +95,10 @@ export class NarrativeService {
         input: instruction,
         stream: true,
         response_modalities: ["AUDIO"],
+        thinking_config: {
+          include_thoughts: true,
+          thinking_level: "HIGH"
+        },
         speech_config: {
           voice_config: {
             prebuilt_voice_config: {
@@ -167,6 +171,10 @@ export class NarrativeService {
         model: "gemini-3.6-flash",
         input: instruction,
         response_modalities: ["AUDIO"],
+        thinking_config: {
+          include_thoughts: true,
+          thinking_level: "HIGH"
+        },
         speech_config: {
           voice_config: {
             prebuilt_voice_config: {
@@ -216,7 +224,7 @@ export class NarrativeService {
     try {
       const ai = getAi();
       const interaction = await (ai as any).interactions.create({
-        model: "gemini-omni-flash-preview",
+        model: "imagen-3",
         input: prompt,
         response_modalities: [modality === 'video' ? 'VIDEO' : 'IMAGE']
       });

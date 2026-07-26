@@ -8,11 +8,11 @@
     /* Semantic Colors based on Sonic Dark */
     --color-primary: #1db954;
     --color-primary-variant: #53e076;
-    --color-background: #121414;
-    --color-surface: #1e2020;
-    --color-surface-container: #282a2b;
-    --color-text-primary: #e2e2e2;
-    --color-text-secondary: #c8c6c5;
+    --color-background: #121212;
+    --color-surface: #181818;
+    --color-surface-container: #282828;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #b3b3b3;
     --color-error: #ffb4ab;
     
     /* Semantic typography */

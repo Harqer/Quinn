@@ -7,6 +7,7 @@ data class Track(
     val album: Album? = null,
     val durationMs: Long,
     val coverUrl: String,
+    val videoUrl: String? = null,
     val streamUrl: String,
     val isLiked: Boolean = false
 )

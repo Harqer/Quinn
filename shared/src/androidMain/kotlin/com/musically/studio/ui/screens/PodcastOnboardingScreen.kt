@@ -42,12 +42,12 @@ fun PodcastOnboardingScreen(
     }
 
     Scaffold(
-        containerColor = Color(0xFF121414),
+        containerColor = com.musically.studio.ui.theme.MaveBackgroundVariant,
         bottomBar = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFF121414).copy(alpha = 0.9f))
+                    .background(com.musically.studio.ui.theme.MaveBackgroundVariant.copy(alpha = 0.9f))
                     .navigationBarsPadding()
                     .padding(16.dp)
             ) {

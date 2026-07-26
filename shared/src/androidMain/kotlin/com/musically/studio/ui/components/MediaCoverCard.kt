@@ -23,20 +23,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.style.styleable
 import coil.compose.AsyncImage
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.style.*
+import com.musically.studio.ui.theme.MaveStyles
+
 @Composable
 fun MediaCoverCard(
     title: String,
     subtitle: String,
     imageUrl: String?,
+    modifier: Modifier = Modifier,
     isLiked: Boolean = false,
     onLikeClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
     onMoreClick: () -> Unit = {},
     onPlayClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    style: Style = Style
 ) {
+    val interactionSource = androidx.compose.runtime.remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) {
+        it.isEnabled = true
+    }
+
     Box(
-        modifier = modifier
+        modifier = modifier.styleable(styleState, MaveStyles.maveCardStyle, style)
     ) {
         Column {
             // Large Square Cover Art

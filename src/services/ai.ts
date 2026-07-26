@@ -24,11 +24,10 @@ Key Creative Principles:
 export const initAi = async () => {
   if (process.env.GOOGLE_CLOUD_PROJECT) {
     ai = new GoogleGenAI({
-      vertexai: {
-        project: process.env.GOOGLE_CLOUD_PROJECT,
-        location: process.env.GOOGLE_CLOUD_LOCATION || "us-central1"
-      }
-    } as any);
+      vertexai: true,
+      project: process.env.GOOGLE_CLOUD_PROJECT,
+      location: process.env.GOOGLE_CLOUD_LOCATION || "us-central1"
+    });
   } else if (getSecret("GEMINI_API_KEY")) {
     ai = new GoogleGenAI({
       apiKey: getSecret("GEMINI_API_KEY") as string,
@@ -40,7 +39,7 @@ export const initAi = async () => {
   // Initialize Genkit for Prompt Abstraction and Structured Output
   gk = genkit({
     plugins: [googleAI({ apiKey: getSecret("GEMINI_API_KEY") })],
-    model: "googleai/gemini-3.6-flash", 
+    model: "gemini-3.6-flash",
   });
 
   await ensureContextCache();
@@ -63,7 +62,7 @@ export const ensureContextCache = async () => {
     // If cache exists, skip (TTL handles expiry)
     if (cachedId) return;
 
-    const cacheManager = (ai as any).caches;
+    const cacheManager = ai.caches;
     if (!cacheManager) return;
 
     logger.info("[AI] Initializing Context Caching for massive instructions...");
@@ -75,14 +74,14 @@ export const ensureContextCache = async () => {
         systemInstruction: {
           parts: [{ text: MASSIVE_DEVELOPER_INSTRUCTIONS }]
         },
-        ttl: { seconds: 3600 }
+        ttl: "3600s"
       }
     });
 
     const newCacheId = response.name;
     const ttlSeconds = 3600;
     
-    if (redis) {
+    if (redis && newCacheId) {
       await redis.set("gemini_context_cache_id", newCacheId, "EX", ttlSeconds);
     }
     
@@ -114,20 +113,23 @@ export const getContextCacheId = async (): Promise<string | null> => {
 export const generateLiveEphemeralToken = async (
   model = "gemini-3.1-flash-live-preview",
   systemInstruction?: string,
-  voice?: string
+  voice?: string,
+  tools?: any[]
 ): Promise<string> => {
   try {
     const aiInstance = getAi();
     const config: any = {
       responseModalities: ["audio"],
+      thinkingConfig: {
+        includeThoughts: true,
+        thinkingLevel: 'HIGH'
+      },
+      ...(systemInstruction && { systemInstruction: { parts: [{ text: systemInstruction }] } }),
+      ...(voice && { speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } }),
+      ...(tools && { tools })
     };
-    if (systemInstruction) {
-      config.systemInstruction = { parts: [{ text: systemInstruction }] };
-    }
-    if (voice) {
-      config.speechConfig = { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } };
-    }
-    const token = await (aiInstance as any).authTokens.create({
+
+    const token = await aiInstance.authTokens.create({
       config: {
         uses: 1, // Restrict to one session
         expireTime: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
@@ -139,7 +141,7 @@ export const generateLiveEphemeralToken = async (
     });
     
     logger.info("[AI] Generated Ephemeral Token for Live API", { model });
-    return token.name;
+    return token.name || "";
   } catch (err) {
     logger.error("[AI] Failed to generate ephemeral token", { error: err });
     throw err;
@@ -157,6 +159,12 @@ export const enhanceImagePrompt = async (userPrompt: string): Promise<string> =>
     const enhancePrompt = genkitInstance.definePrompt({
       name: 'enhanceImagePrompt',
       model: 'googleai/gemini-3.6-flash',
+      config: {
+        thinkingConfig: {
+          includeThoughts: true,
+          thinkingLevel: 'HIGH'
+        }
+      },
       system: `You are a world-class Executive Art Director for Billboard and Vogue luxury campaigns.
 Your task is to take a user concept and dynamically synthesize a highly detailed, context-aware 5-part visual prompt for Imagen 3 image generation.
 Do NOT use static copy-pasted buzzwords. Analyze the specific mood, subject, and medium of the concept, then construct a cohesive prompt containing:
@@ -195,6 +203,12 @@ export const enhanceVideoPrompt = async (userPrompt: string): Promise<string> =>
     const enhancePrompt = genkitInstance.definePrompt({
       name: 'enhanceVideoPrompt',
       model: 'googleai/gemini-3.6-flash',
+      config: {
+        thinkingConfig: {
+          includeThoughts: true,
+          thinkingLevel: 'HIGH'
+        }
+      },
       system: `You are a legendary Master Cinematographer and Commercial Video Director.
 Your task is to convert a user concept into an in-depth, 35mm photorealistic video motion prompt for Veo video models.
 Do NOT use static copy-pasted buzzwords. Analyze the user's intent and construct a cohesive, dynamic video motion prompt containing:
@@ -238,6 +252,12 @@ export const parseHandGesture = async (gestureDescription: string) => {
       name: 'parseHandGesture',
       model: 'googleai/gemini-3.6-flash',
       output: { schema: HandGestureSchema },
+      config: {
+        thinkingConfig: {
+          includeThoughts: true,
+          thinkingLevel: 'HIGH'
+        }
+      },
       system: `You are the orchestration controller. You will receive a description of a user's hand gesture or physical motion.
 Map this gesture to a specific music control action, such as modifying pitch, tempo, or adding/removing instruments.
 Be precise and return ONLY the JSON object.`,
@@ -256,13 +276,21 @@ Be precise and return ONLY the JSON object.`,
  */
 export const MODEL_GARDEN_REGISTRY = {
   IMAGE: {
-    LATEST: "gemini-3-pro-image",
-    FLASH: "gemini-3.1-flash-image"
+    LATEST: "imagen-3",
+    FLASH: "imagen-3-fast"
   },
   VIDEO: {
-    LATEST: "gemini-omni-flash-preview",
-    FLASH: "gemini-omni-flash-preview"
+    LATEST: "veo-2-flash",
+    FLASH: "veo-2-flash"
   }
+};
+
+/**
+ * Dedicated Lyria Music Models.
+ */
+export const LYRIA_REGISTRY = {
+  FULL_TRACK: "lyria-3-pro-preview",
+  REALTIME: "lyria-realtime-exp"
 };
 
 /**
@@ -285,11 +313,11 @@ export const generateCoverMedia = async (
   try {
     const aiInstance = getAi();
     // Primary invocation via Interactions API
-    const response = await (aiInstance as any).interactions.create({
+    const response = await aiInstance.interactions.create({
       model: modelName,
       input: enhancedPrompt,
       response_modalities: [type === 'cover_art' ? "IMAGE" : "VIDEO"]
-    });
+    }) as any;
 
     const imageBytes = response.output_image?.data;
     const mimeType = response.output_image?.mime_type || (type === 'cover_art' ? "image/jpeg" : "image/png");
@@ -312,11 +340,11 @@ export const generateCoverMedia = async (
     try {
       const fallbackModel = type === 'cover_art' ? MODEL_GARDEN_REGISTRY.IMAGE.FLASH : MODEL_GARDEN_REGISTRY.VIDEO.FLASH;
       const aiInstance = getAi();
-      const response = await (aiInstance as any).interactions.create({
+      const response = await aiInstance.interactions.create({
         model: fallbackModel,
         input: enhancedPrompt,
         response_modalities: [type === 'cover_art' ? "IMAGE" : "VIDEO"]
-      });
+      }) as any;
 
       const imageBytes = response.output_image?.data;
       const mimeType = response.output_image?.mime_type || (type === 'cover_art' ? "image/jpeg" : "image/png");

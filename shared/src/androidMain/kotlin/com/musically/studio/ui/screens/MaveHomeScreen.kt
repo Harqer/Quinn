@@ -48,7 +48,7 @@ fun MaveHomeScreen(
     }
 
     Scaffold(
-        containerColor = Color(0xFF121212),
+        containerColor = com.musically.studio.ui.theme.MaveBackground,
         topBar = {
             TopAppBar(
                 title = {
@@ -57,7 +57,7 @@ fun MaveHomeScreen(
                             modifier = Modifier
                                 .size(32.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF1DB954))
+                                .background(com.musically.studio.ui.theme.MaveBrand)
                                 .clickable { onNavigateToProfile() },
                             contentAlignment = Alignment.Center
                         ) {
@@ -78,14 +78,14 @@ fun MaveHomeScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF121212).copy(alpha = 0.9f)
+                    containerColor = com.musically.studio.ui.theme.MaveBackground.copy(alpha = 0.9f)
                 )
             )
         }
     ) { paddingValues ->
         if (isLoading && tracks.isEmpty() && communityTracks.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = Color(0xFF1DB954))
+                CircularProgressIndicator(color = com.musically.studio.ui.theme.MaveBrand)
             }
         } else {
             LazyColumn(
@@ -187,7 +187,7 @@ fun RecentTrackItem(
         modifier = modifier
             .height(56.dp)
             .clip(RoundedCornerShape(4.dp))
-            .background(Color(0xFF282828))
+            .background(com.musically.studio.ui.theme.MaveSurfaceContainer)
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -287,7 +287,7 @@ fun MaveCard(
         )
         Text(
             text = track.artists.firstOrNull()?.name ?: "",
-            color = Color(0xFFA7A7A7),
+            color = com.musically.studio.ui.theme.MaveGray300,
             style = MaterialTheme.typography.bodySmall,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,

@@ -5,6 +5,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.musically.studio.network.ApiClient
 import com.musically.studio.network.RealApiClient
 import com.musically.studio.network.MaveSessionManager
+import com.musically.studio.network.GeminiLiveManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,6 +34,12 @@ object NetworkModule {
     @Singleton
     fun provideMaveSessionManager(okHttpClient: OkHttpClient): MaveSessionManager {
         return MaveSessionManager(okHttpClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeminiLiveManager(okHttpClient: OkHttpClient): GeminiLiveManager {
+        return GeminiLiveManager(okHttpClient)
     }
 
     @Provides

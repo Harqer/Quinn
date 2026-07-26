@@ -67,7 +67,7 @@ fun LiveSessionScreen(
     }
 
     val backgroundGradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFF0D0F10), Color(0xFF121416), Color(0xFF0A0C0E))
+        colors = listOf(com.musically.studio.ui.theme.MaveGray800, com.musically.studio.ui.theme.MaveBackgroundVariant5, com.musically.studio.ui.theme.MaveGray850)
     )
 
     Scaffold(
@@ -91,11 +91,11 @@ fun LiveSessionScreen(
                     Row(verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                         Box(modifier = Modifier.size(8.dp).background(
-                            if (isLiveSessionActive) Color(0xFF4CAF50) else Color(0xFF9E9E9E), CircleShape))
+                            if (isLiveSessionActive) com.musically.studio.ui.theme.MaveGreen500 else com.musically.studio.ui.theme.MaveGray400, CircleShape))
                         Text(
                             text = if (isLiveSessionActive) "Connected" else "Disconnected",
                             style = MaterialTheme.typography.labelSmall,
-                            color = if (isLiveSessionActive) Color(0xFF4CAF50) else Color(0xFF9E9E9E)
+                            color = if (isLiveSessionActive) com.musically.studio.ui.theme.MaveGreen500 else com.musically.studio.ui.theme.MaveGray400
                         )
                     }
                 }
@@ -105,7 +105,7 @@ fun LiveSessionScreen(
                             Icon(
                                 imageVector = if (isWearableStreamingEnabled) Icons.Default.Videocam else Icons.Default.VideocamOff,
                                 contentDescription = "Toggle Wearable Camera Stream",
-                                tint = if (isWearableStreamingEnabled) Color(0xFF4CAF50) else Color(0xFF9E9E9E)
+                                tint = if (isWearableStreamingEnabled) com.musically.studio.ui.theme.MaveGreen500 else com.musically.studio.ui.theme.MaveGray400
                             )
                         }
                     }
@@ -123,12 +123,12 @@ fun LiveSessionScreen(
             ) {
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2430)),
+                    colors = CardDefaults.cardColors(containerColor = com.musically.studio.ui.theme.MaveDarkSurfaceVariant),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Text("Generated Music Vibes", style = MaterialTheme.typography.labelMedium,
-                            color = Color(0xFF9EAABF), fontWeight = FontWeight.SemiBold)
+                            color = com.musically.studio.ui.theme.MaveBlueGray400, fontWeight = FontWeight.SemiBold)
                         Spacer(modifier = Modifier.height(8.dp))
                         generatedPrompts.take(3).forEach { prompt ->
                             Row(modifier = Modifier.padding(vertical = 2.dp),
@@ -149,7 +149,7 @@ fun LiveSessionScreen(
             // Bottom Input Area
             Surface(
                 modifier = Modifier.fillMaxWidth().navigationBarsPadding().imePadding(),
-                color = Color(0xFF161820),
+                color = com.musically.studio.ui.theme.MaveBackgroundVariant2,
                 tonalElevation = 8.dp
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -162,7 +162,7 @@ fun LiveSessionScreen(
                             value = inputText,
                             onValueChange = { inputText = it },
                             placeholder = {
-                                Text("Describe a vibe...", color = Color(0xFF5A6270),
+                                Text("Describe a vibe...", color = com.musically.studio.ui.theme.MaveGray500,
                                     style = MaterialTheme.typography.bodyMedium)
                             },
                             modifier = Modifier.weight(1f),
@@ -170,19 +170,19 @@ fun LiveSessionScreen(
                             shape = RoundedCornerShape(24.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                unfocusedBorderColor = Color(0xFF2A2D35),
-                                focusedContainerColor = Color(0xFF1A1D23),
-                                unfocusedContainerColor = Color(0xFF1A1D23),
+                                unfocusedBorderColor = com.musically.studio.ui.theme.MaveSurfaceVariant4,
+                                focusedContainerColor = com.musically.studio.ui.theme.MaveBackgroundVariant4,
+                                unfocusedContainerColor = com.musically.studio.ui.theme.MaveBackgroundVariant4,
                                 focusedTextColor = Color.White,
                                 unfocusedTextColor = Color.White
                             ),
                             leadingIcon = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     IconButton(onClick = onNavigateToCamera) {
-                                        Icon(Icons.Default.PhotoCamera, contentDescription = "Camera", tint = Color(0xFF9EAABF))
+                                        Icon(Icons.Default.PhotoCamera, contentDescription = "Camera", tint = com.musically.studio.ui.theme.MaveBlueGray400)
                                     }
                                     IconButton(onClick = onNavigateToGallery) {
-                                        Icon(Icons.Default.Add, contentDescription = "Upload", tint = Color(0xFF9EAABF))
+                                        Icon(Icons.Default.Add, contentDescription = "Upload", tint = com.musically.studio.ui.theme.MaveBlueGray400)
                                     }
                                 }
                             },
@@ -204,7 +204,7 @@ fun LiveSessionScreen(
                                 viewModel.recordVoice(context)
                             },
                             modifier = Modifier.size(52.dp),
-                            containerColor = if (isRecording) Color(0xFFE53935) else MaterialTheme.colorScheme.primary,
+                            containerColor = if (isRecording) com.musically.studio.ui.theme.MaveRed600 else MaterialTheme.colorScheme.primary,
                             contentColor = Color.White,
                             elevation = FloatingActionButtonDefaults.elevation(4.dp)
                         ) {
@@ -307,7 +307,7 @@ private fun ChatBubble(message: ChatMessage, viewModel: MainViewModel, modifier:
                 .padding(horizontal = 14.dp, vertical = 10.dp)
         ) {
             Text(text = message.text, style = MaterialTheme.typography.bodyMedium,
-                color = if (message.isUser) Color.White else Color(0xFFCDD5E0))
+                color = if (message.isUser) Color.White else com.musically.studio.ui.theme.MaveBlueGray200)
         }
     }
 }
@@ -336,11 +336,11 @@ private fun ThinkingBubble(text: String, modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier.widthIn(max = 280.dp)
                 .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 16.dp))
-                .background(Color(0xFF1E2430))
+                .background(com.musically.studio.ui.theme.MaveDarkSurfaceVariant)
                 .padding(horizontal = 14.dp, vertical = 10.dp)
         ) {
             Text(text = text, style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF9EAABF).copy(alpha = alpha), maxLines = 4)
+                color = com.musically.studio.ui.theme.MaveBlueGray400.copy(alpha = alpha), maxLines = 4)
         }
     }
 }
@@ -353,13 +353,13 @@ private fun EmptySessionState(onStartSession: () -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         Icon(Icons.Default.WifiOff, contentDescription = null,
-            tint = Color(0xFF4A5260), modifier = Modifier.size(64.dp))
+            tint = com.musically.studio.ui.theme.MaveGray600, modifier = Modifier.size(64.dp))
         Spacer(modifier = Modifier.height(24.dp))
         Text("Session not connected", style = MaterialTheme.typography.titleMedium,
-            color = Color(0xFF9EAABF), fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+            color = com.musically.studio.ui.theme.MaveBlueGray400, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(8.dp))
         Text("Tap below to start your real-time music generation session",
-            style = MaterialTheme.typography.bodyMedium, color = Color(0xFF4A5260),
+            style = MaterialTheme.typography.bodyMedium, color = com.musically.studio.ui.theme.MaveGray600,
             textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onStartSession) {
@@ -389,11 +389,11 @@ private fun SessionWaitingState() {
             modifier = Modifier.size(64.dp))
         Spacer(modifier = Modifier.height(24.dp))
         Text("Connected — say something or type a vibe",
-            style = MaterialTheme.typography.bodyLarge, color = Color(0xFF9EAABF),
+            style = MaterialTheme.typography.bodyLarge, color = com.musically.studio.ui.theme.MaveBlueGray400,
             textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(8.dp))
         Text("You can also tap the camera icon to generate music from a photo",
-            style = MaterialTheme.typography.bodySmall, color = Color(0xFF4A5260),
+            style = MaterialTheme.typography.bodySmall, color = com.musically.studio.ui.theme.MaveGray600,
             textAlign = TextAlign.Center)
     }
 }

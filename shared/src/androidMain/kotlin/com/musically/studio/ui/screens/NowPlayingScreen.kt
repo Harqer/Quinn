@@ -21,6 +21,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
 import coil.compose.AsyncImage
@@ -45,6 +50,8 @@ fun NowPlayingScreen(
     val trackProgress by viewModel.trackProgress.collectAsStateWithLifecycle()
     val isShuffleEnabled by viewModel.isShuffleEnabled.collectAsStateWithLifecycle()
     val isRepeatEnabled by viewModel.isRepeatEnabled.collectAsStateWithLifecycle()
+    val currentCoverUrl by viewModel.currentCoverUrl.collectAsStateWithLifecycle()
+    val currentVideoUrl by viewModel.currentVideoUrl.collectAsStateWithLifecycle()
     val devices by viewModel.devices.collectAsStateWithLifecycle()
     val localCtx = androidx.compose.ui.platform.LocalContext.current
 
@@ -65,7 +72,7 @@ fun NowPlayingScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Brush.verticalGradient(
-                colors = listOf(bgColor, Color(0xFF121212))
+                colors = listOf(bgColor, com.musically.studio.ui.theme.MaveBackground)
             ))
     ) {
         if (track == null) {
@@ -80,6 +87,8 @@ fun NowPlayingScreen(
                     trackProgress = trackProgress,
                     isShuffleEnabled = isShuffleEnabled,
                     isRepeatEnabled = isRepeatEnabled,
+                    currentCoverUrl = currentCoverUrl,
+                    currentVideoUrl = currentVideoUrl,
                     devices = devices,
                     modality = modality,
                     onCollapse = onCollapse,
@@ -105,7 +114,9 @@ fun NowPlayingScreen(
                         }
                     },
                     onQueueClick = onQueueClick,
-                    onLyricsClick = onLyricsClick
+                    onLyricsClick = onLyricsClick,
+                    onRequestCover = { viewModel.requestCoverArt() },
+                    onRequestVideo = { viewModel.requestMusicVideo() }
                 )
             } else {
                 CompactNowPlaying(
@@ -114,6 +125,8 @@ fun NowPlayingScreen(
                     trackProgress = trackProgress,
                     isShuffleEnabled = isShuffleEnabled,
                     isRepeatEnabled = isRepeatEnabled,
+                    currentCoverUrl = currentCoverUrl,
+                    currentVideoUrl = currentVideoUrl,
                     devices = devices,
                     modality = modality,
                     onCollapse = onCollapse,
@@ -139,7 +152,9 @@ fun NowPlayingScreen(
                         }
                     },
                     onQueueClick = onQueueClick,
-                    onLyricsClick = onLyricsClick
+                    onLyricsClick = onLyricsClick,
+                    onRequestCover = { viewModel.requestCoverArt() },
+                    onRequestVideo = { viewModel.requestMusicVideo() }
                 )
             }
         }
@@ -153,6 +168,8 @@ private fun TwoPaneNowPlaying(
     trackProgress: Float,
     isShuffleEnabled: Boolean,
     isRepeatEnabled: Boolean,
+    currentCoverUrl: String?,
+    currentVideoUrl: String?,
     devices: List<com.musically.studio.ui.models.AudioDevice>,
     modality: String,
     onCollapse: () -> Unit,
@@ -166,7 +183,9 @@ private fun TwoPaneNowPlaying(
     onLike: () -> Unit,
     onShare: () -> Unit,
     onQueueClick: () -> Unit,
-    onLyricsClick: () -> Unit
+    onLyricsClick: () -> Unit,
+    onRequestCover: () -> Unit,
+    onRequestVideo: () -> Unit
 ) {
     val localCtx = androidx.compose.ui.platform.LocalContext.current
     Row(
@@ -177,19 +196,27 @@ private fun TwoPaneNowPlaying(
         horizontalArrangement = Arrangement.spacedBy(32.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Left Pane: Album Art
-        AsyncImage(
-            model = track.album.images.firstOrNull()?.url,
-            contentDescription = "Album Art",
-            contentScale = ContentScale.Crop,
-            placeholder = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
-            error = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
-            modifier = Modifier
-                .weight(1f)
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-        )
+        // Left Pane: Album Art / Video
+        Box(modifier = Modifier.weight(1f).aspectRatio(1f)) {
+            if (currentVideoUrl != null) {
+                SeamlessVideoPlayer(
+                    videoUrl = currentVideoUrl,
+                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp))
+                )
+            } else {
+                AsyncImage(
+                    model = currentCoverUrl ?: track.album.images.firstOrNull()?.url,
+                    contentDescription = "Album Art",
+                    contentScale = ContentScale.Crop,
+                    placeholder = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
+                    error = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                )
+            }
+        }
 
         // Right Pane: Details & Controls
         Column(
@@ -263,6 +290,32 @@ private fun TwoPaneNowPlaying(
                 onNext = onNext,
                 onPlayPause = onTogglePlay
             )
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Button(
+                    onClick = onRequestCover,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.1f))
+                ) {
+                    Icon(Icons.Default.Palette, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("New Cover", style = MaterialTheme.typography.labelMedium)
+                }
+                Button(
+                    onClick = onRequestVideo,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.1f))
+                ) {
+                    Icon(Icons.Default.VideoLibrary, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("Music Video", style = MaterialTheme.typography.labelMedium)
+                }
+            }
         }
     }
 }
@@ -274,6 +327,8 @@ private fun CompactNowPlaying(
     trackProgress: Float,
     isShuffleEnabled: Boolean,
     isRepeatEnabled: Boolean,
+    currentCoverUrl: String?,
+    currentVideoUrl: String?,
     devices: List<com.musically.studio.ui.models.AudioDevice>,
     modality: String,
     onCollapse: () -> Unit,
@@ -287,7 +342,9 @@ private fun CompactNowPlaying(
     onLike: () -> Unit,
     onShare: () -> Unit,
     onQueueClick: () -> Unit,
-    onLyricsClick: () -> Unit
+    onLyricsClick: () -> Unit,
+    onRequestCover: () -> Unit,
+    onRequestVideo: () -> Unit
 ) {
     val localCtx = androidx.compose.ui.platform.LocalContext.current
     Column(
@@ -321,21 +378,47 @@ private fun CompactNowPlaying(
         
         Spacer(modifier = Modifier.height(32.dp))
         
-        // Album Art
-        AsyncImage(
-            model = track.album.images.firstOrNull()?.url,
-            contentDescription = "Album Art",
-            contentScale = ContentScale.Crop,
-            placeholder = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
-            error = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-        )
+        // Album Art / Video
+        Box(modifier = Modifier.fillMaxWidth().aspectRatio(1f)) {
+            if (currentVideoUrl != null) {
+                SeamlessVideoPlayer(
+                    videoUrl = currentVideoUrl,
+                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp))
+                )
+            } else {
+                AsyncImage(
+                    model = currentCoverUrl ?: track.album.images.firstOrNull()?.url,
+                    contentDescription = "Album Art",
+                    contentScale = ContentScale.Crop,
+                    placeholder = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
+                    error = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                )
+            }
+        }
         
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            AssistChip(
+                onClick = onRequestCover,
+                label = { Text("Regenerate Cover") },
+                leadingIcon = { Icon(Icons.Default.Palette, contentDescription = null, modifier = Modifier.size(18.dp)) }
+            )
+            AssistChip(
+                onClick = onRequestVideo,
+                label = { Text("Generate Video") },
+                leadingIcon = { Icon(Icons.Default.VideoLibrary, contentDescription = null, modifier = Modifier.size(18.dp)) }
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
         
         // Track Info & Like Button
         Row(
@@ -394,9 +477,9 @@ private fun CompactNowPlaying(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Bluetooth, contentDescription = "Device", tint = Color(0xFF1DB954), modifier = Modifier.size(16.dp))
+                Icon(Icons.Default.Bluetooth, contentDescription = "Device", tint = com.musically.studio.ui.theme.MaveBrand, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(devices.firstOrNull()?.name ?: "Phone Speaker", color = Color(0xFF1DB954), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+                Text(devices.firstOrNull()?.name ?: "Phone Speaker", color = com.musically.studio.ui.theme.MaveBrand, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 IconButton(onClick = onShare, modifier = Modifier.size(24.dp)) {
@@ -525,6 +608,41 @@ private fun PlaybackControls(
             Icon(Icons.Default.Repeat, contentDescription = "Repeat", tint = if (isRepeatEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground)
         }
     }
+}
+
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+@Composable
+private fun SeamlessVideoPlayer(
+    videoUrl: String,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val exoPlayer = remember(videoUrl) {
+        ExoPlayer.Builder(context).build().apply {
+            val mediaItem = androidx.media3.common.MediaItem.fromUri(videoUrl)
+            setMediaItem(mediaItem)
+            repeatMode = Player.REPEAT_MODE_ALL
+            prepare()
+            playWhenReady = true
+        }
+    }
+
+    DisposableEffect(exoPlayer) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+
+    AndroidView(
+        factory = {
+            PlayerView(context).apply {
+                player = exoPlayer
+                useController = false
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            }
+        },
+        modifier = modifier
+    )
 }
 
 private fun formatDuration(millis: Long): String {

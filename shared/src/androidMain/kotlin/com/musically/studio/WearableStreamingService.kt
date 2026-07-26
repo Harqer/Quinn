@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.IBinder
 import com.meta.wearable.dat.camera.Stream
 import com.meta.wearable.dat.camera.addStream
@@ -59,8 +60,8 @@ class WearableStreamingService : Service() {
         
         private var instance: WearableStreamingService? = null
 
-        fun updateUi(songTitle: String, geminiResponse: String) {
-            instance?.updateWearableUi(songTitle, geminiResponse)
+        fun updateUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false) {
+            instance?.updateWearableUi(songTitle, geminiResponse, coverArtUrl, isThinking)
         }
         
         fun startVoiceRecording() {
@@ -81,7 +82,18 @@ class WearableStreamingService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification = createNotification()
-        startForeground(1, notification)
+        
+        // Permission Guard for Android 14+ requirements
+        val hasCamera = checkSelfPermission(android.Manifest.permission.CAMERA) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        val hasMic = checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        
+        if (!hasCamera || !hasMic) {
+            Timber.e("Service started without mandatory permissions. Stopping.")
+            stopSelf()
+            return START_NOT_STICKY
+        }
+
+        startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
         val deviceId = intent?.getStringExtra("DEVICE_ID")
         startWearableSession(deviceId)
         return START_STICKY
@@ -162,16 +174,23 @@ class WearableStreamingService : Service() {
         }
     }
 
-    fun updateWearableUi(songTitle: String, geminiResponse: String) {
-        val onMic = { emitInteraction("MIC") }
-        val onMusicNote = { emitInteraction("MUSIC_NOTE") }
-        val onSkipPrevious = { emitInteraction("SKIP_PREVIOUS") }
-        val onPlayPause = { emitInteraction("PLAY_PAUSE") }
-        val onSkipNext = { emitInteraction("SKIP_NEXT") }
+    fun updateWearableUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false) {
+        val onMic = { emitInteraction("speak") }
+        val onMusicNote = { emitInteraction("generate") }
+        val onSkipPrevious = { emitInteraction("previous") }
+        val onPlayPause = { emitInteraction("play_pause") }
+        val onSkipNext = { emitInteraction("next") }
 
         scope.launch {
             activeDisplay?.sendContent {
                 flexBox {
+                    if (isThinking) {
+                        text(content = "Mave is thinking...")
+                    }
+                    if (coverArtUrl != null) {
+                        // Assuming there is an image view in the SDK, or we use a placeholder/status
+                        text(content = "[Album Art Active]")
+                    }
                     if (geminiResponse.isNotEmpty()) {
                         text(content = geminiResponse)
                     }
@@ -254,9 +273,12 @@ class WearableStreamingService : Service() {
         _isServiceActive.value = false
         scope.cancel()
         activeSession?.let { session ->
-            session.removeStream()
-            session.removeDisplay()
-            session.stop()
+            try {
+                // The SDK handles stream/display removal internally when stop() is called.
+                session.stop()
+            } catch (e: Exception) {
+                Timber.e(e, "Error stopping wearable session")
+            }
         }
     }
 

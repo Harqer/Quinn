@@ -25,9 +25,9 @@ import com.musically.studio.ui.models.ChatMessage
 @Composable
 fun TrackItem(
     track: MaveTrack, 
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    onAlbumClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onAlbumClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -77,9 +77,9 @@ fun TrackItem(
 @Composable
 fun ChatBubble(
     message: ChatMessage,
+    modifier: Modifier = Modifier,
     onLike: () -> Unit = {},
-    onBookmark: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onBookmark: () -> Unit = {}
 ) {
     val alignment = if (message.isUser) Alignment.End else Alignment.Start
     val contentColor = if (message.isUser) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onPrimary

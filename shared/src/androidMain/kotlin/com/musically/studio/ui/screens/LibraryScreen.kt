@@ -82,7 +82,7 @@ fun LibraryScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        containerColor = Color(0xFF121212),
+        containerColor = com.musically.studio.ui.theme.MaveBackground,
         topBar = {
             TopAppBar(
                 title = {
@@ -107,7 +107,7 @@ fun LibraryScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF121212)),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = com.musically.studio.ui.theme.MaveBackground),
                 scrollBehavior = scrollBehavior
             )
         }
@@ -316,9 +316,9 @@ private fun EmptyLibraryState(onNavigateToHome: () -> Unit) {
 @Composable
 fun FilterPill(
     text: String,
+    modifier: Modifier = Modifier,
     isSelected: Boolean = false,
     onClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
     style: Style = Style
 ) {
     val interactionSource = remember { MutableInteractionSource() }

@@ -200,7 +200,7 @@ fun ChatScreen(
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Box(
-                                                modifier = Modifier.size(40.dp).background(Color(0xFF1DB954).copy(alpha = 0.2f), RoundedCornerShape(8.dp)),
+                                                modifier = Modifier.size(40.dp).background(com.musically.studio.ui.theme.MaveBrand.copy(alpha = 0.2f), RoundedCornerShape(8.dp)),
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 Icon(Icons.Default.Album, contentDescription = null)

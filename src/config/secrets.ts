@@ -30,6 +30,7 @@ export async function initSecrets() {
       const payload = version.payload?.data?.toString();
       if (payload) {
         cachedSecrets[secret] = payload;
+        process.env[secret] = payload; // Inject into environment for library compatibility
       }
     } catch (e) {
       logger.warn(`Could not load secret ${secret} from Secret Manager: ${(e as Error).message}`);

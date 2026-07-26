@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { logger } from "../lib/logger";
 
 import { musicService, Track } from '../services/MusicService';
-import { spotifyService } from '../services/SpotifyService';
+import { useSpotify } from './useSpotify';
 export type { Track };
 
 export function useTracks() {
@@ -11,13 +11,14 @@ export function useTracks() {
   const [communityTracks, setCommunityTracks] = useState<Track[]>([]);
   const [spotifyTracks, setSpotifyTracks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { getLibraryTracks } = useSpotify();
 
   useEffect(() => {
     async function fetchTracks() {
       try {
         const discover = await musicService.getDiscoverTracks();
         const library = await musicService.getLibraryTracks();
-        const spotify = await spotifyService.getLibraryTracks();
+        const spotify = await getLibraryTracks();
         
         setCommunityTracks(discover);
         setUserTracks(library);
@@ -30,7 +31,7 @@ export function useTracks() {
     }
 
     fetchTracks();
-  }, []);
+  }, []); // Note: getLibraryTracks not in dep array intentionally to avoid loop on remount, it's stable enough.
 
   return { userTracks, communityTracks, spotifyTracks, loading };
 }

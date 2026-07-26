@@ -105,7 +105,6 @@ class ChatViewModel : ViewModel() {
     }
 
     override fun onCleared() {
-        super.onCleared()
         webSocket?.close(1000, "ViewModel cleared")
     }
 }

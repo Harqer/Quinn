@@ -70,7 +70,7 @@ fun WelcomeScreen(
         )
     }
 
-    Scaffold(containerColor = Color(0xFF121212)) { paddingValues ->
+    Scaffold(containerColor = com.musically.studio.ui.theme.MaveBackground) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
 
         Box(
@@ -78,7 +78,7 @@ fun WelcomeScreen(
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color(0xFF121212), Color(0xFF121212)),
+                        colors = listOf(Color.Transparent, com.musically.studio.ui.theme.MaveBackground, com.musically.studio.ui.theme.MaveBackground),
                         startY = 300f
                     )
                 )

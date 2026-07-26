@@ -35,7 +35,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-    implementation("androidx.palette:palette-ktx:1.0.0")
+            implementation(libs.androidx.palette.ktx)
 
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -47,13 +47,13 @@ kotlin {
         }
         
         commonTest.dependencies {
-    implementation("androidx.palette:palette-ktx:1.0.0")
+            implementation(libs.androidx.palette.ktx)
 
             implementation(kotlin("test"))
         }
 
         androidMain.dependencies {
-    implementation("androidx.palette:palette-ktx:1.0.0")
+            implementation(libs.androidx.palette.ktx)
 
             implementation(libs.mwdat.core)
             implementation(libs.mwdat.camera)
@@ -109,15 +109,16 @@ kotlin {
             implementation(libs.hilt.android)
             implementation(libs.androidx.appfunctions)
             implementation(libs.androidx.appfunctions.service)
-            implementation("com.google.firebase:firebase-dataconnect:16.0.0-beta01")
+            implementation(libs.firebase.dataconnect)
             
             // Engage SDK & WorkManager
-            implementation("com.google.android.engage:engage-core:1.6.0")
-            implementation("androidx.work:work-runtime-ktx:2.9.0")
+            implementation(libs.engage.core)
+            implementation(libs.androidx.work.runtime.ktx)
             
             // Media3
-            implementation("androidx.media3:media3-exoplayer:1.2.0")
-            implementation("androidx.media3:media3-session:1.2.0")
+            implementation(libs.media3.exoplayer)
+            implementation(libs.media3.session)
+            implementation(libs.media3.ui)
         }
         
         val androidUnitTest by getting {
@@ -160,11 +161,11 @@ android {
 }
 
 dependencies {
-    implementation("androidx.palette:palette-ktx:1.0.0")
+    implementation(libs.androidx.palette.ktx)
 
     add("kspAndroid", libs.hilt.compiler)
     add("kspAndroid", libs.androidx.appfunctions.compiler)
 }
 ksp {
-    arg("appfunctions:aggregateAppFunctions", "true")
+    // Aggregation is handled by the :app module to avoid duplicate class collisions
 }

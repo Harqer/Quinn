@@ -52,11 +52,13 @@ class MainViewModelTest {
         
         fakeApiClient = FakeApiClient()
         fakeMaveSessionManager = FakeMaveSessionManager()
+        val mockGeminiLive = mockk<com.musically.studio.network.GeminiLiveManager>(relaxed = true)
 
         viewModel = MainViewModel(
             context = context,
             apiClient = fakeApiClient,
             maveSessionManager = fakeMaveSessionManager,
+            geminiLiveManager = mockGeminiLive,
             auth = mockAuth,
             rtdb = mockDb
         )

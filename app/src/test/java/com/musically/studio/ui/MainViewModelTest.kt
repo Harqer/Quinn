@@ -36,10 +36,11 @@ class MainViewModelTest {
         val mockAuth = Mockito.mock(FirebaseAuth::class.java)
         val mockDb = Mockito.mock(FirebaseDatabase::class.java)
         val mockSession = Mockito.mock(MaveSessionManager::class.java)
+        val mockGeminiLive = Mockito.mock(com.musically.studio.network.GeminiLiveManager::class.java)
         val mockFlow = kotlinx.coroutines.flow.MutableSharedFlow<String>()
         Mockito.doReturn(mockFlow).`when`(mockSession).events
 
-        viewModel = MainViewModel(ApplicationProvider.getApplicationContext(), fakeApiClient, mockSession, mockAuth, mockDb)
+        viewModel = MainViewModel(ApplicationProvider.getApplicationContext(), fakeApiClient, mockSession, mockGeminiLive, mockAuth, mockDb)
     }
 
     @After
@@ -66,7 +67,7 @@ class MainViewModelTest {
         val mockSession = Mockito.mock(MaveSessionManager::class.java)
         val mockFlow = kotlinx.coroutines.flow.MutableSharedFlow<String>()
         Mockito.doReturn(mockFlow).`when`(mockSession).events
-        val viewModel2 = MainViewModel(ApplicationProvider.getApplicationContext(), fakeApiClient, mockSession, mockAuth, Mockito.mock(FirebaseDatabase::class.java))
+        val viewModel2 = MainViewModel(ApplicationProvider.getApplicationContext(), fakeApiClient, mockSession, Mockito.mock(com.musically.studio.network.GeminiLiveManager::class.java), mockAuth, Mockito.mock(FirebaseDatabase::class.java))
         
         var callbackSuccess = false
         viewModel2.guestLogin { success, _ ->

@@ -29,7 +29,8 @@ data class MaveTrack(
     @SerializedName("artists") val artists: List<MaveArtist>,
     @SerializedName("album") val album: MaveAlbum,
     @SerializedName("userId") val userId: String? = null, // Mave Creator UID if community track
-    @SerializedName("durationMs") val durationMs: Long = 0L
+    @SerializedName("durationMs") val durationMs: Long = 0L,
+    @SerializedName("videoUrl") val videoUrl: String? = null
 )
 
 data class MaveTrackItem(

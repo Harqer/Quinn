@@ -2,50 +2,15 @@
 <resources>
     <color name="background">#121212</color>
     <color name="background_elevated">#181818</color>
-    <color name="background_elevated_high">#282828</color>
-    <color name="gradient_red_light">#A62B20</color>
-    <color name="gradient_red_mid1">#641D17</color>
-    <color name="gradient_red_mid2">#271513</color>
-    <color name="gradient_red_start">#C63224</color>
     <color name="primary">#1DB954</color>
-    <color name="primary_variant">#1ED760</color>
     <color name="secondary">#1DB954</color>
     <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#B3B3B3</color>
     <string name="app_name">Mave</string>
     <string name="gcm_defaultSenderId" translatable="false">759854762539</string>
     <string name="google_app_id" translatable="false">1:759854762539:android:e931c1265d228fa84cf86e</string>
     <string name="google_storage_bucket" translatable="false">mave-studio.firebasestorage.app</string>
-    <string name="project_id" translatable="false">mave-studio</string>
-    <string name="google_api_key" translatable="false">759854762539-dummy.apps.googleusercontent.com</string>
-    <string name="title_home">Home</string>
-    <string name="title_library">Your Library</string>
-    <string name="title_search">Search</string>
-    <!-- Album View Screen -->
-    <string name="back">Back</string>
-    <string name="more_options">View Vibe Details</string>
-    <string name="unknown_album">Untitled Vibe</string>
-    <string name="unknown_artist">Independent Creator</string>
-    <string name="album_bullet">Album • %s</string>
-    <string name="like_content_desc">Like</string>
-    <string name="more_content_desc">More</string>
-    <string name="play_content_desc">Play</string>
-    
-    <!-- Library Screen -->
-    <string name="empty_library_title">No saved vibes yet</string>
-    <string name="empty_library_message">Tap the + button or use your camera to generate your first vibe and build out your catalog.</string>
-    <string name="start_creating">Start Creating</string>
-    
-    <!-- Devices Screen -->
-    <string name="connect_to_a_device">Connect to a device</string>
-    <string name="current_device">Current Device</string>
-    <string name="glasses_content_desc">Glasses</string>
-    <string name="ray_ban_meta_smart_glasses">Ray-Ban Meta Smart Glasses</string>
-    <string name="connected">Connected</string>
-    <string name="disconnected">Disconnected</string>
-    <string name="other_devices">Other Devices</string>
-    <string name="bluetooth_content_desc">Bluetooth</string>
-    <string name="bluetooth_or_airplay">Bluetooth or Airplay</string>
+    <string name="google_web_client_id" translatable="false">759854762539-dummy.apps.googleusercontent.com</string>
+
     <style name="Theme.Mave" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorSecondary">@color/secondary</item>

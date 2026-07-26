@@ -54,9 +54,9 @@ fun GenerateCoverScreen(
     val presets = if (dynamicPresets.isNotEmpty()) dynamicPresets else listOf("Vibrant Synthwave", "Minimalist Neon", "Abstract Cyberpunk", "Retro Vinyl")
     var selectedPreset by remember(coverType, presets) { mutableStateOf(presets.firstOrNull() ?: "") }
 
-    val primaryGreen = Color(0xFF1DB954)
-    val darkBackground = Color(0xFF121414)
-    val containerColor = Color(0xFF1E2020)
+    val primaryGreen = com.musically.studio.ui.theme.MaveBrand
+    val darkBackground = com.musically.studio.ui.theme.MaveBackgroundVariant
+    val containerColor = com.musically.studio.ui.theme.MaveDarkSurface
 
     Scaffold(
         topBar = {
@@ -166,7 +166,7 @@ fun GenerateCoverScreen(
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(24.dp))
-                    .background(Color(0xFF1A1C1C))
+                    .background(com.musically.studio.ui.theme.MaveBackgroundVariant3)
                     .border(1.dp, primaryGreen.copy(alpha = 0.3f), RoundedCornerShape(24.dp)),
                 contentAlignment = Alignment.Center
             ) {
@@ -241,7 +241,7 @@ fun GenerateCoverScreen(
                         Box(
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .background(if (isSelected) primaryGreen else Color(0xFF282A2B))
+                                .background(if (isSelected) primaryGreen else com.musically.studio.ui.theme.MaveSurfaceVariant3)
                                 .clickable { selectedPreset = preset }
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {

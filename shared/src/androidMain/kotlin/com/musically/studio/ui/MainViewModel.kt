@@ -21,6 +21,7 @@ import com.musically.studio.dataconnect.DefaultConnector
 import com.musically.studio.dataconnect.instance
 import com.musically.studio.dataconnect.execute
 import com.musically.studio.network.MaveSessionManager
+import com.musically.studio.network.GeminiLiveManager
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.models.ChatMessage
 import com.musically.studio.ui.models.AudioDevice
@@ -35,6 +36,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.json.JSONObject
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import timber.log.Timber
 import javax.inject.Inject
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -45,6 +48,7 @@ class MainViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val apiClient: ApiClient,
     private val maveSessionManager: MaveSessionManager,
+    private val geminiLiveManager: GeminiLiveManager,
     private val auth: FirebaseAuth,
     private val rtdb: FirebaseDatabase
 ) : ViewModel() {
@@ -59,20 +63,20 @@ class MainViewModel @Inject constructor(
     val hasDeclinedPrivacyPolicy: StateFlow<Boolean> = _hasDeclinedPrivacyPolicy.asStateFlow()
 
     fun acceptPrivacyPolicy() {
-        prefs.edit().putBoolean("has_accepted_privacy_policy", true).apply()
+        prefs.edit { putBoolean("has_accepted_privacy_policy", true) }
         _hasAcceptedPrivacyPolicy.value = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         Timber.plant(CrashlyticsTree())
     }
 
     fun declinePrivacyPolicy() {
-        prefs.edit().putBoolean("has_declined_privacy_policy", true).apply()
+        prefs.edit { putBoolean("has_declined_privacy_policy", true) }
         _hasDeclinedPrivacyPolicy.value = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
     }
 
     fun resetPrivacyPolicy() {
-        prefs.edit().putBoolean("has_declined_privacy_policy", false).apply()
+        prefs.edit { putBoolean("has_declined_privacy_policy", false) }
         _hasDeclinedPrivacyPolicy.value = false
     }
 
@@ -111,6 +115,12 @@ class MainViewModel @Inject constructor(
 
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
+
+    private val _currentCoverUrl = MutableStateFlow<String?>(null)
+    val currentCoverUrl: StateFlow<String?> = _currentCoverUrl.asStateFlow()
+
+    private val _currentVideoUrl = MutableStateFlow<String?>(null)
+    val currentVideoUrl: StateFlow<String?> = _currentVideoUrl.asStateFlow()
 
     private val _trackProgress = MutableStateFlow(0f)
     val trackProgress: StateFlow<Float> = _trackProgress.asStateFlow()
@@ -153,6 +163,7 @@ class MainViewModel @Inject constructor(
     val generatedPrompts: StateFlow<List<String>> = _generatedPrompts.asStateFlow()
 
     private var rtdbListener: ValueEventListener? = null
+    private var currentRtdbUid: String? = null
 
     // Registration State Accumulator
     var regEmail = ""
@@ -192,10 +203,24 @@ class MainViewModel @Inject constructor(
         setupWebSocketCollector()
         setupWearableCollector()
         setupWearableFrameStreaming()
+        setupMediaAssetCollector()
         if (isUserLoggedIn()) {
             startRtdbSync()
         }
         fetchCatalog()
+    }
+
+    private fun setupMediaAssetCollector() {
+        viewModelScope.launch {
+            maveSessionManager.coverArtUrl.collect { url ->
+                _currentCoverUrl.value = url
+            }
+        }
+        viewModelScope.launch {
+            maveSessionManager.videoMotionUrl.collect { url ->
+                _currentVideoUrl.value = url
+            }
+        }
     }
 
     private fun fetchCatalog() {
@@ -373,6 +398,12 @@ class MainViewModel @Inject constructor(
                 try {
                     val json = JSONObject(event)
                     when (json.optString("type")) {
+                        "ephemeral_token" -> {
+                            val token = json.optString("token")
+                            if (token.isNotBlank()) {
+                                geminiLiveManager.connect(token)
+                            }
+                        }
                         "mave_thinking", "mave_chunk", "vision_thinking", "director_thinking" -> {
                             val chunk = json.optString("chunk") ?: json.optString("text")
                             _thinkingText.value += chunk
@@ -393,7 +424,7 @@ class MainViewModel @Inject constructor(
                             val message = if (!reasoning.isNullOrBlank()) {
                                 reasoning
                             } else if (prompts != null && prompts.length() > 0) {
-                                "New vibe: ${prompts.getString(0)}"
+                                prompts.getString(0) // No longer prefix with "New vibe:"
                             } else if (!script.isNullOrBlank()) {
                                 script
                             } else {
@@ -402,7 +433,8 @@ class MainViewModel @Inject constructor(
                             
                             if (message.isNotBlank()) {
                                 messages.add(0, ChatMessage(message, false, trackId))
-                                WearableStreamingService.updateUi("Mave Studio", message)
+                                // Pipe to wearable with cover art context
+                                WearableStreamingService.updateUi("Mave Studio", message, _currentCoverUrl.value)
                             }
                         }
                         "error" -> {
@@ -419,7 +451,9 @@ class MainViewModel @Inject constructor(
 
     fun startRtdbSync() {
         val user = auth.currentUser ?: return
-        val stateRef = rtdb.getReference("sessions/${user.uid}/state")
+        val uid = user.uid
+        currentRtdbUid = uid
+        val stateRef = rtdb.getReference("sessions/$uid/state")
         
         rtdbListener = stateRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -437,6 +471,8 @@ class MainViewModel @Inject constructor(
                     
                     (data?.get("isPlaying") as? Boolean)?.let { _isPlaying.value = it }
                     (data?.get("progress") as? Number)?.let { _trackProgress.value = it.toFloat() }
+                    (data?.get("coverArtUrl") as? String)?.let { _currentCoverUrl.value = it }
+                    (data?.get("videoMotionUrl") as? String)?.let { _currentVideoUrl.value = it }
                 } catch (e: Exception) {
                     Timber.e(e, "RTDB Sync Parse Error")
                 }
@@ -495,8 +531,9 @@ class MainViewModel @Inject constructor(
             WearableStreamingService.interactionEvents.collect { event ->
                 Timber.d("Wearable Interaction: $event")
                 when (event) {
-                    "play" -> togglePlayPause()
-                    "pause" -> togglePlayPause()
+                    "play_pause" -> togglePlayPause()
+                    "next" -> skipNext()
+                    "previous" -> skipPrevious()
                     "stop" -> stopPlayback()
                     "generate" -> sendTextCommand("Generate a new atmosphere")
                     "speak" -> recordVoice(null)
@@ -506,7 +543,64 @@ class MainViewModel @Inject constructor(
         
         viewModelScope.launch {
             WearableStreamingService.audioFrames.collect { base64 ->
+                // Also send to Gemini Live for bidirectional dialogue if connected
+                val pcmData = Base64.decode(base64, Base64.NO_WRAP)
+                geminiLiveManager.sendAudio(pcmData)
                 maveSessionManager.sendAudio(base64)
+            }
+        }
+        
+        viewModelScope.launch {
+            WearableStreamingService.cameraFrames.collect { bytes ->
+                // Send POV to Gemini Live for visual reasoning
+                geminiLiveManager.sendVideoFrame(bytes)
+            }
+        }
+
+        viewModelScope.launch {
+            geminiLiveManager.functionCalls.collect { call ->
+                val name = call.getString("name")
+                val args = call.optJSONObject("args")
+                val callId = call.getString("id")
+                
+                if (name == "generate_visual_media") {
+                    val intent = args?.optString("intent") ?: "cover_art"
+                    val pitch = args?.optString("creative_pitch") ?: ""
+                    
+                    // Notify our backend LangGraph to trigger visual production
+                    sendTextCommand("Production Request: Generate $intent. Creative vision: $pitch")
+                    
+                    // Return success to Gemini Live so it can acknowledge in dialogue
+                    val result = JSONObject().apply { put("status", "Initiated production sequence.") }
+                    geminiLiveManager.sendResponse(callId, name, result)
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            geminiLiveManager.transcripts.collect { text ->
+                messages.add(0, ChatMessage(text, false))
+            }
+        }
+
+        viewModelScope.launch {
+            geminiLiveManager.thoughts.collect { thought ->
+                Timber.d("Art Director Reasoning: $thought")
+                // Update Wearable HUD
+                WearableStreamingService.updateUi(
+                    songTitle = currentPlayingTrack.value?.name ?: "",
+                    geminiResponse = "",
+                    coverArtUrl = currentCoverUrl.value,
+                    isThinking = true
+                )
+            }
+        }
+
+        viewModelScope.launch {
+            geminiLiveManager.connectionState.collect { connected ->
+                if (!connected) {
+                    Timber.w("Gemini Live Disconnected")
+                }
             }
         }
     }
@@ -536,6 +630,7 @@ class MainViewModel @Inject constructor(
         }
         _isLiveSessionActive.value = false
         maveSessionManager.disconnect()
+        geminiLiveManager.disconnect()
     }
 
     /** Legacy alias kept for compatibility. */
@@ -633,6 +728,14 @@ class MainViewModel @Inject constructor(
         _isHapticFeedbackEnabled.value = !_isHapticFeedbackEnabled.value
     }
 
+    fun requestCoverArt() {
+        sendTextCommand("Generate a high-fidelity album cover for this vibe.")
+    }
+
+    fun requestMusicVideo() {
+        sendTextCommand("Generate a 35mm cinematic music video loop for this track.")
+    }
+
     fun playTrack(track: MaveTrack) {
         _currentPlayingTrack.value = track
         _isPlaying.value = true
@@ -701,14 +804,14 @@ class MainViewModel @Inject constructor(
             val artistId = track.artists.firstOrNull()?.id
             if (artistId != null) {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = android.net.Uri.parse("spotify:artist:$artistId")
-                    putExtra(Intent.EXTRA_REFERRER, android.net.Uri.parse("android-app://${context.packageName}"))
+                    data = "spotify:artist:$artistId".toUri()
+                    putExtra(Intent.EXTRA_REFERRER, "android-app://${context.packageName}".toUri())
                 }
                 try {
                     context.startActivity(intent)
                 } catch (e: Exception) {
                     // Fallback to web
-                    val webIntent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://open.spotify.com/artist/$artistId"))
+                    val webIntent = Intent(Intent.ACTION_VIEW, "https://open.spotify.com/artist/$artistId".toUri())
                     context.startActivity(webIntent)
                 }
             }
@@ -848,12 +951,12 @@ class MainViewModel @Inject constructor(
     fun signOut() {
         stopLiveSession()
         rtdbListener?.let { listener ->
-            val user = auth.currentUser
-            if (user != null) {
-                rtdb.getReference("sessions/${user.uid}/state").removeEventListener(listener)
+            currentRtdbUid?.let { uid ->
+                rtdb.getReference("sessions/$uid/state").removeEventListener(listener)
             }
         }
         rtdbListener = null
+        currentRtdbUid = null
         auth.signOut()
         Timber.i("User signed out")
         viewModelScope.launch {
@@ -923,7 +1026,6 @@ class MainViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        super.onCleared()
         if (_isRecording.value) {
             stopRecording()
         }

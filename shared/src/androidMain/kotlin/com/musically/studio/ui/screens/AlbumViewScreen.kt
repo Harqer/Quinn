@@ -66,7 +66,7 @@ fun AlbumViewScreen(
 
 
     Scaffold(
-        containerColor = Color(0xFF121212),
+        containerColor = com.musically.studio.ui.theme.MaveBackground,
         topBar = {
             TopAppBar(
                 title = {},
@@ -89,7 +89,7 @@ fun AlbumViewScreen(
                     .height(400.dp)
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(bgColor, Color(0xFF121212))
+                            colors = listOf(bgColor, com.musically.studio.ui.theme.MaveBackground)
                         )
                     )
             )
