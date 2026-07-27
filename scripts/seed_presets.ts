@@ -64,14 +64,14 @@ async function generateAudio(prompt: string, voice: string, outputPath: string) 
 
 async function uploadToStorage(buffer: Buffer, destination: string) {
     // Requires GOOGLE_APPLICATION_CREDENTIALS
-    if (!admin.apps.length) {
+    if (!(admin as any).apps.length) {
         admin.initializeApp({
-            credential: admin.credential.applicationDefault(),
+            credential: (admin as any).credential.applicationDefault(),
             storageBucket: process.env.FIREBASE_STORAGE_BUCKET // e.g. "my-project.firebasestorage.app"
         });
     }
     
-    const bucket = admin.storage().bucket();
+    const bucket = (admin as any).storage().bucket();
     const file = bucket.file(destination);
     
     await file.save(buffer, {

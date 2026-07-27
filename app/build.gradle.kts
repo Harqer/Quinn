@@ -176,6 +176,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.appcheck.playintegrity)
     implementation(libs.firebase.appcheck.debug)
+    implementation(libs.firebase.vertexai)
 
     // Logging
     implementation(libs.timber)

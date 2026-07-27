@@ -11,84 +11,15 @@ interface Message {
 
 import { getAuth } from 'firebase/auth';
 
+import { useMave } from '../../hooks/useMave';
+
 export const ChatScreen: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { messages, sendText, toggleRecording, isRecording, sendVisionFrame } = useMave();
   const [inputValue, setInputValue] = useState('');
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
-  const wsRef = useRef<WebSocket | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    let ws: WebSocket;
-    
-    const connectWs = async () => {
-      const apiUrl = import.meta.env.VITE_API_URL || '';
-      const isSecure = apiUrl ? apiUrl.startsWith('https') : window.location.protocol === 'https:';
-      const protocol = isSecure ? 'wss:' : 'ws:';
-      const hostOrigin = apiUrl ? apiUrl.replace(/^https?:\/\//, '') : window.location.host;
-      const wsUrl = `${protocol}//${hostOrigin}/api/music/ws`;
-      
-      const auth = getAuth();
-      const user = auth.currentUser;
-      let tokenParam = '';
-      if (user) {
-        try {
-          const token = await user.getIdToken();
-          tokenParam = `?token=${token}`;
-        } catch(e) {}
-      }
-      
-      ws = new WebSocket(`${wsUrl}${tokenParam}`);
-      
-      ws.onopen = () => {
-        console.log("WebSocket connected to Mave Engine");
-      };
-      
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.type === 'ai_response') {
-            const aiResponse: Message = {
-              id: Date.now().toString(),
-              sender: 'ai',
-              text: data.text || '',
-              tracks: data.tracks
-            };
-            setMessages(prev => [...prev, aiResponse]);
-          } else if (data.type === 'agent_update') {
-            if (data.chunk && typeof data.chunk === 'string') {
-              const audio = new Audio(data.chunk);
-              audio.play().catch(e => console.error("Audio playback failed", e));
-            }
-            if (data.prompts && data.prompts[0]) {
-              const aiResponse: Message = {
-                id: Date.now().toString(),
-                sender: 'ai',
-                text: "Generated Music: " + data.prompts[0]
-              };
-              setMessages(prev => [...prev, aiResponse]);
-            }
-          }
-        } catch (err) {
-          console.error("Error parsing WS message", err);
-        }
-      };
 
-      ws.onclose = () => {
-        console.log("WebSocket disconnected");
-      };
-
-      wsRef.current = ws;
-    };
-
-    connectWs();
-
-    return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
-    };
-  }, []);
 
   useEffect(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -96,23 +27,9 @@ export const ChatScreen: React.FC = () => {
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
-    
     const text = inputValue.trim();
-    const newUserMsg: Message = {
-      id: Date.now().toString(),
-      sender: 'user',
-      text
-    };
-    
-    setMessages(prev => [...prev, newUserMsg]);
     setInputValue('');
-    
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ type: 'user_message', text }));
-    } else {
-      console.error("WebSocket is not connected");
-      // Could show an error toast here instead of injecting a fake message
-    }
+    sendText(text);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,15 +37,8 @@ export const ChatScreen: React.FC = () => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (ev) => {
-      const base64 = ev.target?.result;
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        wsRef.current.send(JSON.stringify({ type: 'vision', image: base64 }));
-        setMessages(prev => [...prev, {
-          id: Date.now().toString(),
-          sender: 'user',
-          text: `[Sent media for analysis]`
-        }]);
-      }
+      const base64 = ev.target?.result as string;
+      sendVisionFrame(base64);
     };
     reader.readAsDataURL(file);
     // Reset input so the same file can be selected again
@@ -158,8 +68,8 @@ export const ChatScreen: React.FC = () => {
           <Typography variant="body-sm">Your personal audio curator. Ready to discover?</Typography>
         </div>
 
-        {messages.map(msg => (
-          msg.sender === 'ai' ? (
+        {messages.slice().reverse().map(msg => (
+          msg.sender === 'mave' ? (
             <div key={msg.id} className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0">
                 <Icon name="auto_awesome" className="text-on-primary text-[18px]" />
@@ -167,33 +77,18 @@ export const ChatScreen: React.FC = () => {
               <div className="message-bubble bg-surface-bright p-4 rounded-xl rounded-tl-none max-w-[85%]">
                 <Typography variant="body-md" className="text-on-surface">{msg.text}</Typography>
                 
-                {msg.tracks && msg.tracks.length === 1 && (
+                {msg.trackId && msg.title && (
                   <div className="mt-4 bg-surface-container-high rounded-xl overflow-hidden flex items-center p-3 border border-outline-variant/30 group cursor-pointer active:scale-95 transition-transform">
-                    <div className="w-16 h-16 rounded-lg bg-surface-variant flex-shrink-0" />
+                    <div className="w-16 h-16 rounded-lg bg-surface-variant flex-shrink-0">
+                      {msg.coverUrl && <img src={msg.coverUrl} className="w-full h-full object-cover rounded-lg" />}
+                    </div>
                     <div className="ml-4 flex-1">
-                      <Typography variant="body-md" className="font-bold text-on-surface">{msg.tracks[0].title}</Typography>
-                      <Typography variant="body-sm" className="text-text-secondary">{msg.tracks[0].artist}</Typography>
+                      <Typography variant="body-md" className="font-bold text-on-surface">{msg.title}</Typography>
+                      {msg.voice && <Typography variant="body-sm" className="text-text-secondary">{msg.voice}</Typography>}
                     </div>
                     <button className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-lg shadow-primary/20">
                       <Icon name="play_arrow" />
                     </button>
-                  </div>
-                )}
-
-                {msg.tracks && msg.tracks.length > 1 && (
-                  <div className="space-y-2 mt-4">
-                    {msg.tracks.map((track, idx) => (
-                      <div key={idx} className="flex items-center gap-3 p-2 hover:bg-surface-container-highest rounded-lg transition-colors">
-                        <div className="w-10 h-10 bg-secondary-container rounded-lg flex items-center justify-center">
-                          <Icon name="album" className="text-on-secondary-container" />
-                        </div>
-                        <div className="flex-1">
-                          <Typography variant="body-sm" className="font-bold text-on-surface">{track.title}</Typography>
-                          <Typography variant="label-sm" className="text-text-secondary">{track.artist}</Typography>
-                        </div>
-                        <Icon name="add_circle" className="text-text-secondary text-[20px]" />
-                      </div>
-                    ))}
                   </div>
                 )}
               </div>
@@ -256,7 +151,10 @@ export const ChatScreen: React.FC = () => {
              </button>
           ) : (
             <div className="flex items-center flex-shrink-0">
-              <button className="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-surface-container-highest rounded-full transition-colors">
+              <button 
+                onClick={toggleRecording} 
+                className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${isRecording ? 'bg-red-500 text-white' : 'text-text-secondary hover:bg-surface-container-highest'}`}
+              >
                 <Icon name="mic" />
               </button>
               <button onClick={() => fileInputRef.current?.click()} className="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-surface-container-highest rounded-full transition-colors">

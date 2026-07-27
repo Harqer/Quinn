@@ -1,5 +1,5 @@
 import { maveGraph } from "./mave-graph.js";
-import { getAi, generateCoverMedia, generateLiveEphemeralToken } from "./ai.js";
+import { getAi, generateCoverMedia } from "./ai.js";
 import { WebSocket } from "ws";
 import logger from "../config/logger.js";
 import { trackRepository } from "../repositories/TrackRepository.js";
@@ -140,56 +140,6 @@ export class MusicService {
 
     visionLocks.set(sessionId, newLock);
     return newLock;
-  }
-
-  /**
-   * Generates an Ephemeral Token for client-side direct connection instead of proxying raw audio.
-   */
-  async generateMusicLiveToken(ws: WebSocket, sessionId: string) {
-    try {
-      logger.info("[MAVE_SERVICE] Generating Ephemeral Token for Gemini Live API", { sessionId });
-
-      const tools = [
-        {
-          function_declarations: [
-            {
-              name: "generate_visual_media",
-              description: "Generate an album cover or a music video loop for the current musical vibe.",
-              parameters: {
-                type: "object",
-                properties: {
-                  intent: {
-                    type: "string",
-                    enum: ["cover_art", "video_motion"],
-                    description: "Whether to generate a static cover art or a cinematic video loop."
-                  },
-                  creative_pitch: {
-                    type: "string",
-                    description: "A natural language description of the visual style to be generated."
-                  }
-                },
-                required: ["intent"]
-              }
-            }
-          ]
-        }
-      ];
-
-      const token = await generateLiveEphemeralToken(
-        "gemini-3.1-flash-live-preview",
-        "You are Mave, the Executive Creative Director, Master Musical Orchestrator. You are in a live bidirectional session with the user. Your role is to reason about their environment and musical requests. You can trigger music and visual production via your internal reasoning or by calling the generate_visual_media tool.",
-        undefined,
-        tools
-      );
-
-      this.safeSend(ws, {
-        type: "ephemeral_token",
-        token: token
-      });
-      return token;
-    } catch (err) {
-      logger.error("[MAVE_SERVICE] Token generation failed", { error: err });
-    }
   }
 
   /**

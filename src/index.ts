@@ -1,8 +1,8 @@
+import "dotenv/config";
 import { WebSocketServer } from "ws";
 import { auth } from "./config/firebase.js";
 import app from "./app.js";
 import { initAi } from "./services/ai.js";
-import { setupMusicWebSocket } from "./routes/index.js";
 import logger from "./config/logger.js";
 
 import { initSecrets } from "./config/secrets.js";
@@ -20,36 +20,7 @@ async function startServer() {
     logger.error("[SERVER] AI initialization failed. Ensure GEMINI_API_KEY is injected natively into the environment.", { error: err });
   }
 
-  const wss = new WebSocketServer({ noServer: true });
-  setupMusicWebSocket(wss);
-
-  server.on("upgrade", async (request, socket, head) => {
-    const url = new URL(request.url!, `http://${request.headers.host}`);
-    if (url.pathname === "/api/music/ws") {
-      const token = url.searchParams.get("token");
-
-      if (!token) {
-        logger.info("[WS] Guest user connected (Audio First)");
-        wss.handleUpgrade(request, socket, head, (ws) => {
-          wss.emit("connection", ws, request);
-        });
-        return;
-      }
-
-      try {
-        await auth.verifyIdToken(token);
-        wss.handleUpgrade(request, socket, head, (ws) => {
-          wss.emit("connection", ws, request);
-        });
-      } catch (err) {
-        logger.warn("[WS] Invalid authentication token provided. Connection rejected.");
-        socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-        socket.destroy();
-      }
-    } else {
-      socket.destroy();
-    }
-  });
+  // WebSockets removed in favor of Firebase AI SDK
 }
 
 startServer().catch((err) => {

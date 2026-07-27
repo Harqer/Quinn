@@ -75,153 +75,42 @@ router.post("/share", verifyFirebaseToken, verifyAppCheck, async (req: Authentic
   }
 });
 
+router.post("/execute-tool", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
+  const { name, args } = req.body;
+  if (!name) return res.status(400).json({ error: "Tool name is required" });
 
+  try {
+    logger.info(`Executing tool ${name}`, { args, uid: req.user?.uid });
+    
+    // Process different tool calls based on their name
+    switch (name) {
+      case 'generate_full_track':
+        // Generate via Lyria 3
+        const lyriaResult = await musicService.generateMusicDirectly(undefined, args.prompt);
+        return res.json({ status: "success", message: "Track generated", result: lyriaResult });
+      
+      case 'tweak_instrumentation':
+        // Warp or tweak instrumentation via Lyria RealTime
+        await musicService.applySteering(args, req.user!.uid);
+        return res.json({ status: "success", message: "Instrumentation tweaked" });
+        
+      case 'jam_live':
+        // Handle MRT2 live jamming intent
+        return res.json({ status: "success", message: "Entered live jamming mode", instructions: "Connect MIDI controller to MRT2" });
 
-
-// WebSocket Server for Mave Studio Engine (Music & Podcast)
-export const setupMusicWebSocket = (wss: WebSocketServer) => {
-  // Ping/Pong Heartbeat to prune dead connections
-  const interval = setInterval(() => {
-    wss.clients.forEach((ws: any) => {
-      if (ws.isAlive === false) return ws.terminate();
-      ws.isAlive = false;
-      ws.ping();
-    });
-  }, 30000);
-
-  wss.on("close", () => clearInterval(interval));
-
-  wss.on("connection", async (ws: any, request) => {
-    ws.isAlive = true;
-    ws.on("pong", () => { ws.isAlive = true; });
-
-    const url = new URL(request.url || "", `http://${request.headers.host}`);
-    const token = url.searchParams.get("token");
-    const locale = request.headers["accept-language"] || "en";
-
-    let uid = "";
-    if (!token) {
-      uid = `guest_${Math.random().toString(36).substring(7)}`;
-      logger.info(`[WS_STUDIO] Guest user connected.`, { uid });
-    } else {
-      try {
-        const decodedToken = await auth.verifyIdToken(token);
-        uid = decodedToken.uid;
-        logger.info(`[WS_STUDIO] Authenticated user connected.`, { uid });
-      } catch (err) {
-        logger.error(`[WS_STUDIO] Token verification failed. Closing connection.`, { error: err });
-        ws.close(4001, "Unauthorized: Invalid Auth Token");
-        return;
-      }
+      default:
+        return res.status(400).json({ error: "Unknown tool" });
     }
+  } catch (err) {
+    logger.error("Failed to execute tool", { error: err });
+    res.status(500).json({ error: "Failed to execute tool" });
+  }
+});
 
-    const appCheckToken = url.searchParams.get("appCheck");
 
-    if (!appCheckToken) {
-      logger.error(`[WS_STUDIO] Missing App Check token. Closing connection.`);
-      ws.close(4001, "Unauthorized: Missing App Check Token");
-      return;
-    }
 
-    try {
-      await appCheck.verifyToken(appCheckToken);
-    } catch (err) {
-      logger.error(`[WS_STUDIO] Invalid App Check token.`, { error: err });
-      ws.close(4001, "Unauthorized: Invalid App Check Token");
-      return;
-    }
 
-    let musicSessionInitialized = false;
-    let podcastSessionInitialized = false;
-    let audiobookSessionInitialized = false;
-    let currentMode: 'music' | 'podcast' | 'audiobook' = 'music';
-    let isInitializingMusic = false;
 
-    const initMusic = async () => {
-      if (musicSessionInitialized || isInitializingMusic) return;
-      isInitializingMusic = true;
-      try {
-        await musicService.generateMusicLiveToken(ws, uid);
-        musicSessionInitialized = true;
-      } finally {
-        isInitializingMusic = false;
-      }
-    };
-
-    ws.on("message", async (data: any) => {
-      try {
-        const msg = JSON.parse(data.toString());
-
-        if (msg.type === "switch_mode") {
-          currentMode = msg.mode;
-          if (currentMode === 'podcast' && !podcastSessionInitialized) {
-            await narrativeService.startSession(ws, uid, "podcast", locale);
-            podcastSessionInitialized = true;
-          } else if (currentMode === 'audiobook' && !audiobookSessionInitialized) {
-            await narrativeService.startSession(ws, uid, "audiobook", locale);
-            audiobookSessionInitialized = true;
-          } else if (currentMode === 'music' && !musicSessionInitialized) {
-            await initMusic();
-          }
-          logger.info(`[WS_STUDIO] User switched to ${currentMode} mode.`, { uid });
-          return;
-        }
-
-        if (currentMode === 'music') {
-          if (!musicSessionInitialized) await initMusic();
-          if (msg.type === "vision") {
-            await musicService.processVisionEvent(ws, msg.image, uid);
-          } else if (msg.type === "feedback") {
-            await musicService.handleUserFeedback(ws, msg.text, uid);
-          } else if (msg.type === "steering_action") {
-            await musicService.applySteering(msg.params, uid);
-          } else if (["skip_next", "skip_previous", "toggle_shuffle", "toggle_repeat", "seek_to"].includes(msg.type)) {
-            await musicService.handlePlaybackCommand(msg.type, msg, uid);
-          } else if (["play", "pause", "stop"].includes(msg.type)) {
-            // The client manages playback directly, we just sync state to RTDB if needed
-            logger.info(`[WS_STUDIO] Playback state changed to ${msg.type}`, { uid });
-          } else if (msg.type === "generate_instrumentation") {
-            const { prompt, sessionId } = msg;
-            await instrumentationService.streamInstrumentation(ws, prompt, sessionId);
-          } else if (msg.type === "user_message") {
-            await musicService.handleUserFeedback(ws, msg.text, uid);
-          }
-        } else if (currentMode === 'podcast') {
-          // Podcast Mode
-          if (!podcastSessionInitialized) {
-            await narrativeService.startSession(ws, uid, "podcast", locale);
-            podcastSessionInitialized = true;
-          }
-          if (msg.type === "vision") {
-            await narrativeService.processVision(ws, msg.image, "podcast", locale);
-          } else if (msg.type === "text_command") {
-            // Text commands are sent directly by the client to Gemini, we can log them or sync to RTDB
-            logger.info(`[WS_STUDIO] Received text command: ${msg.text}`, { uid });
-          }
-        } else if (currentMode === 'audiobook') {
-          // Audiobook Mode
-          if (!audiobookSessionInitialized) {
-            await narrativeService.startSession(ws, uid, "audiobook", locale);
-            audiobookSessionInitialized = true;
-          }
-          if (msg.type === "vision") {
-            await narrativeService.processVision(ws, msg.image, "audiobook", locale);
-          } else if (msg.type === "text_command") {
-            // Text commands are sent directly by the client to Gemini, we can log them or sync to RTDB
-            logger.info(`[WS_STUDIO] Received text command: ${msg.text}`, { uid });
-          }
-        }
-      } catch (msgErr) {
-        logger.error("[WS_MESSAGE_ERR]", { error: msgErr });
-      }
-    });
-
-    ws.on("close", () => {
-      musicSessionInitialized = false;
-      podcastSessionInitialized = false;
-      audiobookSessionInitialized = false;
-    });
-  });
-};
+// WebSocket Server removed in favor of Firebase AI SDK native connections
 
 export default router;
