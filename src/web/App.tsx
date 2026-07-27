@@ -59,7 +59,7 @@ export const App: React.FC = () => {
 
   return (
     <NavigationContext.Provider value={setRoute}>
-      <div className="flex h-full w-full p-0 md:p-6 md:gap-6 gap-2 text-text-primary font-sans overflow-hidden select-none bg-black pb-0 md:pb-[92px]">
+      <div className="flex h-full w-full p-0 md:p-6 md:gap-6 gap-2 text-text-primary font-sans overflow-hidden bg-black pb-0 md:pb-[92px]">
         
         {showBottomNav && (
           <aside className="hidden md:flex w-[280px] lg:w-[420px] h-full flex-col gap-6 z-40">

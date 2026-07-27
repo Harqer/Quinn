@@ -1,0 +1,920 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/E2ETest.kt</file>
+  <line>10</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.E2ETest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>15</length>
+  <highlighted_element>class E2ETest {</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/E2ETest.kt</file>
+  <line>15</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.E2ETest void testAppLaunchAndWelcome()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/ProductionIntegrationTest.kt</file>
+  <line>15</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.ProductionIntegrationTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>16</length>
+  <highlighted_element>@HiltAndroidTest</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/ProductionIntegrationTest.kt</file>
+  <line>25</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ProductionIntegrationTest void init()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/ProductionIntegrationTest.kt</file>
+  <line>30</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ProductionIntegrationTest void testRealApiTracksFetch()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/MyApplication.kt</file>
+  <line>19</line>
+  <module>MyExampleApp.app.main</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.MyApplication" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>15</length>
+  <highlighted_element>@HiltAndroidApp</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/appfunctions/MaveFunctionsTest.kt</file>
+  <line>16</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.appfunctions.MaveFunctionsTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>38</length>
+  <highlighted_element>@RunWith(RobolectricTestRunner::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/appfunctions/MaveFunctionsTest.kt</file>
+  <line>27</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.appfunctions.MaveFunctionsTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/appfunctions/MaveFunctionsTest.kt</file>
+  <line>33</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.appfunctions.MaveFunctionsTest void testStrikeVibe()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/appfunctions/MaveFunctionsTest.kt</file>
+  <line>39</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.appfunctions.MaveFunctionsTest void testGeneratePodcast()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/appfunctions/MaveFunctionsTest.kt</file>
+  <line>45</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.appfunctions.MaveFunctionsTest void testSearchForContent()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/appfunctions/MaveFunctionsTest.kt</file>
+  <line>51</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.appfunctions.MaveFunctionsTest void testOpenLibrary()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/appfunctions/MaveFunctionsTest.kt</file>
+  <line>57</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.appfunctions.MaveFunctionsTest void testOpenHome()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/di/DITest.kt</file>
+  <line>18</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.di</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.di.DITest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>16</length>
+  <highlighted_element>@HiltAndroidTest</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/di/DITest.kt</file>
+  <line>29</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.di</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.di.DITest void init()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/di/DITest.kt</file>
+  <line>34</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.di</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.di.DITest void test ApiClient is injected successfully()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/RealNetworkIntegrationTest.kt</file>
+  <line>12</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.network.RealNetworkIntegrationTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>38</length>
+  <highlighted_element>@RunWith(RobolectricTestRunner::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/RealNetworkIntegrationTest.kt</file>
+  <line>18</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.RealNetworkIntegrationTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/RealNetworkIntegrationTest.kt</file>
+  <line>24</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.RealNetworkIntegrationTest void test fetch community tracks from real backend()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/TokenManagerTest.kt</file>
+  <line>6</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.network.TokenManagerTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>24</length>
+  <highlighted_element>class TokenManagerTest {</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/TokenManagerTest.kt</file>
+  <line>8</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.TokenManagerTest void getValidToken returns null when no user is signed in()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/AlbumViewScreenshotTest.kt</file>
+  <line>11</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.ui.AlbumViewScreenshotTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/AlbumViewScreenshotTest.kt</file>
+  <line>18</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.AlbumViewScreenshotTest void testAlbumView_defaultState()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/AppNavigationTest.kt</file>
+  <line>12</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.ui.AppNavigationTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/AppNavigationTest.kt</file>
+  <line>18</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.AppNavigationTest void testNavigation_canNavigateToLibrary()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/MainViewModelTest.kt</file>
+  <line>24</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.ui.MainViewModelTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>40</length>
+  <highlighted_element>@OptIn(ExperimentalCoroutinesApi::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/MainViewModelTest.kt</file>
+  <line>32</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.MainViewModelTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/MainViewModelTest.kt</file>
+  <line>45</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.MainViewModelTest void tearDown()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>6</length>
+  <highlighted_element>@After</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/MainViewModelTest.kt</file>
+  <line>50</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.MainViewModelTest void testFetchCommunityTracks_updatesState()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/MainViewModelTest.kt</file>
+  <line>61</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.MainViewModelTest void testLoginAsGuest_callsCallback()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/MaveScreenshotTest.kt</file>
+  <line>15</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.ui.MaveScreenshotTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>38</length>
+  <highlighted_element>@RunWith(RobolectricTestRunner::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/MaveScreenshotTest.kt</file>
+  <line>23</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.MaveScreenshotTest void captureThemeBaseline()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/components/ComponentScreenshotTests.kt</file>
+  <line>20</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.components</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.ui.components.ComponentScreenshotTests" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/components/ComponentScreenshotTests.kt</file>
+  <line>28</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.components.ComponentScreenshotTests void maveButtonPrimary_rendersCorrectly()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/components/ComponentScreenshotTests.kt</file>
+  <line>44</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.components.ComponentScreenshotTests void maveButtonOutline_rendersCorrectly()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/components/MediaCoverCardTest.kt</file>
+  <line>18</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.components</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.ui.components.MediaCoverCardTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/components/MediaCoverCardTest.kt</file>
+  <line>26</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.components.MediaCoverCardTest void mediaCoverCard_clickPlay_callsOnPlayClick()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/components/MediaCoverCardTest.kt</file>
+  <line>46</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.components.MediaCoverCardTest void mediaCoverCard_clickLike_callsOnLikeClick()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/components/MediaCoverCardTest.kt</file>
+  <line>67</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.components.MediaCoverCardTest void mediaCoverCard_clickShare_callsOnShareClick()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/components/MediaCoverCardTest.kt</file>
+  <line>87</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.components.MediaCoverCardTest void mediaCoverCard_clickMoreOptions_callsOnMoreClick()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/components/MediaCoverCardTest.kt</file>
+  <line>107</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.components.MediaCoverCardTest void mediaCoverCard_layout_screenshotTest()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/AuthOptionsScreenTest.kt</file>
+  <line>16</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.ui.screens.AuthOptionsScreenTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/AuthOptionsScreenTest.kt</file>
+  <line>24</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.screens.AuthOptionsScreenTest void authOptionsScreen_rendersCorrectly()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/UserProfileScreenTest.kt</file>
+  <line>24</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.ui.screens.UserProfileScreenTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/UserProfileScreenTest.kt</file>
+  <line>34</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.screens.UserProfileScreenTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/UserProfileScreenTest.kt</file>
+  <line>44</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.screens.UserProfileScreenTest void userProfileScreen_rendersCorrectly()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/WelcomeScreenTest.kt</file>
+  <line>28</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.ui.screens.WelcomeScreenTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/WelcomeScreenTest.kt</file>
+  <line>38</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.screens.WelcomeScreenTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/WelcomeScreenTest.kt</file>
+  <line>48</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.screens.WelcomeScreenTest void welcomeScreen_privacyDialogDisplayed_whenNotAccepted()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/WelcomeScreenTest.kt</file>
+  <line>66</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.ui.screens.WelcomeScreenTest void welcomeScreen_privacyDialogDismissed_whenAccepted()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/utils/FrameProcessorTest.kt</file>
+  <line>10</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.utils</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.utils.FrameProcessorTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>40</length>
+  <highlighted_element>@OptIn(ExperimentalCoroutinesApi::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/utils/FrameProcessorTest.kt</file>
+  <line>13</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.utils</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.utils.FrameProcessorTest void throttleFrames should only emit one frame within 1 second period()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/kotlin/com/musically/studio/MainActivityTest.kt</file>
+  <line>10</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="class" FQNAME="com.musically.studio.MainActivityTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>38</length>
+  <highlighted_element>@RunWith(RobolectricTestRunner::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/kotlin/com/musically/studio/MainActivityTest.kt</file>
+  <line>14</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.MainActivityTest void launch MainActivity to check for crash()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+</problems>

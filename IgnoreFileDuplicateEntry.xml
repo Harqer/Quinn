@@ -1,0 +1,14 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/.gitignore</file>
+  <line>46</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.gitignore" />
+  <problem_class id="IgnoreFileDuplicateEntry" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Ignore file duplicates</problem_class>
+  <description>&lt;code&gt;google-services.json&lt;/code&gt; pattern is defined more than once</description>
+  <highlighted_element>google-services.json</highlighted_element>
+  <language>IgnoreLang</language>
+  <offset>0</offset>
+  <length>20</length>
+</problem>
+</problems>

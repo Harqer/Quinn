@@ -22,7 +22,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.net.Uri
+import android.util.Base64
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import com.musically.studio.ui.theme.LocalMaveColorScheme
 import com.musically.studio.ui.theme.MaveStyles
 
@@ -34,6 +44,26 @@ fun ChatScreen(
 ) {
     val messages by viewModel.messages.collectAsState()
     var inputValue by remember { mutableStateOf("") }
+    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    
+    val imagePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            coroutineScope.launch(Dispatchers.IO) {
+                try {
+                    val mimeType = context.contentResolver.getType(it) ?: "image/jpeg"
+                    context.contentResolver.openInputStream(it)?.use { inputStream ->
+                        val bytes = inputStream.readBytes()
+                        val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
+                        viewModel.sendVisionFrame(base64, mimeType)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
     
     // Adaptive & Edge-to-edge
     Box(
@@ -77,7 +107,7 @@ fun ChatScreen(
                         .styleable(style = MaveStyles.chatInputRowStyle), // Styles API compliance
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { /* Add */ }) {
+                    IconButton(onClick = { imagePickerLauncher.launch("image/*") }) {
                         Icon(Icons.Default.Add, contentDescription = "Add")
                     }
                     
@@ -112,7 +142,7 @@ fun ChatScreen(
                         IconButton(onClick = { /* Mic */ }) {
                             Icon(Icons.Default.Mic, contentDescription = "Mic")
                         }
-                        IconButton(onClick = { /* CameraX Feature Integration */ }) {
+                        IconButton(onClick = { imagePickerLauncher.launch("image/*") }) {
                             Icon(Icons.Default.PhotoCamera, contentDescription = "Camera", tint = LocalMaveColorScheme.current.onSurface)
                         }
                     }
@@ -163,7 +193,14 @@ fun ChatScreen(
                                 .weight(1f, fill = false)
                                 .styleable(style = MaveStyles.aiMessageBubbleStyle) // Styles API compliance
                         ) {
-                            Text(msg.text, fontSize = 16.sp)
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                SelectionContainer(modifier = Modifier.weight(1f, fill = false)) {
+                                    Text(msg.text, fontSize = 16.sp)
+                                }
+                                IconButton(onClick = { clipboardManager.setText(AnnotatedString(msg.text)) }) {
+                                    Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp))
+                                }
+                            }
                             
                             if (msg.tracks?.size == 1) {
                                 Spacer(modifier = Modifier.height(16.dp))
@@ -227,7 +264,14 @@ fun ChatScreen(
                                 modifier = Modifier
                                     .styleable(style = MaveStyles.userMessageBubbleStyle) // Styles API compliance
                             ) {
-                                Text(msg.text, fontSize = 16.sp)
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    IconButton(onClick = { clipboardManager.setText(AnnotatedString(msg.text)) }) {
+                                        Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp))
+                                    }
+                                    SelectionContainer {
+                                        Text(msg.text, fontSize = 16.sp)
+                                    }
+                                }
                             }
                             Text("DELIVERED", fontSize = 10.sp, modifier = Modifier.padding(top = 4.dp, end = 4.dp))
                         }

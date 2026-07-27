@@ -1,0 +1,290 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/@google-cloud/storage/node_modules/node-fetch/README.md</file>
+  <line>386</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/@google-cloud/storage/node_modules/node-fetch/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>Header | Value ------------------- | --------------------------------------------------...</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>415</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/@grpc/proto-loader/README.md</file>
+  <line>31</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/@grpc/proto-loader/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>| Field name | Valid values | Description |------------|--------------|------------ | `keepCase` | `...</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>1217</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>65</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- r | 255 g | 255 b | 255</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>72</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- h | 360 s | 100 l | 100</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>79</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- h | 360 s | 100 v | 100</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>86</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- h | 360 w | 100 b | 100</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>93</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- x | 94 y | 99 z | 108</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>56</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>100</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- l | 100 a | -86, 98 b | -108, 94</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>67</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>107</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- l | 100 c | 133 h | 360</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>114</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- l | 100 a | -23, 28 b | -31, 20</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>66</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>121</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- l | 100 c | 32 h | 360</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>57</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>128</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- c | 100 m | 100 y | 100 k | 100</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>66</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>136</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- hex | ```0xffffff```</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>55</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>141</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | value ---|--- name | any key from [color-name](https://github.com/colorjs/color-name/blob/...</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>116</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>146</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- 0 | 65535 1 | 65535 2 | 65535</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>64</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/color-convert/README.md</file>
+  <line>153</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/color-convert/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>channel | full-scale value ---|--- gray | 100</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>45</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/jwa/README.md</file>
+  <line>10</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/jwa/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>alg Parameter Value | Digital Signature or MAC Algorithm ----------------|--------------------------...</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>731</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/jws/readme.md</file>
+  <line>24</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/jws/readme.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>alg Parameter Value | Digital Signature or MAC Algorithm ----------------|--------------------------...</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>731</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/mime/README.md</file>
+  <line>80</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/mime/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>Module | Size --- | --- `mime-db` | 18 KB `mime-types` | same as mime-db `mime` | 8 KB `mime/lite` ...</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>106</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/protobufjs/README.md</file>
+  <line>82</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/protobufjs/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>| Distribution | Location |--------------|-------------------------------------------------------- |...</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>307</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/protobufjs/README.md</file>
+  <line>106</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/protobufjs/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>| Field type | Expected JS type (create, encode) | Conversion (fromObject) |------------|-----------...</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>976</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/protobufjs/README.md</file>
+  <line>293</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/protobufjs/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>| Type (T) | Extends | Type-specific properties |--------------------|---------...</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>776</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/protobufjs/ext/descriptor/README.md</file>
+  <line>37</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/protobufjs/ext/descriptor/README.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>| Descriptor type | protobuf.js type | Remarks |-------------------------------|------...</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>1799</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/retry-request/readme.md</file>
+  <line>3</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/retry-request/readme.md" />
+  <problem_class id="MarkdownNoTableBorders" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Table doesn't have side borders</problem_class>
+  <description>For compatibility reasons, all table rows should have borders (pipe symbols) at the start and at the end</description>
+  <highlighted_element>|![retry-request](logo.png) |:-: |Retry a [request][request] with built-in [exponential backoff](htt...</highlighted_element>
+  <language>Markdown</language>
+  <offset>0</offset>
+  <length>185</length>
+</problem>
+</problems>

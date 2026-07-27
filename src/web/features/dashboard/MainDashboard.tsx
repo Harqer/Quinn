@@ -270,10 +270,22 @@ export const MainDashboard: React.FC = () => {
             )}
             {messages.map((m, i) => (
               <div key={i} className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
-                <div className={`max-w-[90%] p-4 rounded-3xl text-sm font-bold shadow-xl leading-relaxed ${
-                  m.sender === 'user' ? 'bg-[#2E2E2E] text-white' : 'bg-[#1DB954] text-black'
-                }`}>
-                  {m.text}
+                <div className={`max-w-[90%] flex items-start gap-2 ${m.sender === 'user' ? 'flex-row-reverse' : ''}`}>
+                  <div className={`p-4 rounded-3xl text-sm font-bold shadow-xl leading-relaxed select-text ${
+                    m.sender === 'user' ? 'bg-[#2E2E2E] text-white' : 'bg-[#1DB954] text-black'
+                  }`}>
+                    {m.text}
+                  </div>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(m.text);
+                      showToast('Copied to clipboard');
+                    }}
+                    className="p-2 text-gray-500 hover:text-white transition-colors mt-2"
+                    title="Copy text"
+                  >
+                    <span className="material-icons-round text-sm">content_copy</span>
+                  </button>
                 </div>
                 {m.sender === 'mave' && m.trackId && (
                   <div className="flex gap-4 mt-2 ml-2">

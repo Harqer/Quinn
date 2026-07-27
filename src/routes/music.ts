@@ -6,10 +6,12 @@ import { WebSocketServer, WebSocket } from "ws";
 import logger from "../config/logger.js";
 import { musicService } from "../services/MusicService.js";
 import { narrativeService } from "../services/NarrativeService.js";
+import { InstrumentationService } from "../services/InstrumentationService.js";
 import { trackRepository } from "../repositories/TrackRepository.js";
 import { getAi } from "../services/ai.js";
 
 const router = Router();
+const instrumentationService = new InstrumentationService();
 
 router.post("/generate", optionalFirebaseToken, verifyAppCheck, checkDailyQuota, async (req: AuthenticatedRequest, res: Response) => {
   const result = GenerateSchema.safeParse(req.body);
@@ -178,6 +180,11 @@ export const setupMusicWebSocket = (wss: WebSocketServer) => {
           } else if (["play", "pause", "stop"].includes(msg.type)) {
             // The client manages playback directly, we just sync state to RTDB if needed
             logger.info(`[WS_STUDIO] Playback state changed to ${msg.type}`, { uid });
+          } else if (msg.type === "generate_instrumentation") {
+            const { prompt, sessionId } = msg;
+            await instrumentationService.streamInstrumentation(ws, prompt, sessionId);
+          } else if (msg.type === "user_message") {
+            await musicService.handleUserFeedback(ws, msg.text, uid);
           }
         } else if (currentMode === 'podcast') {
           // Podcast Mode

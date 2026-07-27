@@ -26,11 +26,13 @@ export const initAi = async () => {
     ai = new GoogleGenAI({
       vertexai: true,
       project: process.env.GOOGLE_CLOUD_PROJECT,
-      location: process.env.GOOGLE_CLOUD_LOCATION || "us-central1"
+      location: process.env.GOOGLE_CLOUD_LOCATION || "us-central1",
+      httpOptions: { apiVersion: "v1alpha" }
     });
   } else if (getSecret("GEMINI_API_KEY")) {
     ai = new GoogleGenAI({
       apiKey: getSecret("GEMINI_API_KEY") as string,
+      httpOptions: { apiVersion: "v1alpha" }
     });
   } else {
     throw new Error("GEMINI_API_KEY or GOOGLE_CLOUD_PROJECT is not set in environment.");

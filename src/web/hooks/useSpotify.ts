@@ -94,6 +94,47 @@ export function useSpotify() {
     }
   };
 
+  // Add Spotify Web Playback SDK Initialization
+  const [player, setPlayer] = useState<any>(null);
+  const [deviceId, setDeviceId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isConnected) return;
+    
+    const script = document.createElement("script");
+    script.src = "https://sdk.scdn.co/spotify-player.js";
+    script.async = true;
+
+    document.body.appendChild(script);
+
+    (window as any).onSpotifyWebPlaybackSDKReady = async () => {
+      // Get token from backend
+      const res = await apiFetch('/api/spotify/token');
+      const data = await res.json();
+      const token = data.token;
+      
+      const spotifyPlayer = new (window as any).Spotify.Player({
+        name: 'Mave Studio Web Player',
+        getOAuthToken: (cb: any) => { cb(token); }, // Need actual token here for Premium playback
+        volume: 0.5
+      });
+
+      setPlayer(spotifyPlayer);
+
+      spotifyPlayer.addListener('ready', ({ device_id }: { device_id: string }) => {
+        logger.info('Ready with Device ID', device_id);
+        setDeviceId(device_id);
+      });
+
+      spotifyPlayer.connect();
+    };
+
+    return () => {
+      script.remove();
+      if (player) player.disconnect();
+    };
+  }, [isConnected]);
+
   useEffect(() => {
     checkStatus();
     const handleMessage = (event: MessageEvent) => {
@@ -103,5 +144,5 @@ export function useSpotify() {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  return { playlists, isConnected, loading, connectSpotify, getLibraryTracks, addTrackToPlaylist };
+  return { playlists, isConnected, loading, connectSpotify, getLibraryTracks, addTrackToPlaylist, player, deviceId };
 }

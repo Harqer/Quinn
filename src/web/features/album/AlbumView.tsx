@@ -3,6 +3,8 @@ import { Typography } from '../../components/atoms/Typography';
 import { Icon } from '../../components/atoms/Icon';
 import { TrackListItem } from '../../components/molecules/TrackListItem';
 import { EmptyState } from '../../components/molecules/EmptyState';
+import { ErrorAlert } from '../../components/molecules/ErrorAlert';
+import { TrackListSkeleton } from '../../components/molecules/TrackListSkeleton';
 import { useAppContext } from '../../contexts/AppContext';
 import { getAuth } from 'firebase/auth';
 import { logger } from "../../lib/logger";
@@ -13,19 +15,28 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const { activeAlbumId: id } = useAppContext();
   const [tracks, setTracks] = useState<Track[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showOptions, setShowOptions] = useState(false);
   const { playTrack } = usePlayerContext();
 
-  useEffect(() => {
+  const fetchAlbum = () => {
     if (id) {
       setLoading(true);
-      musicService.getAlbumTracks(id)
+      setError(null);
+      musicService.getAlbumTracks(id, "Album") // Assuming getAlbumTracks takes id and name now
         .then(setTracks)
-        .catch(err => logger.error("Failed to fetch album tracks", err))
+        .catch(err => {
+          logger.error("Failed to fetch album tracks", err);
+          setError("Unable to load album tracks. Please check your connection.");
+        })
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchAlbum();
   }, [id]);
 
   const handleAction = async (action: 'like' | 'share' | 'options', targetId: string) => {
@@ -113,9 +124,11 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
        </div>
        <div className="flex-1 flex flex-col px-4 pt-4" onClick={() => setShowOptions(false)}>
          {loading ? (
-            <div className="flex-1 flex justify-center items-center">
-               <Typography variant="body-md">Loading album...</Typography>
+            <div className="w-full">
+               <TrackListSkeleton count={6} />
             </div>
+         ) : error ? (
+            <ErrorAlert message={error} onRetry={fetchAlbum} />
          ) : tracks.length > 0 ? (
             tracks.map(track => (
               <div key={track.id} onClick={() => playTrack(track)}>

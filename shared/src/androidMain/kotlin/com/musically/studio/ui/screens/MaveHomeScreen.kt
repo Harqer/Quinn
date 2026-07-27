@@ -34,6 +34,7 @@ fun MaveHomeScreen(
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
     val communityTracks by viewModel.communityTracks.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val errorMessage by viewModel.catalogErrorMessage.collectAsStateWithLifecycle()
     
     val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
     val greeting = when {
@@ -86,6 +87,23 @@ fun MaveHomeScreen(
         if (isLoading && tracks.isEmpty() && communityTracks.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = com.musically.studio.ui.theme.MaveBrand)
+            }
+        } else if (errorMessage != null && tracks.isEmpty() && communityTracks.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(errorMessage ?: "An error occurred", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyLarge)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    com.musically.studio.ui.components.atoms.MaveButton(
+                        text = "Retry",
+                        onClick = { 
+                            viewModel.fetchUserTracks()
+                            viewModel.fetchCommunityTracks() 
+                        }
+                    )
+                }
             }
         } else {
             LazyColumn(

@@ -20,6 +20,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*UpsertUser*](#upsertuser)
   - [*CreatePlaylist*](#createplaylist)
   - [*AddTrackToPlaylist*](#addtracktoplaylist)
+  - [*CreatePodcast*](#createpodcast)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `default`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -1225,6 +1226,124 @@ console.log(data.playlistEntry_insert);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.playlistEntry_insert);
+});
+```
+
+## CreatePodcast
+You can execute the `CreatePodcast` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+createPodcast(vars: CreatePodcastVariables): MutationPromise<CreatePodcastData, CreatePodcastVariables>;
+
+interface CreatePodcastRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreatePodcastVariables): MutationRef<CreatePodcastData, CreatePodcastVariables>;
+}
+export const createPodcastRef: CreatePodcastRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+createPodcast(dc: DataConnect, vars: CreatePodcastVariables): MutationPromise<CreatePodcastData, CreatePodcastVariables>;
+
+interface CreatePodcastRef {
+  ...
+  (dc: DataConnect, vars: CreatePodcastVariables): MutationRef<CreatePodcastData, CreatePodcastVariables>;
+}
+export const createPodcastRef: CreatePodcastRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the createPodcastRef:
+```typescript
+const name = createPodcastRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `CreatePodcast` mutation requires an argument of type `CreatePodcastVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface CreatePodcastVariables {
+  name: string;
+  publisher: string;
+  imageUrl?: string | null;
+  description?: string | null;
+}
+```
+### Return Type
+Recall that executing the `CreatePodcast` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `CreatePodcastData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface CreatePodcastData {
+  podcast_insert: Podcast_Key;
+}
+```
+### Using `CreatePodcast`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, createPodcast, CreatePodcastVariables } from '@musically/dataconnect';
+
+// The `CreatePodcast` mutation requires an argument of type `CreatePodcastVariables`:
+const createPodcastVars: CreatePodcastVariables = {
+  name: ..., 
+  publisher: ..., 
+  imageUrl: ..., // optional
+  description: ..., // optional
+};
+
+// Call the `createPodcast()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await createPodcast(createPodcastVars);
+// Variables can be defined inline as well.
+const { data } = await createPodcast({ name: ..., publisher: ..., imageUrl: ..., description: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await createPodcast(dataConnect, createPodcastVars);
+
+console.log(data.podcast_insert);
+
+// Or, you can use the `Promise` API.
+createPodcast(createPodcastVars).then((response) => {
+  const data = response.data;
+  console.log(data.podcast_insert);
+});
+```
+
+### Using `CreatePodcast`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, createPodcastRef, CreatePodcastVariables } from '@musically/dataconnect';
+
+// The `CreatePodcast` mutation requires an argument of type `CreatePodcastVariables`:
+const createPodcastVars: CreatePodcastVariables = {
+  name: ..., 
+  publisher: ..., 
+  imageUrl: ..., // optional
+  description: ..., // optional
+};
+
+// Call the `createPodcastRef()` function to get a reference to the mutation.
+const ref = createPodcastRef(createPodcastVars);
+// Variables can be defined inline as well.
+const ref = createPodcastRef({ name: ..., publisher: ..., imageUrl: ..., description: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = createPodcastRef(dataConnect, createPodcastVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.podcast_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.podcast_insert);
 });
 ```
 

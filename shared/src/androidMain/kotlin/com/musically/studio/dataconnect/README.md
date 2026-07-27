@@ -81,8 +81,8 @@ val connector: DefaultConnector = DefaultConnector.getInstance(
 
 The `default` Data Connect connector defines
 7 queries and
-4 mutations,
-a total of 11 operations.
+5 mutations,
+a total of 12 operations.
 Each of these operations is exposed
 as a property of [DefaultConnector].
 

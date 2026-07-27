@@ -1,0 +1,14 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/resources/robolectric.properties</file>
+  <line>1</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/test/resources/robolectric.properties" />
+  <problem_class id="UnusedProperty" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused property</problem_class>
+  <description>Unused property 'sdk'</description>
+  <highlighted_element>sdk</highlighted_element>
+  <language>Properties</language>
+  <offset>0</offset>
+  <length>3</length>
+</problem>
+</problems>

@@ -5,6 +5,8 @@ import { narrativeService } from '../../services/narrativeService';
 import { useAppContext } from '../../contexts/AppContext';
 import { getAuth } from 'firebase/auth';
 import { logger } from "../../lib/logger";
+import { ErrorAlert } from '../../components/molecules/ErrorAlert';
+import { Shimmer } from '../../components/atoms/Shimmer';
 
 export const PodcastGeneratorScreen: React.FC = () => {
   const [prompt, setPrompt] = useState('');
@@ -16,13 +18,20 @@ export const PodcastGeneratorScreen: React.FC = () => {
   const [voices, setVoices] = useState<any[]>([]);
   const { setCurrentTrack, setIsPlaying } = useAppContext();
 
-  useEffect(() => {
-    const fetchVoices = async () => {
+  const [voicesError, setVoicesError] = useState<string | null>(null);
+
+  const fetchVoices = async () => {
+    try {
+      setVoicesError(null);
       const fetchedVoices = await narrativeService.getVoices();
-      if (fetchedVoices.length > 0) {
-        setVoices(fetchedVoices);
-      }
-    };
+      setVoices(fetchedVoices);
+    } catch (err) {
+      setVoicesError("Failed to load voices.");
+      logger.error("Failed to load voices", err);
+    }
+  };
+
+  useEffect(() => {
     fetchVoices();
   }, []);
 
@@ -69,26 +78,39 @@ export const PodcastGeneratorScreen: React.FC = () => {
       const decoder = new TextDecoder();
       let done = false;
       let scriptBuffer = '';
+      let streamBuffer = '';
+      
+      const { AudioStreamPlayer } = await import('../../utils/AudioStreamPlayer');
+      const audioPlayer = new AudioStreamPlayer();
+      await audioPlayer.init();
 
       while (!done && reader) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         if (value) {
           const chunkStr = decoder.decode(value, { stream: true });
-          const lines = chunkStr.split('\n\n');
-          for (const line of lines) {
+          streamBuffer += chunkStr;
+          
+          let eolIndex;
+          while ((eolIndex = streamBuffer.indexOf('\n\n')) >= 0) {
+            const line = streamBuffer.slice(0, eolIndex).trim();
+            streamBuffer = streamBuffer.slice(eolIndex + 2);
+            
             if (line.startsWith('data: ')) {
               try {
-                const data = JSON.parse(line.replace('data: ', ''));
-                if (data.type === 'chunk') {
+                const data = JSON.parse(line.substring(6));
+                if (data.type === 'chunk' || data.type === 'thought') {
                   scriptBuffer += data.text;
                   setThinkingText(scriptBuffer);
+                } else if (data.type === 'audio_chunk') {
+                  audioPlayer.queueAudioChunk(data.data);
                 } else if (data.type === 'complete') {
                   setPodcastResult(data.track);
                   setThinkingText('');
                 } else if (data.type === 'error') {
                   setError(data.error);
                   setThinkingText('');
+                  audioPlayer.stop();
                 }
               } catch (e) {
                 logger.error("Failed to parse SSE data", e);
@@ -145,8 +167,15 @@ export const PodcastGeneratorScreen: React.FC = () => {
               <div className="text-[10px] text-text-secondary">{v.desc}</div>
             </button>
           ))}
-          {voices.length === 0 && (
-             <div className="text-sm text-text-secondary italic">Loading voice presets...</div>
+          {voices.length === 0 && !voicesError && (
+             <div className="col-span-full">
+               <Shimmer className="w-full h-16 rounded-xl" />
+             </div>
+          )}
+          {voicesError && (
+             <div className="col-span-full">
+               <ErrorAlert message={voicesError} onRetry={fetchVoices} />
+             </div>
           )}
         </div>
       </div>
@@ -164,7 +193,7 @@ export const PodcastGeneratorScreen: React.FC = () => {
           rows={4}
           className="w-full bg-surface border border-outline/30 rounded-xl p-3 text-sm text-white placeholder-text-secondary outline-none focus:border-primary transition-colors resize-none"
         />
-        {error && <span className="text-xs text-red-400 font-medium">{error}</span>}
+        {error && <ErrorAlert message={error} />}
       </div>
 
       {/* Action Button */}

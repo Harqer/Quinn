@@ -1,0 +1,374 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/food.md</file>
+  <line>1084</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/food.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_RECOMMENDATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>81</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/food.md</file>
+  <line>1087</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/food.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_FEATURED&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>75</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/food.md</file>
+  <line>1090</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/food.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.food.PUBLISH_FOOD_SHOPPING_CART&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>90</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/food.md</file>
+  <line>1093</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/food.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.food.PUBLISH_FOOD_SHOPPING_LIST&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>90</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/food.md</file>
+  <line>1096</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/food.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.food.PUBLISH_REORDER_CLUSTER&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>87</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/healthandfitness.md</file>
+  <line>997</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/healthandfitness.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_RECOMMENDATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>81</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/healthandfitness.md</file>
+  <line>1000</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/healthandfitness.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_FEATURED&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>75</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/healthandfitness.md</file>
+  <line>1003</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/healthandfitness.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_CONTINUATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>79</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/listen.md</file>
+  <line>991</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/listen.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_RECOMMENDATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>81</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/listen.md</file>
+  <line>994</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/listen.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_FEATURED&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>75</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/listen.md</file>
+  <line>997</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/listen.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_CONTINUATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>79</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/otherverticals.md</file>
+  <line>1243</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/otherverticals.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_RECOMMENDATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>81</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/otherverticals.md</file>
+  <line>1246</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/otherverticals.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_FEATURED&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>75</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/otherverticals.md</file>
+  <line>1249</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/otherverticals.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_CONTINUATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>79</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/read.md</file>
+  <line>853</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/read.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_RECOMMENDATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>81</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/read.md</file>
+  <line>856</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/read.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_FEATURED&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>75</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/read.md</file>
+  <line>859</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/read.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_CONTINUATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>79</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md</file>
+  <line>1153</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_RECOMMENDATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>81</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md</file>
+  <line>1156</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_FEATURED&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>75</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md</file>
+  <line>1159</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.shopping.PUBLISH_SHOPPING_CART&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>89</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md</file>
+  <line>1162</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.shopping.PUBLISH_SHOPPING_LIST&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>89</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md</file>
+  <line>1165</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.shopping.PUBLISH_REORDER_CLUSTER&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>91</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md</file>
+  <line>1168</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/shopping.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.shopping.PUBLISH_SHOPPING_ORDER_TRACKING_CLUS...</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>107</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/social.md</file>
+  <line>668</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/social.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_RECOMMENDATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>81</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/travel.md</file>
+  <line>1351</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/travel.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_RECOMMENDATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>81</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/travel.md</file>
+  <line>1354</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/travel.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_FEATURED&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>75</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/travel.md</file>
+  <line>1357</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/travel.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.travel.PUBLISH_CONTINUE_SEARCH&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>89</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/travel.md</file>
+  <line>1360</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/travel.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.travel.PUBLISH_RESERVATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>85</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/watch.md</file>
+  <line>1023</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/watch.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_RECOMMENDATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>81</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/watch.md</file>
+  <line>1026</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/watch.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_FEATURED&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>75</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/watch.md</file>
+  <line>1029</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/.agents/skills/engage-sdk-integration/references/android/guide/playcore/engage/watch.md" />
+  <problem_class id="CheckEmptyScriptTag" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty tag</problem_class>
+  <description>Empty tag doesn't work in some browsers</description>
+  <highlighted_element>&lt;action android:name=&quot;com.google.android.engage.action.PUBLISH_CONTINUATION&quot; /&gt;</highlighted_element>
+  <language>HTML</language>
+  <offset>13</offset>
+  <length>79</length>
+</problem>
+</problems>

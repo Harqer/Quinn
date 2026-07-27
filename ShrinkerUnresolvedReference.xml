@@ -1,0 +1,122 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/shared/build/generated/ksp/android/androidDebug/resources/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_BindsModule_LazyClassKeys.pro</file>
+  <line>1</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/shared/build/generated/ksp/android/androidDebug/resources/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_BindsModule_LazyClassKeys.pro" />
+  <problem_class id="ShrinkerUnresolvedReference" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved reference in Shrinker Config file</problem_class>
+  <description>Unresolved class name</description>
+  <highlighted_element>com.musically.studio.ui.MainViewModel</highlighted_element>
+  <language>SHRINKER_CONFIG</language>
+  <offset>44</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/shared/build/generated/ksp/android/androidDebug/resources/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_KeyModule_LazyClassKeys.pro</file>
+  <line>1</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/shared/build/generated/ksp/android/androidDebug/resources/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_KeyModule_LazyClassKeys.pro" />
+  <problem_class id="ShrinkerUnresolvedReference" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved reference in Shrinker Config file</problem_class>
+  <description>Unresolved class name</description>
+  <highlighted_element>com.musically.studio.ui.MainViewModel</highlighted_element>
+  <language>SHRINKER_CONFIG</language>
+  <offset>44</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/shared/build/intermediates/classes/debug/transformDebugClassesWithAsm/dirs/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_BindsModule_LazyClassKeys.pro</file>
+  <line>1</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/shared/build/intermediates/classes/debug/transformDebugClassesWithAsm/dirs/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_BindsModule_LazyClassKeys.pro" />
+  <problem_class id="ShrinkerUnresolvedReference" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved reference in Shrinker Config file</problem_class>
+  <description>Unresolved class name</description>
+  <highlighted_element>com.musically.studio.ui.MainViewModel</highlighted_element>
+  <language>SHRINKER_CONFIG</language>
+  <offset>44</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/shared/build/intermediates/classes/debug/transformDebugClassesWithAsm/dirs/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_KeyModule_LazyClassKeys.pro</file>
+  <line>1</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/shared/build/intermediates/classes/debug/transformDebugClassesWithAsm/dirs/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_KeyModule_LazyClassKeys.pro" />
+  <problem_class id="ShrinkerUnresolvedReference" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved reference in Shrinker Config file</problem_class>
+  <description>Unresolved class name</description>
+  <highlighted_element>com.musically.studio.ui.MainViewModel</highlighted_element>
+  <language>SHRINKER_CONFIG</language>
+  <offset>44</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/shared/build/intermediates/java_res/debug/processDebugJavaRes/out/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_BindsModule_LazyClassKeys.pro</file>
+  <line>1</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/shared/build/intermediates/java_res/debug/processDebugJavaRes/out/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_BindsModule_LazyClassKeys.pro" />
+  <problem_class id="ShrinkerUnresolvedReference" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved reference in Shrinker Config file</problem_class>
+  <description>Unresolved class name</description>
+  <highlighted_element>com.musically.studio.ui.MainViewModel</highlighted_element>
+  <language>SHRINKER_CONFIG</language>
+  <offset>44</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/shared/build/intermediates/java_res/debug/processDebugJavaRes/out/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_KeyModule_LazyClassKeys.pro</file>
+  <line>1</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/shared/build/intermediates/java_res/debug/processDebugJavaRes/out/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_KeyModule_LazyClassKeys.pro" />
+  <problem_class id="ShrinkerUnresolvedReference" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved reference in Shrinker Config file</problem_class>
+  <description>Unresolved class name</description>
+  <highlighted_element>com.musically.studio.ui.MainViewModel</highlighted_element>
+  <language>SHRINKER_CONFIG</language>
+  <offset>44</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/shared/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_BindsModule_LazyClassKeys.pro</file>
+  <line>1</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/shared/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_BindsModule_LazyClassKeys.pro" />
+  <problem_class id="ShrinkerUnresolvedReference" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved reference in Shrinker Config file</problem_class>
+  <description>Unresolved class name</description>
+  <highlighted_element>com.musically.studio.ui.MainViewModel</highlighted_element>
+  <language>SHRINKER_CONFIG</language>
+  <offset>44</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/shared/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_KeyModule_LazyClassKeys.pro</file>
+  <line>1</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/shared/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_KeyModule_LazyClassKeys.pro" />
+  <problem_class id="ShrinkerUnresolvedReference" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved reference in Shrinker Config file</problem_class>
+  <description>Unresolved class name</description>
+  <highlighted_element>com.musically.studio.ui.MainViewModel</highlighted_element>
+  <language>SHRINKER_CONFIG</language>
+  <offset>44</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/shared/build/kspCaches/android/androidDebug/backups/resources/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_BindsModule_LazyClassKeys.pro</file>
+  <line>1</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/shared/build/kspCaches/android/androidDebug/backups/resources/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_BindsModule_LazyClassKeys.pro" />
+  <problem_class id="ShrinkerUnresolvedReference" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved reference in Shrinker Config file</problem_class>
+  <description>Unresolved class name</description>
+  <highlighted_element>com.musically.studio.ui.MainViewModel</highlighted_element>
+  <language>SHRINKER_CONFIG</language>
+  <offset>44</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/shared/build/kspCaches/android/androidDebug/backups/resources/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_KeyModule_LazyClassKeys.pro</file>
+  <line>1</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/shared/build/kspCaches/android/androidDebug/backups/resources/META-INF/proguard/com_musically_studio_ui_MainViewModel_HiltModules_KeyModule_LazyClassKeys.pro" />
+  <problem_class id="ShrinkerUnresolvedReference" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved reference in Shrinker Config file</problem_class>
+  <description>Unresolved class name</description>
+  <highlighted_element>com.musically.studio.ui.MainViewModel</highlighted_element>
+  <language>SHRINKER_CONFIG</language>
+  <offset>44</offset>
+  <length>37</length>
+</problem>
+</problems>

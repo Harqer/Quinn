@@ -37,24 +37,106 @@ const getCachedModel = async (modelName: string, temperature: number = 0.7) => {
   });
 };
 
-/**
- * Interactions API Wrapper for Structured Music Output
- */
-const createMusicInteraction = async (input: string, image?: string, previousId?: string) => {
+function encodeWAV(samples: Int16Array, sampleRate: number = 48000, numChannels: number = 1) {
+  const buffer = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buffer);
+  
+  const writeString = (view: DataView, offset: number, string: string) => {
+    for (let i = 0; i < string.length; i++) {
+      view.setUint8(offset + i, string.charCodeAt(i));
+    }
+  };
+  
+  writeString(view, 0, 'RIFF');
+  view.setUint32(4, 36 + samples.length * 2, true);
+  writeString(view, 8, 'WAVE');
+  
+  writeString(view, 12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * numChannels * 2, true);
+  view.setUint16(32, numChannels * 2, true);
+  view.setUint16(34, 16, true);
+  
+  writeString(view, 36, 'data');
+  view.setUint32(40, samples.length * 2, true);
+  
+  const data = new Int16Array(buffer, 44);
+  data.set(samples);
+  
+  return Buffer.from(buffer);
+}
+
+const createMusicInteraction = async (input: string, image?: string, previousId?: string, onChunk?: any) => {
     const ai = getAi();
-    const model = previousId ? LYRIA_REGISTRY.REALTIME : LYRIA_REGISTRY.FULL_TRACK;
+    
+    return new Promise<any>(async (resolve, reject) => {
+        const audioChunks: number[][] = [];
+        let fullText = "";
+        
+        try {
+            const stream = await ai.models.generateContentStream({
+                model: "lyria-realtime-exp",
+                contents: [
+                    "You are Lyria RealTime, generating ambient music. " + input,
+                    ...(image ? [image] : [])
+                ],
+                config: {
+                    responseModalities: ["AUDIO"],
+                    thinkingConfig: {
+                        includeThoughts: true
+                    }
+                }
+            });
 
-    const contents: any[] = [{ type: "text", text: input }];
-    if (image) contents.push({ type: "image", data: image, mime_type: "image/jpeg" });
+            for await (const chunk of stream) {
+                const parts = chunk.candidates?.[0]?.content?.parts || [];
+                for (const part of parts) {
+                    if (part.thought && part.text) {
+                        if (onChunk) {
+                            onChunk({ type: "mave_thinking", text: `\n[THINKING] ${part.text}\n` });
+                        }
+                    } else if (part.text) {
+                        fullText += part.text;
+                        if (onChunk) {
+                            onChunk({ type: "mave_thinking", text: part.text });
+                        }
+                    }
+                    
+                    if (part.inlineData && part.inlineData.mimeType?.startsWith("audio/") && part.inlineData.data) {
+                        const audioBuffer = Buffer.from(part.inlineData.data, "base64");
+                        const intArray = new Int16Array(
+                            audioBuffer.buffer,
+                            audioBuffer.byteOffset,
+                            audioBuffer.length / Int16Array.BYTES_PER_ELEMENT
+                        );
+                        audioChunks.push(Array.from(intArray));
+                        
+                        if (onChunk) {
+                            onChunk({ type: "mave_thinking", text: "." }); 
+                        }
+                    }
+                }
+            }
 
-    const interaction = await (ai as any).interactions.create({
-        model: model,
-        input: contents,
-        previous_interaction_id: previousId,
-        response_format: { type: "audio" }
+            if (audioChunks.length > 0) {
+                const flatArray = new Int16Array(audioChunks.flat());
+                const wavBuffer = encodeWAV(flatArray, 48000, 1);
+                const base64Audio = wavBuffer.toString("base64");
+                resolve({
+                    output_text: fullText || "Lyria RealTime Ambient Generate",
+                    output_audio: { data: `data:audio/wav;base64,${base64Audio}` }
+                });
+            } else {
+                resolve({ output_text: fullText || "No audio generated", output_audio: null });
+            }
+        } catch (err) {
+            logger.error("Lyria RealTime generateContentStream error", { error: err });
+            reject(err);
+        }
     });
-
-    return interaction;
 };
 
 // Nodes
@@ -77,29 +159,38 @@ const visualAnalyzerNode = async (state: typeof MaveState.State, config: any) =>
   await ensureContextCache();
 
   // Use flagship 3.6 model for ultra-fast, high-fidelity visual interpretation
-  const model = await getCachedModel("gemini-3.6-flash", 0.1);
-
-  const stream = await model.stream([
-    ["system", `Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics. Avoid any technical jargon like 'neon' or 'proxy'. You support 70+ languages and should respond in the language corresponding to this locale: ${state.locale || 'en'}.`],
-    ["human", state.image]
-  ]);
+  const ai = getAi();
+  const stream = await ai.models.generateContentStream({
+    model: "gemini-3.6-flash",
+    contents: [
+      `Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics. Avoid any technical jargon like 'neon' or 'proxy'. You support 70+ languages and should respond in the language corresponding to this locale: ${state.locale || 'en'}.`,
+      state.image
+    ],
+    config: {
+      thinkingConfig: { includeThoughts: true }
+    }
+  });
 
   let fullDescription = "";
   for await (const chunk of stream) {
-    const text = chunk.content.toString();
-    fullDescription += text;
-
-    // Pipe chunks to frontend for zero-latency feedback
-    if (config.configurable?.onChunk) {
-      config.configurable.onChunk({ type: "vision_thinking", text });
+    const parts = chunk.candidates?.[0]?.content?.parts || [];
+    for (const part of parts) {
+      if (part.thought && part.text) {
+        if (config.configurable?.onChunk) {
+          config.configurable.onChunk({ type: "vision_thinking", text: `\n[THINKING] ${part.text}\n` });
+        }
+      } else if (part.text) {
+        fullDescription += part.text;
+        if (config.configurable?.onChunk) {
+          config.configurable.onChunk({ type: "vision_thinking", text: part.text });
+        }
+      }
     }
   }
 
   await cacheVisionResult(imageHash, fullDescription);
   return { visionDescription: fullDescription };
 };
-
-import { getGenkit, LYRIA_REGISTRY } from "./ai.js";
 
 const directorNode = async (state: typeof MaveState.State, config: any) => {
   const userText = (state.userFeedback || "").toLowerCase();
@@ -112,10 +203,11 @@ const directorNode = async (state: typeof MaveState.State, config: any) => {
   await ensureContextCache();
 
   // Use the 3.1 Pro model for high-fidelity creative orchestration reasoning
-  const model = await getCachedModel("gemini-3.1-pro-preview", 0.4);
-
-  const stream = await model.stream([
-    ["system", `You are the Mave Orchestra Director. Your role is to reason about the visual atmosphere and user intent to orchestrate a world-class audio-visual experience.
+  const ai = getAi();
+  const stream = await ai.models.generateContentStream({
+    model: "gemini-3.1-pro-preview",
+    contents: [
+      `You are the Mave Orchestra Director. Your role is to reason about the visual atmosphere and user intent to orchestrate a world-class audio-visual experience.
 Reason naturally about what you see and what the user wants.
 If the user feedback starts with "Production Request:", prioritize fulfilling that specific media generation intent.
 If the user asks for a song, vibe, or instrument, set the modality to 'music'.
@@ -129,28 +221,41 @@ At the end of your response, you MUST include a JSON block with the final orches
   "visualIntent": "none" | "cover_art" | "video_motion"
 }
 \`\`\`
-Speak naturally to the user about your creative choices. Support 70+ languages. Locale: ${state.locale || 'en'}.`],
-    ["human", `Visual Atmosphere: ${state.visionDescription}\nUser Feedback: ${state.userFeedback || "Compose real-time music for this atmosphere"}`]
-  ]);
+Speak naturally to the user about your creative choices. Support 70+ languages. Locale: ${state.locale || 'en'}.`,
+      `Visual Atmosphere: ${state.visionDescription}\nUser Feedback: ${state.userFeedback || "Compose real-time music for this atmosphere"}`
+    ],
+    config: {
+      thinkingConfig: { includeThoughts: true }
+    }
+  });
 
   let fullResponse = "";
   let isJsonDetected = false;
   for await (const chunk of stream) {
-    const text = chunk.content.toString();
-    fullResponse += text;
-
-    // Direct pipe of natural reasoning and dialogue to the user
-    // We attempt to stop streaming if we detect the start of the JSON block
-    if (config.configurable?.onChunk) {
-      if (!isJsonDetected && fullResponse.includes("```json")) {
-        isJsonDetected = true;
-        // Emit only the part before the JSON block
-        const preJson = text.split("```json")[0];
-        if (preJson) {
-           config.configurable.onChunk({ type: "mave_thinking", text: preJson });
+    const parts = chunk.candidates?.[0]?.content?.parts || [];
+    for (const part of parts) {
+      if (part.thought && part.text) {
+        if (config.configurable?.onChunk) {
+          config.configurable.onChunk({ type: "mave_thinking", text: `\n[THINKING] ${part.text}\n` });
         }
-      } else if (!isJsonDetected) {
-        config.configurable.onChunk({ type: "mave_thinking", text });
+      } else if (part.text) {
+        const text = part.text;
+        fullResponse += text;
+
+        // Direct pipe of natural reasoning and dialogue to the user
+        // We attempt to stop streaming if we detect the start of the JSON block
+        if (config.configurable?.onChunk) {
+          if (!isJsonDetected && fullResponse.includes("```json")) {
+            isJsonDetected = true;
+            // Emit only the part before the JSON block
+            const preJson = text.split("```json")[0];
+            if (preJson) {
+               config.configurable.onChunk({ type: "mave_thinking", text: preJson });
+            }
+          } else if (!isJsonDetected) {
+            config.configurable.onChunk({ type: "mave_thinking", text });
+          }
+        }
       }
     }
   }
@@ -179,7 +284,7 @@ const musicDirectorNode = async (state: typeof MaveState.State, config: any) => 
 
   const input = `Visual Vibe: ${state.visionDescription}\nUser Feedback: ${state.userFeedback || "Generate music fitting this atmosphere"}`;
 
-  const interaction = await createMusicInteraction(input, state.image, state.previousInteractionId);
+  const interaction = await createMusicInteraction(input, state.image, state.previousInteractionId, config.configurable?.onChunk);
 
   const prompts = interaction.output_text?.split("\n").filter((l: string) => l.trim().length > 0) || [];
   const audio = interaction.output_audio?.data;
@@ -195,7 +300,7 @@ const podcastNarratorNode = async (state: typeof MaveState.State, config: any) =
   if (state.modality === 'music') return {};
 
   // Use flagship 3.1 Pro model for natural storytelling and narration
-  const model = await getCachedModel("gemini-3.1-pro-preview", 0.7);
+  const ai = getAi();
   const feedbackContext = state.userFeedback ? `\nUser Input/Feedback: ${state.userFeedback}` : "";
 
   const isAudiobook = state.modality === 'audiobook';
@@ -203,18 +308,31 @@ const podcastNarratorNode = async (state: typeof MaveState.State, config: any) =
     ? `You are Mave, an elite Audiobook Narrator and Author. Based on the visual vibe and user instructions, generate a highly descriptive and immersive story chapter segment (3-5 paragraphs). No technical jargon. You MUST respond in the language corresponding to this locale: ${state.locale || 'en'}.`
     : `You are Mave, the narrator. Based on the visual vibe and user instructions, generate a short, engaging narrative segment (2-4 sentences) for 'Mave POV'. If user gave feedback, acknowledge it naturally in your tone. No technical jargon. You MUST respond in the language corresponding to this locale: ${state.locale || 'en'}.`;
 
-  const stream = await model.stream([
-    ["system", systemPrompt],
-    ["human", `Visual Vibe: ${state.visionDescription}${feedbackContext}`]
-  ]);
+  const stream = await ai.models.generateContentStream({
+    model: "gemini-3.1-pro-preview",
+    contents: [
+      systemPrompt,
+      `Visual Vibe: ${state.visionDescription}${feedbackContext}`
+    ],
+    config: {
+      thinkingConfig: { includeThoughts: true }
+    }
+  });
 
   let fullScript = "";
   for await (const chunk of stream) {
-    const text = chunk.content.toString();
-    fullScript += text;
-
-    if (config.configurable?.onChunk) {
-      config.configurable.onChunk({ type: "mave_thinking", text });
+    const parts = chunk.candidates?.[0]?.content?.parts || [];
+    for (const part of parts) {
+      if (part.thought && part.text) {
+        if (config.configurable?.onChunk) {
+          config.configurable.onChunk({ type: "mave_thinking", text: `\n[THINKING] ${part.text}\n` });
+        }
+      } else if (part.text) {
+        fullScript += part.text;
+        if (config.configurable?.onChunk) {
+          config.configurable.onChunk({ type: "mave_thinking", text: part.text });
+        }
+      }
     }
   }
 

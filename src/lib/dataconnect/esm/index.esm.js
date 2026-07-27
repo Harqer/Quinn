@@ -53,6 +53,18 @@ export function addTrackToPlaylist(dcOrVars, vars) {
   return executeMutation(addTrackToPlaylistRef(dcInstance, inputVars));
 }
 
+export const createPodcastRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreatePodcast', inputVars);
+}
+createPodcastRef.operationName = 'CreatePodcast';
+
+export function createPodcast(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createPodcastRef(dcInstance, inputVars));
+}
+
 export const getUserTracksRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();

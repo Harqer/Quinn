@@ -1,0 +1,67 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/di/DITest.kt</file>
+  <line>35</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.di</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.di.DITest void test ApiClient is injected successfully()" />
+  <problem_class id="IllegalIdentifier" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Illegal Android Identifier</problem_class>
+  <description>Identifier not allowed in Android projects</description>
+  <highlighted_element>`test ApiClient is injected successfully`</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>41</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/RealNetworkIntegrationTest.kt</file>
+  <line>25</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.RealNetworkIntegrationTest void test fetch community tracks from real backend()" />
+  <problem_class id="IllegalIdentifier" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Illegal Android Identifier</problem_class>
+  <description>Identifier not allowed in Android projects</description>
+  <highlighted_element>`test fetch community tracks from real backend`</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>47</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/TokenManagerTest.kt</file>
+  <line>9</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.TokenManagerTest void getValidToken returns null when no user is signed in()" />
+  <problem_class id="IllegalIdentifier" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Illegal Android Identifier</problem_class>
+  <description>Identifier not allowed in Android projects</description>
+  <highlighted_element>`getValidToken returns null when no user is signed in`</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>54</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/utils/FrameProcessorTest.kt</file>
+  <line>14</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.utils</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.utils.FrameProcessorTest void throttleFrames should only emit one frame within 1 second period()" />
+  <problem_class id="IllegalIdentifier" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Illegal Android Identifier</problem_class>
+  <description>Identifier not allowed in Android projects</description>
+  <highlighted_element>`throttleFrames should only emit one frame within 1 second period`</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>66</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/kotlin/com/musically/studio/MainActivityTest.kt</file>
+  <line>15</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.MainActivityTest void launch MainActivity to check for crash()" />
+  <problem_class id="IllegalIdentifier" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Illegal Android Identifier</problem_class>
+  <description>Identifier not allowed in Android projects</description>
+  <highlighted_element>`launch MainActivity to check for crash`</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>40</length>
+</problem>
+</problems>

@@ -1,0 +1,132 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/ProductionIntegrationTest.kt</file>
+  <line>20</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="field" FQNAME="com.musically.studio.ProductionIntegrationTest hiltRule" />
+  <problem_class id="HasPlatformType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function or property has platform type</problem_class>
+  <description>Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. Specify type explicitly as nullable or non-nullable.</description>
+  <highlighted_element>hiltRule</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/di/DITest.kt</file>
+  <line>24</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.di</package>
+  <entry_point TYPE="field" FQNAME="com.musically.studio.di.DITest hiltRule" />
+  <problem_class id="HasPlatformType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function or property has platform type</problem_class>
+  <description>Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. Specify type explicitly as nullable or non-nullable.</description>
+  <highlighted_element>hiltRule</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/AlbumViewScreenshotTest.kt</file>
+  <line>16</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="field" FQNAME="com.musically.studio.ui.AlbumViewScreenshotTest composeTestRule" />
+  <problem_class id="HasPlatformType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function or property has platform type</problem_class>
+  <description>Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. Specify type explicitly as nullable or non-nullable.</description>
+  <highlighted_element>composeTestRule</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/AppNavigationTest.kt</file>
+  <line>16</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="field" FQNAME="com.musically.studio.ui.AppNavigationTest composeTestRule" />
+  <problem_class id="HasPlatformType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function or property has platform type</problem_class>
+  <description>Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. Specify type explicitly as nullable or non-nullable.</description>
+  <highlighted_element>composeTestRule</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/MaveScreenshotTest.kt</file>
+  <line>21</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui</package>
+  <entry_point TYPE="field" FQNAME="com.musically.studio.ui.MaveScreenshotTest composeTestRule" />
+  <problem_class id="HasPlatformType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function or property has platform type</problem_class>
+  <description>Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. Specify type explicitly as nullable or non-nullable.</description>
+  <highlighted_element>composeTestRule</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/components/ComponentScreenshotTests.kt</file>
+  <line>26</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.components</package>
+  <entry_point TYPE="field" FQNAME="com.musically.studio.ui.components.ComponentScreenshotTests composeTestRule" />
+  <problem_class id="HasPlatformType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function or property has platform type</problem_class>
+  <description>Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. Specify type explicitly as nullable or non-nullable.</description>
+  <highlighted_element>composeTestRule</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/components/MediaCoverCardTest.kt</file>
+  <line>24</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.components</package>
+  <entry_point TYPE="field" FQNAME="com.musically.studio.ui.components.MediaCoverCardTest composeTestRule" />
+  <problem_class id="HasPlatformType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function or property has platform type</problem_class>
+  <description>Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. Specify type explicitly as nullable or non-nullable.</description>
+  <highlighted_element>composeTestRule</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/AuthOptionsScreenTest.kt</file>
+  <line>22</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="field" FQNAME="com.musically.studio.ui.screens.AuthOptionsScreenTest composeTestRule" />
+  <problem_class id="HasPlatformType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function or property has platform type</problem_class>
+  <description>Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. Specify type explicitly as nullable or non-nullable.</description>
+  <highlighted_element>composeTestRule</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/UserProfileScreenTest.kt</file>
+  <line>30</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="field" FQNAME="com.musically.studio.ui.screens.UserProfileScreenTest composeTestRule" />
+  <problem_class id="HasPlatformType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function or property has platform type</problem_class>
+  <description>Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. Specify type explicitly as nullable or non-nullable.</description>
+  <highlighted_element>composeTestRule</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/ui/screens/WelcomeScreenTest.kt</file>
+  <line>34</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.ui.screens</package>
+  <entry_point TYPE="field" FQNAME="com.musically.studio.ui.screens.WelcomeScreenTest composeTestRule" />
+  <problem_class id="HasPlatformType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function or property has platform type</problem_class>
+  <description>Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. Specify type explicitly as nullable or non-nullable.</description>
+  <highlighted_element>composeTestRule</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>15</length>
+</problem>
+</problems>

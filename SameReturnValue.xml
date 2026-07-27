@@ -1,0 +1,492 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>4</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object bookmarkTrack(java.lang.String trackId, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;bookmarkTrack()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>bookmarkTrack</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>6</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object addToPlaylist(java.lang.String trackId, java.lang.String playlistId, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;addToPlaylist()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>addToPlaylist</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>7</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object saveProfile(java.lang.String name, java.lang.String birthday, java.lang.String gender, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;saveProfile()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>saveProfile</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>8</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object savePreferences(java.util.List&lt;java.lang.String&gt; artists, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;savePreferences()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>savePreferences</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>11</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object reportTarget(java.lang.String targetId, java.lang.String targetType, java.lang.String reason, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;reportTarget()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>reportTarget</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>21</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object verifyDigitalCredential(java.lang.String credentialJson, java.lang.String nonce, kotlin.coroutines.Continuation&lt;? super java.lang.String&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;verifyDigitalCredential()&lt;/code&gt; always returns &lt;code&gt;mock-token&lt;/code&gt;</description>
+  <highlighted_element>verifyDigitalCredential</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>23</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>23</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object generateCoverMedia(java.lang.String prompt, java.lang.String type, kotlin.coroutines.Continuation&lt;? super java.lang.String&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;generateCoverMedia()&lt;/code&gt; always returns &lt;code&gt;null&lt;/code&gt;</description>
+  <highlighted_element>generateCoverMedia</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>29</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getTrack(java.lang.String trackId, kotlin.coroutines.Continuation&lt;? super MaveTrack&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;getTrack()&lt;/code&gt; always returns &lt;code&gt;null&lt;/code&gt;</description>
+  <highlighted_element>getTrack</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>30</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getSpotifyStatus(kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;getSpotifyStatus()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>getSpotifyStatus</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>14</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean play()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;play()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>play</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>18</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean pause()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;pause()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>pause</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>22</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean stop()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;stop()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>stop</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>26</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean next()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;next()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>next</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>30</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean previous()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;previous()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>previous</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>25</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake java.lang.Boolean play()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;play()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>play</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>26</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake java.lang.Boolean pause()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;pause()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>pause</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>27</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake java.lang.Boolean stop()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;stop()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>stop</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>28</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake java.lang.Boolean next()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;next()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>next</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>29</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake java.lang.Boolean previous()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;previous()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>previous</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>13</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object bookmarkTrack(java.lang.String trackId, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;bookmarkTrack()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>bookmarkTrack</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>14</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object shareVibe(java.lang.String trackId, kotlin.coroutines.Continuation&lt;? super java.lang.String&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;shareVibe()&lt;/code&gt; always returns &lt;code&gt;null&lt;/code&gt;</description>
+  <highlighted_element>shareVibe</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>15</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object addToPlaylist(java.lang.String trackId, java.lang.String playlistId, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;addToPlaylist()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>addToPlaylist</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>16</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object saveProfile(java.lang.String name, java.lang.String birthday, java.lang.String gender, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;saveProfile()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>saveProfile</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>17</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object savePreferences(java.util.List&lt;java.lang.String&gt; artists, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;savePreferences()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>savePreferences</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>20</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object reportTarget(java.lang.String targetId, java.lang.String targetType, java.lang.String reason, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;reportTarget()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>reportTarget</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>22</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object generateCoverMedia(java.lang.String prompt, java.lang.String type, kotlin.coroutines.Continuation&lt;? super java.lang.String&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;generateCoverMedia()&lt;/code&gt; always returns &lt;code&gt;null&lt;/code&gt;</description>
+  <highlighted_element>generateCoverMedia</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>23</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getTrack(java.lang.String trackId, kotlin.coroutines.Continuation&lt;? super MaveTrack&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;getTrack()&lt;/code&gt; always returns &lt;code&gt;null&lt;/code&gt;</description>
+  <highlighted_element>getTrack</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>24</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getSpotifyStatus(kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;getSpotifyStatus()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>getSpotifyStatus</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>25</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object verifyDigitalCredential(java.lang.String credentialJson, java.lang.String nonce, kotlin.coroutines.Continuation&lt;? super java.lang.String&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;verifyDigitalCredential()&lt;/code&gt; always returns &lt;code&gt;null&lt;/code&gt;</description>
+  <highlighted_element>verifyDigitalCredential</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>23</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>32</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object deleteAccount(kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;deleteAccount()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>deleteAccount</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>14</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean play()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;play()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>play</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>18</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean pause()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;pause()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>pause</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>22</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean stop()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;stop()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>stop</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>26</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean next()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;next()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>next</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>30</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean previous()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;previous()&lt;/code&gt; always returns &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>previous</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>8</length>
+</problem>
+</problems>

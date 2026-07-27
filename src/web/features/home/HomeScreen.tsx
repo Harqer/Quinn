@@ -9,9 +9,10 @@ import { useTracks } from '../../hooks/useTracks';
 import { getAuth } from 'firebase/auth';
 import { Shimmer } from '../../components/atoms/Shimmer';
 import maveLogoDark from '../../assets/mave_brand_dark.png';
+import { ErrorAlert } from '../../components/molecules/ErrorAlert';
 
 export const HomeScreen: React.FC = () => {
-  const { communityTracks, userTracks, loading } = useTracks();
+  const { communityTracks, userTracks, loading, error, retry } = useTracks();
   const auth = getAuth();
   const user = auth.currentUser;
   const userInitial = user?.displayName ? user.displayName[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'M');
@@ -40,6 +41,10 @@ export const HomeScreen: React.FC = () => {
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
            <Typography variant="body-lg">Loading Studio...</Typography>
+        </div>
+      ) : error ? (
+        <div className="p-4">
+          <ErrorAlert message={error} onRetry={retry} />
         </div>
       ) : (
         <>

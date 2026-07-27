@@ -3,6 +3,7 @@ package com.musically.studio.network
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.util.UUID
 import org.json.JSONObject
 import timber.log.Timber
 import java.io.IOException
@@ -141,35 +142,16 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
             .build()
         return executeRequest(request)
     }
-
     override suspend fun getUserTracks(): List<MaveTrack>? {
-        val token = TokenManager.getValidToken() ?: return null
-        val request = Request.Builder()
-            .url("$BASE_URL/music/user/tracks")
-            .header("Authorization", "Bearer $token")
-            .get()
-            .build()
-
-        return try {
-            client.newCall(request).execute().use { response ->
-                if (response.isSuccessful) {
-                    val body = response.body?.string()
-                    if (!body.isNullOrEmpty()) {
-                        val gson = com.google.gson.Gson()
-                        val trackResponse = gson.fromJson(body, MaveTracksResponse::class.java)
-                        trackResponse?.items?.map { it.track } ?: emptyList()
-                    } else {
-                        emptyList()
-                    }
-                } else {
-                    null
-                }
-            }
-        } catch (e: IOException) {
-            null
-        } catch (e: Exception) {
-            Timber.e(e, "Error parsing tracks")
-            null
+        val res = DefaultConnector.instance.getUserTracks.execute()
+        return res.data.tracks.map { t ->
+            MaveTrack(
+                id = t.id,
+                name = t.name,
+                artists = listOf(MaveArtist(id = UUID.nameUUIDFromBytes(t.artistName.toByteArray()).toString(), name = t.artistName)),
+                album = MaveAlbum(id = UUID.nameUUIDFromBytes(t.albumName.toByteArray()).toString(), name = t.albumName, images = listOfNotNull(t.imageUrl?.let { MaveImage(url = it) })),
+                durationMs = 210000L // 3:30 standard placeholder for unbound durations in prod
+            )
         }
     }
 
@@ -214,32 +196,16 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
     }
 
     override suspend fun getCommunityTracks(): List<MaveTrack>? {
-        val request = Request.Builder()
-            .url("$BASE_URL/music/community/tracks")
-            .get()
-            .build()
-
-        return try {
-            client.newCall(request).execute().use { response ->
-                if (response.isSuccessful) {
-                    val body = response.body?.string()
-                    if (!body.isNullOrEmpty()) {
-                        val gson = com.google.gson.Gson()
-                        val json = JSONObject(body)
-                        val tracksArray = json.optJSONArray("tracks")
-                        val list = mutableListOf<MaveTrack>()
-                        if (tracksArray != null) {
-                            for (i in 0 until tracksArray.length()) {
-                                list.add(gson.fromJson(tracksArray.getString(i), MaveTrack::class.java))
-                            }
-                        }
-                        list
-                    } else {
-                        emptyList()
-                    }
-                } else null
-            }
-        } catch (e: Exception) { null }
+        val res = DefaultConnector.instance.getCommunityTracks.execute()
+        return res.data.tracks.map { t ->
+            MaveTrack(
+                id = t.id,
+                name = t.name,
+                artists = listOf(MaveArtist(id = t.owner.uid, name = t.artistName)),
+                album = MaveAlbum(id = UUID.nameUUIDFromBytes(t.albumName.toByteArray()).toString(), name = t.albumName, images = listOfNotNull(t.imageUrl?.let { MaveImage(url = it) })),
+                durationMs = 210000L
+            )
+        }
     }
 
 
@@ -394,92 +360,67 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
     }
 
     override suspend fun getPlaylists(): List<MavePlaylist>? {
-        return try {
-            val res = DefaultConnector.instance.getPlaylists.execute()
-            res.data.playlists.map { p ->
-                MavePlaylist(
-                    id = p.id,
-                    name = p.name,
-                    coverUrl = p.imageUrl,
-                    description = p.description
-                )
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Error fetching playlists via Data Connect")
-            null
+        val res = DefaultConnector.instance.getPlaylists.execute()
+        return res.data.playlists.map { p ->
+            MavePlaylist(
+                id = p.id,
+                name = p.name,
+                coverUrl = p.imageUrl,
+                description = p.description
+            )
         }
     }
 
     override suspend fun getCategories(): List<MaveCategory>? {
-        return try {
-            val res = DefaultConnector.instance.getCategories.execute()
-            res.data.categories.map { c ->
-                MaveCategory(
-                    id = c.id,
-                    name = c.name,
-                    imageUrl = c.imageUrl,
-                    colorHex = "#8B5CF6"
-                )
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Error fetching categories via Data Connect")
-            null
+        val res = DefaultConnector.instance.getCategories.execute()
+        return res.data.categories.map { c ->
+            MaveCategory(
+                id = c.id,
+                name = c.name,
+                imageUrl = c.imageUrl,
+                colorHex = "#8B5CF6"
+            )
         }
     }
 
     override suspend fun getAlbums(): List<MaveAlbum>? {
-        return try {
-            val res = DefaultConnector.instance.getAlbums.execute()
-            res.data.albums.map { a ->
-                MaveAlbum(
-                    id = a.id,
-                    name = a.name,
-                    artists = listOf(MaveArtist(a.id, a.artistName)),
-                    images = listOf(MaveImage(a.imageUrl ?: "")),
-                    description = "Release Year: ${a.releaseYear ?: "Unknown"}"
-                )
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Error fetching albums via Data Connect")
-            null
+        val res = DefaultConnector.instance.getAlbums.execute()
+        return res.data.albums.map { a ->
+            MaveAlbum(
+                id = a.id,
+                name = a.name,
+                artists = listOf(MaveArtist(id = UUID.nameUUIDFromBytes(a.artistName.toByteArray()).toString(), name = a.artistName)),
+                images = listOfNotNull(a.imageUrl?.takeIf { it.isNotEmpty() }?.let { MaveImage(it) }),
+                description = "Release Year: ${a.releaseYear ?: "Unknown"}"
+            )
         }
     }
 
     override suspend fun getPodcasts(): List<MavePodcast>? {
-        return try {
-            val res = DefaultConnector.instance.getPodcasts.execute()
-            res.data.podcasts.map { p ->
-                MavePodcast(
-                    id = p.id,
-                    name = p.name,
-                    publisher = p.publisher,
-                    imageUrl = p.imageUrl,
-                    description = p.description
-                )
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Error fetching podcasts via Data Connect")
-            null
+        val res = DefaultConnector.instance.getPodcasts.execute()
+        return res.data.podcasts.map { p ->
+            MavePodcast(
+                id = p.id,
+                name = p.name,
+                publisher = p.publisher,
+                imageUrl = p.imageUrl,
+                description = p.description
+            )
         }
     }
 
     override suspend fun getAudiobooks(): List<MaveAudiobook>? {
-        return try {
-            val res = DefaultConnector.instance.getAudiobooks.execute()
-            res.data.audiobooks.map { a ->
-                MaveAudiobook(
-                    id = a.id,
-                    title = a.title,
-                    author = a.author,
-                    narrator = a.narrator,
-                    imageUrl = a.imageUrl,
-                    duration = a.duration,
-                    audioUrl = a.audioUrl
-                )
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Error fetching audiobooks via Data Connect")
-            null
+        val res = DefaultConnector.instance.getAudiobooks.execute()
+        return res.data.audiobooks.map { a ->
+            MaveAudiobook(
+                id = a.id,
+                title = a.title,
+                author = a.author,
+                narrator = a.narrator,
+                imageUrl = a.imageUrl,
+                duration = a.duration,
+                audioUrl = a.audioUrl
+            )
         }
     }
 
@@ -511,8 +452,12 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
                                 list.add(MaveTrack(
                                     id = item.optString("id"),
                                     name = item.optString("name"),
-                                    artists = listOf(MaveArtist(id = "", name = artistName)),
-                                    album = MaveAlbum(id = "", name = "", images = listOfNotNull(coverUrl.takeIf { it.isNotEmpty() }?.let { MaveImage(url = it) })),
+                                    artists = listOf(MaveArtist(id = UUID.nameUUIDFromBytes(artistName.toByteArray()).toString(), name = artistName)),
+                                    album = MaveAlbum(
+                                        id = UUID.nameUUIDFromBytes((album?.optString("name") ?: "Unknown").toByteArray()).toString(),
+                                        name = album?.optString("name") ?: "Unknown",
+                                        images = listOfNotNull(coverUrl.takeIf { it.isNotEmpty() }?.let { MaveImage(url = it) })
+                                    ),
                                     durationMs = item.optInt("duration_ms", 0).toLong() * 1000
                                 ))
                             }

@@ -58,6 +58,7 @@ fun DiscoverScreen(
     val userTracks by viewModel.tracks.collectAsStateWithLifecycle()
     val categories by viewModel.categories.collectAsStateWithLifecycle()
     val playlists by viewModel.playlists.collectAsStateWithLifecycle()
+    val errorMessage by viewModel.catalogErrorMessage.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
 
     val hasSeenTooltipTour by viewModel.hasSeenTooltipTour.collectAsStateWithLifecycle()
@@ -170,7 +171,18 @@ fun DiscoverScreen(
                         }
                     }
 
-                    if (communityTracks.isEmpty()) {
+                    if (errorMessage != null && communityTracks.isEmpty()) {
+                        Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(errorMessage ?: "An error occurred", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyLarge)
+                                Spacer(modifier = Modifier.height(16.dp))
+                                com.musically.studio.ui.components.atoms.MaveButton(
+                                    text = "Retry",
+                                    onClick = { viewModel.fetchCommunityTracks() }
+                                )
+                            }
+                        }
+                    } else if (communityTracks.isEmpty()) {
                         Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
                             Text("No tracks found", color = Color.White, style = MaterialTheme.typography.titleMedium)
                         }
@@ -272,7 +284,20 @@ fun DiscoverScreen(
                 }
             }
 
-            if (playlists.isEmpty()) {
+            if (errorMessage != null && playlists.isEmpty()) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(errorMessage ?: "An error occurred", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyLarge)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            com.musically.studio.ui.components.atoms.MaveButton(
+                                text = "Retry",
+                                onClick = { viewModel.fetchPlaylists() }
+                            )
+                        }
+                    }
+                }
+            } else if (playlists.isEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
                         Text("No playlists found", color = Color.White, style = MaterialTheme.typography.titleMedium)

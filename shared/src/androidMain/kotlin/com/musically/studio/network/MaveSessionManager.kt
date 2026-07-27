@@ -12,7 +12,8 @@ import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 open class MaveSessionManager(
-    private val client: OkHttpClient
+    private val client: OkHttpClient,
+    private val liveAudioPlayer: LiveAudioPlayer = LiveAudioPlayer()
 ) {
     private var webSocket: WebSocket? = null
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -62,6 +63,12 @@ open class MaveSessionManager(
                         when (json.optString("type")) {
                             "cover_art_update" -> _coverArtUrl.value = json.optString("coverArtUrl")
                             "video_motion_update" -> _videoMotionUrl.value = json.optString("videoMotionUrl")
+                            "agent_update" -> {
+                                val chunk = json.optString("chunk")
+                                if (chunk.isNotEmpty()) {
+                                    liveAudioPlayer.feedPcmData(chunk)
+                                }
+                            }
                         }
                     } catch (e: Exception) {
                         Timber.e(e, "Error parsing WebSocket message")
@@ -148,6 +155,7 @@ open class MaveSessionManager(
         reconnectJob?.cancel()
         webSocket?.close(1000, "User logout")
         webSocket = null
+        liveAudioPlayer.stop()
         scope.coroutineContext.cancelChildren() // CRITICAL: Stop background reconnects/emissions
     }
 }

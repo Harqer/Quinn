@@ -23,6 +23,8 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val createPlaylist: CreatePlaylistMutation
   
+    public val createPodcast: CreatePodcastMutation
+  
     public val createTrack: CreateTrackMutation
   
     public val getAlbums: GetAlbumsQuery
@@ -92,6 +94,10 @@ private class DefaultConnectorImpl(
       CreatePlaylistMutationImpl(this)
     }
   
+    override val createPodcast by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      CreatePodcastMutationImpl(this)
+    }
+  
     override val createTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
       CreateTrackMutationImpl(this)
     }
@@ -138,6 +144,7 @@ private class DefaultConnectorImpl(
     listOf(
       addTrackToPlaylist,
         createPlaylist,
+        createPodcast,
         createTrack,
         upsertUser,
         
@@ -315,6 +322,21 @@ private class CreatePlaylistMutationImpl(
     CreatePlaylistMutation.Companion.operationName,
     CreatePlaylistMutation.Companion.dataDeserializer,
     CreatePlaylistMutation.Companion.variablesSerializer,
+  )
+
+
+private class CreatePodcastMutationImpl(
+  connector: DefaultConnector
+):
+  CreatePodcastMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      CreatePodcastMutation.Data,
+      CreatePodcastMutation.Variables
+  >(
+    connector,
+    CreatePodcastMutation.Companion.operationName,
+    CreatePodcastMutation.Companion.dataDeserializer,
+    CreatePodcastMutation.Companion.variablesSerializer,
   )
 
 

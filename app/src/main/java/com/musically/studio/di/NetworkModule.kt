@@ -6,6 +6,7 @@ import com.musically.studio.network.ApiClient
 import com.musically.studio.network.RealApiClient
 import com.musically.studio.network.MaveSessionManager
 import com.musically.studio.network.GeminiLiveManager
+import com.musically.studio.network.StreamingApiClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,6 +29,12 @@ object NetworkModule {
     @Singleton
     fun provideApiClient(okHttpClient: OkHttpClient): ApiClient {
         return RealApiClient(okHttpClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStreamingApiClient(okHttpClient: OkHttpClient): StreamingApiClient {
+        return StreamingApiClient(okHttpClient)
     }
 
     @Provides

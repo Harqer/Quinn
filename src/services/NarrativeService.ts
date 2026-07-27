@@ -90,38 +90,16 @@ export class NarrativeService {
            return "";
         });
 
-      const stream = await (ai as any).interactions.create({
+      const textStream = await ai.models.generateContentStream({
         model: "gemini-3.6-flash",
-        input: instruction,
-        stream: true,
-        response_modalities: ["AUDIO"],
-        thinking_config: {
-          include_thoughts: true,
-          thinking_level: "HIGH"
-        },
-        speech_config: {
-          voice_config: {
-            prebuilt_voice_config: {
-              voice_name: voice || (mode === 'audiobook' ? "Kore" : "Aoede")
-            }
-          }
-        }
+        contents: instruction
       });
 
       let fullScript = "";
-      let fullAudioBase64 = "";
-      let audioMimeType = "audio/wav";
-
-      for await (const chunk of stream) {
-        const delta = chunk.step?.delta;
-        if (delta?.text) {
-          fullScript += delta.text;
-          res.write(`data: ${JSON.stringify({ type: 'chunk', text: delta.text })}\n\n`);
-        }
-        if (delta?.output_audio?.data) {
-          audioMimeType = delta.output_audio.mime_type || audioMimeType;
-          fullAudioBase64 += delta.output_audio.data;
-          res.write(`data: ${JSON.stringify({ type: 'audio_chunk', data: delta.output_audio.data, mimeType: audioMimeType })}\n\n`);
+      for await (const chunk of textStream) {
+        if (chunk.text) {
+          fullScript += chunk.text;
+          res.write(`data: ${JSON.stringify({ type: 'chunk', text: chunk.text })}\n\n`);
         }
       }
 
@@ -129,6 +107,38 @@ export class NarrativeService {
       if (!script) {
         throw new Error("Failed to generate script: Empty response");
       }
+
+      const audioStream = await ai.models.generateContentStream({
+        model: "gemini-2.5-flash-preview-tts",
+        contents: `Read the following aloud: ${script}`,
+        config: {
+          responseModalities: ["AUDIO"],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: {
+                voiceName: voice || (mode === 'audiobook' ? "Kore" : "Aoede")
+              }
+            }
+          }
+        }
+      });
+
+      let fullAudioBase64 = "";
+      let audioMimeType = "audio/wav";
+
+      for await (const chunk of audioStream) {
+        if (chunk.candidates?.[0]?.content?.parts) {
+          for (const part of chunk.candidates[0].content.parts) {
+            if (part.inlineData && part.inlineData.mimeType?.startsWith('audio/') && part.inlineData.data) {
+              audioMimeType = part.inlineData.mimeType;
+              fullAudioBase64 += part.inlineData.data;
+              const buffer = Buffer.from(part.inlineData.data, 'base64');
+              res.write(`data: ${JSON.stringify({ type: 'audio_chunk', data: part.inlineData.data, mimeType: audioMimeType })}\n\n`);
+            }
+          }
+        }
+      }
+
       const coverUrl = await coverPromise;
       
       const track = {
@@ -137,7 +147,7 @@ export class NarrativeService {
         artist: "Mave AI Studio",
         album: mode === 'audiobook' ? "Audiobooks" : "Narratives",
         script: script,
-        voice: voice || (mode === 'audiobook' ? "KORE" : "AOEDE"),
+        voice: voice || (mode === 'audiobook' ? "Kore" : "Aoede"),
         coverUrl: coverUrl,
         audioUrl: fullAudioBase64 ? `data:${audioMimeType};base64,${fullAudioBase64}` : undefined,
         createdAt: new Date().toISOString()
@@ -167,31 +177,36 @@ export class NarrativeService {
            return "";
         });
 
-      const interaction = await (ai as any).interactions.create({
+      const textInteraction = await ai.models.generateContent({
         model: "gemini-3.6-flash",
-        input: instruction,
-        response_modalities: ["AUDIO"],
-        thinking_config: {
-          include_thoughts: true,
-          thinking_level: "HIGH"
-        },
-        speech_config: {
-          voice_config: {
-            prebuilt_voice_config: {
-              voice_name: voice || (mode === 'audiobook' ? "Kore" : "Aoede")
+        contents: instruction
+      });
+
+      const script = textInteraction.text?.trim();
+      if (!script) {
+        throw new Error("Failed to generate script: Empty response");
+      }
+
+      const audioInteraction = await ai.models.generateContent({
+        model: "gemini-2.5-flash-preview-tts",
+        contents: `Read the following aloud: ${script}`,
+        config: {
+          responseModalities: ["AUDIO"],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: {
+                voiceName: voice || (mode === 'audiobook' ? "Kore" : "Aoede")
+              }
             }
           }
         }
       });
-
-      const script = interaction.output_text?.trim();
-      if (!script) {
-        throw new Error("Failed to generate script: Empty response");
-      }
       
       let audioUrl;
-      if (interaction.output_audio) {
-        audioUrl = `data:${interaction.output_audio.mime_type || 'audio/wav'};base64,${interaction.output_audio.data}`;
+      const parts = audioInteraction.candidates?.[0]?.content?.parts || [];
+      const audioPart = parts.find(p => p.inlineData?.mimeType?.startsWith('audio/') && p.inlineData.data);
+      if (audioPart && audioPart.inlineData) {
+        audioUrl = `data:${audioPart.inlineData.mimeType};base64,${audioPart.inlineData.data}`;
       }
       
       const coverUrl = await coverPromise;

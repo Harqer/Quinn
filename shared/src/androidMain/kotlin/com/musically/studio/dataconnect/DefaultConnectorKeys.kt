@@ -36,6 +36,16 @@ package com.musically.studio.dataconnect
   }
 
   @kotlinx.serialization.Serializable
+  public data class PodcastKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
   public data class TrackKey(
   
     val id: String,

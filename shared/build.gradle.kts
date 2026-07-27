@@ -89,6 +89,7 @@ kotlin {
             implementation(libs.spotify.auth)
             implementation(libs.retrofit.core)
             implementation(libs.retrofit.gson)
+            implementation("com.squareup.okhttp3:okhttp-sse:4.12.0")
             implementation(libs.glide.core)
             implementation(libs.coil.compose)
 

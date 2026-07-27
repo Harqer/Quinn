@@ -28,6 +28,7 @@ fun PodcastOnboardingScreen(
     onDone: () -> Unit
 ) {
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
+    val errorMessage by viewModel.catalogErrorMessage.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
     val selectedPodcasts = remember { mutableStateListOf<String>() }
 
@@ -92,7 +93,20 @@ fun PodcastOnboardingScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            if (tracks.isEmpty()) {
+            if (errorMessage != null && tracks.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(errorMessage ?: "An error occurred", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyLarge)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = { viewModel.fetchUserTracks() },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color.Black)
+                        ) {
+                            Text("Retry", fontWeight = FontWeight.ExtraBold)
+                        }
+                    }
+                }
+            } else if (tracks.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text("No tracks found", color = Color.White, style = MaterialTheme.typography.titleMedium)
                 }

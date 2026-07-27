@@ -16,14 +16,17 @@ export const ChatScreen: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let ws: WebSocket;
     
     const connectWs = async () => {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const baseUrl = import.meta.env.VITE_WS_URL || `${protocol}//${window.location.host}`;
-      const wsUrl = `${baseUrl.replace(/\/$/, '')}/api/music/ws`;
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const isSecure = apiUrl ? apiUrl.startsWith('https') : window.location.protocol === 'https:';
+      const protocol = isSecure ? 'wss:' : 'ws:';
+      const hostOrigin = apiUrl ? apiUrl.replace(/^https?:\/\//, '') : window.location.host;
+      const wsUrl = `${protocol}//${hostOrigin}/api/music/ws`;
       
       const auth = getAuth();
       const user = auth.currentUser;
@@ -52,6 +55,19 @@ export const ChatScreen: React.FC = () => {
               tracks: data.tracks
             };
             setMessages(prev => [...prev, aiResponse]);
+          } else if (data.type === 'agent_update') {
+            if (data.chunk && typeof data.chunk === 'string') {
+              const audio = new Audio(data.chunk);
+              audio.play().catch(e => console.error("Audio playback failed", e));
+            }
+            if (data.prompts && data.prompts[0]) {
+              const aiResponse: Message = {
+                id: Date.now().toString(),
+                sender: 'ai',
+                text: "Generated Music: " + data.prompts[0]
+              };
+              setMessages(prev => [...prev, aiResponse]);
+            }
           }
         } catch (err) {
           console.error("Error parsing WS message", err);
@@ -96,6 +112,28 @@ export const ChatScreen: React.FC = () => {
     } else {
       console.error("WebSocket is not connected");
       // Could show an error toast here instead of injecting a fake message
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const base64 = ev.target?.result;
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({ type: 'vision', image: base64 }));
+        setMessages(prev => [...prev, {
+          id: Date.now().toString(),
+          sender: 'user',
+          text: `[Sent media for analysis]`
+        }]);
+      }
+    };
+    reader.readAsDataURL(file);
+    // Reset input so the same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -163,7 +201,16 @@ export const ChatScreen: React.FC = () => {
           ) : (
             <div key={msg.id} className="flex flex-col items-end w-full">
               <div className="message-bubble bg-primary-container p-4 rounded-xl rounded-tr-none text-on-primary-container shadow-lg shadow-primary-container/10 max-w-[85%]">
-                <Typography variant="body-md">{msg.text}</Typography>
+                <div className="flex items-start gap-2">
+                  <Typography variant="body-md">{msg.text}</Typography>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(msg.text)}
+                    className="text-on-primary-container/70 hover:text-on-primary-container transition-colors p-1 -mt-1 rounded-full active:bg-black/10"
+                    title="Copy text"
+                  >
+                    <Icon name="content_copy" className="text-[16px]" />
+                  </button>
+                </div>
               </div>
               <span className="text-[10px] mt-1 text-text-secondary uppercase tracking-widest mr-1">Delivered</span>
             </div>
@@ -175,7 +222,17 @@ export const ChatScreen: React.FC = () => {
       {/* Bottom Input Bar Section */}
       <div className="fixed bottom-0 left-0 w-full px-4 pb-8 pt-4 bg-gradient-to-t from-background via-background to-transparent z-50">
         <div className="max-w-4xl mx-auto flex items-end gap-2 bg-surface-container-high rounded-full p-2 shadow-2xl border border-outline-variant/20 backdrop-blur-xl">
-          <button className="w-10 h-10 flex items-center justify-center text-primary hover:bg-surface-container-highest rounded-full transition-colors flex-shrink-0">
+          <input 
+            type="file" 
+            accept="image/*,video/*" 
+            ref={fileInputRef} 
+            onChange={handleFileUpload} 
+            className="hidden" 
+          />
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="w-10 h-10 flex items-center justify-center text-primary hover:bg-surface-container-highest rounded-full transition-colors flex-shrink-0"
+          >
             <Icon name="add" />
           </button>
           
@@ -202,29 +259,7 @@ export const ChatScreen: React.FC = () => {
               <button className="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-surface-container-highest rounded-full transition-colors">
                 <Icon name="mic" />
               </button>
-              <button onClick={() => {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*,video/*';
-                input.onchange = async (e: any) => {
-                  const file = e.target.files[0];
-                  if (!file) return;
-                  const reader = new FileReader();
-                  reader.onload = (ev) => {
-                    const base64 = ev.target?.result;
-                    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-                      wsRef.current.send(JSON.stringify({ type: 'vision', image: base64 }));
-                      setMessages(prev => [...prev, {
-                        id: Date.now().toString(),
-                        sender: 'user',
-                        text: `[Sent media for analysis]`
-                      }]);
-                    }
-                  };
-                  reader.readAsDataURL(file);
-                };
-                input.click();
-              }} className="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-surface-container-highest rounded-full transition-colors">
+              <button onClick={() => fileInputRef.current?.click()} className="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-surface-container-highest rounded-full transition-colors">
                 <Icon name="photo_camera" />
               </button>
             </div>

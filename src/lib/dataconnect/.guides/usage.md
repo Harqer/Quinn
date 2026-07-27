@@ -14,7 +14,7 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { createTrack, upsertUser, createPlaylist, addTrackToPlaylist, getUserTracks, getCommunityTracks, getCategories, getPlaylists, getAlbums, getPodcasts } from '@musically/dataconnect';
+import { createTrack, upsertUser, createPlaylist, addTrackToPlaylist, createPodcast, getUserTracks, getCommunityTracks, getCategories, getPlaylists, getAlbums } from '@musically/dataconnect';
 
 
 // Operation CreateTrack:  For variables, look at type CreateTrackVars in ../index.d.ts
@@ -28,6 +28,9 @@ const { data } = await CreatePlaylist(dataConnect, createPlaylistVars);
 
 // Operation AddTrackToPlaylist:  For variables, look at type AddTrackToPlaylistVars in ../index.d.ts
 const { data } = await AddTrackToPlaylist(dataConnect, addTrackToPlaylistVars);
+
+// Operation CreatePodcast:  For variables, look at type CreatePodcastVars in ../index.d.ts
+const { data } = await CreatePodcast(dataConnect, createPodcastVars);
 
 // Operation GetUserTracks: 
 const { data } = await GetUserTracks(dataConnect);
@@ -43,9 +46,6 @@ const { data } = await GetPlaylists(dataConnect);
 
 // Operation GetAlbums: 
 const { data } = await GetAlbums(dataConnect);
-
-// Operation GetPodcasts: 
-const { data } = await GetPodcasts(dataConnect);
 
 
 ```

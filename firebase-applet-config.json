@@ -4,5 +4,6 @@
   "apiKey": "AIzaSyAUdh1aIXuLNBx3GucRz-DKFXYP6d-jB4Y",
   "authDomain": "musically-studio.firebaseapp.com",
   "storageBucket": "musically-studio.firebasestorage.app",
-  "messagingSenderId": "759854762539"
+  "messagingSenderId": "759854762539",
+  "measurementId": "G-MWZ1234567"
 }

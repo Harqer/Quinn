@@ -43,6 +43,17 @@ export interface CreatePlaylistVariables {
   description?: string | null;
 }
 
+export interface CreatePodcastData {
+  podcast_insert: Podcast_Key;
+}
+
+export interface CreatePodcastVariables {
+  name: string;
+  publisher: string;
+  imageUrl?: string | null;
+  description?: string | null;
+}
+
 export interface CreateTrackData {
   track_insert: Track_Key;
 }
@@ -219,6 +230,18 @@ export const addTrackToPlaylistRef: AddTrackToPlaylistRef;
 
 export function addTrackToPlaylist(vars: AddTrackToPlaylistVariables): MutationPromise<AddTrackToPlaylistData, AddTrackToPlaylistVariables>;
 export function addTrackToPlaylist(dc: DataConnect, vars: AddTrackToPlaylistVariables): MutationPromise<AddTrackToPlaylistData, AddTrackToPlaylistVariables>;
+
+interface CreatePodcastRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreatePodcastVariables): MutationRef<CreatePodcastData, CreatePodcastVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreatePodcastVariables): MutationRef<CreatePodcastData, CreatePodcastVariables>;
+  operationName: string;
+}
+export const createPodcastRef: CreatePodcastRef;
+
+export function createPodcast(vars: CreatePodcastVariables): MutationPromise<CreatePodcastData, CreatePodcastVariables>;
+export function createPodcast(dc: DataConnect, vars: CreatePodcastVariables): MutationPromise<CreatePodcastData, CreatePodcastVariables>;
 
 interface GetUserTracksRef {
   /* Allow users to create refs without passing in DataConnect */

@@ -8,9 +8,10 @@ import { TrackListItem } from '../../components/molecules/TrackListItem';
 import { useTracks } from '../../hooks/useTracks';
 import { getAuth } from 'firebase/auth';
 import { EmptyState } from '../../components/molecules/EmptyState';
+import { ErrorAlert } from '../../components/molecules/ErrorAlert';
 
 export const LibraryScreen: React.FC = () => {
-  const { userTracks, communityTracks, spotifyTracks, loading } = useTracks();
+  const { userTracks, communityTracks, spotifyTracks, loading, error, retry } = useTracks();
   const auth = getAuth();
   const user = auth.currentUser;
   const userInitial = user?.displayName ? user.displayName[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'M');
@@ -48,6 +49,8 @@ export const LibraryScreen: React.FC = () => {
         <div className="p-8 text-center">
           <Typography variant="body-md">Loading Library...</Typography>
         </div>
+      ) : error ? (
+        <ErrorAlert message={error} onRetry={retry} />
       ) : displayTracks.length > 0 ? (
         <div className="flex flex-col px-0 gap-0">
           <Typography variant="label-md" className="px-4 py-2 text-primary font-bold">Mave Studio Tracks</Typography>

@@ -1,0 +1,210 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>17</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void sendEvent(java.lang.String type, java.util.Map&lt;java.lang.String,? extends java.lang.Object&gt; data)" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>sendEvent</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>21</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void sendPrompts(java.util.List&lt;? extends java.util.Map&lt;java.lang.String,? extends java.lang.Object&gt;&gt; prompts)" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>sendPrompts</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>25</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void play()" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>play</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>26</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void pause()" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>pause</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>27</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void stop()" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>stop</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>28</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void next()" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>next</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>29</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void previous()" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>previous</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>31</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void sendAudio(java.lang.String base64)" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>sendAudio</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>32</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void sendVideoFrame(byte[] frameBytes)" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>sendVideoFrame</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>14</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>17</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void sendEvent(java.lang.String type, java.util.Map&lt;java.lang.String,? extends java.lang.Object&gt; data)" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>sendEvent</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>21</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void sendPrompts(java.util.List&lt;? extends java.util.Map&lt;java.lang.String,? extends java.lang.Object&gt;&gt; prompts)" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>sendPrompts</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>31</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void sendAudio(java.lang.String base64)" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>sendAudio</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>32</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake void sendVideoFrame(byte[] frameBytes)" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>sendVideoFrame</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>14</length>
+</problem>
+</problems>

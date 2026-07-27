@@ -1,0 +1,496 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>5</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object shareVibe(java.lang.String trackId, kotlin.coroutines.Continuation&lt;? super java.lang.String&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'shareVibe' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>59</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>9</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getUserTracks(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MaveTrack&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getUserTracks' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>57</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>10</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getVibesByUserId(java.lang.String userId, kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MaveTrack&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getVibesByUserId' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>74</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>12</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getCommunityTracks(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MaveTrack&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getCommunityTracks' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>62</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>21</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object verifyDigitalCredential(java.lang.String credentialJson, java.lang.String nonce, kotlin.coroutines.Continuation&lt;? super java.lang.String&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'verifyDigitalCredential' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>95</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>22</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object generateMusicPrompts(java.lang.String imageB64, kotlin.coroutines.Continuation&lt;? super java.util.List&lt;java.lang.String&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'generateMusicPrompts' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>77</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>24</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getPlaylists(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends com.musically.studio.network.MavePlaylist&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getPlaylists' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>88</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>25</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getCategories(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends com.musically.studio.network.MaveCategory&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getCategories' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>89</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>26</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getAlbums(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends com.musically.studio.network.MaveAlbum&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getAlbums' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>82</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>27</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getPodcasts(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends com.musically.studio.network.MavePodcast&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getPodcasts' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>86</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>28</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getAudiobooks(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends com.musically.studio.network.MaveAudiobook&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getAudiobooks' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>90</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>31</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getSpotifyPlaylists(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends com.musically.studio.network.MavePlaylist&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getSpotifyPlaylists' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>95</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>14</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean play()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'play' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>32</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>18</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean pause()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'pause' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>22</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean stop()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'stop' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>32</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>26</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean next()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'next' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>32</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>30</line>
+  <module>MyExampleApp.app.androidTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean previous()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'previous' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>36</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>25</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake java.lang.Boolean play()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'play' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>32</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>26</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake java.lang.Boolean pause()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'pause' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>27</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake java.lang.Boolean stop()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'stop' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>32</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>28</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake java.lang.Boolean next()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'next' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>32</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/fakes/MaveSessionManagerFake.kt</file>
+  <line>29</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.fakes</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.fakes.MaveSessionManagerFake java.lang.Boolean previous()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'previous' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>36</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>4</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getCommunityTracks(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MaveTrack&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getCommunityTracks' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>62</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>12</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getSpotifyLibraryTracks(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MaveTrack&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getSpotifyLibraryTracks' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>67</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>18</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getUserTracks(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MaveTrack&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getUserTracks' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>57</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>19</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getVibesByUserId(java.lang.String userId, kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MaveTrack&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getVibesByUserId' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>74</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>21</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object generateMusicPrompts(java.lang.String imageB64, kotlin.coroutines.Continuation&lt;? super java.util.List&lt;java.lang.String&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'generateMusicPrompts' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>77</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>26</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getSpotifyPlaylists(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MavePlaylist&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getSpotifyPlaylists' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>66</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>27</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getPlaylists(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MavePlaylist&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getPlaylists' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>59</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>28</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getCategories(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MaveCategory&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getCategories' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>60</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>29</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getAlbums(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MaveAlbum&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getAlbums' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>53</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>30</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getPodcasts(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MavePodcast&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getPodcasts' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>57</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeApiClient.kt</file>
+  <line>31</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeApiClient java.lang.Object getAudiobooks(kotlin.coroutines.Continuation&lt;? super java.util.List&lt;? extends MaveAudiobook&gt;&gt; $completion)" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'getAudiobooks' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>61</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>14</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean play()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'play' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>32</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>18</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean pause()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'pause' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>22</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean stop()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'stop' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>32</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>26</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean next()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'next' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>32</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/musically/studio/network/FakeMaveSessionManager.kt</file>
+  <line>30</line>
+  <module>MyExampleApp.app.unitTest</module>
+  <package>com.musically.studio.network</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.network.FakeMaveSessionManager java.lang.Boolean previous()" />
+  <problem_class id="RedundantNullableReturnType" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant nullable return type</problem_class>
+  <description>'previous' always returns non-null type</description>
+  <highlighted_element>?</highlighted_element>
+  <language>kotlin</language>
+  <offset>36</offset>
+  <length>1</length>
+</problem>
+</problems>

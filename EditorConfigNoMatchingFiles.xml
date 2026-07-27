@@ -1,0 +1,62 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/extend/.editorconfig</file>
+  <line>19</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/extend/.editorconfig" />
+  <problem_class id="EditorConfigNoMatchingFiles" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">No matching files</problem_class>
+  <description>No files under 'extend' folder match this pattern</description>
+  <highlighted_element>[Makefile]</highlighted_element>
+  <language>EditorConfig</language>
+  <offset>0</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/qs/.editorconfig</file>
+  <line>25</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/qs/.editorconfig" />
+  <problem_class id="EditorConfigNoMatchingFiles" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">No matching files</problem_class>
+  <description>No files under 'qs' folder match this pattern</description>
+  <highlighted_element>[Makefile]</highlighted_element>
+  <language>EditorConfig</language>
+  <offset>0</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/qs/.editorconfig</file>
+  <line>32</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/qs/.editorconfig" />
+  <problem_class id="EditorConfigNoMatchingFiles" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">No matching files</problem_class>
+  <description>No files under 'qs' folder match this pattern</description>
+  <highlighted_element>[LICENSE]</highlighted_element>
+  <language>EditorConfig</language>
+  <offset>0</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/qs/.editorconfig</file>
+  <line>36</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/qs/.editorconfig" />
+  <problem_class id="EditorConfigNoMatchingFiles" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">No matching files</problem_class>
+  <description>No files under 'qs' folder match this pattern</description>
+  <highlighted_element>[coverage/**/*]</highlighted_element>
+  <language>EditorConfig</language>
+  <offset>0</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/node_modules/qs/.editorconfig</file>
+  <line>45</line>
+  <module>MyExampleApp</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/node_modules/qs/.editorconfig" />
+  <problem_class id="EditorConfigNoMatchingFiles" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">No matching files</problem_class>
+  <description>No files under 'qs' folder match this pattern</description>
+  <highlighted_element>[tea.yaml]</highlighted_element>
+  <language>EditorConfig</language>
+  <offset>0</offset>
+  <length>10</length>
+</problem>
+</problems>

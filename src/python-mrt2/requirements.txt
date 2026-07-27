@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+websockets
+python-multipart
+pydantic
+magenta-rt
+jax[cuda12]

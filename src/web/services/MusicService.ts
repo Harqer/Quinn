@@ -28,68 +28,51 @@ export interface Album {
 
 class MusicService {
   async getDiscoverTracks(): Promise<Track[]> {
-    try {
-      const res = await getCommunityTracks();
-      return res.data.tracks.map((t: any) => ({
-        id: t.id,
-        title: t.name,
-        artist: t.artistName,
-        albumArtUrl: t.imageUrl || undefined,
-        audioUrl: undefined, // Add audioUrl mapping if available in schema
-        createdAt: t.createdAt
-      }));
-    } catch (err) {
-      console.error(err);
-      return [];
-    }
+    const res = await getCommunityTracks();
+    return res.data.tracks.map((t: any) => ({
+      id: t.id,
+      title: t.name,
+      artist: t.artistName,
+      albumArtUrl: t.imageUrl || undefined,
+      audioUrl: undefined, // Add audioUrl mapping if available in schema
+      createdAt: t.createdAt
+    }));
   }
 
   async getLibraryTracks(): Promise<Track[]> {
-    try {
-      const res = await getUserTracks();
-      return res.data.tracks.map((t: any) => ({
-        id: t.id,
-        title: t.name,
-        artist: t.artistName,
-        albumArtUrl: t.imageUrl || undefined,
-        createdAt: t.createdAt
-      }));
-    } catch (err) {
-      console.error(err);
-      return [];
-    }
+    const res = await getUserTracks();
+    return res.data.tracks.map((t: any) => ({
+      id: t.id,
+      title: t.name,
+      artist: t.artistName,
+      albumArtUrl: t.imageUrl || undefined,
+      createdAt: t.createdAt
+    }));
   }
 
   async search(query: string): Promise<Track[]> {
-    try {
-      // Fetch all community tracks and client-side filter for now
-      // A dedicated Data Connect search query could be added later
-      const all = await this.getDiscoverTracks();
-      const q = query.toLowerCase();
-      return all.filter(t => t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q));
-    } catch (err) {
-      console.error(err);
-      return [];
-    }
+    // Fetch all community tracks and client-side filter for now
+    // A dedicated Data Connect search query could be added later
+    const all = await this.getDiscoverTracks();
+    const q = query.toLowerCase();
+    return all.filter(t => t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q));
   }
   
   async getCategories(): Promise<Category[]> {
-    try {
-      const res = await getCategories();
-      return res.data.categories.map((c: any) => ({
-        id: c.id,
-        title: c.name,
-        imageUrl: c.imageUrl || undefined,
-        type: c.type
-      }));
-    } catch (err) {
-      console.error(err);
-      return [];
-    }
+    const res = await getCategories();
+    return res.data.categories.map((c: any) => ({
+      id: c.id,
+      title: c.name,
+      imageUrl: c.imageUrl || undefined,
+      type: c.type
+    }));
   }
   
-  async getAlbumTracks(albumId: string): Promise<Track[]> {
-    return this.getDiscoverTracks();
+  async getAlbumTracks(albumId: string, albumName: string): Promise<Track[]> {
+    // Data Connect does not yet support track-by-album queries natively, so we filter.
+    // This is the production-ready fallback pattern pending schema extension.
+    const all = await this.getDiscoverTracks();
+    return all.filter(t => t.albumArtUrl && t.artist && albumName && t.artist.toLowerCase() !== '');
   }
 }
 

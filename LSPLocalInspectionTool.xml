@@ -1,0 +1,67 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/MainActivity.kt</file>
+  <line>120</line>
+  <module>MyExampleApp.app.main</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/MainActivity.kt" />
+  <problem_class id="LSPLocalInspectionTool" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Diagnostics</problem_class>
+  <description>Did you mean to spell `UserProfileScreen's` this way?</description>
+  <highlighted_element>UserProfileScreen's</highlighted_element>
+  <language />
+  <offset>77</offset>
+  <length>19</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/MainActivity.kt</file>
+  <line>121</line>
+  <module>MyExampleApp.app.main</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/MainActivity.kt" />
+  <problem_class id="LSPLocalInspectionTool" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Diagnostics</problem_class>
+  <description>Did you mean `SignedOut`?</description>
+  <highlighted_element>onSignedOut</highlighted_element>
+  <language />
+  <offset>27</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/MainActivity.kt</file>
+  <line>123</line>
+  <module>MyExampleApp.app.main</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/MainActivity.kt" />
+  <problem_class id="LSPLocalInspectionTool" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Diagnostics</problem_class>
+  <description>Did you mean to spell `UserProfileScreen` this way?</description>
+  <highlighted_element>UserProfileScreen</highlighted_element>
+  <language />
+  <offset>68</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/MainActivity.kt</file>
+  <line>124</line>
+  <module>MyExampleApp.app.main</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/MainActivity.kt" />
+  <problem_class id="LSPLocalInspectionTool" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Diagnostics</problem_class>
+  <description>Did you mean to spell `UserProfileScreen` this way?</description>
+  <highlighted_element>UserProfileScreen</highlighted_element>
+  <language />
+  <offset>73</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/MainActivity.kt</file>
+  <line>195</line>
+  <module>MyExampleApp.app.main</module>
+  <package>com.musically.studio</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/MainActivity.kt" />
+  <problem_class id="LSPLocalInspectionTool" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Diagnostics</problem_class>
+  <description>Did you mean to spell `isUserLoggedIn` this way?</description>
+  <highlighted_element>isUserLoggedIn</highlighted_element>
+  <language />
+  <offset>46</offset>
+  <length>14</length>
+</problem>
+</problems>

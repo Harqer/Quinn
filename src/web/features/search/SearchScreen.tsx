@@ -6,6 +6,7 @@ import { logger } from '../../lib/logger';
 import { musicService, Category, Track } from '../../services/MusicService';
 import { usePlayerContext } from '../../contexts/PlayerContext';
 import { TrackListItem } from '../../components/molecules/TrackListItem';
+import { ErrorAlert } from '../../components/molecules/ErrorAlert';
 
 export const SearchScreen: React.FC = () => {
   const auth = getAuth();
@@ -13,21 +14,30 @@ export const SearchScreen: React.FC = () => {
   const userInitial = user?.displayName ? user.displayName[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'M');
 
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesError, setCategoriesError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Track[]>([]);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const { playTrack } = usePlayerContext();
 
   useEffect(() => {
+    setCategoriesError(null);
     musicService.getCategories().then(setCategories).catch(err => {
       logger.error('Error fetching categories from MusicService', err);
+      setCategoriesError('Failed to load categories.');
     });
   }, []);
 
   useEffect(() => {
     if (searchQuery.trim().length > 0) {
-      musicService.search(searchQuery).then(setSearchResults);
+      setSearchError(null);
+      musicService.search(searchQuery).then(setSearchResults).catch(err => {
+        logger.error('Error searching tracks', err);
+        setSearchError('Failed to load search results.');
+      });
     } else {
       setSearchResults([]);
+      setSearchError(null);
     }
   }, [searchQuery]);
 
@@ -59,7 +69,15 @@ export const SearchScreen: React.FC = () => {
         {searchQuery.trim().length > 0 ? (
           <div>
             <Typography variant="title-md" className="font-bold mb-4">Top results</Typography>
-            {searchResults.length > 0 ? (
+            {searchError ? (
+              <ErrorAlert 
+                message={searchError} 
+                onRetry={() => {
+                  setSearchError(null);
+                  musicService.search(searchQuery).then(setSearchResults).catch(err => setSearchError('Failed to load search results.'));
+                }} 
+              />
+            ) : searchResults.length > 0 ? (
               <div className="flex flex-col gap-2">
                 {searchResults.map(track => (
                   <div key={track.id} onClick={() => playTrack(track)}>
@@ -74,27 +92,39 @@ export const SearchScreen: React.FC = () => {
         ) : (
           <>
             <Typography variant="title-md" className="font-bold mb-4">Browse all</Typography>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              {categories.map((cat) => (
-                <div 
-                  key={cat.id} 
-
-                  className={`aspect-[1.5] rounded-[4px] p-3 relative overflow-hidden shadow-md cursor-pointer`}
-                  onClick={() => {
-                    logger.trackEvent('category_click', { id: cat.id });
-                    setSearchQuery(cat.title);
-                  }}
-                >
-                  <Typography variant="title-md" className={`font-bold text-white z-10 relative break-words`}>
-                    {cat.title}
-                  </Typography>
-                  <div className="absolute -bottom-2 -right-4 w-16 h-16 bg-black/20 rounded-[4px] transform rotate-[25deg] shadow-lg"></div>
-                </div>
-              ))}
-              {categories.length === 0 && (
-                 <div className="text-sm text-text-secondary italic col-span-2">Loading categories...</div>
-              )}
-            </div>
+            {categoriesError ? (
+              <div className="col-span-full">
+                <ErrorAlert 
+                  message={categoriesError} 
+                  onRetry={() => {
+                    setCategoriesError(null);
+                    musicService.getCategories().then(setCategories).catch(err => setCategoriesError('Failed to load categories.'));
+                  }} 
+                />
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {categories.map((cat) => (
+                  <div 
+                    key={cat.id} 
+                    className={`aspect-[1.5] rounded-[4px] p-3 relative overflow-hidden shadow-md cursor-pointer`}
+                    style={{ backgroundColor: '#282828' }}
+                    onClick={() => {
+                      logger.trackEvent('category_click', { id: cat.id });
+                      setSearchQuery(cat.title);
+                    }}
+                  >
+                    <Typography variant="title-md" className={`font-bold text-white z-10 relative break-words`}>
+                      {cat.title}
+                    </Typography>
+                    <div className="absolute -bottom-2 -right-4 w-16 h-16 bg-black/20 rounded-[4px] transform rotate-[25deg] shadow-lg"></div>
+                  </div>
+                ))}
+                {categories.length === 0 && (
+                   <div className="text-sm text-text-secondary italic col-span-2">Loading categories...</div>
+                )}
+              </div>
+            )}
           </>
         )}
       </div>

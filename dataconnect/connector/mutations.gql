@@ -46,3 +46,17 @@ mutation AddTrackToPlaylist(
     trackId: $trackId
   })
 }
+
+mutation CreatePodcast(
+  $name: String!,
+  $publisher: String!,
+  $imageUrl: String,
+  $description: String
+) @auth(level: PUBLIC) {
+  podcast_insert(data: {
+    name: $name,
+    publisher: $publisher,
+    imageUrl: $imageUrl,
+    description: $description
+  })
+}

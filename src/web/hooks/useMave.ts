@@ -15,6 +15,7 @@ export interface MaveMessage {
   voice?: string;
   coverUrl?: string;
   script?: string;
+  audioUrl?: string;
 }
 
 export function useMave() {
@@ -65,8 +66,8 @@ export function useMave() {
             setThinkingText("");
             const rawText = msg.prompts ? msg.prompts[0] : (msg.script || msg.vision);
             const text = rawText && !/firestore|redis|database|deployed|caching|vibe/i.test(rawText) ? rawText : null;
-            if (text) {
-              setMessages(prev => [{ id: Date.now().toString(), text, sender: 'mave' as const, trackId: msg.trackId }, ...prev].slice(0, 15));
+            if (text || msg.chunk) {
+              setMessages(prev => [{ id: Date.now().toString(), text: text || "Generated Audio", sender: 'mave' as const, trackId: msg.trackId, type: 'music_card', audioUrl: msg.chunk }, ...prev].slice(0, 15));
             }
           } else if (msg.type === 'cover_art_update') {
             setCoverArtUrl(msg.coverArtUrl);
@@ -134,17 +135,23 @@ export function useMave() {
           const decoder = new TextDecoder();
           let done = false;
           let scriptBuffer = '';
+          let streamBuffer = '';
 
           while (!done && reader) {
             const { value, done: doneReading } = await reader.read();
             done = doneReading;
             if (value) {
               const chunkStr = decoder.decode(value, { stream: true });
-              const lines = chunkStr.split('\n\n');
-              for (const line of lines) {
+              streamBuffer += chunkStr;
+              
+              let eolIndex;
+              while ((eolIndex = streamBuffer.indexOf('\n\n')) >= 0) {
+                const line = streamBuffer.slice(0, eolIndex).trim();
+                streamBuffer = streamBuffer.slice(eolIndex + 2);
+                
                 if (line.startsWith('data: ')) {
                   try {
-                    const data = JSON.parse(line.replace('data: ', ''));
+                    const data = JSON.parse(line.substring(6));
                     if (data.type === 'chunk' || data.type === 'thought') {
                       scriptBuffer += data.text;
                       setThinkingText(scriptBuffer);
@@ -158,7 +165,8 @@ export function useMave() {
                         title: data.track.title,
                         script: data.track.script,
                         voice: data.track.voice,
-                        coverUrl: data.track.coverUrl
+                        coverUrl: data.track.coverUrl,
+                        audioUrl: data.track.audioUrl
                       } as any, ...prev].slice(0, 15));
                     }
                   } catch (e) {

@@ -1,0 +1,67 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt</file>
+  <line>37</line>
+  <module>MyExampleApp.app.main</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.appfunctions.MaveFunctions java.lang.Object strikeVibe(AppFunctionContext context, java.lang.String text, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt</file>
+  <line>48</line>
+  <module>MyExampleApp.app.main</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.appfunctions.MaveFunctions java.lang.Object generatePodcast(AppFunctionContext context, java.lang.String topic, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt</file>
+  <line>72</line>
+  <module>MyExampleApp.app.main</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.appfunctions.MaveFunctions java.lang.Object searchForContent(AppFunctionContext context, java.lang.String query, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt</file>
+  <line>82</line>
+  <module>MyExampleApp.app.main</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.appfunctions.MaveFunctions java.lang.Object openLibrary(AppFunctionContext context, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt</file>
+  <line>92</line>
+  <module>MyExampleApp.app.main</module>
+  <package>com.musically.studio.appfunctions</package>
+  <entry_point TYPE="method" FQNAME="com.musically.studio.appfunctions.MaveFunctions java.lang.Object openHome(AppFunctionContext context, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+</problem>
+</problems>

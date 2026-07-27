@@ -133,7 +133,7 @@ fun PodcastGeneratorScreen(
                         Spacer(modifier = Modifier.width(8.dp))
                         IconButton(
                             onClick = {
-                                viewModel.sendTextCommand(promptText)
+                                viewModel.generatePodcast(promptText)
                                 promptText = ""
                             },
                             modifier = Modifier

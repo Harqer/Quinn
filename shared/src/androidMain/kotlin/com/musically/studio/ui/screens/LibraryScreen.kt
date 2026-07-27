@@ -64,6 +64,7 @@ fun LibraryScreen(
 ) {
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val errorMessage by viewModel.catalogErrorMessage.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.fetchUserTracks()
@@ -151,6 +152,24 @@ fun LibraryScreen(
             if (isLoading && tracks.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                }
+            } else if (errorMessage != null && tracks.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = errorMessage ?: "An error occurred",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        MaveButton(
+                            text = "Retry",
+                            onClick = { viewModel.fetchUserTracks() }
+                        )
+                    }
                 }
             } else if (tracks.isEmpty()) {
                 EmptyLibraryState(onNavigateToHome = onNavigateToHome)

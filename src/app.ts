@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 import { rateLimit } from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
 import Redis from "ioredis";
-import { musicRouter } from "./routes/index.js";
+import { musicRouter, spotifyRouter } from "./routes/index.js";
 import { getRedis } from "./config/redis.js";
 import logger from "./config/logger.js";
 
@@ -64,6 +64,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/music", musicRouter);
+app.use("/api/spotify", spotifyRouter);
 
 // URL Redirect Service
 app.get("/s/:shortCode", async (req, res) => {

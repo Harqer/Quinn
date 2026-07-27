@@ -22,6 +22,7 @@ import com.musically.studio.dataconnect.instance
 import com.musically.studio.dataconnect.execute
 import com.musically.studio.network.MaveSessionManager
 import com.musically.studio.network.GeminiLiveManager
+import com.musically.studio.network.StreamingApiClient
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.models.ChatMessage
 import com.musically.studio.ui.models.AudioDevice
@@ -49,6 +50,7 @@ class MainViewModel @Inject constructor(
     private val apiClient: ApiClient,
     private val maveSessionManager: MaveSessionManager,
     private val geminiLiveManager: GeminiLiveManager,
+    private val streamingApiClient: StreamingApiClient,
     private val auth: FirebaseAuth,
     private val rtdb: FirebaseDatabase
 ) : ViewModel() {
@@ -106,6 +108,13 @@ class MainViewModel @Inject constructor(
     
     private val _isWearableConnected = MutableStateFlow(false)
     val isWearableConnected: StateFlow<Boolean> = _isWearableConnected.asStateFlow()
+
+    private val _catalogErrorMessage = MutableStateFlow<String?>(null)
+    val catalogErrorMessage: StateFlow<String?> = _catalogErrorMessage.asStateFlow()
+
+    fun clearCatalogError() {
+        _catalogErrorMessage.value = null
+    }
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -233,36 +242,71 @@ class MainViewModel @Inject constructor(
 
     fun fetchCategories() {
         viewModelScope.launch {
-            val result = apiClient.getCategories()
-            if (result != null) _categories.value = result
+            try {
+                val result = apiClient.getCategories()
+                if (result != null) {
+                    _categories.value = result
+                    _catalogErrorMessage.value = null
+                }
+            } catch (e: Exception) {
+                _catalogErrorMessage.value = e.message ?: "Failed to load categories."
+            }
         }
     }
 
     fun fetchPlaylists() {
         viewModelScope.launch {
-            val result = apiClient.getPlaylists()
-            if (result != null) _playlists.value = result
+            try {
+                val result = apiClient.getPlaylists()
+                if (result != null) {
+                    _playlists.value = result
+                    _catalogErrorMessage.value = null
+                }
+            } catch (e: Exception) {
+                _catalogErrorMessage.value = e.message ?: "Failed to load playlists."
+            }
         }
     }
 
     fun fetchAlbums() {
         viewModelScope.launch {
-            val result = apiClient.getAlbums()
-            if (result != null) _albums.value = result
+            try {
+                val result = apiClient.getAlbums()
+                if (result != null) {
+                    _albums.value = result
+                    _catalogErrorMessage.value = null
+                }
+            } catch (e: Exception) {
+                _catalogErrorMessage.value = e.message ?: "Failed to load albums."
+            }
         }
     }
 
     fun fetchPodcasts() {
         viewModelScope.launch {
-            val result = apiClient.getPodcasts()
-            if (result != null) _podcasts.value = result
+            try {
+                val result = apiClient.getPodcasts()
+                if (result != null) {
+                    _podcasts.value = result
+                    _catalogErrorMessage.value = null
+                }
+            } catch (e: Exception) {
+                _catalogErrorMessage.value = e.message ?: "Failed to load podcasts."
+            }
         }
     }
 
     fun fetchAudiobooks() {
         viewModelScope.launch {
-            val result = apiClient.getAudiobooks()
-            if (result != null) _audiobooks.value = result
+            try {
+                val result = apiClient.getAudiobooks()
+                if (result != null) {
+                    _audiobooks.value = result
+                    _catalogErrorMessage.value = null
+                }
+            } catch (e: Exception) {
+                _catalogErrorMessage.value = e.message ?: "Failed to load audiobooks."
+            }
         }
     }
 
@@ -651,6 +695,41 @@ class MainViewModel @Inject constructor(
         maveSessionManager.sendEvent("feedback", mapOf("text" to text))
     }
 
+    private var currentAudioPlayer: com.musically.studio.audio.StreamAudioPlayer? = null
+
+    fun generatePodcast(text: String) {
+        messages.add(0, ChatMessage(text, true))
+        _thinkingText.value = ""
+        currentAudioPlayer?.stop()
+        currentAudioPlayer = com.musically.studio.audio.StreamAudioPlayer()
+        
+        viewModelScope.launch {
+            try {
+                streamingApiClient.generatePodcastStream(text).collect { event ->
+                    if (event.text != null) {
+                        _thinkingText.value += event.text
+                    }
+                    if (event.audioBase64 != null) {
+                        currentAudioPlayer?.queueAudioChunk(event.audioBase64)
+                    }
+                    if (event.isComplete) {
+                        _thinkingText.value = ""
+                        val script = event.trackInfo?.audioUrl ?: "Generated Podcast"
+                        messages.add(0, ChatMessage(script, false, event.trackInfo?.id))
+                        currentAudioPlayer?.stop()
+                        currentAudioPlayer = null
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error generating podcast")
+                messages.add(0, ChatMessage("Error generating podcast", false))
+                _thinkingText.value = ""
+                currentAudioPlayer?.stop()
+                currentAudioPlayer = null
+            }
+        }
+    }
+
     @SuppressLint("MissingPermission")
     fun recordVoice(context: Context?) {
         if (!_hasAcceptedPrivacyPolicy.value) return
@@ -852,21 +931,38 @@ class MainViewModel @Inject constructor(
     fun fetchUserTracks() {
         viewModelScope.launch {
             _isLoading.value = true
-            val maveTracks = apiClient.getUserTracks() ?: emptyList()
-            val spotifyTracks = apiClient.getSpotifyLibraryTracks() ?: emptyList()
-            _tracks.value = maveTracks + spotifyTracks
-            _isLoading.value = false
+            try {
+                val maveTracks = apiClient.getUserTracks()
+                val spotifyTracks = apiClient.getSpotifyLibraryTracks()
+                if (maveTracks == null && spotifyTracks == null) {
+                    _catalogErrorMessage.value = "Failed to load library tracks."
+                    _tracks.value = emptyList()
+                } else {
+                    _tracks.value = (maveTracks ?: emptyList()) + (spotifyTracks ?: emptyList())
+                    _catalogErrorMessage.value = null
+                }
+            } catch (e: Exception) {
+                _catalogErrorMessage.value = e.message ?: "Failed to load library tracks."
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
     fun fetchCommunityTracks() {
         viewModelScope.launch {
             _isLoading.value = true
-            val result = apiClient.getCommunityTracks()
-            if (result != null) {
-                _communityTracks.value = result
+            try {
+                val result = apiClient.getCommunityTracks()
+                if (result != null) {
+                    _communityTracks.value = result
+                    _catalogErrorMessage.value = null
+                }
+            } catch (e: Exception) {
+                _catalogErrorMessage.value = e.message ?: "Failed to load community tracks."
+            } finally {
+                _isLoading.value = false
             }
-            _isLoading.value = false
         }
     }
 
