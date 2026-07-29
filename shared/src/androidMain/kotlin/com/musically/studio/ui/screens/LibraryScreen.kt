@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.window.core.layout.WindowWidthSizeClass
 import com.musically.studio.shared.R
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.TrackItem
@@ -377,8 +376,7 @@ fun ConnectionsSection(
     spotifyConnected: Boolean,
     youtubeConnected: Boolean
 ) {
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
-    val isCompact = windowSizeClass == WindowWidthSizeClass.COMPACT
+    val isCompact = currentWindowAdaptiveInfo().windowSizeClass.windowWidthDp < 600
     
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
         Text("Connections", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.Bold)

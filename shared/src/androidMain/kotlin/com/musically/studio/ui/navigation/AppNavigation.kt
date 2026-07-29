@@ -45,7 +45,6 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
-import androidx.window.core.layout.WindowWidthSizeClass
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.MiniPlayer
 import com.musically.studio.ui.screens.NowPlayingScreen
@@ -61,7 +60,7 @@ fun MaveApp(
     hasPermissions: Boolean
 ) {
     val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
+    val isExpanded = adaptiveInfo.windowSizeClass.windowWidthDp >= 840
 
     val topLevelRoutes = setOf<Route>(Route.Home, Route.Search, Route.Chat, Route.Podcast, Route.Devices, Route.Library)
     val startRoute: Route = Route.Welcome

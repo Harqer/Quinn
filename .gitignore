@@ -44,3 +44,7 @@ pnpm-debug.log*
 !/.agents/
 *.apk
 google-services.json
+index.html
+node_modules/
+script.js
+styles.css

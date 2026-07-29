@@ -12,7 +12,6 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.DigitalCredential
 import androidx.credentials.GetDigitalCredentialOption
 import androidx.credentials.exceptions.GetCredentialException
-import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
