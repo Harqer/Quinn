@@ -37,6 +37,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.draw.clip
+import androidx.window.core.layout.WindowWidthSizeClass
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import timber.log.Timber
@@ -376,7 +377,7 @@ fun ConnectionsSection(
     spotifyConnected: Boolean,
     youtubeConnected: Boolean
 ) {
-    val isCompact = currentWindowAdaptiveInfo().windowSizeClass.windowWidthDp < 600
+    val isCompact = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
     
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
         Text("Connections", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.Bold)
