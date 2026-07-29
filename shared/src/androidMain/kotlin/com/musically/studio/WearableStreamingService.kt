@@ -175,37 +175,47 @@ class WearableStreamingService : Service() {
     }
 
     fun updateWearableUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false) {
-        val onMic = { emitInteraction("speak") }
-        val onMusicNote = { emitInteraction("generate") }
-        val onSkipPrevious = { emitInteraction("previous") }
         val onPlayPause = { emitInteraction("play_pause") }
         val onSkipNext = { emitInteraction("next") }
 
         scope.launch {
             activeDisplay?.sendContent {
-                flexBox {
-                    if (isThinking) {
-                        text(content = "Mave is thinking...")
-                    }
+                flexBox(
+                    direction = Direction.COLUMN,
+                    gap = 12,
+                    paddingBottom = 16,
+                    paddingEnd = 16,
+                    paddingStart = 16,
+                    paddingTop = 16,
+                    alignment = Alignment.CENTER,
+                    crossAlignment = Alignment.CENTER
+                ) {
                     if (coverArtUrl != null) {
-                        // Assuming there is an image view in the SDK, or we use a placeholder/status
-                        text(content = "[Album Art Active]")
+                        image(
+                            uri = coverArtUrl
+                        )
+                    } else {
+                        icon(name = IconName.MUSIC_NOTE)
                     }
+                    
+                    val displayTitle = when {
+                        isThinking -> "Mave is thinking..."
+                        songTitle.isNotEmpty() -> songTitle
+                        else -> "Mave Studio"
+                    }
+                    text(content = displayTitle, style = TextStyle.HEADING)
+                    
                     if (geminiResponse.isNotEmpty()) {
-                        text(content = geminiResponse)
+                        text(content = geminiResponse, style = TextStyle.BODY)
                     }
 
-                    flexBox(direction = Direction.ROW) {
-                        button("", ButtonStyle.PRIMARY, IconName.SPEECH_BUBBLE, onMic, 0f, 0f, Alignment.CENTER)
-                        button("", ButtonStyle.PRIMARY, IconName.MUSIC_NOTE, onMusicNote, 0f, 0f, Alignment.CENTER)
-                    }
-
-                    flexBox(direction = Direction.ROW) {
-                        button("", ButtonStyle.PRIMARY, IconName.TRIANGLE_LEFT_VERTICAL_LINE, onSkipPrevious, 0f, 0f, Alignment.CENTER)
-                        button("", ButtonStyle.PRIMARY, IconName.TRIANGLE_RIGHT, onPlayPause, 0f, 0f, Alignment.CENTER)
-                        button("", ButtonStyle.PRIMARY, IconName.TRIANGLE_RIGHT_VERTICAL_LINE, onSkipNext, 0f, 0f, Alignment.CENTER)
+                    flexBox(direction = Direction.ROW, gap = 16, alignment = Alignment.CENTER) {
+                        button(label = "", style = ButtonStyle.PRIMARY, iconName = IconName.TRIANGLE_RIGHT, onClick = onPlayPause)
+                        button(label = "", style = ButtonStyle.SECONDARY, iconName = IconName.TRIANGLE_RIGHT_VERTICAL_LINE, onClick = onSkipNext)
                     }
                 }
+            }?.onFailure { error, _ ->
+                Timber.e("Failed to send display content: ${error.description}")
             }
         }
     }
