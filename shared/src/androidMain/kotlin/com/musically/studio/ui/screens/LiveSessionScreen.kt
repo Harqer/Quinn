@@ -296,13 +296,13 @@ private fun ChatBubble(message: ChatMessage, viewModel: MainViewModel, modifier:
             }
             Spacer(modifier = Modifier.width(8.dp))
         }
-        val clipboardManager = androidx.compose.ui.platform.LocalClipboardManager.current
         val context = androidx.compose.ui.platform.LocalContext.current
+        val clipboardManager = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
         
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (message.isUser) {
                 IconButton(onClick = { 
-                    clipboardManager.setText(androidx.compose.ui.text.AnnotatedString(message.text))
+                    clipboardManager.setPrimaryClip(android.content.ClipData.newPlainText("text", message.text))
                     android.widget.Toast.makeText(context, "Copied", android.widget.Toast.LENGTH_SHORT).show()
                 }) {
                     Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp), tint = Color.White)
@@ -323,7 +323,7 @@ private fun ChatBubble(message: ChatMessage, viewModel: MainViewModel, modifier:
             }
             if (!message.isUser) {
                 IconButton(onClick = { 
-                    clipboardManager.setText(androidx.compose.ui.text.AnnotatedString(message.text))
+                    clipboardManager.setPrimaryClip(android.content.ClipData.newPlainText("text", message.text))
                     android.widget.Toast.makeText(context, "Copied", android.widget.Toast.LENGTH_SHORT).show()
                 }) {
                     Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp), tint = com.musically.studio.ui.theme.MaveBlueGray200)

@@ -376,7 +376,7 @@ fun ConnectionsSection(
     spotifyConnected: Boolean,
     youtubeConnected: Boolean
 ) {
-    val isCompact = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == androidx.window.core.layout.WindowWidthSizeClass.COMPACT
+    val isCompact = currentWindowAdaptiveInfo().windowSizeClass.windowWidthDp < 600
     
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
         Text("Connections", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.Bold)

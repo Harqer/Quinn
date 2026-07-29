@@ -13,7 +13,7 @@ androidxTestExt = "1.3.0"
 androidxTestRunner = "1.7.0"
 androidxTestEspresso = "3.7.0"
 coroutines = "1.11.0"
-play-services-auth = "21.6.0"
+googleid = "1.1.1"
 hilt = "2.60.1"
 mockk = "1.14.11"
 robolectric = "4.16.1"
@@ -38,7 +38,7 @@ timber = "5.0.1"
 firebase-bom = "34.16.0"
 roborazzi = "1.70.0"
 uiautomator = "2.3.0"
-engageCore = "1.6.0"
+engage-core = "1.6.0"
 workManager = "2.11.2"
 androidxPalette = "1.0.0"
 firebaseDataconnect = "16.0.0-beta01"
@@ -48,7 +48,7 @@ billing = "7.1.1"
 
 [libraries]
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-google-play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth" }
+googleid-library = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 spotify-auth = { group = "com.spotify.android", name = "auth", version.ref = "spotify-auth" }
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
@@ -129,7 +129,7 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mo
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
 androidx-palette-ktx = { group = "androidx.palette", name = "palette-ktx", version.ref = "androidxPalette" }
 firebase-dataconnect = { group = "com.google.firebase", name = "firebase-dataconnect", version.ref = "firebaseDataconnect" }
-engage-core = { group = "com.google.android.engage", name = "engage-core", version.ref = "engageCore" }
+engage-core = { group = "com.google.android.engage", name = "engage-core", version.ref = "engage-core" }
 
 # Compose Multiplatform — shared UI (commonMain)
 [plugins]

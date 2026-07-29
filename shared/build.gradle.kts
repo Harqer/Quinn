@@ -68,7 +68,7 @@ kotlin {
             implementation(libs.androidx.compose.material.icons.extended)
 
             implementation(libs.google.material)
-            implementation(libs.google.play.services.auth)
+            implementation(libs.googleid.library)
             implementation(libs.androidx.identity)
             implementation(libs.androidx.identity.play)
             implementation(libs.androidx.core.ktx)

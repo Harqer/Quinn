@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -1419,7 +1420,7 @@ class MainViewModel @Inject constructor(
         if (device.type == DeviceType.BLUETOOTH && device.id.contains(":")) {
             // It's a MAC address. Attempt to create a bond (pair)
             try {
-                val adapter = BluetoothAdapter.getDefaultAdapter()
+                val adapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
                 val btDevice = adapter?.getRemoteDevice(device.id)
                 if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
                     if (btDevice?.bondState == BluetoothDevice.BOND_NONE) {
@@ -1441,7 +1442,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun startBluetoothDiscovery(activityContext: Context) {
-        val adapter = BluetoothAdapter.getDefaultAdapter()
+        val adapter = (activityContext.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
         if (adapter == null) {
             Timber.e("Bluetooth not supported on this device")
             return

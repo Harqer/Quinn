@@ -23,8 +23,8 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
 import timber.log.Timber
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.OAuthProvider
@@ -68,22 +68,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private val googleSignInLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result: androidx.activity.result.ActivityResult ->
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        try {
-            val account = task.getResult(com.google.android.gms.common.api.ApiException::class.java)
-            val idToken = account?.idToken
-            if (idToken != null) {
-                mainViewModel.loginWithGoogle(idToken.toString()) { success, _ ->
-                    // Navigation handled by state observations in MaveApp
-                }
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Something went wrong during sign-in.")
-        }
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -178,12 +163,38 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun launchGoogleSignIn() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.google_web_client_id)) 
-            .requestEmail()
-            .build()
-        val client = GoogleSignIn.getClient(this, gso)
-        googleSignInLauncher.launch(client.signInIntent)
+        lifecycleScope.launch {
+            try {
+                val credentialManager = CredentialManager.create(this@MainActivity)
+                val googleIdOption = GetGoogleIdOption.Builder()
+                    .setFilterByAuthorizedAccounts(false)
+                    .setServerClientId(getString(R.string.google_web_client_id))
+                    .setAutoSelectEnabled(true)
+                    .build()
+
+                val request = GetCredentialRequest.Builder()
+                    .addCredentialOption(googleIdOption)
+                    .build()
+
+                val result = credentialManager.getCredential(
+                    request = request,
+                    context = this@MainActivity
+                )
+
+                val credential = result.credential
+                if (credential is androidx.credentials.CustomCredential &&
+                    credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                    val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                    mainViewModel.loginWithGoogle(googleIdTokenCredential.idToken) { success, _ ->
+                        // Navigation handled by state observations
+                    }
+                } else {
+                    Timber.e("Unexpected type of credential")
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Google Sign-In failed")
+            }
+        }
     }
 
     private fun launchAppleSignIn(viewModel: MainViewModel) {

@@ -70,7 +70,9 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
         /**
          * Function to mark this entry as something that should be displayed within a [ModalBottomSheet].
          */
-        fun bottomSheet(modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties()) =
+        fun bottomSheet(modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(
+            securePolicy = androidx.compose.ui.window.SecureFlagPolicy.Inherit
+        )) =
             metadata {
                 put(BottomSheetKey, modalBottomSheetProperties)
             }

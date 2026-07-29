@@ -60,7 +60,7 @@ fun MaveApp(
     hasPermissions: Boolean
 ) {
     val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == androidx.window.core.layout.WindowWidthSizeClass.EXPANDED
+    val isExpanded = adaptiveInfo.windowSizeClass.windowWidthDp >= 840
 
     val topLevelRoutes = setOf<Route>(Route.Home, Route.Search, Route.Chat, Route.Podcast, Route.Devices, Route.Library)
     val startRoute: Route = Route.Welcome

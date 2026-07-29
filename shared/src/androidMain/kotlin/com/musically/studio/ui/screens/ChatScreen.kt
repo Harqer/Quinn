@@ -14,6 +14,7 @@ import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.style.rememberUpdatedStyleState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +27,6 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -52,8 +52,8 @@ fun ChatScreen(
 ) {
     val messages by viewModel.messages.collectAsState()
     var inputValue by remember { mutableStateOf("") }
-    val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
+    val clipboardManager = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
     val coroutineScope = rememberCoroutineScope()
     
     val imagePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -232,7 +232,7 @@ fun ChatScreen(
                                     Text(msg.text, fontSize = 16.sp)
                                 }
                                 IconButton(onClick = { 
-                                    clipboardManager.setText(AnnotatedString(msg.text))
+                                    clipboardManager.setPrimaryClip(android.content.ClipData.newPlainText("text", msg.text))
                                     android.widget.Toast.makeText(context, "Copied to clipboard", android.widget.Toast.LENGTH_SHORT).show()
                                 }) {
                                     Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp))
@@ -303,7 +303,7 @@ fun ChatScreen(
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     IconButton(onClick = { 
-                                        clipboardManager.setText(AnnotatedString(msg.text))
+                                        clipboardManager.setPrimaryClip(android.content.ClipData.newPlainText("text", msg.text))
                                         android.widget.Toast.makeText(context, "Copied to clipboard", android.widget.Toast.LENGTH_SHORT).show()
                                     }) {
                                         Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp))

@@ -17,15 +17,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.CustomCredential
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import kotlinx.coroutines.launch
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.OAuthProvider
 import com.musically.studio.ui.MainViewModel
 import timber.log.Timber
 import androidx.activity.compose.LocalActivity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.runtime.rememberCoroutineScope
 
 @Composable
 fun AuthScreen(
@@ -37,23 +41,7 @@ fun AuthScreen(
     val clientIdResId = context.resources.getIdentifier("default_web_client_id", "string", context.packageName)
     val webClientId = if (clientIdResId != 0) stringResource(id = clientIdResId) else ""
 
-    val googleSignInLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                account.idToken?.let { token ->
-                    viewModel.loginWithGoogle(token) { success, _ ->
-                        if (success) {
-                            onAuthSuccess()
-                        }
-                    }
-                }
-            } catch (e: ApiException) {
-                Timber.e(e, "Google Sign-In failed")
-            }
-        }
-    }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier.fillMaxSize().padding(32.dp),
@@ -63,12 +51,35 @@ fun AuthScreen(
         Button(
             onClick = {
                 if (webClientId.isNotEmpty()) {
-                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(webClientId)
-                        .requestEmail()
-                        .build()
-                    val client = GoogleSignIn.getClient(context, gso)
-                    googleSignInLauncher.launch(client.signInIntent)
+                    coroutineScope.launch {
+                        try {
+                            val credentialManager = CredentialManager.create(context)
+                            val googleIdOption = GetGoogleIdOption.Builder()
+                                .setFilterByAuthorizedAccounts(false)
+                                .setServerClientId(webClientId)
+                                .setAutoSelectEnabled(true)
+                                .build()
+                            
+                            val request = GetCredentialRequest.Builder()
+                                .addCredentialOption(googleIdOption)
+                                .build()
+                            
+                            val result = credentialManager.getCredential(request = request, context = context)
+                            val credential = result.credential
+                            
+                            if (credential is CustomCredential && 
+                                credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                                val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                                viewModel.loginWithGoogle(googleIdTokenCredential.idToken) { success, _ ->
+                                    if (success) {
+                                        onAuthSuccess()
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            Timber.e(e, "Google Sign-In failed")
+                        }
+                    }
                 }
             },
             modifier = Modifier.fillMaxWidth().height(56.dp)
