@@ -23,8 +23,6 @@ fun BirthdayInputScreen(
     onBackClick: () -> Unit
 ) {
     var dateMillis by remember { mutableStateOf<Long?>(null) }
-    var showPicker by remember { mutableStateOf(false) }
-    
     val dateLabel = if (dateMillis != null) {
         SimpleDateFormat("dd MMMM yyyy", Locale.US).format(Date(dateMillis!!))
     } else {
@@ -63,31 +61,14 @@ fun BirthdayInputScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            Box(modifier = Modifier.clickable { showPicker = true }) {
+            Box {
                 MaveTextField(
                     value = dateLabel,
-                    onValueChange = {},
-                    label = "",
-                    enabled = false,
+                    onValueChange = { viewModel.regBirthday = it; dateMillis = null },
+                    label = "YYYY-MM-DD",
+                    enabled = true,
                     modifier = Modifier.fillMaxWidth()
                 )
-            }
-            
-            if (showPicker) {
-                val datePickerState = rememberDatePickerState()
-                DatePickerDialog(
-                    onDismissRequest = { showPicker = false },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            dateMillis = datePickerState.selectedDateMillis
-                            showPicker = false
-                        }) {
-                            Text("Done", color = MaterialTheme.colorScheme.primary)
-                        }
-                    }
-                ) {
-                    DatePicker(state = datePickerState)
-                }
             }
         }
     }

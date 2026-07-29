@@ -118,6 +118,7 @@ fun AlbumViewScreen(
                                 }
                                 context.startActivity(android.content.Intent.createChooser(shareIntent, "Share Album"))
                             },
+                            onDownloadClick = onDownloadClick,
                             onMoreClick = { albumTracks.firstOrNull()?.let { onMoreClick(it.id) } },
                             onPlayClick = { albumTracks.firstOrNull()?.let { onTrackClick(it.id) } },
                             modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 16.dp)

@@ -45,13 +45,7 @@ fun maveEntryProvider(
     entry<Route.AuthOptions> {
         val activity = androidx.activity.compose.LocalActivity.current
         AuthOptionsScreen(
-            onEmailClick = { 
-                if (activity != null) {
-                    viewModel.verifyEmail(activity)
-                } else {
-                    navigator.navigate(Route.EmailInput)
-                }
-            },
+            onEmailClick = { navigator.navigate(Route.EmailInput) },
             onGoogleClick = { viewModel.triggerGoogleSignIn() },
             onAppleClick = { viewModel.triggerAppleSignIn() },
             onLoginClick = { navigator.navigate(Route.Login) },
@@ -62,7 +56,7 @@ fun maveEntryProvider(
     entry<Route.Login> {
         LoginScreen(
             onLoginSuccess = { navigator.navigate(Route.Home) },
-            onNavigateToSignUp = { navigator.navigate(Route.Welcome) },
+            onNavigateToSignUp = { navigator.navigate(Route.AuthOptions) },
             viewModel = viewModel
         )
     }
@@ -148,7 +142,14 @@ fun maveEntryProvider(
     ) {
         ChatScreen(
             onNavigateBack = { navigator.goBack() },
-            onMenuClick = onMenuClick
+            onMenuClick = onMenuClick,
+            onTrackClick = { trackId ->
+                viewModel.tracks.value.find { it.id == trackId }?.let {
+                    viewModel.playTrack(it)
+                } ?: viewModel.communityTracks.value.find { it.id == trackId }?.let {
+                    viewModel.playTrack(it)
+                }
+            }
         )
     }
 

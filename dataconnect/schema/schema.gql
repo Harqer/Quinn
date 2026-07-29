@@ -7,6 +7,13 @@ type User @table(key: "uid") {
   favoriteGenres: [String!]
 }
 
+type AuthIdentity @table(key: ["provider", "providerSubject"]) {
+  provider: String!
+  providerSubject: String!
+  user: User!
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
 type UserSettings @table(key: "userId") {
   userId: String! @default(expr: "auth.uid")
   user: User! @unique

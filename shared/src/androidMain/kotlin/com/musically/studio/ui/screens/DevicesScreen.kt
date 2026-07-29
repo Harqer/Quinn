@@ -211,6 +211,14 @@ fun DevicesScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable(interactionSource = interactionSource, indication = null) { 
+                            if (device.name.contains("Meta", ignoreCase = true) || device.name.contains("Ray-Ban", ignoreCase = true)) {
+                                if (context is android.app.Activity) {
+                                    val isRegistered = com.meta.wearable.dat.core.Wearables.registrationState.value == com.meta.wearable.dat.core.types.RegistrationState.REGISTERED
+                                    if (!isRegistered) {
+                                        com.meta.wearable.dat.core.Wearables.startRegistration(context)
+                                    }
+                                }
+                            }
                             viewModel.selectDevice(device)
                         }
                         .styleable(styleState = styleState, style = MaveStyles.deviceCardStyle)

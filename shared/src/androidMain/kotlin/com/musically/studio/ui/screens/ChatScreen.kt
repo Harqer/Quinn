@@ -48,6 +48,7 @@ import timber.log.Timber
 fun ChatScreen(
     onNavigateBack: () -> Unit,
     onMenuClick: () -> Unit = {},
+    onTrackClick: (String) -> Unit = {},
     viewModel: ChatViewModel = viewModel()
 ) {
     val messages by viewModel.messages.collectAsState()
@@ -248,7 +249,9 @@ fun ChatScreen(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .clickable(interactionSource = trackInteractionSource, indication = null) {}
+                                        .clickable(interactionSource = trackInteractionSource, indication = null) {
+                                            onTrackClick(msg.id)
+                                        }
                                         .styleable(styleState = trackStyleState, style = MaveStyles.musicTrackCardStyle), // Styles API compliance
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {

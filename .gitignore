@@ -38,14 +38,19 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Git
+# Dotfiles Catch-All
+.*
 !.gitignore
 !/.github/
 !/.agents/
+!/.lavish/
+!.firebaserc
+!.infisical.json
+
+# Exclude Specific Builds and Assets
 *.apk
 google-services.json
-index.html
 node_modules/
+index.html
 script.js
 styles.css
-index.html

@@ -63,8 +63,6 @@ class MainActivity : ComponentActivity() {
         val audioGranted = permissions[Manifest.permission.RECORD_AUDIO] ?: false
         if (cameraGranted && audioGranted) {
             permissionsGranted.value = true
-            // Start DAT Registration once permissions are granted
-            Wearables.startRegistration(this)
         }
     }
 
@@ -186,7 +184,9 @@ class MainActivity : ComponentActivity() {
                     credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                     val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
                     mainViewModel.loginWithGoogle(googleIdTokenCredential.idToken) { success, _ ->
-                        // Navigation handled by state observations
+                        if (success) {
+                            mainViewModel.navigateTo(Route.Home)
+                        }
                     }
                 } else {
                     Timber.e("Unexpected type of credential")
@@ -202,7 +202,7 @@ class MainActivity : ComponentActivity() {
         FirebaseAuth.getInstance().startActivityForSignInWithProvider(this, provider.build())
             .addOnSuccessListener {
                 viewModel.startRtdbSync()
-                // Navigation will update via isUserLoggedIn check or state observation
+                viewModel.navigateTo(Route.Home)
             }
             .addOnFailureListener { e ->
                 Timber.e(e, "Apple Sign-In failed")

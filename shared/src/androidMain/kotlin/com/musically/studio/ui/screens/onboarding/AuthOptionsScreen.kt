@@ -55,7 +55,7 @@ fun AuthOptionsScreen(
             Spacer(modifier = Modifier.height(48.dp))
             
             MaveButton(
-                text = "Continue with Verified Email",
+                text = "Continue with email",
                 onClick = onEmailClick,
                 modifier = Modifier.fillMaxWidth(),
                 style = MaveStyles.primaryButton

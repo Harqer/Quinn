@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
@@ -36,6 +37,7 @@ fun MediaCoverCard(
     isLiked: Boolean = false,
     onLikeClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
+    onDownloadClick: () -> Unit = {},
     onMoreClick: () -> Unit = {},
     onPlayClick: () -> Unit = {},
     style: Style = Style
@@ -92,6 +94,14 @@ fun MediaCoverCard(
                             Icon(
                                 imageVector = Icons.Default.Share,
                                 contentDescription = "Share",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        IconButton(onClick = onDownloadClick, modifier = Modifier.size(36.dp)) {
+                            Icon(
+                                imageVector = Icons.Default.Download,
+                                contentDescription = "Download",
                                 tint = Color.White,
                                 modifier = Modifier.size(20.dp)
                             )

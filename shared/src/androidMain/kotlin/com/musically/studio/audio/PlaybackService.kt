@@ -58,6 +58,8 @@ class PlaybackService : MediaSessionService() {
         
         player.setAudioAttributes(audioAttributes, true)
         
+        createNotificationChannel()
+        
         mediaSession = MediaSession.Builder(this, player)
             .setCallback(CustomMediaSessionCallback())
             .build()
