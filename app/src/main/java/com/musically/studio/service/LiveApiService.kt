@@ -16,8 +16,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.google.firebase.vertexai.type.Type
-
 @Singleton
 class LiveApiService @Inject constructor(
     private val auth: FirebaseAuth
@@ -28,39 +26,21 @@ class LiveApiService @Inject constructor(
     private val tools = listOf(
         Tool(
             listOf(
-                FunctionDeclaration(
+                com.google.firebase.vertexai.type.defineFunction(
                     "generate_full_track",
                     "Generate a new, full professional music track or background score (Lyria 3).",
-                    Schema(
-                        Type.OBJECT,
-                        properties = mapOf(
-                            "prompt" to Schema(Type.STRING, description = "Musical style and description")
-                        ),
-                        required = listOf("prompt")
-                    )
-                ),
-                FunctionDeclaration(
+                    com.google.firebase.vertexai.type.Schema.str("prompt", "Musical style and description")
+                ) { prompt -> org.json.JSONObject() },
+                com.google.firebase.vertexai.type.defineFunction(
                     "tweak_instrumentation",
                     "Modify or tweak the instruments, density, or style of the current playing track (Lyria RealTime).",
-                    Schema(
-                        Type.OBJECT,
-                        properties = mapOf(
-                            "prompt" to Schema(Type.STRING, description = "What to tweak (e.g. add more bass, make it faster)")
-                        ),
-                        required = listOf("prompt")
-                    )
-                ),
-                FunctionDeclaration(
+                    com.google.firebase.vertexai.type.Schema.str("prompt", "What to tweak (e.g. add more bass, make it faster)")
+                ) { prompt -> org.json.JSONObject() },
+                com.google.firebase.vertexai.type.defineFunction(
                     "jam_live",
                     "Enter live jamming mode using a MIDI controller or live instrument input (MRT2).",
-                    Schema(
-                        Type.OBJECT,
-                        properties = mapOf(
-                            "intent" to Schema(Type.STRING, description = "The user intent for jamming")
-                        ),
-                        required = listOf("intent")
-                    )
-                )
+                    com.google.firebase.vertexai.type.Schema.str("intent", "The user intent for jamming")
+                ) { intent -> org.json.JSONObject() }
             )
         )
     )

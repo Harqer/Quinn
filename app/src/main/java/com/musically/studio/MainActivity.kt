@@ -47,6 +47,8 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.musically.studio.audio.PlaybackService
+import com.meta.wearable.dat.core.Wearables
+import com.meta.wearable.dat.core.types.RegistrationState
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -62,6 +64,8 @@ class MainActivity : ComponentActivity() {
         val audioGranted = permissions[Manifest.permission.RECORD_AUDIO] ?: false
         if (cameraGranted && audioGranted) {
             permissionsGranted.value = true
+            // Start DAT Registration once permissions are granted
+            Wearables.startRegistration(this)
         }
     }
 
@@ -97,6 +101,16 @@ class MainActivity : ComponentActivity() {
             }
             
             LaunchedEffect(Unit) {
+                // Monitor DAT Registration state
+                launch {
+                    Wearables.registrationState.collectLatest { state ->
+                        Timber.d("Wearable Registration State: $state")
+                        if (state == RegistrationState.REGISTERED && permissionsGranted.value) {
+                            Timber.i("Wearables SDK successfully registered.")
+                        }
+                    }
+                }
+                
                 mainViewModel.authSideEffect.collectLatest { effect ->
                     when (effect) {
                         AuthSideEffect.LaunchGoogleSignIn -> launchGoogleSignIn()

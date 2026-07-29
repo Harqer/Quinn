@@ -253,25 +253,71 @@ export class MusicService {
       return { url: coverResult.url, prompt: coverResult.prompt, type, modelUsed: coverResult.modelUsed };
     }
 
-    const ai = getAi();
-    const prompt = `Analyze vision stream and generate music prompts for ${type || 'ambient'}`;
-    const { LYRIA_REGISTRY } = await import("./ai.js");
-
-    let inputToModel: any = prompt;
-    if (image) {
-      const mimeType = image.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
-      const base64Data = image.includes(',') ? image.split(',')[1] : image;
-      inputToModel = [
-        prompt, 
-        { image: { data: base64Data, mime_type: mimeType } } // Interactions API format
-      ];
-    }
+    const { getSecret } = await import("../config/secrets.js");
+    const { GoogleGenAI } = await import("@google/genai");
+    const { encodeWAV } = await import("../utils/wav.js");
     
-    const interaction = await (ai as any).interactions.create({
-      model: LYRIA_REGISTRY.FULL_TRACK,
-      input: inputToModel
-    });
-    return { response: interaction.output_text };
+    // Explicitly use v1alpha for Lyria RealTime
+    const apiKey = getSecret("GEMINI_API_KEY") as string;
+    const aiAlpha = new GoogleGenAI({ apiKey, httpOptions: { apiVersion: "v1alpha" } });
+
+    const promptText = type || "Ambient electronic";
+    
+    // Get track metadata from Gemini concurrently
+    let trackName = "Generated Track";
+    let artistName = "Mave AI";
+    let coverUrl = "";
+
+    try {
+      const metaAi = getAi();
+      const metaRes = await metaAi.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: `Generate a JSON object with 'trackName' and 'artistName' for a song described as: ${promptText}. Do not use markdown tags, just return the JSON.`,
+      });
+      const metaData = JSON.parse(metaRes.text || "{}");
+      if (metaData.trackName) trackName = metaData.trackName;
+      if (metaData.artistName) artistName = metaData.artistName;
+    } catch (e) {
+      logger.warn("Failed to generate metadata for track", e);
+    }
+
+    try {
+      const metaAi = getAi();
+      const lyriaRes = await metaAi.models.generateContent({
+        model: "lyria-3-pro-preview",
+        contents: promptText
+      });
+
+      const audioChunks: Buffer[] = [];
+      if (lyriaRes.candidates?.[0]?.content?.parts) {
+        for (const part of lyriaRes.candidates[0].content.parts) {
+          if (part.inlineData?.data) {
+            audioChunks.push(Buffer.from(part.inlineData.data, "base64"));
+          }
+        }
+      }
+      
+      let audioUrl = "";
+      if (audioChunks.length > 0) {
+        // Assume audio comes back as raw PCM or already wav, let's wrap it in WAV to be safe or pass through
+        const combinedPcm = Buffer.concat(audioChunks);
+        const wavBuffer = encodeWAV(combinedPcm, 2, 48000);
+        audioUrl = `data:audio/wav;base64,${wavBuffer.toString("base64")}`;
+      } else {
+        throw new Error("No audio returned from Lyria 3");
+      }
+
+      return {
+        response: `I've generated a new track based on your prompt: ${promptText}. Hope you enjoy it!`,
+        audioUrl,
+        coverUrl,
+        trackName,
+        artistName,
+      };
+    } catch (err) {
+      logger.error("Failed to generate music via Lyria 3 Pro", err);
+      throw err;
+    }
   }
 
 

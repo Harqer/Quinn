@@ -139,7 +139,7 @@ fun MaveHomeScreen(
                 if (communityTracks.isNotEmpty()) {
                     item {
                         MaveCarousel(
-                            title = "Community Vibes",
+                            title = "Community Songs",
                             tracks = communityTracks,
                             onTrackClick = onTrackClick
                         )

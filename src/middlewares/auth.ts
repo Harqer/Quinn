@@ -64,6 +64,10 @@ export const verifyAppCheck = async (
   const token = req.header("X-Firebase-AppCheck");
 
   if (!token) {
+    if (process.env.NODE_ENV !== "production") {
+      logger.warn("[APP_CHECK] Missing token. Bypassing in development mode.");
+      return next();
+    }
     res.status(401).json({ error: "Unauthorized: Missing App Check token." });
     return;
   }
@@ -74,6 +78,10 @@ export const verifyAppCheck = async (
     next();
   } catch (err: any) {
     logger.error("[APP_CHECK] App Check token validation failed:", { error: err.message || err });
+    if (process.env.NODE_ENV !== "production") {
+      logger.warn("[APP_CHECK] Invalid token. Bypassing in development mode.");
+      return next();
+    }
     res.status(401).json({ error: "Unauthorized: Invalid App Check token." });
   }
 };
@@ -103,7 +111,7 @@ export const checkDailyQuota = async (
     const currentCount = await redis.get(quotaKey);
     const count = currentCount ? parseInt(currentCount, 10) : 0;
 
-    const DAILY_LIMIT = req.user?.isGuest ? 5 : 50;
+    const DAILY_LIMIT = req.user?.isGuest ? 50 : 5000;
     
     if (count >= DAILY_LIMIT) {
       logger.warn(`[QUOTA] User exceeded daily generation limit.`, { uid, limit: DAILY_LIMIT, isGuest: req.user?.isGuest });

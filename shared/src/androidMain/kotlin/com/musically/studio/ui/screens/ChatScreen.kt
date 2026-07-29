@@ -23,6 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
@@ -31,15 +34,20 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import android.net.Uri
 import android.util.Base64
+import android.graphics.Bitmap
+import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.musically.studio.ui.theme.LocalMaveColorScheme
 import com.musically.studio.ui.theme.MaveStyles
+import com.musically.studio.ui.components.atoms.animated_images
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     onNavigateBack: () -> Unit,
+    onMenuClick: () -> Unit = {},
     viewModel: ChatViewModel = viewModel()
 ) {
     val messages by viewModel.messages.collectAsState()
@@ -59,7 +67,22 @@ fun ChatScreen(
                         viewModel.sendVisionFrame(base64, mimeType)
                     }
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Timber.e(e, "Failed to capture or encode image from URI")
+                }
+            }
+        }
+    }
+    
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
+        bitmap?.let {
+            coroutineScope.launch(Dispatchers.IO) {
+                try {
+                    val stream = ByteArrayOutputStream()
+                    it.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+                    val base64 = Base64.encodeToString(stream.toByteArray(), Base64.NO_WRAP)
+                    viewModel.sendVisionFrame(base64, "image/jpeg")
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to capture or encode image from Camera")
                 }
             }
         }
@@ -79,13 +102,8 @@ fun ChatScreen(
             TopAppBar(
                 title = { Text("Mave", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = onMenuClick) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "Options")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -109,6 +127,9 @@ fun ChatScreen(
                 ) {
                     IconButton(onClick = { imagePickerLauncher.launch("image/*") }) {
                         Icon(Icons.Default.Add, contentDescription = "Add")
+                    }
+                    IconButton(onClick = { cameraLauncher.launch(null) }) {
+                        Icon(Icons.Default.PhotoCamera, contentDescription = "Camera", tint = LocalMaveColorScheme.current.onSurface)
                     }
                     
                     TextField(
@@ -139,11 +160,27 @@ fun ChatScreen(
                             Icon(Icons.Default.Send, contentDescription = "Send", tint = Color.Black)
                         }
                     } else {
-                        IconButton(onClick = { /* Mic */ }) {
+                        val context = LocalContext.current
+                        IconButton(onClick = { viewModel.recordVoice(context) }) {
                             Icon(Icons.Default.Mic, contentDescription = "Mic")
                         }
-                        IconButton(onClick = { imagePickerLauncher.launch("image/*") }) {
-                            Icon(Icons.Default.PhotoCamera, contentDescription = "Camera", tint = LocalMaveColorScheme.current.onSurface)
+                        IconButton(
+                            onClick = {
+                                coroutineScope.launch {
+                                    inputValue = "Generate cover art for: "
+                                }
+                            }
+                        ) {
+                            Icon(Icons.Default.Palette, contentDescription = "Generate Cover Art", modifier = Modifier.size(20.dp))
+                        }
+                        IconButton(
+                            onClick = {
+                                coroutineScope.launch {
+                                    inputValue = "Generate a music video for: "
+                                }
+                            }
+                        ) {
+                            Icon(animated_images, contentDescription = "Generate Video", modifier = Modifier.size(20.dp))
                         }
                     }
                 }
@@ -151,25 +188,29 @@ fun ChatScreen(
         },
         containerColor = Color.Transparent
         ) { paddingValues ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .consumeWindowInsets(paddingValues) // Handle edge-to-edge correctly
-                    .padding(horizontal = 16.dp),
-                contentPadding = PaddingValues(bottom = 100.dp) // Removed hardcoded top=24.dp
-            ) {
-            item {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp, top = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            Box(modifier = Modifier.fillMaxSize()) {
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(id = com.musically.studio.shared.R.drawable.logo),
+                    contentDescription = "Mave Background",
+                    modifier = Modifier.fillMaxSize().alpha(0.05f),
+                    contentScale = ContentScale.Crop
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .consumeWindowInsets(paddingValues) // Handle edge-to-edge correctly
+                        .padding(horizontal = 16.dp),
+                    contentPadding = PaddingValues(bottom = 100.dp) // Removed hardcoded top=24.dp
                 ) {
-                    Icon(
-                        Icons.Default.GraphicEq, 
-                        contentDescription = null, 
-                        modifier = Modifier.size(48.dp).padding(bottom = 8.dp)
-                    )
-                    Text("Your personal audio curator. Ready to discover?", fontSize = 14.sp)
+            if (messages.isEmpty()) {
+                item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp, top = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Your personal audio curator. Ready to discover?", fontSize = 14.sp)
+                    }
                 }
             }
             
@@ -179,15 +220,6 @@ fun ChatScreen(
                         modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                         horizontalArrangement = Arrangement.Start
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .padding(4.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
                         Column(
                             modifier = Modifier
                                 .weight(1f, fill = false)
@@ -197,7 +229,10 @@ fun ChatScreen(
                                 SelectionContainer(modifier = Modifier.weight(1f, fill = false)) {
                                     Text(msg.text, fontSize = 16.sp)
                                 }
-                                IconButton(onClick = { clipboardManager.setText(AnnotatedString(msg.text)) }) {
+                                IconButton(onClick = { 
+                                    clipboardManager.setText(AnnotatedString(msg.text))
+                                    android.widget.Toast.makeText(context, "Copied to clipboard", android.widget.Toast.LENGTH_SHORT).show()
+                                }) {
                                     Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp))
                                 }
                             }
@@ -265,7 +300,10 @@ fun ChatScreen(
                                     .styleable(style = MaveStyles.userMessageBubbleStyle) // Styles API compliance
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    IconButton(onClick = { clipboardManager.setText(AnnotatedString(msg.text)) }) {
+                                    IconButton(onClick = { 
+                                        clipboardManager.setText(AnnotatedString(msg.text))
+                                        android.widget.Toast.makeText(context, "Copied to clipboard", android.widget.Toast.LENGTH_SHORT).show()
+                                    }) {
                                         Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp))
                                     }
                                     SelectionContainer {
@@ -280,5 +318,6 @@ fun ChatScreen(
             }
         }
     }
+}
 }
 }

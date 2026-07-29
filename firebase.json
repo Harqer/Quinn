@@ -30,6 +30,9 @@
       }
     ]
   },
+  "extensions": {
+    "firestore-stripe-payments": "stripe/firestore-stripe-payments@latest"
+  },
   "dataconnect": {
     "source": "dataconnect"
   },

@@ -37,9 +37,13 @@ class UserProfileScreenTest {
         val mockDb = Mockito.mock(FirebaseDatabase::class.java)
         val mockSession = Mockito.mock(MaveSessionManager::class.java)
         val mockGeminiLive = Mockito.mock(com.musically.studio.network.GeminiLiveManager::class.java)
+        Mockito.doReturn(kotlinx.coroutines.flow.MutableSharedFlow<org.json.JSONObject>()).`when`(mockGeminiLive).functionCalls
+        Mockito.doReturn(kotlinx.coroutines.flow.MutableSharedFlow<String>()).`when`(mockGeminiLive).transcripts
+        Mockito.doReturn(kotlinx.coroutines.flow.MutableSharedFlow<String>()).`when`(mockGeminiLive).thoughts
+        Mockito.doReturn(kotlinx.coroutines.flow.MutableStateFlow(false)).`when`(mockGeminiLive).connectionState
         val mockFlow = kotlinx.coroutines.flow.MutableSharedFlow<String>()
         Mockito.doReturn(mockFlow).`when`(mockSession).events
-        viewModel = MainViewModel(ApplicationProvider.getApplicationContext(), FakeApiClient(), mockSession, mockGeminiLive, mockAuth, mockDb)
+        viewModel = MainViewModel(ApplicationProvider.getApplicationContext(), FakeApiClient(), mockSession, mockGeminiLive, org.mockito.Mockito.mock(com.musically.studio.network.StreamingApiClient::class.java), mockAuth, mockDb)
     }
 
     @Test

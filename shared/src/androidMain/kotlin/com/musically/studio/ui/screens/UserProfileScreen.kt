@@ -98,7 +98,7 @@ fun UserProfileScreen(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        "This will permanently delete your Mave Studio account and all your vibes. This action cannot be undone.",
+                        "This will permanently delete your Mave Studio account and all your songs. This action cannot be undone.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -370,7 +370,7 @@ fun UserProfileScreen(
                                     color = MaterialTheme.colorScheme.error
                                 )
                                 Text(
-                                    "Permanently remove your account and all vibes",
+                                    "Permanently remove your account and all songs",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -408,7 +408,7 @@ fun UserProfileScreen(
             // Vibes section header
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
-                    text = if (isOwnProfile) "My Vibes" else "Public Vibes",
+                    text = if (isOwnProfile) "My Songs" else "Public Songs",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.fillMaxWidth()
@@ -424,7 +424,7 @@ fun UserProfileScreen(
             } else if (vibes.isEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Text(
-                        text = "No public vibes found.",
+                        text = "No public songs found.",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

@@ -13,6 +13,8 @@ export interface PlayerBarProps {
   isPlaying?: boolean;
   currentTime?: number;
   duration?: number;
+  isShuffleEnabled?: boolean;
+  repeatMode?: 'none' | 'all' | 'one';
   onPlayPause?: (e: React.MouseEvent) => void;
   onSeek?: (time: number) => void;
   onShuffle?: (e: React.MouseEvent) => void;
@@ -29,6 +31,8 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({
   isPlaying = false,
   currentTime = 0,
   duration = 0,
+  isShuffleEnabled = false,
+  repeatMode = 'none',
   onPlayPause,
   onSeek,
   onShuffle,
@@ -81,7 +85,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({
       <div className="hidden md:flex flex-col items-center justify-center max-w-[40%] w-full gap-2">
         <div className="flex items-center gap-4">
           <button 
-            className="text-text-secondary hover:text-white transition-colors" 
+            className={`transition-colors ${isShuffleEnabled ? 'text-primary' : 'text-text-secondary hover:text-white'}`} 
             disabled={isEmpty}
             onClick={(e) => { e.stopPropagation(); onShuffle?.(e); }}
           >
@@ -114,11 +118,13 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({
             <span className="material-symbols-outlined text-[24px]">skip_next</span>
           </button>
           <button 
-            className="text-text-secondary hover:text-white transition-colors" 
+            className={`transition-colors ${repeatMode !== 'none' ? 'text-primary' : 'text-text-secondary hover:text-white'}`} 
             disabled={isEmpty}
             onClick={(e) => { e.stopPropagation(); onRepeat?.(e); }}
           >
-            <span className="material-symbols-outlined text-[20px]">repeat</span>
+            <span className="material-symbols-outlined text-[20px] relative">
+              {repeatMode === 'one' ? 'repeat_one' : 'repeat'}
+            </span>
           </button>
         </div>
         <div className="flex items-center gap-2 w-full text-xs text-text-secondary font-medium">

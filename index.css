@@ -123,3 +123,11 @@ body {
   border: 3px solid #121212;
   border-radius: 6px;
 }
+
+.custom-scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar-hidden {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

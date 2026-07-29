@@ -8,6 +8,10 @@ query GetUserTracks @auth(level: USER) {
     artistName
     albumName
     imageUrl
+    audioUrl
+    prompt
+    visibility
+    isCommunity
     createdAt
   }
 }
@@ -78,5 +82,109 @@ query GetAudiobooks @auth(level: PUBLIC) {
     imageUrl
     duration
     audioUrl
+  }
+}
+
+query GetUserSettings @auth(level: USER) {
+  userSettings(key: { userId_expr: "auth.uid" }) {
+    userId
+    isPremium
+    theme
+    parentalControlsEnabled
+    stripeCustomerId
+  }
+}
+
+query GetPaymentHistory @auth(level: USER) {
+  paymentHistories(
+    where: { user: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    amount
+    currency
+    status
+    stripeInvoiceId
+    createdAt
+  }
+}
+
+query GetLikedTracks @auth(level: USER) {
+  likedTracks(
+    where: { user: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ addedAt: DESC }]
+  ) {
+    track {
+      id
+      name
+      artistName
+      albumName
+      imageUrl
+      audioUrl
+      prompt
+      visibility
+      isCommunity
+      createdAt
+    }
+    addedAt
+  }
+}
+
+query GetBookmarkedTracks @auth(level: USER) {
+  bookmarkedTracks(
+    where: { user: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ addedAt: DESC }]
+  ) {
+    track {
+      id
+      name
+      artistName
+      albumName
+      imageUrl
+      audioUrl
+      prompt
+      visibility
+      isCommunity
+      createdAt
+    }
+    addedAt
+  }
+}
+
+query GetUserCameraCaptures @auth(level: USER) {
+  cameraCaptures(
+    where: { user: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    imageUrl
+    videoUrl
+    environmentData
+    createdAt
+    generatedTrack {
+      id
+      name
+      imageUrl
+      audioUrl
+    }
+  }
+}
+
+query GetUserVideoDigestions @auth(level: USER) {
+  videoDigestions(
+    where: { user: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    videoUrl
+    extractedAudioUrl
+    atmosphereSummary
+    createdAt
+    generatedTrack {
+      id
+      name
+      imageUrl
+      audioUrl
+    }
   }
 }

@@ -147,7 +147,8 @@ fun maveEntryProvider(
         }
     ) {
         ChatScreen(
-            onNavigateBack = { navigator.goBack() }
+            onNavigateBack = { navigator.goBack() },
+            onMenuClick = onMenuClick
         )
     }
 
@@ -349,6 +350,9 @@ fun maveEntryProvider(
             },
             onLyricsClick = { 
                 navigator.navigate(Route.Lyrics(track?.id ?: ""))
+            },
+            onDeviceClick = {
+                navigator.navigate(Route.Devices)
             }
         )
     }

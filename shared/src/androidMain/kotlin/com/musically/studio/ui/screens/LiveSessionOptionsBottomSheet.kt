@@ -54,8 +54,7 @@ fun LiveSessionOptionsBottomSheet(
             )
             
             val onClear: () -> Unit = {
-                viewModel.stopLiveSession()
-                viewModel.startLiveSession()
+                viewModel.clearLiveSessionHistory()
                 onDismiss()
             }
 

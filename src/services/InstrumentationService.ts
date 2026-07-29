@@ -1,6 +1,5 @@
 import WebSocket from "ws";
-import fetch from "node-fetch";
-import FormData from "form-data";
+
 import logger from "../config/logger.js";
 import { Duplex } from "stream";
 
@@ -22,10 +21,7 @@ export class InstrumentationService {
   async extractStyleFromAudio(audioBuffer: Buffer): Promise<string | null> {
     try {
       const form = new FormData();
-      form.append("audio_file", audioBuffer, {
-        filename: "captured_style.wav",
-        contentType: "audio/wav",
-      });
+      form.append("audio_file", new Blob([new Uint8Array(audioBuffer)], { type: "audio/wav" }), "captured_style.wav");
 
       const response = await fetch(`${this.mrtBackendUrl}/api/extract_style`, {
         method: "POST",

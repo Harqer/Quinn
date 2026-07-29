@@ -1,5 +1,5 @@
 import { decodeSdJwt } from "@sd-jwt/decode";
-import fetch from "node-fetch";
+
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import logger from "../config/logger.js";
 

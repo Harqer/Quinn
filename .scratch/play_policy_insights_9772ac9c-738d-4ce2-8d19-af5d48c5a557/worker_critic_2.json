@@ -1,0 +1,62 @@
+[
+    {
+        "psl_constant": "VIDEOS",
+        "policy_id": "data_safety_section",
+        "issue_summary": "**User-Initiated Collection**: Disclosure exempt, but **must be declared** in Play Store form.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "/home/shaolin/lyria/dist/assets/ChatScreen-9DCyr41R.js"
+        ],
+        "evidence": "ChatScreen-9DCyr41R.js contains a file input allowing video uploads via FileReader, which are triggered by user interaction.",
+        "recommendation": "Declare user-initiated video collection in the Play Store Data Safety form.",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_4.json",
+        "finding_id": "10"
+    },
+    {
+        "psl_constant": "AUDIO",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "**Background Transfer (Disclosure Claimed)**: Evidence found; requires Critic verification.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/WearableStreamingService.kt",
+            "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+        ],
+        "evidence": "WearableStreamingService.kt captures MIC audio and pipes it to a WebSocket. WelcomeScreen.kt provides an AlertDialog gatekeeping this action.",
+        "recommendation": "Ensure that the gatekeeper in WelcomeScreen is completely robust and blocks background audio transfer until explicitly accepted.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "DISCLOSED",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_4.json",
+        "finding_id": "11"
+    },
+    {
+        "psl_constant": "NAME",
+        "policy_id": "data_safety_section",
+        "issue_summary": "**User-Initiated Collection**: Disclosure exempt, but **must be declared** in Play Store form.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+            "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+            "/home/shaolin/lyria/src/services/CredentialVerifier.ts"
+        ],
+        "evidence": "User-initiated login request extracts family_name/given_name and transmits them to the first-party backend via apiClient.",
+        "recommendation": "Declare Name collection in the Play Store Data Safety form.",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_5.json",
+        "finding_id": "13"
+    }
+]

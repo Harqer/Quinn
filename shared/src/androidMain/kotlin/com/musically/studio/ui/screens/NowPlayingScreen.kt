@@ -44,7 +44,8 @@ fun NowPlayingScreen(
     onCollapse: () -> Unit,
     onMoreOptions: (String) -> Unit,
     onQueueClick: () -> Unit = {},
-    onLyricsClick: () -> Unit = {}
+    onLyricsClick: () -> Unit = {},
+    onDeviceClick: () -> Unit = {}
 ) {
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     val trackProgress by viewModel.trackProgress.collectAsStateWithLifecycle()
@@ -53,6 +54,7 @@ fun NowPlayingScreen(
     val currentCoverUrl by viewModel.currentCoverUrl.collectAsStateWithLifecycle()
     val currentVideoUrl by viewModel.currentVideoUrl.collectAsStateWithLifecycle()
     val devices by viewModel.devices.collectAsStateWithLifecycle()
+    val volume by viewModel.volume.collectAsStateWithLifecycle()
     val localCtx = androidx.compose.ui.platform.LocalContext.current
 
     val adaptiveInfo = currentWindowAdaptiveInfo()
@@ -99,7 +101,8 @@ fun NowPlayingScreen(
                     onPrevious = { viewModel.skipPrevious() },
                     onToggleShuffle = { viewModel.toggleShuffle() },
                     onToggleRepeat = { viewModel.toggleRepeat() },
-                    onLike = { viewModel.bookmarkTrack(track.id) },
+                    onLike = { viewModel.likeTrack(track.id) },
+                    onBookmark = { viewModel.bookmarkTrack(track.id) },
                     onShare = { 
                         viewModel.shareTrack(track.id) { url ->
                             url?.let {
@@ -115,8 +118,11 @@ fun NowPlayingScreen(
                     },
                     onQueueClick = onQueueClick,
                     onLyricsClick = onLyricsClick,
+                    onDeviceClick = onDeviceClick,
                     onRequestCover = { viewModel.requestCoverArt() },
-                    onRequestVideo = { viewModel.requestMusicVideo() }
+                    onRequestVideo = { viewModel.requestMusicVideo() },
+                    volume = volume,
+                    onVolumeChange = { viewModel.setVolume(it) }
                 )
             } else {
                 CompactNowPlaying(
@@ -137,7 +143,8 @@ fun NowPlayingScreen(
                     onPrevious = { viewModel.skipPrevious() },
                     onToggleShuffle = { viewModel.toggleShuffle() },
                     onToggleRepeat = { viewModel.toggleRepeat() },
-                    onLike = { viewModel.bookmarkTrack(track.id) },
+                    onLike = { viewModel.likeTrack(track.id) },
+                    onBookmark = { viewModel.bookmarkTrack(track.id) },
                     onShare = { 
                         viewModel.shareTrack(track.id) { url ->
                             url?.let {
@@ -153,8 +160,11 @@ fun NowPlayingScreen(
                     },
                     onQueueClick = onQueueClick,
                     onLyricsClick = onLyricsClick,
+                    onDeviceClick = onDeviceClick,
                     onRequestCover = { viewModel.requestCoverArt() },
-                    onRequestVideo = { viewModel.requestMusicVideo() }
+                    onRequestVideo = { viewModel.requestMusicVideo() },
+                    volume = volume,
+                    onVolumeChange = { viewModel.setVolume(it) }
                 )
             }
         }
@@ -167,7 +177,7 @@ private fun TwoPaneNowPlaying(
     isPlaying: Boolean,
     trackProgress: Float,
     isShuffleEnabled: Boolean,
-    isRepeatEnabled: Boolean,
+    isRepeatEnabled: String,
     currentCoverUrl: String?,
     currentVideoUrl: String?,
     devices: List<com.musically.studio.ui.models.AudioDevice>,
@@ -181,11 +191,15 @@ private fun TwoPaneNowPlaying(
     onToggleShuffle: () -> Unit,
     onToggleRepeat: () -> Unit,
     onLike: () -> Unit,
+    onBookmark: () -> Unit,
     onShare: () -> Unit,
     onQueueClick: () -> Unit,
     onLyricsClick: () -> Unit,
+    onDeviceClick: () -> Unit,
     onRequestCover: () -> Unit,
-    onRequestVideo: () -> Unit
+    onRequestVideo: () -> Unit,
+    volume: Float,
+    onVolumeChange: (Float) -> Unit
 ) {
     val localCtx = androidx.compose.ui.platform.LocalContext.current
     Row(
@@ -265,8 +279,16 @@ private fun TwoPaneNowPlaying(
                         maxLines = 1
                     )
                 }
-                IconButton(onClick = onMore) {
-                    Icon(Icons.Default.MoreHoriz, contentDescription = "More", tint = MaterialTheme.colorScheme.onBackground)
+                Row {
+                    IconButton(onClick = onLike) {
+                        Icon(Icons.Default.FavoriteBorder, contentDescription = "Like", tint = MaterialTheme.colorScheme.onBackground)
+                    }
+                    IconButton(onClick = onBookmark) {
+                        Icon(Icons.Default.BookmarkBorder, contentDescription = "Bookmark", tint = MaterialTheme.colorScheme.onBackground)
+                    }
+                    IconButton(onClick = onMore) {
+                        Icon(Icons.Default.MoreHoriz, contentDescription = "More", tint = MaterialTheme.colorScheme.onBackground)
+                    }
                 }
             }
 
@@ -326,7 +348,7 @@ private fun CompactNowPlaying(
     isPlaying: Boolean,
     trackProgress: Float,
     isShuffleEnabled: Boolean,
-    isRepeatEnabled: Boolean,
+    isRepeatEnabled: String,
     currentCoverUrl: String?,
     currentVideoUrl: String?,
     devices: List<com.musically.studio.ui.models.AudioDevice>,
@@ -340,11 +362,15 @@ private fun CompactNowPlaying(
     onToggleShuffle: () -> Unit,
     onToggleRepeat: () -> Unit,
     onLike: () -> Unit,
+    onBookmark: () -> Unit,
     onShare: () -> Unit,
     onQueueClick: () -> Unit,
     onLyricsClick: () -> Unit,
+    onDeviceClick: () -> Unit,
     onRequestCover: () -> Unit,
-    onRequestVideo: () -> Unit
+    onRequestVideo: () -> Unit,
+    volume: Float,
+    onVolumeChange: (Float) -> Unit
 ) {
     val localCtx = androidx.compose.ui.platform.LocalContext.current
     Column(
@@ -446,6 +472,9 @@ private fun CompactNowPlaying(
                 IconButton(onClick = onLike) {
                     Icon(Icons.Default.FavoriteBorder, contentDescription = "Like", tint = MaterialTheme.colorScheme.onBackground)
                 }
+                IconButton(onClick = onBookmark) {
+                    Icon(Icons.Default.BookmarkBorder, contentDescription = "Bookmark", tint = MaterialTheme.colorScheme.onBackground)
+                }
                 IconButton(onClick = onMore) {
                     Icon(Icons.Default.MoreHoriz, contentDescription = "More", tint = MaterialTheme.colorScheme.onBackground)
                 }
@@ -469,14 +498,22 @@ private fun CompactNowPlaying(
             onPlayPause = onTogglePlay
         )
         
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        VolumeSlider(volume = volume, onVolumeChange = onVolumeChange)
+        Spacer(modifier = Modifier.height(16.dp))
         
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onDeviceClick() }
+                    .padding(8.dp)
+            ) {
                 Icon(Icons.Default.Bluetooth, contentDescription = "Device", tint = com.musically.studio.ui.theme.MaveBrand, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(devices.firstOrNull()?.name ?: "Phone Speaker", color = com.musically.studio.ui.theme.MaveBrand, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
@@ -567,7 +604,7 @@ private fun PlaybackSlider(
 private fun PlaybackControls(
     isPlaying: Boolean,
     isShuffleEnabled: Boolean,
-    isRepeatEnabled: Boolean,
+    isRepeatEnabled: String,
     onToggleShuffle: () -> Unit,
     onToggleRepeat: () -> Unit,
     onPrevious: () -> Unit,
@@ -605,7 +642,11 @@ private fun PlaybackControls(
             Icon(Icons.Default.SkipNext, contentDescription = "Next", tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(36.dp))
         }
         IconButton(onClick = onToggleRepeat) {
-            Icon(Icons.Default.Repeat, contentDescription = "Repeat", tint = if (isRepeatEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground)
+            Icon(
+                if (isRepeatEnabled == "one") Icons.Default.RepeatOne else Icons.Default.Repeat,
+                contentDescription = "Repeat",
+                tint = if (isRepeatEnabled != "none") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+            )
         }
     }
 }
@@ -650,4 +691,29 @@ private fun formatDuration(millis: Long): String {
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60
     return String.format(Locale.US, "%d:%02d", minutes, seconds)
+}
+
+@Composable
+private fun VolumeSlider(
+    volume: Float,
+    onVolumeChange: (Float) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Icon(Icons.Default.VolumeDown, contentDescription = "Volume Down", tint = Color.White.copy(alpha = 0.7f), modifier = Modifier.size(20.dp))
+        Slider(
+            value = volume,
+            onValueChange = onVolumeChange,
+            colors = SliderDefaults.colors(
+                thumbColor = Color.White,
+                activeTrackColor = Color.White,
+                inactiveTrackColor = Color.White.copy(alpha = 0.3f)
+            ),
+            modifier = Modifier.weight(1f).height(24.dp)
+        )
+        Icon(Icons.Default.VolumeUp, contentDescription = "Volume Up", tint = Color.White.copy(alpha = 0.7f), modifier = Modifier.size(20.dp))
+    }
 }

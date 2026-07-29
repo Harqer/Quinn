@@ -53,10 +53,18 @@ class MainViewModelTest {
         fakeApiClient = FakeApiClient()
         fakeMaveSessionManager = FakeMaveSessionManager()
         val mockGeminiLive = mockk<com.musically.studio.network.GeminiLiveManager>(relaxed = true)
+        every { mockGeminiLive.functionCalls } returns kotlinx.coroutines.flow.MutableSharedFlow<org.json.JSONObject>()
+        every { mockGeminiLive.transcripts } returns kotlinx.coroutines.flow.MutableSharedFlow<String>()
+        every { mockGeminiLive.thoughts } returns kotlinx.coroutines.flow.MutableSharedFlow<String>()
+        every { mockGeminiLive.connectionState } returns kotlinx.coroutines.flow.MutableStateFlow(false)
+
+        io.mockk.mockkObject(com.meta.wearable.dat.core.Wearables)
+        every { com.meta.wearable.dat.core.Wearables.devices } returns kotlinx.coroutines.flow.MutableStateFlow(emptySet())
 
         viewModel = MainViewModel(
             context = context,
             apiClient = fakeApiClient,
+            streamingApiClient = mockk(relaxed = true),
             maveSessionManager = fakeMaveSessionManager,
             geminiLiveManager = mockGeminiLive,
             auth = mockAuth,
@@ -66,6 +74,7 @@ class MainViewModelTest {
 
     @After
     fun tearDown() {
+        io.mockk.unmockkAll()
         Dispatchers.resetMain()
     }
 

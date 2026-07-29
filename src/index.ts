@@ -10,8 +10,8 @@ import { initSecrets } from "./config/secrets.js";
 async function startServer() {
   await initSecrets();
   const portNum = Number(process.env.PORT) || 8080;
-  const server = app.listen(portNum, "0.0.0.0", () => {
-    logger.info(`[SERVER] Listening on 0.0.0.0:${portNum}`);
+  const server = app.listen(portNum, () => {
+    logger.info(`[SERVER] Listening on ${portNum}`);
   });
 
   try {
@@ -21,6 +21,9 @@ async function startServer() {
   }
 
   // WebSockets removed in favor of Firebase AI SDK
+  setInterval(() => {
+    // keepalive heartbeat
+  }, 1000 * 60 * 60);
 }
 
 startServer().catch((err) => {

@@ -6,7 +6,8 @@ import { fileURLToPath } from "url";
 import { rateLimit } from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
 import Redis from "ioredis";
-import { musicRouter, spotifyRouter } from "./routes/index.js";
+import { musicRouter, spotifyRouter, chatRouter, stripeRouter } from "./routes/index.js";
+import youtubeRouter from "./routes/youtube.js";
 import { getRedis } from "./config/redis.js";
 import logger from "./config/logger.js";
 
@@ -18,14 +19,12 @@ const app = express();
 // Rate Limiting Setup (Production Grade)
 let limiterStore;
 
-const redisUrl = process.env.REDIS_URL;
-if (redisUrl) {
+const redisClient = getRedis();
+if (redisClient) {
   try {
-    const client = new Redis(redisUrl, { maxRetriesPerRequest: 3, enableOfflineQueue: false });
-    client.on("error", (err) => logger.warn("[REDIS_STORE] Redis client error:", { error: err.message }));
     limiterStore = new RedisStore({
       // @ts-expect-error - ioredis type compatibility
-      sendCommand: (...args: string[]) => client.call(...args),
+      sendCommand: (...args: string[]) => redisClient.call(...args),
     });
   } catch (err) {
     logger.warn("[REDIS_STORE] Failed to initialize Redis store for rate limiting, falling back to memory store.");
@@ -65,10 +64,25 @@ app.use((req, res, next) => {
 
 app.use("/api/music", musicRouter);
 app.use("/api/spotify", spotifyRouter);
+app.use("/api/chat", chatRouter);
+app.use("/api/stripe", stripeRouter);
+app.use("/api/youtube", youtubeRouter);
 
 // URL Redirect Service
-app.get("/s/:shortCode", async (req, res) => {
-  res.redirect(302, "/");
+app.get("/s/:shortCode", async (req, res, next) => {
+  try {
+    const { shortCode } = req.params;
+    const { trackRepository } = await import("./repositories/TrackRepository.js");
+    const trackId = await trackRepository.resolveShortLink(shortCode);
+    if (trackId) {
+      res.redirect(302, `/track/${trackId}`);
+    } else {
+      res.redirect(302, "/");
+    }
+  } catch (err) {
+    logger.error("Failed to resolve short link", { error: err });
+    next(err);
+  }
 });
 
 // Serve frontend

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAuth } from 'firebase/auth';
 import { logger } from '@/web/lib/logger';
+import { copyToClipboard } from '../../utils/clipboard';
 import { MusicVisualizer } from './MusicVisualizer';
 import { GesturePad } from './GesturePad';
 import { useMave } from '../../hooks/useMave';
@@ -24,6 +25,31 @@ const MaveLogo: React.FC<{ variant?: 'light' | 'dark', size?: number }> = ({ var
     />
   );
 };
+
+function CopyButton({ text, showToast }: { text: string; showToast: (msg: string) => void }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    const success = await copyToClipboard(text);
+    if (success) {
+      setCopied(true);
+      showToast('Copied to clipboard');
+      setTimeout(() => setCopied(false), 2000);
+    } else {
+      showToast('Failed to copy');
+    }
+  };
+
+  return (
+    <button 
+      onClick={handleCopy}
+      className="p-2 text-gray-500 hover:text-white transition-colors mt-2 flex-shrink-0"
+      title="Copy text"
+    >
+      <span className="material-icons-round text-sm">{copied ? "check" : "content_copy"}</span>
+    </button>
+  );
+}
 
 export const MainDashboard: React.FC = () => {
   const [videoActive, setVideoActive] = useState(true);
@@ -276,16 +302,7 @@ export const MainDashboard: React.FC = () => {
                   }`}>
                     {m.text}
                   </div>
-                  <button 
-                    onClick={() => {
-                      navigator.clipboard.writeText(m.text);
-                      showToast('Copied to clipboard');
-                    }}
-                    className="p-2 text-gray-500 hover:text-white transition-colors mt-2"
-                    title="Copy text"
-                  >
-                    <span className="material-icons-round text-sm">content_copy</span>
-                  </button>
+                  <CopyButton text={m.text} showToast={showToast} />
                 </div>
                 {m.sender === 'mave' && m.trackId && (
                   <div className="flex gap-4 mt-2 ml-2">

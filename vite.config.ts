@@ -9,6 +9,9 @@ export default defineConfig(({ mode }) => {
         port: 3000,
         host: '0.0.0.0',
         hmr: false,
+        proxy: {
+          '/api': 'http://localhost:8081'
+        }
       },
       preview: {
         port: 3000,

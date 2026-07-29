@@ -50,4 +50,21 @@ object TestNetworkModule {
     fun provideFirebaseDatabase(): FirebaseDatabase {
         return Mockito.mock(FirebaseDatabase::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideGeminiLiveManager(): com.musically.studio.network.GeminiLiveManager {
+        val mockGeminiLive = Mockito.mock(com.musically.studio.network.GeminiLiveManager::class.java)
+        Mockito.doReturn(kotlinx.coroutines.flow.MutableSharedFlow<org.json.JSONObject>()).`when`(mockGeminiLive).functionCalls
+        Mockito.doReturn(kotlinx.coroutines.flow.MutableSharedFlow<String>()).`when`(mockGeminiLive).transcripts
+        Mockito.doReturn(kotlinx.coroutines.flow.MutableSharedFlow<String>()).`when`(mockGeminiLive).thoughts
+        Mockito.doReturn(kotlinx.coroutines.flow.MutableStateFlow(false)).`when`(mockGeminiLive).connectionState
+        return mockGeminiLive
+    }
+
+    @Provides
+    @Singleton
+    fun provideStreamingApiClient(): com.musically.studio.network.StreamingApiClient {
+        return Mockito.mock(com.musically.studio.network.StreamingApiClient::class.java)
+    }
 }

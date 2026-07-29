@@ -30,4 +30,9 @@ class FakeApiClient : ApiClient {
     override suspend fun getPodcasts(): List<MavePodcast>? = emptyList()
     override suspend fun getAudiobooks(): List<MaveAudiobook>? = emptyList()
     override suspend fun deleteAccount(): Boolean = true
+    override suspend fun likeTrack(trackId: String): Boolean = true
+    override suspend fun generateLyrics(trackId: String, audioUrl: String): String? = "Lyrics"
+    override suspend fun generateMusicFromMedia(base64: String, mimeType: String): MaveTrack? = null
+    override suspend fun createStripeCheckoutSession(returnUrl: String): String? = "checkout_session"
+    override suspend fun createStripePortalSession(returnUrl: String): String? = "portal_session"
 }

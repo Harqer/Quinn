@@ -36,10 +36,10 @@ export function useSpotify() {
         const data = await res.json();
         setIsConnected(data.connected);
         if (data.connected) fetchPlaylists();
-        else setLoading(false);
       }
     } catch (err) {
       logger.error('Failed to check Spotify status', err);
+    } finally {
       setLoading(false);
     }
   };

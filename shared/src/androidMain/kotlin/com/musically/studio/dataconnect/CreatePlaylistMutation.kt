@@ -35,7 +35,6 @@ public interface CreatePlaylistMutation :
       
       @kotlin.DslMarker public annotation class BuilderDsl
 
-      
       @BuilderDsl
       public interface Builder {
         public var name: String
@@ -44,7 +43,6 @@ public interface CreatePlaylistMutation :
       }
 
       public companion object {
-        
         @Suppress("NAME_SHADOWING")
         public fun build(
           name: String,

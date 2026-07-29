@@ -19,8 +19,12 @@ export async function initSecrets() {
     "GEMINI_API_KEY",
     "SPOTIFY_CLIENT_ID",
     "SPOTIFY_CLIENT_SECRET",
+    "REDIS_HOST",
+    "REDIS_PORT",
     "UPSTASH_REDIS_REST_URL",
-    "UPSTASH_REDIS_REST_TOKEN"
+    "UPSTASH_REDIS_REST_TOKEN",
+    "STRIPE_PUBLISHABLE_KEY",
+    "STRIPE_SECRET_KEY"
   ];
 
   for (const secret of secretsToFetch) {

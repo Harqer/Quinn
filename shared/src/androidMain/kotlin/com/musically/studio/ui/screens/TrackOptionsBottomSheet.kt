@@ -69,7 +69,7 @@ fun TrackOptionsBottomSheet(
                         if (url != null) {
                             val sendIntent = Intent().apply {
                                 action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT, "Check out this vibe on Mave: $url")
+                                putExtra(Intent.EXTRA_TEXT, "Check out this song on Mave: $url")
                                 type = "text/plain"
                             }
                             context.startActivity(Intent.createChooser(sendIntent, null))
@@ -78,7 +78,7 @@ fun TrackOptionsBottomSheet(
                     onDismiss()
                 }
 
-                val headlineShare = "Share vibe"
+                val headlineShare = "Share song"
                 val shareIcon = Icons.Default.Share
                 ListItem(
                     headlineContent = { Text(headlineShare, color = MaterialTheme.colorScheme.onSurface) },

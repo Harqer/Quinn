@@ -1,49 +1,65 @@
 package com.musically.studio.ui
 
 import android.annotation.SuppressLint
+import android.Manifest
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Base64
+import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
+import android.util.Base64
 import androidx.compose.runtime.mutableStateListOf
+import androidx.core.content.ContextCompat
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.musically.studio.WearableStreamingService
-import com.musically.studio.network.ApiClient
+import com.musically.studio.billing.PlayBillingManager
 import com.musically.studio.dataconnect.DefaultConnector
-import com.musically.studio.dataconnect.instance
+import com.musically.studio.dataconnect.GetPaymentHistoryQuery.Data.PaymentHistoriesItem
+import com.musically.studio.dataconnect.GetUserSettingsQuery.Data.UserSettings
 import com.musically.studio.dataconnect.execute
-import com.musically.studio.network.MaveSessionManager
+import com.musically.studio.dataconnect.instance
+import com.musically.studio.logging.CrashlyticsTree
+import com.musically.studio.network.ApiClient
 import com.musically.studio.network.GeminiLiveManager
-import com.musically.studio.network.StreamingApiClient
+import com.musically.studio.network.MaveSessionManager
 import com.musically.studio.network.MaveTrack
-import com.musically.studio.ui.models.ChatMessage
+import com.musically.studio.network.StreamingApiClient
 import com.musically.studio.ui.models.AudioDevice
+import com.musically.studio.ui.models.ChatMessage
 import com.musically.studio.ui.models.DeviceType
 import com.musically.studio.ui.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.json.JSONObject
-import androidx.core.content.edit
-import androidx.core.net.toUri
 import timber.log.Timber
 import javax.inject.Inject
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.musically.studio.logging.CrashlyticsTree
 
+@android.annotation.SuppressLint("MissingPermission")
 @HiltViewModel
 class MainViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -54,6 +70,13 @@ class MainViewModel @Inject constructor(
     private val auth: FirebaseAuth,
     private val rtdb: FirebaseDatabase
 ) : ViewModel() {
+
+    private val playBillingManager = PlayBillingManager(context)
+    val billingProductDetails = playBillingManager.productDetails
+
+    fun launchBillingFlow(activity: Activity, productId: String) {
+        playBillingManager.launchBillingFlow(activity, productId)
+    }
 
     
     private val prefs = context.getSharedPreferences("mave_prefs", Context.MODE_PRIVATE)
@@ -137,11 +160,41 @@ class MainViewModel @Inject constructor(
     private val _isShuffleEnabled = MutableStateFlow(false)
     val isShuffleEnabled: StateFlow<Boolean> = _isShuffleEnabled.asStateFlow()
 
-    private val _isRepeatEnabled = MutableStateFlow(false)
-    val isRepeatEnabled: StateFlow<Boolean> = _isRepeatEnabled.asStateFlow()
+    private val _isRepeatEnabled = MutableStateFlow("none") // "none", "all", "one"
+    val isRepeatEnabled: StateFlow<String> = _isRepeatEnabled.asStateFlow()
+
+    private val _queue = MutableStateFlow<List<MaveTrack>>(emptyList())
+    val queue: StateFlow<List<MaveTrack>> = _queue.asStateFlow()
+
+    private val _originalQueue = MutableStateFlow<List<MaveTrack>>(emptyList())
+    
+    private val _queueIndex = MutableStateFlow(-1)
+    val queueIndex: StateFlow<Int> = _queueIndex.asStateFlow()
 
     private val _isHapticFeedbackEnabled = MutableStateFlow(true)
     val isHapticFeedbackEnabled: StateFlow<Boolean> = _isHapticFeedbackEnabled.asStateFlow()
+
+    // Settings State
+    private val _userSettings = MutableStateFlow<UserSettings?>(null)
+    val userSettings: StateFlow<UserSettings?> = _userSettings.asStateFlow()
+
+    private val _paymentHistory = MutableStateFlow<List<PaymentHistoriesItem>>(emptyList())
+    val paymentHistory: StateFlow<List<PaymentHistoriesItem>> = _paymentHistory.asStateFlow()
+
+    private val _isPremium = MutableStateFlow(false)
+    val isPremium: StateFlow<Boolean> = _isPremium.asStateFlow()
+
+    private val _stripeUrl = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val stripeUrl = _stripeUrl.asSharedFlow()
+
+    private val _oauthUrl = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val oauthUrl = _oauthUrl.asSharedFlow()
+
+    private val _spotifyConnected = MutableStateFlow(false)
+    val spotifyConnected = _spotifyConnected.asStateFlow()
+
+    private val _youtubeConnected = MutableStateFlow(false)
+    val youtubeConnected = _youtubeConnected.asStateFlow()
 
     // Navigation and UI State
     private val _shouldExpandBottomSheet = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
@@ -171,6 +224,9 @@ class MainViewModel @Inject constructor(
     private val _generatedPrompts = MutableStateFlow<List<String>>(emptyList())
     val generatedPrompts: StateFlow<List<String>> = _generatedPrompts.asStateFlow()
 
+    private val _lyrics = MutableStateFlow<String?>(null)
+    val lyrics: StateFlow<String?> = _lyrics.asStateFlow()
+
     private var rtdbListener: ValueEventListener? = null
     private var currentRtdbUid: String? = null
 
@@ -195,6 +251,9 @@ class MainViewModel @Inject constructor(
     private val _isLiveSessionActive = MutableStateFlow(false)
     val isLiveSessionActive: StateFlow<Boolean> = _isLiveSessionActive.asStateFlow()
 
+    private val _volume = MutableStateFlow(1f)
+    val volume: StateFlow<Float> = _volume.asStateFlow()
+
     // Gallery/Video image-to-music state
     private val _pendingGalleryImageBase64 = MutableStateFlow<String?>(null)
     val pendingGalleryImageBase64: StateFlow<String?> = _pendingGalleryImageBase64.asStateFlow()
@@ -208,11 +267,72 @@ class MainViewModel @Inject constructor(
     // Throttle wearable frame streaming to 1 frame per 2 seconds to avoid overloading backend
     private val WEARABLE_FRAME_INTERVAL_MS = 2000L
 
+    private val bluetoothReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                BluetoothAdapter.ACTION_STATE_CHANGED -> {
+                    val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
+                    _isBluetoothEnabled.value = (state == BluetoothAdapter.STATE_ON)
+                }
+                BluetoothDevice.ACTION_FOUND -> {
+                    val device = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                    }
+                    if (device != null && context != null) {
+                        try {
+                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                                @android.annotation.SuppressLint("MissingPermission")
+                                val name = device.name ?: "Unknown Device"
+                                val audioDevice = AudioDevice(
+                                    id = device.address,
+                                    name = name,
+                                    subtitle = "Bluetooth",
+                                    type = DeviceType.BLUETOOTH,
+                                    isCurrent = false
+                                )
+                                val currentList = _devices.value.toMutableList()
+                                if (currentList.none { it.id == audioDevice.id }) {
+                                    currentList.add(audioDevice)
+                                    _devices.value = currentList
+                                }
+                            }
+                        } catch (e: SecurityException) {
+                            Timber.e(e, "Missing BLUETOOTH_CONNECT permission")
+                        }
+                    }
+                }
+                BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                    _isScanning.value = false
+                }
+            }
+        }
+    }
+
     init {
+        try {
+            val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+            val maxVolume = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
+            val currentVolume = audioManager.getStreamVolume(android.media.AudioManager.STREAM_MUSIC)
+            _volume.value = if (maxVolume > 0) currentVolume.toFloat() / maxVolume else 1f
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to read initial volume")
+        }
+
         setupWebSocketCollector()
         setupWearableCollector()
         setupWearableFrameStreaming()
         setupMediaAssetCollector()
+        
+        val filter = IntentFilter().apply {
+            addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+            addAction(BluetoothDevice.ACTION_FOUND)
+            addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+        }
+        context.registerReceiver(bluetoothReceiver, filter)
+
         if (isUserLoggedIn()) {
             startRtdbSync()
         }
@@ -238,6 +358,132 @@ class MainViewModel @Inject constructor(
         fetchAlbums()
         fetchPodcasts()
         fetchAudiobooks()
+        fetchUserSettings()
+    }
+
+    fun fetchUserSettings() {
+        if (!isUserLoggedIn()) return
+        viewModelScope.launch {
+            try {
+                // Fetch settings
+                val settingsResult = DefaultConnector.instance.getUserSettings.execute()
+                _userSettings.value = settingsResult.data.userSettings
+                
+                // Fetch payment history
+                val historyResult = DefaultConnector.instance.getPaymentHistory.execute()
+                _paymentHistory.value = historyResult.data.paymentHistories
+
+                // Determine premium status based on active subscription in user settings
+                _isPremium.value = settingsResult.data.userSettings?.isPremium == true
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to load user settings from Data Connect")
+            }
+        }
+    }
+
+    fun updateTheme(theme: String) {
+        val currentSettings = _userSettings.value
+        val isPremium = currentSettings?.isPremium == true
+        
+        viewModelScope.launch {
+            try {
+                DefaultConnector.instance.upsertUserSettings.execute {
+                    this.theme = theme
+                    this.parentalControlsEnabled = currentSettings?.parentalControlsEnabled ?: false
+                }
+                fetchUserSettings() // Reload
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to update theme")
+            }
+        }
+    }
+
+    fun updateParentalControls(enabled: Boolean) {
+        val currentSettings = _userSettings.value
+        viewModelScope.launch {
+            try {
+                DefaultConnector.instance.upsertUserSettings.execute {
+                    this.theme = currentSettings?.theme ?: "system"
+                    this.parentalControlsEnabled = enabled
+                }
+                fetchUserSettings() // Reload
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to update parental controls")
+            }
+        }
+    }
+
+    fun launchStripePortal(returnUrl: String = "lyria://settings") {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val url = apiClient.createStripePortalSession(returnUrl)
+            _isLoading.value = false
+            url?.let { _stripeUrl.emit(it) }
+        }
+    }
+
+    fun launchStripeCheckout(returnUrl: String = "lyria://settings") {
+        val user = auth.currentUser
+        if (user == null) {
+            return
+        }
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                val sessionRef = db.collection("customers").document(user.uid).collection("checkout_sessions").document()
+                val data = hashMapOf(
+                    "price" to "default",
+                    "success_url" to returnUrl,
+                    "cancel_url" to returnUrl
+                )
+                sessionRef.set(data).await()
+                
+                sessionRef.addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        Timber.e(e, "Listen failed.")
+                        _isLoading.value = false
+                        return@addSnapshotListener
+                    }
+                    if (snapshot != null && snapshot.exists()) {
+                        val url = snapshot.getString("url")
+                        if (url != null) {
+                            _isLoading.value = false
+                            viewModelScope.launch {
+                                _stripeUrl.emit(url)
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to launch Stripe Checkout")
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun connectSpotify() {
+        viewModelScope.launch {
+            try {
+                // Ideally this would fetch from a defined ApiClient method, 
+                // but for this implementation we simulate the response from the backend.
+                val url = com.musically.studio.shared.BuildConfig.API_BASE_URL + "/api/spotify/auth-url"
+                _oauthUrl.emit(url)
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to connect Spotify")
+            }
+        }
+    }
+
+    fun connectYouTube() {
+        viewModelScope.launch {
+            try {
+                val url = com.musically.studio.shared.BuildConfig.API_BASE_URL + "/api/youtube/auth-url"
+                _oauthUrl.emit(url)
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to connect YouTube")
+            }
+        }
     }
 
     fun fetchCategories() {
@@ -412,12 +658,17 @@ class MainViewModel @Inject constructor(
                     val user = task.result?.user
                     if (user != null) {
                         viewModelScope.launch {
-                            val success = apiClient.saveProfile(regName, regBirthday, regGender)
-                            _isLoading.value = false
-                            if (success) {
+                            try {
+                                com.musically.studio.dataconnect.DefaultConnector.instance.upsertUser.execute {
+                                    this.displayName = regName
+                                    this.email = regEmail
+                                }
+                                _isLoading.value = false
                                 startRtdbSync()
                                 callback(true, null)
-                            } else {
+                            } catch (e: Exception) {
+                                Timber.e(e, "Failed to save profile via Data Connect")
+                                _isLoading.value = false
                                 callback(false, "Could not complete your profile. Please try again.")
                             }
                         }
@@ -431,8 +682,15 @@ class MainViewModel @Inject constructor(
 
     fun saveArtistPreferences(artists: List<String>, callback: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val success = apiClient.savePreferences(artists)
-            callback(success)
+            try {
+                com.musically.studio.dataconnect.DefaultConnector.instance.updateUserPreferences.execute {
+                    this.favoriteArtists = artists
+                }
+                callback(true)
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to save preferences via Data Connect")
+                callback(false)
+            }
         }
     }
 
@@ -667,6 +925,13 @@ class MainViewModel @Inject constructor(
         startRtdbSync()
     }
 
+    /** Clears the live chat session history and resets the session */
+    fun clearLiveSessionHistory() {
+        messages.clear()
+        stopLiveSession()
+        startLiveSession()
+    }
+
     /** Stops the live session including any ongoing recording. */
     fun stopLiveSession() {
         if (_isRecording.value) {
@@ -716,6 +981,10 @@ class MainViewModel @Inject constructor(
                         _thinkingText.value = ""
                         val script = event.trackInfo?.audioUrl ?: "Generated Podcast"
                         messages.add(0, ChatMessage(script, false, event.trackInfo?.id))
+                        event.trackInfo?.let { track ->
+                            _currentPlayingTrack.value = track
+                            _isPlaying.value = true
+                        }
                         currentAudioPlayer?.stop()
                         currentAudioPlayer = null
                     }
@@ -768,6 +1037,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun setVolume(volumeLevel: Float) {
+        _volume.value = volumeLevel
+        try {
+            val audioManager = context.getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
+            val maxVolume = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
+            val mappedVolume = (volumeLevel * maxVolume).toInt()
+            audioManager.setStreamVolume(android.media.AudioManager.STREAM_MUSIC, mappedVolume, 0)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to set volume")
+        }
+    }
+
     fun setPlayingState(playing: Boolean) {
         if (_isPlaying.value != playing) {
             _isPlaying.value = playing
@@ -780,12 +1061,69 @@ class MainViewModel @Inject constructor(
         maveSessionManager.stop()
     }
 
-    fun skipNext() {
-        maveSessionManager.sendEvent("skip_next", emptyMap())
+    fun playQueue(tracks: List<MaveTrack>, startIndex: Int = 0) {
+        if (tracks.isEmpty()) return
+        
+        _originalQueue.value = tracks
+        
+        if (_isShuffleEnabled.value) {
+            val currentTrack = tracks[startIndex]
+            val remaining = tracks.filterIndexed { i, _ -> i != startIndex }.shuffled()
+            _queue.value = listOf(currentTrack) + remaining
+            _queueIndex.value = 0
+        } else {
+            _queue.value = tracks
+            _queueIndex.value = startIndex
+        }
+        
+        playTrack(_queue.value[_queueIndex.value])
+    }
+
+    fun skipNext(autoAdvance: Boolean = false) {
+        val currentQueue = _queue.value
+        val currentIndex = _queueIndex.value
+        
+        if (currentQueue.isEmpty()) {
+            maveSessionManager.sendEvent("skip_next", emptyMap())
+            return
+        }
+        
+        if (currentIndex < currentQueue.size - 1) {
+            _queueIndex.value = currentIndex + 1
+            playTrack(currentQueue[_queueIndex.value])
+        } else if (_isRepeatEnabled.value == "all" || (!autoAdvance && currentQueue.isNotEmpty())) {
+            _queueIndex.value = 0
+            playTrack(currentQueue[0])
+        } else {
+            _isPlaying.value = false
+            maveSessionManager.stop()
+        }
     }
 
     fun skipPrevious() {
-        maveSessionManager.sendEvent("skip_previous", emptyMap())
+        val currentQueue = _queue.value
+        val currentIndex = _queueIndex.value
+        
+        if (currentQueue.isEmpty()) {
+            maveSessionManager.sendEvent("skip_previous", emptyMap())
+            return
+        }
+        
+        // If we are past 3 seconds, just restart current track (simulated by seeking to 0)
+        if (_trackProgress.value > 3f) {
+            seekTo(0f)
+            return
+        }
+        
+        if (currentIndex > 0) {
+            _queueIndex.value = currentIndex - 1
+            playTrack(currentQueue[_queueIndex.value])
+        } else if (_isRepeatEnabled.value == "all") {
+            _queueIndex.value = currentQueue.size - 1
+            playTrack(currentQueue[_queueIndex.value])
+        } else {
+            seekTo(0f)
+        }
     }
 
     fun seekTo(position: Float) {
@@ -795,12 +1133,30 @@ class MainViewModel @Inject constructor(
 
     fun toggleShuffle() {
         _isShuffleEnabled.value = !_isShuffleEnabled.value
+        val currentTrack = _currentPlayingTrack.value
+        val currentQueue = _queue.value
+        
+        if (currentQueue.isNotEmpty() && currentTrack != null) {
+            if (_isShuffleEnabled.value) {
+                val remaining = _originalQueue.value.filter { it.id != currentTrack.id }.shuffled()
+                _queue.value = listOf(currentTrack) + remaining
+                _queueIndex.value = 0
+            } else {
+                _queue.value = _originalQueue.value
+                _queueIndex.value = _queue.value.indexOfFirst { it.id == currentTrack.id }.coerceAtLeast(0)
+            }
+        }
+        
         maveSessionManager.sendEvent("toggle_shuffle", mapOf("enabled" to _isShuffleEnabled.value))
     }
 
     fun toggleRepeat() {
-        _isRepeatEnabled.value = !_isRepeatEnabled.value
-        maveSessionManager.sendEvent("toggle_repeat", mapOf("enabled" to _isRepeatEnabled.value))
+        _isRepeatEnabled.value = when (_isRepeatEnabled.value) {
+            "none" -> "all"
+            "all" -> "one"
+            else -> "none"
+        }
+        maveSessionManager.sendEvent("toggle_repeat", mapOf("mode" to _isRepeatEnabled.value))
     }
 
     fun toggleHapticFeedback() {
@@ -820,6 +1176,48 @@ class MainViewModel @Inject constructor(
         _isPlaying.value = true
         maveSessionManager.sendEvent("play_track", mapOf("trackId" to track.id))
         viewModelScope.launch { _shouldExpandBottomSheet.emit(true) }
+    }
+
+    fun bookmarkTrack(trackId: String) {
+        viewModelScope.launch {
+            apiClient.bookmarkTrack(trackId)
+        }
+    }
+
+    fun likeTrack(trackId: String) {
+        viewModelScope.launch {
+            apiClient.likeTrack(trackId)
+        }
+    }
+
+    fun generateLyrics(trackId: String, audioUrl: String) {
+        viewModelScope.launch {
+            _lyrics.value = "Generating lyrics..."
+            try {
+                // Call backend endpoint which uses Gemini Flash to process the audio and generate lyrics
+                val result = apiClient.generateLyrics(trackId, audioUrl)
+                if (result != null) {
+                    _lyrics.value = result
+                } else {
+                    _lyrics.value = "Could not generate lyrics."
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to generate lyrics")
+                _lyrics.value = "Error generating lyrics."
+            }
+        }
+    }
+
+    fun shareTrack(trackId: String, callback: (String?) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val url = apiClient.shareVibe(trackId)
+                callback(url ?: "${com.musically.studio.shared.BuildConfig.API_BASE_URL}/track/$trackId")
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to share track")
+                callback(null)
+            }
+        }
     }
 
     fun sendFrame(base64: String) {
@@ -897,12 +1295,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun shareTrack(trackId: String, callback: (String?) -> Unit) {
-        viewModelScope.launch {
-            val url = apiClient.shareVibe(trackId)
-            callback(url)
-        }
-    }
 
     fun addToPlaylist(trackId: String, playlistId: String? = null) {
         viewModelScope.launch {
@@ -910,11 +1302,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun bookmarkTrack(trackId: String) {
-        viewModelScope.launch {
-            apiClient.bookmarkTrack(trackId)
-        }
-    }
+
 
     fun saveTrackToLibrary(trackId: String) {
         viewModelScope.launch {
@@ -972,6 +1360,12 @@ class MainViewModel @Inject constructor(
     private val _devices = MutableStateFlow<List<AudioDevice>>(emptyList())
     val devices: StateFlow<List<AudioDevice>> = _devices.asStateFlow()
 
+    private val _isBluetoothEnabled = MutableStateFlow(false)
+    val isBluetoothEnabled: StateFlow<Boolean> = _isBluetoothEnabled.asStateFlow()
+
+    private val _isScanning = MutableStateFlow(false)
+    val isScanning: StateFlow<Boolean> = _isScanning.asStateFlow()
+
     // Account deletion state
     private val _accountDeletionState = MutableStateFlow<AccountDeletionState>(AccountDeletionState.Idle)
     val accountDeletionState: StateFlow<AccountDeletionState> = _accountDeletionState.asStateFlow()
@@ -980,6 +1374,7 @@ class MainViewModel @Inject constructor(
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val outputs = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
         val isBluetoothOn = audioManager.isBluetoothA2dpOn || audioManager.isBluetoothScoOn
+        _isBluetoothEnabled.value = isBluetoothOn
         @Suppress("DEPRECATION")
         val isWiredOn = audioManager.isWiredHeadsetOn
 
@@ -1021,12 +1416,48 @@ class MainViewModel @Inject constructor(
         }
         _devices.value = updatedDevices
 
-        if (device.subtitle == "Meta Wearable") {
+        if (device.type == DeviceType.BLUETOOTH && device.id.contains(":")) {
+            // It's a MAC address. Attempt to create a bond (pair)
+            try {
+                val adapter = BluetoothAdapter.getDefaultAdapter()
+                val btDevice = adapter?.getRemoteDevice(device.id)
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                    if (btDevice?.bondState == BluetoothDevice.BOND_NONE) {
+                        btDevice.createBond()
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to pair with device")
+            }
+        }
+
+        // Real Meta Wearable devices will be handled here if selected
+        if (device.name.contains("Meta", ignoreCase = true) || device.name.contains("Ray-Ban", ignoreCase = true)) {
             val intent = Intent(context, WearableStreamingService::class.java).apply {
                 putExtra("DEVICE_ID", device.id)
             }
             context.startForegroundService(intent)
         }
+    }
+
+    fun startBluetoothDiscovery(activityContext: Context) {
+        val adapter = BluetoothAdapter.getDefaultAdapter()
+        if (adapter == null) {
+            Timber.e("Bluetooth not supported on this device")
+            return
+        }
+
+        if (ContextCompat.checkSelfPermission(activityContext, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            Timber.e("Missing BLUETOOTH_SCAN permission")
+            return
+        }
+
+        if (adapter.isDiscovering) {
+            adapter.cancelDiscovery()
+        }
+        
+        _isScanning.value = true
+        adapter.startDiscovery()
     }
 
     fun fetchVibesByUserId(userId: String) {
@@ -1131,6 +1562,11 @@ class MainViewModel @Inject constructor(
             if (user != null) {
                 rtdb.getReference("sessions/${user.uid}/state").removeEventListener(listener)
             }
+        }
+        try {
+            context.unregisterReceiver(bluetoothReceiver)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to unregister bluetoothReceiver")
         }
     }
 

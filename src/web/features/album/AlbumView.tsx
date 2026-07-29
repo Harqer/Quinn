@@ -17,7 +17,7 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showOptions, setShowOptions] = useState(false);
-  const { playTrack } = usePlayerContext();
+  const { playQueue } = usePlayerContext();
 
   const fetchAlbum = () => {
     if (id) {
@@ -130,8 +130,8 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
          ) : error ? (
             <ErrorAlert message={error} onRetry={fetchAlbum} />
          ) : tracks.length > 0 ? (
-            tracks.map(track => (
-              <div key={track.id} onClick={() => playTrack(track)}>
+            tracks.map((track, index) => (
+              <div key={track.id} onClick={() => playQueue(tracks, index)}>
                 <TrackListItem 
                   title={track.title} 
                   artist={track.artist || 'Unknown Artist'} 

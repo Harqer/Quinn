@@ -39,7 +39,6 @@ public interface CreatePodcastMutation :
       
       @kotlin.DslMarker public annotation class BuilderDsl
 
-      
       @BuilderDsl
       public interface Builder {
         public var name: String
@@ -50,7 +49,6 @@ public interface CreatePodcastMutation :
       }
 
       public companion object {
-        
         @Suppress("NAME_SHADOWING")
         public fun build(
           name: String,publisher: String,

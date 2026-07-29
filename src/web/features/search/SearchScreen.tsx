@@ -11,14 +11,13 @@ import { ErrorAlert } from '../../components/molecules/ErrorAlert';
 export const SearchScreen: React.FC = () => {
   const auth = getAuth();
   const user = auth.currentUser;
-  const userInitial = user?.displayName ? user.displayName[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'M');
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoriesError, setCategoriesError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Track[]>([]);
   const [searchError, setSearchError] = useState<string | null>(null);
-  const { playTrack } = usePlayerContext();
+  const { playQueue } = usePlayerContext();
 
   useEffect(() => {
     setCategoriesError(null);
@@ -45,7 +44,11 @@ export const SearchScreen: React.FC = () => {
     <div className="flex flex-col h-full w-full bg-background overflow-y-auto pb-32">
       <div className="px-4 pt-12 pb-2 sticky top-0 bg-background/90 backdrop-blur-md z-10 flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-black overflow-hidden shadow-inner flex-shrink-0">
-          {userInitial}
+          {user?.photoURL ? (
+            <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+          ) : (
+            <Icon name="account_circle" size="md" />
+          )}
         </div>
         <Typography variant="title-lg" className="font-bold flex-1">Search</Typography>
       </div>
@@ -79,8 +82,8 @@ export const SearchScreen: React.FC = () => {
               />
             ) : searchResults.length > 0 ? (
               <div className="flex flex-col gap-2">
-                {searchResults.map(track => (
-                  <div key={track.id} onClick={() => playTrack(track)}>
+                {searchResults.map((track, index) => (
+                  <div key={track.id} onClick={() => playQueue(searchResults, index)}>
                     <TrackListItem title={track.title} artist={track.artist} />
                   </div>
                 ))}

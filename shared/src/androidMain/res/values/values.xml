@@ -22,8 +22,8 @@
     <string name="title_search">Search</string>
     <!-- Album View Screen -->
     <string name="back">Back</string>
-    <string name="more_options">View Vibe Details</string>
-    <string name="unknown_album">Untitled Vibe</string>
+    <string name="more_options">View Song Details</string>
+    <string name="unknown_album">Untitled Song</string>
     <string name="unknown_artist">Independent Creator</string>
     <string name="album_bullet">Album • %s</string>
     <string name="like_content_desc">Like</string>
@@ -31,8 +31,8 @@
     <string name="play_content_desc">Play</string>
     
     <!-- Library Screen -->
-    <string name="empty_library_title">No saved vibes yet</string>
-    <string name="empty_library_message">Tap the + button or use your camera to generate your first vibe and build out your catalog.</string>
+    <string name="empty_library_title">No saved songs yet</string>
+    <string name="empty_library_message">Create your first song in the Studio and it will appear here.</string>
     <string name="start_creating">Start Creating</string>
     
     <!-- Devices Screen -->

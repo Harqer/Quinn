@@ -162,7 +162,7 @@ fun LiveSessionScreen(
                             value = inputText,
                             onValueChange = { inputText = it },
                             placeholder = {
-                                Text("Describe a vibe...", color = com.musically.studio.ui.theme.MaveGray500,
+                                Text("Describe a song...", color = com.musically.studio.ui.theme.MaveGray500,
                                     style = MaterialTheme.typography.bodyMedium)
                             },
                             modifier = Modifier.weight(1f),
@@ -296,18 +296,39 @@ private fun ChatBubble(message: ChatMessage, viewModel: MainViewModel, modifier:
             }
             Spacer(modifier = Modifier.width(8.dp))
         }
-        Box(
-            modifier = Modifier.widthIn(max = 280.dp)
-                .clip(RoundedCornerShape(
-                    topStart = if (message.isUser) 16.dp else 4.dp,
-                    topEnd = if (message.isUser) 4.dp else 16.dp,
-                    bottomStart = 16.dp, bottomEnd = 16.dp
-                ))
-                .background(if (message.isUser) MaterialTheme.colorScheme.primary else bgColor.copy(alpha = 0.3f))
-                .padding(horizontal = 14.dp, vertical = 10.dp)
-        ) {
-            Text(text = message.text, style = MaterialTheme.typography.bodyMedium,
-                color = if (message.isUser) Color.White else com.musically.studio.ui.theme.MaveBlueGray200)
+        val clipboardManager = androidx.compose.ui.platform.LocalClipboardManager.current
+        val context = androidx.compose.ui.platform.LocalContext.current
+        
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (message.isUser) {
+                IconButton(onClick = { 
+                    clipboardManager.setText(androidx.compose.ui.text.AnnotatedString(message.text))
+                    android.widget.Toast.makeText(context, "Copied", android.widget.Toast.LENGTH_SHORT).show()
+                }) {
+                    Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp), tint = Color.White)
+                }
+            }
+            Box(
+                modifier = Modifier.widthIn(max = 280.dp)
+                    .clip(RoundedCornerShape(
+                        topStart = if (message.isUser) 16.dp else 4.dp,
+                        topEnd = if (message.isUser) 4.dp else 16.dp,
+                        bottomStart = 16.dp, bottomEnd = 16.dp
+                    ))
+                    .background(if (message.isUser) MaterialTheme.colorScheme.primary else bgColor.copy(alpha = 0.3f))
+                    .padding(horizontal = 14.dp, vertical = 10.dp)
+            ) {
+                Text(text = message.text, style = MaterialTheme.typography.bodyMedium,
+                    color = if (message.isUser) Color.White else com.musically.studio.ui.theme.MaveBlueGray200)
+            }
+            if (!message.isUser) {
+                IconButton(onClick = { 
+                    clipboardManager.setText(androidx.compose.ui.text.AnnotatedString(message.text))
+                    android.widget.Toast.makeText(context, "Copied", android.widget.Toast.LENGTH_SHORT).show()
+                }) {
+                    Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp), tint = com.musically.studio.ui.theme.MaveBlueGray200)
+                }
+            }
         }
     }
 }
@@ -388,7 +409,7 @@ private fun SessionWaitingState() {
             tint = MaterialTheme.colorScheme.primary.copy(alpha = alpha),
             modifier = Modifier.size(64.dp))
         Spacer(modifier = Modifier.height(24.dp))
-        Text("Connected — say something or type a vibe",
+        Text("Connected — say something or type a song description",
             style = MaterialTheme.typography.bodyLarge, color = com.musically.studio.ui.theme.MaveBlueGray400,
             textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(8.dp))

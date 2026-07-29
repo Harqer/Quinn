@@ -11,6 +11,8 @@ import com.musically.studio.dataconnect.*
 
 interface ApiClient {
     suspend fun bookmarkTrack(trackId: String): Boolean
+    suspend fun likeTrack(trackId: String): Boolean
+    suspend fun generateLyrics(trackId: String, audioUrl: String): String?
     suspend fun shareVibe(trackId: String): String?
     suspend fun addToPlaylist(trackId: String, playlistId: String? = null): Boolean
     suspend fun saveProfile(name: String, birthday: String, gender: String): Boolean
@@ -21,6 +23,7 @@ interface ApiClient {
     suspend fun getCommunityTracks(): List<MaveTrack>?
 
     suspend fun generateMusicPrompts(imageB64: String): List<String>?
+    suspend fun generateMusicFromMedia(base64: String, mimeType: String): MaveTrack?
     suspend fun generateCoverMedia(prompt: String, type: String): String?
     suspend fun getTrack(trackId: String): MaveTrack?
     suspend fun getSpotifyStatus(): Boolean
@@ -34,6 +37,8 @@ interface ApiClient {
     suspend fun getAudiobooks(): List<MaveAudiobook>?
     suspend fun getSpotifyLibraryTracks(): List<MaveTrack>?
     suspend fun deleteAccount(): Boolean
+    suspend fun createStripeCheckoutSession(returnUrl: String): String?
+    suspend fun createStripePortalSession(returnUrl: String): String?
 }
 
 class RealApiClient(private val client: OkHttpClient) : ApiClient {
@@ -41,15 +46,23 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
     private val JSON = "application/json; charset=utf-8".toMediaType()
 
     override suspend fun bookmarkTrack(trackId: String): Boolean {
-        val token = TokenManager.getValidToken() ?: return false
-        val body = """{"trackId": "$trackId"}""".toRequestBody(JSON)
-        val request = Request.Builder()
-            .url("$BASE_URL/music/bookmark")
-            .header("Authorization", "Bearer $token")
-            .post(body)
-            .build()
+        return try {
+            DefaultConnector.instance.bookmarkTrack.execute(trackId)
+            true
+        } catch (e: Exception) {
+            Timber.e(e, "Error bookmarking track")
+            false
+        }
+    }
 
-        return executeRequest(request)
+    override suspend fun likeTrack(trackId: String): Boolean {
+        return try {
+            DefaultConnector.instance.likeTrack.execute(trackId)
+            true
+        } catch (e: Exception) {
+            Timber.e(e, "Error liking track")
+            false
+        }
     }
 
     override suspend fun shareVibe(trackId: String): String? {
@@ -66,6 +79,65 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
                 if (response.isSuccessful) {
                     val json = JSONObject(response.body?.string() ?: "{}")
                     json.optString("url")
+                } else null
+            }
+        } catch (e: Exception) { null }
+    }
+
+    override suspend fun generateLyrics(trackId: String, audioUrl: String): String? {
+        val token = TokenManager.getValidToken() ?: return null
+        val json = JSONObject().apply {
+            put("trackId", trackId)
+            put("audioUrl", audioUrl)
+        }
+        val body = json.toString().toRequestBody(JSON)
+        val request = Request.Builder()
+            .url("$BASE_URL/music/lyrics")
+            .header("Authorization", "Bearer $token")
+            .post(body)
+            .build()
+        
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val respJson = JSONObject(response.body?.string() ?: "{}")
+                    respJson.optString("lyrics")
+                } else null
+            }
+        } catch (e: Exception) { null }
+    }
+
+    override suspend fun generateMusicFromMedia(base64: String, mimeType: String): MaveTrack? {
+        val token = TokenManager.getValidToken() ?: return null
+        val json = JSONObject().apply {
+            put("data", base64)
+            put("mimeType", mimeType)
+        }
+        val body = json.toString().toRequestBody(JSON)
+        val request = Request.Builder()
+            .url("$BASE_URL/music/generate-from-media")
+            .header("Authorization", "Bearer $token")
+            .post(body)
+            .build()
+        
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val responseJson = JSONObject(response.body?.string() ?: "{}")
+                    val nameStr = responseJson.optString("title", responseJson.optString("trackName", "Media Inspired Track"))
+                    val artistStr = responseJson.optString("artist", responseJson.optString("artistName", "Mave"))
+                    val coverStr = responseJson.optString("coverUrl", "")
+                    MaveTrack(
+                        id = responseJson.optString("id", responseJson.optString("trackId", UUID.randomUUID().toString())),
+                        name = nameStr,
+                        artists = listOf(MaveArtist(id = UUID.nameUUIDFromBytes(artistStr.toByteArray()).toString(), name = artistStr)),
+                        album = MaveAlbum(
+                            id = UUID.nameUUIDFromBytes("Generated".toByteArray()).toString(),
+                            name = "Generated",
+                            images = listOfNotNull(coverStr.takeIf { it.isNotEmpty() }?.let { MaveImage(url = it) })
+                        ),
+                        audioUrl = responseJson.optString("url", responseJson.optString("audioUrl", ""))
+                    )
                 } else null
             }
         } catch (e: Exception) { null }
@@ -467,5 +539,61 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
                 } else null
             }
         } catch (e: Exception) { null }
+    }
+
+    override suspend fun createStripeCheckoutSession(returnUrl: String): String? {
+        val token = TokenManager.getValidToken() ?: return null
+        val json = JSONObject().apply {
+            put("returnUrl", returnUrl)
+        }
+        val body = json.toString().toRequestBody(JSON)
+        val request = Request.Builder()
+            .url("$BASE_URL/stripe/checkout-session")
+            .header("Authorization", "Bearer $token")
+            .post(body)
+            .build()
+        
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val respBody = response.body?.string()
+                    if (!respBody.isNullOrEmpty()) {
+                        val respJson = JSONObject(respBody)
+                        respJson.optString("url")
+                    } else null
+                } else null
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error creating checkout session")
+            null
+        }
+    }
+
+    override suspend fun createStripePortalSession(returnUrl: String): String? {
+        val token = TokenManager.getValidToken() ?: return null
+        val json = JSONObject().apply {
+            put("returnUrl", returnUrl)
+        }
+        val body = json.toString().toRequestBody(JSON)
+        val request = Request.Builder()
+            .url("$BASE_URL/stripe/portal-session")
+            .header("Authorization", "Bearer $token")
+            .post(body)
+            .build()
+        
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val respBody = response.body?.string()
+                    if (!respBody.isNullOrEmpty()) {
+                        val respJson = JSONObject(respBody)
+                        respJson.optString("url")
+                    } else null
+                } else null
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error creating portal session")
+            null
+        }
     }
 }

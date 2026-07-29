@@ -60,3 +60,104 @@ mutation CreatePodcast(
     description: $description
   })
 }
+
+mutation UpsertUserSettings(
+  $theme: String,
+  $parentalControlsEnabled: Boolean,
+  $stripeCustomerId: String
+) @auth(level: USER) {
+  userSettings_upsert(data: {
+    userId_expr: "auth.uid",
+    userUid_expr: "auth.uid",
+    theme: $theme,
+    parentalControlsEnabled: $parentalControlsEnabled,
+    stripeCustomerId: $stripeCustomerId
+  })
+}
+
+mutation UpdateUserPreferences(
+  $favoriteArtists: [String!],
+  $favoriteGenres: [String!]
+) @auth(level: USER) {
+  user_upsert(
+    data: {
+      uid_expr: "auth.uid",
+      favoriteArtists: $favoriteArtists,
+      favoriteGenres: $favoriteGenres
+    }
+  )
+}
+
+mutation RecordPayment(
+  $userUid: String!,
+  $amount: Float!,
+  $currency: String!,
+  $status: String!,
+  $stripeInvoiceId: String
+) @auth(level: NO_ACCESS) {
+  paymentHistory_insert(data: {
+    userUid: $userUid,
+    amount: $amount,
+    currency: $currency,
+    status: $status,
+    stripeInvoiceId: $stripeInvoiceId
+  })
+}
+
+mutation LikeTrack($trackId: String!) @auth(level: USER) {
+  likedTrack_insert(data: {
+    userUid_expr: "auth.uid",
+    trackId: $trackId
+  })
+}
+
+mutation RemoveLikedTrack($trackId: String!) @auth(level: USER) {
+  likedTrack_delete(key: {
+    userUid_expr: "auth.uid",
+    trackId: $trackId
+  })
+}
+
+mutation BookmarkTrack($trackId: String!) @auth(level: USER) {
+  bookmarkedTrack_insert(data: {
+    userUid_expr: "auth.uid",
+    trackId: $trackId
+  })
+}
+
+mutation RemoveBookmarkedTrack($trackId: String!) @auth(level: USER) {
+  bookmarkedTrack_delete(key: {
+    userUid_expr: "auth.uid",
+    trackId: $trackId
+  })
+}
+
+mutation CreateCameraCapture(
+  $imageUrl: String,
+  $videoUrl: String,
+  $environmentData: String,
+  $generatedTrackId: String
+) @auth(level: USER) {
+  cameraCapture_insert(data: {
+    userUid_expr: "auth.uid",
+    imageUrl: $imageUrl,
+    videoUrl: $videoUrl,
+    environmentData: $environmentData,
+    generatedTrackId: $generatedTrackId
+  })
+}
+
+mutation CreateVideoDigestion(
+  $videoUrl: String!,
+  $extractedAudioUrl: String,
+  $atmosphereSummary: String,
+  $generatedTrackId: String
+) @auth(level: USER) {
+  videoDigestion_insert(data: {
+    userUid_expr: "auth.uid",
+    videoUrl: $videoUrl,
+    extractedAudioUrl: $extractedAudioUrl,
+    atmosphereSummary: $atmosphereSummary,
+    generatedTrackId: $generatedTrackId
+  })
+}

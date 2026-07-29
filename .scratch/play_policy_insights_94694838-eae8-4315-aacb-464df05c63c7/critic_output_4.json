@@ -1,7 +1,0 @@
-{
-  "23": {
-    "action": "VERIFIED",
-    "confidence": "High",
-    "critic_justification": "MainViewModel.kt implements loginWithEmail and guestLogin methods. MainActivity.kt implements Google and Apple sign-in flows. The app contains a login wall and therefore requires demo credentials and an account deletion link per Play Store policy."
-  }
-}

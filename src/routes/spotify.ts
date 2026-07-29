@@ -1,107 +1,87 @@
-import { Router } from "express";
-import fetch from "node-fetch";
+import { Router, Response, NextFunction } from "express";
 import logger from "../config/logger.js";
-import { getRedis } from "../config/redis.js";
+import { optionalFirebaseToken, AuthenticatedRequest } from "../middlewares/auth.js";
+import { spotifyService } from "../services/SpotifyService.js";
 
 const router = Router();
-const REDIRECT_URI = process.env.VITE_API_URL 
-    ? `${process.env.VITE_API_URL}/api/spotify/callback` 
-    : "http://localhost:8080/api/spotify/callback";
 
-// Helper to get access token from Redis per-user
-async function getSpotifyToken(userId: string): Promise<string | null> {
-  const redis = getRedis();
-  if (!redis) return null;
-  return await redis.get(`spotify_token:${userId}`);
-}
-
-router.get("/status", async (req, res) => {
-  const redis = getRedis();
-  const token = redis ? await redis.get("spotify_token:global") : null;
-  res.json({ connected: !!token });
-});
-
-router.get("/token", async (req, res) => {
-  const redis = getRedis();
-  const token = redis ? await redis.get("spotify_token:global") : null;
-  if (!token) return res.status(401).json({ error: "No token found" });
-  res.json({ token });
-});
-
-router.get("/auth-url", (req, res) => {
-  const clientId = process.env.SPOTIFY_CLIENT_ID;
-  const scope = "user-library-read playlist-read-private streaming user-read-email user-read-private user-modify-playback-state";
-  
-  if (!clientId) {
-    return res.status(500).json({ error: "Missing SPOTIFY_CLIENT_ID" });
+router.get("/status", optionalFirebaseToken, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  const userId = req.user?.uid;
+  if (!userId || req.user?.isGuest) {
+    return res.json({ connected: false });
   }
-
-  const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${clientId}&scope=${encodeURIComponent(scope)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
-  res.json({ url: authUrl });
+  try {
+    const token = await spotifyService.getToken(userId);
+    return res.json({ connected: !!token });
+  } catch (err) {
+    logger.error("Error getting Spotify token status", { error: err });
+    next(err);
+  }
 });
 
-router.get("/callback", async (req, res) => {
-  const code = req.query.code as string;
-  const clientId = process.env.SPOTIFY_CLIENT_ID;
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+router.get("/token", optionalFirebaseToken, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  const userId = req.user?.uid;
+  if (!userId || req.user?.isGuest) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  try {
+    const token = await spotifyService.getToken(userId);
+    if (!token) return res.status(401).json({ error: "No token found" });
+    return res.json({ token });
+  } catch (err) {
+    logger.error("Error getting Spotify token", { error: err });
+    next(err);
+  }
+});
 
-  if (!code || !clientId || !clientSecret) {
-    return res.status(400).send("Missing parameters or credentials");
+router.get("/auth-url", optionalFirebaseToken, (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  const userId = req.user?.uid;
+  if (!userId || req.user?.isGuest) {
+    return res.status(401).json({ error: "Please log in to connect Spotify." });
   }
 
   try {
-    const tokenRes = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": "Basic " + Buffer.from(`${clientId}:${clientSecret}`).toString("base64"),
-      },
-      body: new URLSearchParams({
-        code,
-        redirect_uri: REDIRECT_URI,
-        grant_type: "authorization_code",
-      }).toString(),
-    });
+    const authUrl = spotifyService.getAuthUrl(userId);
+    return res.json({ url: authUrl });
+  } catch (err) {
+    logger.error("Error getting Spotify auth URL", { error: err });
+    next(err);
+  }
+});
 
-    const data: any = await tokenRes.json();
-    if (data.access_token) {
-      // Typically we'd associate this with the user ID from auth middleware.
-      // For now, storing globally or in session
-      const redis = getRedis();
-      if (redis) {
-        await redis.set("spotify_token:global", data.access_token, "EX", data.expires_in);
-        await redis.set("spotify_refresh:global", data.refresh_token);
-      }
-      
-      res.send(`
-        <script>
-          window.opener.postMessage({ type: 'OAUTH_AUTH_SUCCESS' }, '*');
-          window.close();
-        </script>
-      `);
-    } else {
-      res.status(400).json(data);
-    }
+router.get("/callback", async (req, res, next) => {
+  const code = req.query.code as string;
+  const state = req.query.state as string;
+
+  try {
+    await spotifyService.handleCallback(code, state);
+    return res.send(`
+      <script>
+        window.opener.postMessage({ type: 'OAUTH_AUTH_SUCCESS' }, '*');
+        window.close();
+      </script>
+    `);
   } catch (err: any) {
     logger.error("Spotify Auth Error", err);
-    res.status(500).send("Authentication failed");
+    next(err);
   }
 });
 
-router.get("/library", async (req, res) => {
-  const redis = getRedis();
-  const token = redis ? await redis.get("spotify_token:global") : null;
+router.get("/library", optionalFirebaseToken, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  const userId = req.user?.uid;
+  if (!userId || req.user?.isGuest) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
   
-  if (!token) return res.status(401).json({ error: "Not connected" });
-
   try {
-    const tracksRes = await fetch("https://api.spotify.com/v1/me/tracks?limit=20", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await tracksRes.json();
-    res.json(data);
+    const token = await spotifyService.getToken(userId);
+    if (!token) return res.status(401).json({ error: "Not connected" });
+
+    const data = await spotifyService.fetchLibrary(token);
+    return res.json(data);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch library" });
+    logger.error("Failed to fetch library", { error: err });
+    next(err);
   }
 });
 

@@ -48,6 +48,14 @@ public interface GetUserTracksQuery :
   
     val imageUrl: String?,
   
+    val audioUrl: String?,
+  
+    val prompt: String?,
+  
+    val visibility: String,
+  
+    val isCommunity: Boolean,
+  
     val createdAt: @kotlinx.serialization.Serializable(with = com.google.firebase.dataconnect.serializers.TimestampSerializer::class) com.google.firebase.Timestamp,
   
   ) {

@@ -1,0 +1,10 @@
+MOCK/TODO in /home/shaolin/lyria/src/tests/genkit.test.ts:11: console.warn("No GEMINI_API_KEY found, skipping live Genkit tests or falling back to mocks if necessary.");
+MOCK/TODO in /home/shaolin/lyria/src/tests/genkit.test.ts:28: const mockResponse = {
+EMOJI in /home/shaolin/lyria/src/web/features/chat/ChatScreen.tsx:186: 🎨
+EMOJI in /home/shaolin/lyria/src/web/features/chat/ChatScreen.tsx:196: 🎬
+EMOJI in /home/shaolin/lyria/src/web/hooks/useMave.ts:216: setMessages(prev => prev.map(m => m.id === responseId ? { ...m, text: `⚠️ ${event.message}` } : m));
+EMOJI in /home/shaolin/lyria/src/web/hooks/useMave.ts:247: setMessages(prev => prev.map(m => m.id === responseId ? { ...m, text: `⚠️ ${event.message}` } : m));
+EMOJI in /home/shaolin/lyria/src/web/hooks/useMave.ts:290: setMessages(prev => [{ id: Date.now().toString(), text: `⚠️ Tool error: ${err?.message || 'Unknown error'}`, sender: 'mave' as const }, ...prev].slice(0, 15));
+EMOJI in /home/shaolin/lyria/src/web/hooks/useMave.ts:364: setMessages(prev => [{ id: Date.now().toString(), text: `⚠️ Error connecting live session: ${errorMessage}`, sender: 'mave' as const }, ...prev].slice(0, 15));
+EMOJI in /home/shaolin/lyria/src/web/hooks/useMave.ts:430: text: `⚠️ Error: ${err.message}`,
+EMOJI in /home/shaolin/lyria/src/web/hooks/useMave.ts:468: setMessages(prev => [{ id: Date.now().toString(), text: '⚠️ Microphone access denied. Please allow mic access and try again.', sender: 'mave' as const }, ...prev].slice(0, 15));

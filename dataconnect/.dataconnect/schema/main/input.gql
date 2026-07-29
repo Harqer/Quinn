@@ -1,0 +1,3569 @@
+"""
+✨ `Album_KeyOutput` returns the primary key fields of table type `Album`.
+
+It has the same format as `Album_Key`, but is only used as mutation return value.
+"""
+scalar Album_KeyOutput
+"""
+✨ `Audiobook_KeyOutput` returns the primary key fields of table type `Audiobook`.
+
+It has the same format as `Audiobook_Key`, but is only used as mutation return value.
+"""
+scalar Audiobook_KeyOutput
+"""
+✨ `BookmarkedTrack_KeyOutput` returns the primary key fields of table type `BookmarkedTrack`.
+
+It has the same format as `BookmarkedTrack_Key`, but is only used as mutation return value.
+"""
+scalar BookmarkedTrack_KeyOutput
+"""
+✨ `Category_KeyOutput` returns the primary key fields of table type `Category`.
+
+It has the same format as `Category_Key`, but is only used as mutation return value.
+"""
+scalar Category_KeyOutput
+"""
+✨ `LikedTrack_KeyOutput` returns the primary key fields of table type `LikedTrack`.
+
+It has the same format as `LikedTrack_Key`, but is only used as mutation return value.
+"""
+scalar LikedTrack_KeyOutput
+"""
+✨ `PaymentHistory_KeyOutput` returns the primary key fields of table type `PaymentHistory`.
+
+It has the same format as `PaymentHistory_Key`, but is only used as mutation return value.
+"""
+scalar PaymentHistory_KeyOutput
+"""
+✨ `Playlist_KeyOutput` returns the primary key fields of table type `Playlist`.
+
+It has the same format as `Playlist_Key`, but is only used as mutation return value.
+"""
+scalar Playlist_KeyOutput
+"""
+✨ `PlaylistEntry_KeyOutput` returns the primary key fields of table type `PlaylistEntry`.
+
+It has the same format as `PlaylistEntry_Key`, but is only used as mutation return value.
+"""
+scalar PlaylistEntry_KeyOutput
+"""
+✨ `Podcast_KeyOutput` returns the primary key fields of table type `Podcast`.
+
+It has the same format as `Podcast_Key`, but is only used as mutation return value.
+"""
+scalar Podcast_KeyOutput
+"""
+✨ `PodcastEpisode_KeyOutput` returns the primary key fields of table type `PodcastEpisode`.
+
+It has the same format as `PodcastEpisode_Key`, but is only used as mutation return value.
+"""
+scalar PodcastEpisode_KeyOutput
+"""
+✨ `Track_KeyOutput` returns the primary key fields of table type `Track`.
+
+It has the same format as `Track_Key`, but is only used as mutation return value.
+"""
+scalar Track_KeyOutput
+"""
+✨ `User_KeyOutput` returns the primary key fields of table type `User`.
+
+It has the same format as `User_Key`, but is only used as mutation return value.
+"""
+scalar User_KeyOutput
+"""
+✨ `UserSettings_KeyOutput` returns the primary key fields of table type `UserSettings`.
+
+It has the same format as `UserSettings_Key`, but is only used as mutation return value.
+"""
+scalar UserSettings_KeyOutput
+"""
+✨ Generated data input type for table 'Album'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Album_Data {
+  """
+  ✨ Generated from Field `Album`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Album`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Album`.`artistName` of type `String!`
+  """
+  artistName: String
+  """
+  ✨ `_expr` server value variant of `artistName` (✨ Generated from Field `Album`.`artistName` of type `String!`)
+  """
+  artistName_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Album`.`imageUrl` of type `String`
+  """
+  imageUrl: String
+  """
+  ✨ `_expr` server value variant of `imageUrl` (✨ Generated from Field `Album`.`imageUrl` of type `String`)
+  """
+  imageUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Album`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Album`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Album`.`releaseYear` of type `Int`
+  """
+  releaseYear: Int
+  """
+  ✨ `_expr` server value variant of `releaseYear` (✨ Generated from Field `Album`.`releaseYear` of type `Int`)
+  """
+  releaseYear_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `releaseYear` (✨ Generated from Field `Album`.`releaseYear` of type `Int`)
+  """
+  releaseYear_update: [Int_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'Album'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Album_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Album_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Album_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Album_Filter!]
+  """
+  ✨ Generated from Field `Album`.`id` of type `String!`
+  """
+  id: String_Filter
+  """
+  ✨ Generated from Field `Album`.`artistName` of type `String!`
+  """
+  artistName: String_Filter
+  """
+  ✨ Generated from Field `Album`.`imageUrl` of type `String`
+  """
+  imageUrl: String_Filter
+  """
+  ✨ Generated from Field `Album`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Album`.`releaseYear` of type `Int`
+  """
+  releaseYear: Int_Filter
+}
+"""
+✨ Generated first-row input type for table 'Album'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Album_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Album_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Album_Filter
+}
+"""
+✨ Generated having input type for table 'Album'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Album_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Album_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Album_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Album_Having!]
+  """
+  ✨ Generated from Field `Album`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Album`.`artistName_count` of type `Int!`
+  """
+  artistName_count: Int_Filter
+  """
+  ✨ Generated from Field `Album`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Album`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `Album`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Album`.`releaseYear_count` of type `Int!`
+  """
+  releaseYear_count: Int_Filter
+  """
+  ✨ Generated from Field `Album`.`releaseYear_sum` of type `Int`
+  """
+  releaseYear_sum: Int_Filter
+  """
+  ✨ Generated from Field `Album`.`releaseYear_avg` of type `Float`
+  """
+  releaseYear_avg: Float_Filter
+  """
+  ✨ Generated from Field `Album`.`releaseYear_min` of type `Int`
+  """
+  releaseYear_min: Int_Filter
+  """
+  ✨ Generated from Field `Album`.`releaseYear_max` of type `Int`
+  """
+  releaseYear_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Album'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Album_Key {
+  """
+  ✨ Generated from Field `Album`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Album`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Album'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Album_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Album_Filter
+}
+"""
+✨ Generated order input type for table 'Album'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Album_Order {
+  """
+  ✨ Generated from Field `Album`.`id` of type `String!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`artistName` of type `String!`
+  """
+  artistName: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`imageUrl` of type `String`
+  """
+  imageUrl: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`releaseYear` of type `Int`
+  """
+  releaseYear: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`artistName_count` of type `Int!`
+  """
+  artistName_count: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`releaseYear_count` of type `Int!`
+  """
+  releaseYear_count: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`releaseYear_sum` of type `Int`
+  """
+  releaseYear_sum: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`releaseYear_avg` of type `Float`
+  """
+  releaseYear_avg: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`releaseYear_min` of type `Int`
+  """
+  releaseYear_min: OrderDirection
+  """
+  ✨ Generated from Field `Album`.`releaseYear_max` of type `Int`
+  """
+  releaseYear_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Audiobook'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Audiobook_Data {
+  """
+  ✨ Generated from Field `Audiobook`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Audiobook`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Audiobook`.`audioUrl` of type `String`
+  """
+  audioUrl: String
+  """
+  ✨ `_expr` server value variant of `audioUrl` (✨ Generated from Field `Audiobook`.`audioUrl` of type `String`)
+  """
+  audioUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Audiobook`.`author` of type `String!`
+  """
+  author: String
+  """
+  ✨ `_expr` server value variant of `author` (✨ Generated from Field `Audiobook`.`author` of type `String!`)
+  """
+  author_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Audiobook`.`duration` of type `Int`
+  """
+  duration: Int
+  """
+  ✨ `_expr` server value variant of `duration` (✨ Generated from Field `Audiobook`.`duration` of type `Int`)
+  """
+  duration_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `duration` (✨ Generated from Field `Audiobook`.`duration` of type `Int`)
+  """
+  duration_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Audiobook`.`imageUrl` of type `String`
+  """
+  imageUrl: String
+  """
+  ✨ `_expr` server value variant of `imageUrl` (✨ Generated from Field `Audiobook`.`imageUrl` of type `String`)
+  """
+  imageUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Audiobook`.`narrator` of type `String`
+  """
+  narrator: String
+  """
+  ✨ `_expr` server value variant of `narrator` (✨ Generated from Field `Audiobook`.`narrator` of type `String`)
+  """
+  narrator_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Audiobook`.`title` of type `String!`
+  """
+  title: String
+  """
+  ✨ `_expr` server value variant of `title` (✨ Generated from Field `Audiobook`.`title` of type `String!`)
+  """
+  title_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'Audiobook'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Audiobook_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Audiobook_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Audiobook_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Audiobook_Filter!]
+  """
+  ✨ Generated from Field `Audiobook`.`id` of type `String!`
+  """
+  id: String_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`audioUrl` of type `String`
+  """
+  audioUrl: String_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`author` of type `String!`
+  """
+  author: String_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`duration` of type `Int`
+  """
+  duration: Int_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`imageUrl` of type `String`
+  """
+  imageUrl: String_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`narrator` of type `String`
+  """
+  narrator: String_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`title` of type `String!`
+  """
+  title: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Audiobook'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Audiobook_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Audiobook_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Audiobook_Filter
+}
+"""
+✨ Generated having input type for table 'Audiobook'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Audiobook_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Audiobook_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Audiobook_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Audiobook_Having!]
+  """
+  ✨ Generated from Field `Audiobook`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`audioUrl_count` of type `Int!`
+  """
+  audioUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`author_count` of type `Int!`
+  """
+  author_count: Int_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`duration_count` of type `Int!`
+  """
+  duration_count: Int_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`narrator_count` of type `Int!`
+  """
+  narrator_count: Int_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`title_count` of type `Int!`
+  """
+  title_count: Int_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`duration_sum` of type `Int`
+  """
+  duration_sum: Int_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`duration_avg` of type `Float`
+  """
+  duration_avg: Float_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`duration_min` of type `Int`
+  """
+  duration_min: Int_Filter
+  """
+  ✨ Generated from Field `Audiobook`.`duration_max` of type `Int`
+  """
+  duration_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Audiobook'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Audiobook_Key {
+  """
+  ✨ Generated from Field `Audiobook`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Audiobook`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Audiobook'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Audiobook_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Audiobook_Filter
+}
+"""
+✨ Generated order input type for table 'Audiobook'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Audiobook_Order {
+  """
+  ✨ Generated from Field `Audiobook`.`id` of type `String!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`audioUrl` of type `String`
+  """
+  audioUrl: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`author` of type `String!`
+  """
+  author: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`duration` of type `Int`
+  """
+  duration: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`imageUrl` of type `String`
+  """
+  imageUrl: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`narrator` of type `String`
+  """
+  narrator: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`title` of type `String!`
+  """
+  title: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`audioUrl_count` of type `Int!`
+  """
+  audioUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`author_count` of type `Int!`
+  """
+  author_count: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`duration_count` of type `Int!`
+  """
+  duration_count: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`narrator_count` of type `Int!`
+  """
+  narrator_count: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`title_count` of type `Int!`
+  """
+  title_count: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`duration_sum` of type `Int`
+  """
+  duration_sum: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`duration_avg` of type `Float`
+  """
+  duration_avg: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`duration_min` of type `Int`
+  """
+  duration_min: OrderDirection
+  """
+  ✨ Generated from Field `Audiobook`.`duration_max` of type `Int`
+  """
+  duration_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'BookmarkedTrack'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input BookmarkedTrack_Data {
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`userUid` of type `String!`
+  """
+  userUid: String
+  """
+  ✨ `_expr` server value variant of `userUid` (✨ Generated from Field `BookmarkedTrack`.`userUid` of type `String!`)
+  """
+  userUid_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`trackId` of type `String!`
+  """
+  trackId: String
+  """
+  ✨ `_expr` server value variant of `trackId` (✨ Generated from Field `BookmarkedTrack`.`trackId` of type `String!`)
+  """
+  trackId_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`track` of type `Track!`
+  """
+  track: Track_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`user` of type `User!`
+  """
+  user: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`addedAt` of type `Timestamp!`
+  """
+  addedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `addedAt` (✨ Generated from Field `BookmarkedTrack`.`addedAt` of type `Timestamp!`)
+  """
+  addedAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `addedAt` (✨ Generated from Field `BookmarkedTrack`.`addedAt` of type `Timestamp!`)
+  """
+  addedAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `addedAt` (✨ Generated from Field `BookmarkedTrack`.`addedAt` of type `Timestamp!`)
+  """
+  addedAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'BookmarkedTrack'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input BookmarkedTrack_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [BookmarkedTrack_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: BookmarkedTrack_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [BookmarkedTrack_Filter!]
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`userUid` of type `String!`
+  """
+  userUid: String_Filter
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`trackId` of type `String!`
+  """
+  trackId: String_Filter
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`track` of type `Track!`
+  """
+  track: Track_Filter
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`addedAt` of type `Timestamp!`
+  """
+  addedAt: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'BookmarkedTrack'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input BookmarkedTrack_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [BookmarkedTrack_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: BookmarkedTrack_Filter
+}
+"""
+✨ Generated having input type for table 'BookmarkedTrack'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input BookmarkedTrack_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [BookmarkedTrack_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: BookmarkedTrack_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [BookmarkedTrack_Having!]
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`addedAt_count` of type `Int!`
+  """
+  addedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`trackId_count` of type `Int!`
+  """
+  trackId_count: Int_Filter
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`userUid_count` of type `Int!`
+  """
+  userUid_count: Int_Filter
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`addedAt_min` of type `Timestamp`
+  """
+  addedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`addedAt_max` of type `Timestamp`
+  """
+  addedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'BookmarkedTrack'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input BookmarkedTrack_Key {
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`userUid` of type `String!`
+  """
+  userUid: String
+  """
+  ✨ `_expr` server value variant of `userUid` (✨ Generated from Field `BookmarkedTrack`.`userUid` of type `String!`)
+  """
+  userUid_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`trackId` of type `String!`
+  """
+  trackId: String
+  """
+  ✨ `_expr` server value variant of `trackId` (✨ Generated from Field `BookmarkedTrack`.`trackId` of type `String!`)
+  """
+  trackId_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'BookmarkedTrack'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input BookmarkedTrack_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: BookmarkedTrack_Filter
+}
+"""
+✨ Generated order input type for table 'BookmarkedTrack'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input BookmarkedTrack_Order {
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`userUid` of type `String!`
+  """
+  userUid: OrderDirection
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`trackId` of type `String!`
+  """
+  trackId: OrderDirection
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`track` of type `Track!`
+  """
+  track: Track_Order
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`addedAt` of type `Timestamp!`
+  """
+  addedAt: OrderDirection
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`addedAt_count` of type `Int!`
+  """
+  addedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`trackId_count` of type `Int!`
+  """
+  trackId_count: OrderDirection
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`userUid_count` of type `Int!`
+  """
+  userUid_count: OrderDirection
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`addedAt_min` of type `Timestamp`
+  """
+  addedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `BookmarkedTrack`.`addedAt_max` of type `Timestamp`
+  """
+  addedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Category'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Category_Data {
+  """
+  ✨ Generated from Field `Category`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Category`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Category`.`imageUrl` of type `String`
+  """
+  imageUrl: String
+  """
+  ✨ `_expr` server value variant of `imageUrl` (✨ Generated from Field `Category`.`imageUrl` of type `String`)
+  """
+  imageUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Category`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Category`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Category`.`type` of type `String!`
+  """
+  type: String
+  """
+  ✨ `_expr` server value variant of `type` (✨ Generated from Field `Category`.`type` of type `String!`)
+  """
+  type_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'Category'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Category_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Category_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Category_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Category_Filter!]
+  """
+  ✨ Generated from Field `Category`.`id` of type `String!`
+  """
+  id: String_Filter
+  """
+  ✨ Generated from Field `Category`.`imageUrl` of type `String`
+  """
+  imageUrl: String_Filter
+  """
+  ✨ Generated from Field `Category`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Category`.`type` of type `String!`
+  """
+  type: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Category'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Category_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Category_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Category_Filter
+}
+"""
+✨ Generated having input type for table 'Category'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Category_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Category_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Category_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Category_Having!]
+  """
+  ✨ Generated from Field `Category`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Category`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Category`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `Category`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Category`.`type_count` of type `Int!`
+  """
+  type_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Category'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Category_Key {
+  """
+  ✨ Generated from Field `Category`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Category`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Category'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Category_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Category_Filter
+}
+"""
+✨ Generated order input type for table 'Category'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Category_Order {
+  """
+  ✨ Generated from Field `Category`.`id` of type `String!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Category`.`imageUrl` of type `String`
+  """
+  imageUrl: OrderDirection
+  """
+  ✨ Generated from Field `Category`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Category`.`type` of type `String!`
+  """
+  type: OrderDirection
+  """
+  ✨ Generated from Field `Category`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Category`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Category`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `Category`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Category`.`type_count` of type `Int!`
+  """
+  type_count: OrderDirection
+}
+"""
+✨ Generated data input type for table 'LikedTrack'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input LikedTrack_Data {
+  """
+  ✨ Generated from Field `LikedTrack`.`userUid` of type `String!`
+  """
+  userUid: String
+  """
+  ✨ `_expr` server value variant of `userUid` (✨ Generated from Field `LikedTrack`.`userUid` of type `String!`)
+  """
+  userUid_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `LikedTrack`.`trackId` of type `String!`
+  """
+  trackId: String
+  """
+  ✨ `_expr` server value variant of `trackId` (✨ Generated from Field `LikedTrack`.`trackId` of type `String!`)
+  """
+  trackId_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `LikedTrack`.`track` of type `Track!`
+  """
+  track: Track_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `LikedTrack`.`user` of type `User!`
+  """
+  user: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `LikedTrack`.`addedAt` of type `Timestamp!`
+  """
+  addedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `addedAt` (✨ Generated from Field `LikedTrack`.`addedAt` of type `Timestamp!`)
+  """
+  addedAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `addedAt` (✨ Generated from Field `LikedTrack`.`addedAt` of type `Timestamp!`)
+  """
+  addedAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `addedAt` (✨ Generated from Field `LikedTrack`.`addedAt` of type `Timestamp!`)
+  """
+  addedAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'LikedTrack'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input LikedTrack_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [LikedTrack_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: LikedTrack_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [LikedTrack_Filter!]
+  """
+  ✨ Generated from Field `LikedTrack`.`userUid` of type `String!`
+  """
+  userUid: String_Filter
+  """
+  ✨ Generated from Field `LikedTrack`.`trackId` of type `String!`
+  """
+  trackId: String_Filter
+  """
+  ✨ Generated from Field `LikedTrack`.`track` of type `Track!`
+  """
+  track: Track_Filter
+  """
+  ✨ Generated from Field `LikedTrack`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `LikedTrack`.`addedAt` of type `Timestamp!`
+  """
+  addedAt: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'LikedTrack'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input LikedTrack_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [LikedTrack_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: LikedTrack_Filter
+}
+"""
+✨ Generated having input type for table 'LikedTrack'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input LikedTrack_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [LikedTrack_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: LikedTrack_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [LikedTrack_Having!]
+  """
+  ✨ Generated from Field `LikedTrack`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `LikedTrack`.`addedAt_count` of type `Int!`
+  """
+  addedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `LikedTrack`.`trackId_count` of type `Int!`
+  """
+  trackId_count: Int_Filter
+  """
+  ✨ Generated from Field `LikedTrack`.`userUid_count` of type `Int!`
+  """
+  userUid_count: Int_Filter
+  """
+  ✨ Generated from Field `LikedTrack`.`addedAt_min` of type `Timestamp`
+  """
+  addedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `LikedTrack`.`addedAt_max` of type `Timestamp`
+  """
+  addedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'LikedTrack'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input LikedTrack_Key {
+  """
+  ✨ Generated from Field `LikedTrack`.`userUid` of type `String!`
+  """
+  userUid: String
+  """
+  ✨ `_expr` server value variant of `userUid` (✨ Generated from Field `LikedTrack`.`userUid` of type `String!`)
+  """
+  userUid_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `LikedTrack`.`trackId` of type `String!`
+  """
+  trackId: String
+  """
+  ✨ `_expr` server value variant of `trackId` (✨ Generated from Field `LikedTrack`.`trackId` of type `String!`)
+  """
+  trackId_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'LikedTrack'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input LikedTrack_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: LikedTrack_Filter
+}
+"""
+✨ Generated order input type for table 'LikedTrack'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input LikedTrack_Order {
+  """
+  ✨ Generated from Field `LikedTrack`.`userUid` of type `String!`
+  """
+  userUid: OrderDirection
+  """
+  ✨ Generated from Field `LikedTrack`.`trackId` of type `String!`
+  """
+  trackId: OrderDirection
+  """
+  ✨ Generated from Field `LikedTrack`.`track` of type `Track!`
+  """
+  track: Track_Order
+  """
+  ✨ Generated from Field `LikedTrack`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `LikedTrack`.`addedAt` of type `Timestamp!`
+  """
+  addedAt: OrderDirection
+  """
+  ✨ Generated from Field `LikedTrack`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `LikedTrack`.`addedAt_count` of type `Int!`
+  """
+  addedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `LikedTrack`.`trackId_count` of type `Int!`
+  """
+  trackId_count: OrderDirection
+  """
+  ✨ Generated from Field `LikedTrack`.`userUid_count` of type `Int!`
+  """
+  userUid_count: OrderDirection
+  """
+  ✨ Generated from Field `LikedTrack`.`addedAt_min` of type `Timestamp`
+  """
+  addedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `LikedTrack`.`addedAt_max` of type `Timestamp`
+  """
+  addedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'PaymentHistory'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input PaymentHistory_Data {
+  """
+  ✨ Generated from Field `PaymentHistory`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `PaymentHistory`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PaymentHistory`.`userUid` of type `String!`
+  """
+  userUid: String
+  """
+  ✨ `_expr` server value variant of `userUid` (✨ Generated from Field `PaymentHistory`.`userUid` of type `String!`)
+  """
+  userUid_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PaymentHistory`.`user` of type `User!`
+  """
+  user: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount` of type `Float!`
+  """
+  amount: Float
+  """
+  ✨ `_expr` server value variant of `amount` (✨ Generated from Field `PaymentHistory`.`amount` of type `Float!`)
+  """
+  amount_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `amount` (✨ Generated from Field `PaymentHistory`.`amount` of type `Float!`)
+  """
+  amount_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PaymentHistory`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `PaymentHistory`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `PaymentHistory`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `PaymentHistory`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PaymentHistory`.`currency` of type `String!`
+  """
+  currency: String
+  """
+  ✨ `_expr` server value variant of `currency` (✨ Generated from Field `PaymentHistory`.`currency` of type `String!`)
+  """
+  currency_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PaymentHistory`.`status` of type `String!`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `PaymentHistory`.`status` of type `String!`)
+  """
+  status_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PaymentHistory`.`stripeInvoiceId` of type `String`
+  """
+  stripeInvoiceId: String
+  """
+  ✨ `_expr` server value variant of `stripeInvoiceId` (✨ Generated from Field `PaymentHistory`.`stripeInvoiceId` of type `String`)
+  """
+  stripeInvoiceId_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'PaymentHistory'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input PaymentHistory_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [PaymentHistory_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: PaymentHistory_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [PaymentHistory_Filter!]
+  """
+  ✨ Generated from Field `PaymentHistory`.`id` of type `String!`
+  """
+  id: String_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`userUid` of type `String!`
+  """
+  userUid: String_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount` of type `Float!`
+  """
+  amount: Float_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`currency` of type `String!`
+  """
+  currency: String_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`status` of type `String!`
+  """
+  status: String_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`stripeInvoiceId` of type `String`
+  """
+  stripeInvoiceId: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'PaymentHistory'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input PaymentHistory_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [PaymentHistory_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: PaymentHistory_Filter
+}
+"""
+✨ Generated having input type for table 'PaymentHistory'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input PaymentHistory_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [PaymentHistory_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: PaymentHistory_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [PaymentHistory_Having!]
+  """
+  ✨ Generated from Field `PaymentHistory`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount_count` of type `Int!`
+  """
+  amount_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`currency_count` of type `Int!`
+  """
+  currency_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`stripeInvoiceId_count` of type `Int!`
+  """
+  stripeInvoiceId_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`userUid_count` of type `Int!`
+  """
+  userUid_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount_sum` of type `Float`
+  """
+  amount_sum: Float_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount_avg` of type `Float`
+  """
+  amount_avg: Float_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount_min` of type `Float`
+  """
+  amount_min: Float_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount_max` of type `Float`
+  """
+  amount_max: Float_Filter
+  """
+  ✨ Generated from Field `PaymentHistory`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'PaymentHistory'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input PaymentHistory_Key {
+  """
+  ✨ Generated from Field `PaymentHistory`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `PaymentHistory`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'PaymentHistory'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input PaymentHistory_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: PaymentHistory_Filter
+}
+"""
+✨ Generated order input type for table 'PaymentHistory'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input PaymentHistory_Order {
+  """
+  ✨ Generated from Field `PaymentHistory`.`id` of type `String!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`userUid` of type `String!`
+  """
+  userUid: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount` of type `Float!`
+  """
+  amount: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`currency` of type `String!`
+  """
+  currency: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`status` of type `String!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`stripeInvoiceId` of type `String`
+  """
+  stripeInvoiceId: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount_count` of type `Int!`
+  """
+  amount_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`currency_count` of type `Int!`
+  """
+  currency_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`stripeInvoiceId_count` of type `Int!`
+  """
+  stripeInvoiceId_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`userUid_count` of type `Int!`
+  """
+  userUid_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount_sum` of type `Float`
+  """
+  amount_sum: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount_avg` of type `Float`
+  """
+  amount_avg: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount_min` of type `Float`
+  """
+  amount_min: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`amount_max` of type `Float`
+  """
+  amount_max: OrderDirection
+  """
+  ✨ Generated from Field `PaymentHistory`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Playlist'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Playlist_Data {
+  """
+  ✨ Generated from Field `Playlist`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Playlist`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Playlist`.`ownerUid` of type `String!`
+  """
+  ownerUid: String
+  """
+  ✨ `_expr` server value variant of `ownerUid` (✨ Generated from Field `Playlist`.`ownerUid` of type `String!`)
+  """
+  ownerUid_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Playlist`.`owner` of type `User!`
+  """
+  owner: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Playlist`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Playlist`.`description` of type `String`)
+  """
+  description_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Playlist`.`imageUrl` of type `String`
+  """
+  imageUrl: String
+  """
+  ✨ `_expr` server value variant of `imageUrl` (✨ Generated from Field `Playlist`.`imageUrl` of type `String`)
+  """
+  imageUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Playlist`.`isPublic` of type `Boolean!`
+  """
+  isPublic: Boolean
+  """
+  ✨ `_expr` server value variant of `isPublic` (✨ Generated from Field `Playlist`.`isPublic` of type `Boolean!`)
+  """
+  isPublic_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Playlist`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Playlist`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Playlist`.`playlistEntries_on_playlist` of type `[PlaylistEntry!]!`
+  """
+  playlistEntries_on_playlist: [PlaylistEntry_Data!]
+}
+"""
+✨ Generated filter input type for table 'Playlist'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Playlist_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Playlist_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Playlist_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Playlist_Filter!]
+  """
+  ✨ Generated from Field `Playlist`.`id` of type `String!`
+  """
+  id: String_Filter
+  """
+  ✨ Generated from Field `Playlist`.`ownerUid` of type `String!`
+  """
+  ownerUid: String_Filter
+  """
+  ✨ Generated from Field `Playlist`.`owner` of type `User!`
+  """
+  owner: User_Filter
+  """
+  ✨ Generated from Field `Playlist`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Playlist`.`imageUrl` of type `String`
+  """
+  imageUrl: String_Filter
+  """
+  ✨ Generated from Field `Playlist`.`isPublic` of type `Boolean!`
+  """
+  isPublic: Boolean_Filter
+  """
+  ✨ Generated from Field `Playlist`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Playlist`.`playlistEntries_on_playlist` of type `[PlaylistEntry!]!`
+  """
+  playlistEntries_on_playlist: PlaylistEntry_ListFilter
+  """
+  ✨ Generated from Field `Playlist`.`tracks_via_PlaylistEntry` of type `[Track!]!`
+  """
+  tracks_via_PlaylistEntry: Track_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Playlist'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Playlist_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Playlist_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Playlist_Filter
+}
+"""
+✨ Generated having input type for table 'Playlist'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Playlist_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Playlist_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Playlist_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Playlist_Having!]
+  """
+  ✨ Generated from Field `Playlist`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Playlist`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Playlist`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Playlist`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `Playlist`.`isPublic_count` of type `Int!`
+  """
+  isPublic_count: Int_Filter
+  """
+  ✨ Generated from Field `Playlist`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Playlist`.`ownerUid_count` of type `Int!`
+  """
+  ownerUid_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Playlist'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Playlist_Key {
+  """
+  ✨ Generated from Field `Playlist`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Playlist`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Playlist'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Playlist_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Playlist_Filter
+}
+"""
+✨ Generated order input type for table 'Playlist'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Playlist_Order {
+  """
+  ✨ Generated from Field `Playlist`.`id` of type `String!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`ownerUid` of type `String!`
+  """
+  ownerUid: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`owner` of type `User!`
+  """
+  owner: User_Order
+  """
+  ✨ Generated from Field `Playlist`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`imageUrl` of type `String`
+  """
+  imageUrl: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`isPublic` of type `Boolean!`
+  """
+  isPublic: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`isPublic_count` of type `Int!`
+  """
+  isPublic_count: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Playlist`.`ownerUid_count` of type `Int!`
+  """
+  ownerUid_count: OrderDirection
+}
+"""
+✨ Generated data input type for table 'PlaylistEntry'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input PlaylistEntry_Data {
+  """
+  ✨ Generated from Field `PlaylistEntry`.`playlistId` of type `String!`
+  """
+  playlistId: String
+  """
+  ✨ `_expr` server value variant of `playlistId` (✨ Generated from Field `PlaylistEntry`.`playlistId` of type `String!`)
+  """
+  playlistId_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PlaylistEntry`.`trackId` of type `String!`
+  """
+  trackId: String
+  """
+  ✨ `_expr` server value variant of `trackId` (✨ Generated from Field `PlaylistEntry`.`trackId` of type `String!`)
+  """
+  trackId_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PlaylistEntry`.`playlist` of type `Playlist!`
+  """
+  playlist: Playlist_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PlaylistEntry`.`track` of type `Track!`
+  """
+  track: Track_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PlaylistEntry`.`addedAt` of type `Timestamp!`
+  """
+  addedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `addedAt` (✨ Generated from Field `PlaylistEntry`.`addedAt` of type `Timestamp!`)
+  """
+  addedAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `addedAt` (✨ Generated from Field `PlaylistEntry`.`addedAt` of type `Timestamp!`)
+  """
+  addedAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `addedAt` (✨ Generated from Field `PlaylistEntry`.`addedAt` of type `Timestamp!`)
+  """
+  addedAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'PlaylistEntry'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input PlaylistEntry_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [PlaylistEntry_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: PlaylistEntry_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [PlaylistEntry_Filter!]
+  """
+  ✨ Generated from Field `PlaylistEntry`.`playlistId` of type `String!`
+  """
+  playlistId: String_Filter
+  """
+  ✨ Generated from Field `PlaylistEntry`.`trackId` of type `String!`
+  """
+  trackId: String_Filter
+  """
+  ✨ Generated from Field `PlaylistEntry`.`playlist` of type `Playlist!`
+  """
+  playlist: Playlist_Filter
+  """
+  ✨ Generated from Field `PlaylistEntry`.`track` of type `Track!`
+  """
+  track: Track_Filter
+  """
+  ✨ Generated from Field `PlaylistEntry`.`addedAt` of type `Timestamp!`
+  """
+  addedAt: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'PlaylistEntry'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input PlaylistEntry_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [PlaylistEntry_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: PlaylistEntry_Filter
+}
+"""
+✨ Generated having input type for table 'PlaylistEntry'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input PlaylistEntry_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [PlaylistEntry_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: PlaylistEntry_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [PlaylistEntry_Having!]
+  """
+  ✨ Generated from Field `PlaylistEntry`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `PlaylistEntry`.`addedAt_count` of type `Int!`
+  """
+  addedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `PlaylistEntry`.`playlistId_count` of type `Int!`
+  """
+  playlistId_count: Int_Filter
+  """
+  ✨ Generated from Field `PlaylistEntry`.`trackId_count` of type `Int!`
+  """
+  trackId_count: Int_Filter
+  """
+  ✨ Generated from Field `PlaylistEntry`.`addedAt_min` of type `Timestamp`
+  """
+  addedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `PlaylistEntry`.`addedAt_max` of type `Timestamp`
+  """
+  addedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'PlaylistEntry'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input PlaylistEntry_Key {
+  """
+  ✨ Generated from Field `PlaylistEntry`.`playlistId` of type `String!`
+  """
+  playlistId: String
+  """
+  ✨ `_expr` server value variant of `playlistId` (✨ Generated from Field `PlaylistEntry`.`playlistId` of type `String!`)
+  """
+  playlistId_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PlaylistEntry`.`trackId` of type `String!`
+  """
+  trackId: String
+  """
+  ✨ `_expr` server value variant of `trackId` (✨ Generated from Field `PlaylistEntry`.`trackId` of type `String!`)
+  """
+  trackId_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'PlaylistEntry'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input PlaylistEntry_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: PlaylistEntry_Filter
+}
+"""
+✨ Generated order input type for table 'PlaylistEntry'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input PlaylistEntry_Order {
+  """
+  ✨ Generated from Field `PlaylistEntry`.`playlistId` of type `String!`
+  """
+  playlistId: OrderDirection
+  """
+  ✨ Generated from Field `PlaylistEntry`.`trackId` of type `String!`
+  """
+  trackId: OrderDirection
+  """
+  ✨ Generated from Field `PlaylistEntry`.`playlist` of type `Playlist!`
+  """
+  playlist: Playlist_Order
+  """
+  ✨ Generated from Field `PlaylistEntry`.`track` of type `Track!`
+  """
+  track: Track_Order
+  """
+  ✨ Generated from Field `PlaylistEntry`.`addedAt` of type `Timestamp!`
+  """
+  addedAt: OrderDirection
+  """
+  ✨ Generated from Field `PlaylistEntry`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `PlaylistEntry`.`addedAt_count` of type `Int!`
+  """
+  addedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `PlaylistEntry`.`playlistId_count` of type `Int!`
+  """
+  playlistId_count: OrderDirection
+  """
+  ✨ Generated from Field `PlaylistEntry`.`trackId_count` of type `Int!`
+  """
+  trackId_count: OrderDirection
+  """
+  ✨ Generated from Field `PlaylistEntry`.`addedAt_min` of type `Timestamp`
+  """
+  addedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `PlaylistEntry`.`addedAt_max` of type `Timestamp`
+  """
+  addedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Podcast'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Podcast_Data {
+  """
+  ✨ Generated from Field `Podcast`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Podcast`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Podcast`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Podcast`.`description` of type `String`)
+  """
+  description_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Podcast`.`imageUrl` of type `String`
+  """
+  imageUrl: String
+  """
+  ✨ `_expr` server value variant of `imageUrl` (✨ Generated from Field `Podcast`.`imageUrl` of type `String`)
+  """
+  imageUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Podcast`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Podcast`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Podcast`.`publisher` of type `String!`
+  """
+  publisher: String
+  """
+  ✨ `_expr` server value variant of `publisher` (✨ Generated from Field `Podcast`.`publisher` of type `String!`)
+  """
+  publisher_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Podcast`.`podcastEpisodes_on_podcast` of type `[PodcastEpisode!]!`
+  """
+  podcastEpisodes_on_podcast: [PodcastEpisode_Data!]
+}
+"""
+✨ Generated filter input type for table 'Podcast'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Podcast_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Podcast_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Podcast_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Podcast_Filter!]
+  """
+  ✨ Generated from Field `Podcast`.`id` of type `String!`
+  """
+  id: String_Filter
+  """
+  ✨ Generated from Field `Podcast`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Podcast`.`imageUrl` of type `String`
+  """
+  imageUrl: String_Filter
+  """
+  ✨ Generated from Field `Podcast`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Podcast`.`publisher` of type `String!`
+  """
+  publisher: String_Filter
+  """
+  ✨ Generated from Field `Podcast`.`podcastEpisodes_on_podcast` of type `[PodcastEpisode!]!`
+  """
+  podcastEpisodes_on_podcast: PodcastEpisode_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Podcast'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Podcast_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Podcast_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Podcast_Filter
+}
+"""
+✨ Generated having input type for table 'Podcast'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Podcast_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Podcast_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Podcast_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Podcast_Having!]
+  """
+  ✨ Generated from Field `Podcast`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Podcast`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Podcast`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Podcast`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `Podcast`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Podcast`.`publisher_count` of type `Int!`
+  """
+  publisher_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Podcast'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Podcast_Key {
+  """
+  ✨ Generated from Field `Podcast`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Podcast`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Podcast'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Podcast_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Podcast_Filter
+}
+"""
+✨ Generated order input type for table 'Podcast'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Podcast_Order {
+  """
+  ✨ Generated from Field `Podcast`.`id` of type `String!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Podcast`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Podcast`.`imageUrl` of type `String`
+  """
+  imageUrl: OrderDirection
+  """
+  ✨ Generated from Field `Podcast`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Podcast`.`publisher` of type `String!`
+  """
+  publisher: OrderDirection
+  """
+  ✨ Generated from Field `Podcast`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Podcast`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Podcast`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Podcast`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `Podcast`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Podcast`.`publisher_count` of type `Int!`
+  """
+  publisher_count: OrderDirection
+}
+"""
+✨ Generated data input type for table 'PodcastEpisode'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input PodcastEpisode_Data {
+  """
+  ✨ Generated from Field `PodcastEpisode`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `PodcastEpisode`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PodcastEpisode`.`podcastId` of type `String!`
+  """
+  podcastId: String
+  """
+  ✨ `_expr` server value variant of `podcastId` (✨ Generated from Field `PodcastEpisode`.`podcastId` of type `String!`)
+  """
+  podcastId_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PodcastEpisode`.`podcast` of type `Podcast!`
+  """
+  podcast: Podcast_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PodcastEpisode`.`audioUrl` of type `String`
+  """
+  audioUrl: String
+  """
+  ✨ `_expr` server value variant of `audioUrl` (✨ Generated from Field `PodcastEpisode`.`audioUrl` of type `String`)
+  """
+  audioUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration` of type `Int`
+  """
+  duration: Int
+  """
+  ✨ `_expr` server value variant of `duration` (✨ Generated from Field `PodcastEpisode`.`duration` of type `Int`)
+  """
+  duration_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `duration` (✨ Generated from Field `PodcastEpisode`.`duration` of type `Int`)
+  """
+  duration_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PodcastEpisode`.`publishDate` of type `Timestamp`
+  """
+  publishDate: Timestamp
+  """
+  ✨ `_expr` server value variant of `publishDate` (✨ Generated from Field `PodcastEpisode`.`publishDate` of type `Timestamp`)
+  """
+  publishDate_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `publishDate` (✨ Generated from Field `PodcastEpisode`.`publishDate` of type `Timestamp`)
+  """
+  publishDate_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `publishDate` (✨ Generated from Field `PodcastEpisode`.`publishDate` of type `Timestamp`)
+  """
+  publishDate_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `PodcastEpisode`.`title` of type `String!`
+  """
+  title: String
+  """
+  ✨ `_expr` server value variant of `title` (✨ Generated from Field `PodcastEpisode`.`title` of type `String!`)
+  """
+  title_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'PodcastEpisode'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input PodcastEpisode_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [PodcastEpisode_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: PodcastEpisode_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [PodcastEpisode_Filter!]
+  """
+  ✨ Generated from Field `PodcastEpisode`.`id` of type `String!`
+  """
+  id: String_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`podcastId` of type `String!`
+  """
+  podcastId: String_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`podcast` of type `Podcast!`
+  """
+  podcast: Podcast_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`audioUrl` of type `String`
+  """
+  audioUrl: String_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration` of type `Int`
+  """
+  duration: Int_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`publishDate` of type `Timestamp`
+  """
+  publishDate: Timestamp_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`title` of type `String!`
+  """
+  title: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'PodcastEpisode'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input PodcastEpisode_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [PodcastEpisode_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: PodcastEpisode_Filter
+}
+"""
+✨ Generated having input type for table 'PodcastEpisode'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input PodcastEpisode_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [PodcastEpisode_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: PodcastEpisode_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [PodcastEpisode_Having!]
+  """
+  ✨ Generated from Field `PodcastEpisode`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`audioUrl_count` of type `Int!`
+  """
+  audioUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration_count` of type `Int!`
+  """
+  duration_count: Int_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`podcastId_count` of type `Int!`
+  """
+  podcastId_count: Int_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`publishDate_count` of type `Int!`
+  """
+  publishDate_count: Int_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`title_count` of type `Int!`
+  """
+  title_count: Int_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration_sum` of type `Int`
+  """
+  duration_sum: Int_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration_avg` of type `Float`
+  """
+  duration_avg: Float_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration_min` of type `Int`
+  """
+  duration_min: Int_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`publishDate_min` of type `Timestamp`
+  """
+  publishDate_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration_max` of type `Int`
+  """
+  duration_max: Int_Filter
+  """
+  ✨ Generated from Field `PodcastEpisode`.`publishDate_max` of type `Timestamp`
+  """
+  publishDate_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'PodcastEpisode'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input PodcastEpisode_Key {
+  """
+  ✨ Generated from Field `PodcastEpisode`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `PodcastEpisode`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'PodcastEpisode'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input PodcastEpisode_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: PodcastEpisode_Filter
+}
+"""
+✨ Generated order input type for table 'PodcastEpisode'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input PodcastEpisode_Order {
+  """
+  ✨ Generated from Field `PodcastEpisode`.`id` of type `String!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`podcastId` of type `String!`
+  """
+  podcastId: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`podcast` of type `Podcast!`
+  """
+  podcast: Podcast_Order
+  """
+  ✨ Generated from Field `PodcastEpisode`.`audioUrl` of type `String`
+  """
+  audioUrl: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration` of type `Int`
+  """
+  duration: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`publishDate` of type `Timestamp`
+  """
+  publishDate: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`title` of type `String!`
+  """
+  title: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`audioUrl_count` of type `Int!`
+  """
+  audioUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration_count` of type `Int!`
+  """
+  duration_count: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`podcastId_count` of type `Int!`
+  """
+  podcastId_count: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`publishDate_count` of type `Int!`
+  """
+  publishDate_count: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`title_count` of type `Int!`
+  """
+  title_count: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration_sum` of type `Int`
+  """
+  duration_sum: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration_avg` of type `Float`
+  """
+  duration_avg: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration_min` of type `Int`
+  """
+  duration_min: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`publishDate_min` of type `Timestamp`
+  """
+  publishDate_min: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`duration_max` of type `Int`
+  """
+  duration_max: OrderDirection
+  """
+  ✨ Generated from Field `PodcastEpisode`.`publishDate_max` of type `Timestamp`
+  """
+  publishDate_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Track'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Track_Data {
+  """
+  ✨ Generated from Field `Track`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Track`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`ownerUid` of type `String!`
+  """
+  ownerUid: String
+  """
+  ✨ `_expr` server value variant of `ownerUid` (✨ Generated from Field `Track`.`ownerUid` of type `String!`)
+  """
+  ownerUid_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`owner` of type `User!`
+  """
+  owner: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`albumName` of type `String!`
+  """
+  albumName: String
+  """
+  ✨ `_expr` server value variant of `albumName` (✨ Generated from Field `Track`.`albumName` of type `String!`)
+  """
+  albumName_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`artistName` of type `String!`
+  """
+  artistName: String
+  """
+  ✨ `_expr` server value variant of `artistName` (✨ Generated from Field `Track`.`artistName` of type `String!`)
+  """
+  artistName_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`audioUrl` of type `String`
+  """
+  audioUrl: String
+  """
+  ✨ `_expr` server value variant of `audioUrl` (✨ Generated from Field `Track`.`audioUrl` of type `String`)
+  """
+  audioUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Track`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Track`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `Track`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`imageUrl` of type `String`
+  """
+  imageUrl: String
+  """
+  ✨ `_expr` server value variant of `imageUrl` (✨ Generated from Field `Track`.`imageUrl` of type `String`)
+  """
+  imageUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`isCommunity` of type `Boolean!`
+  """
+  isCommunity: Boolean
+  """
+  ✨ `_expr` server value variant of `isCommunity` (✨ Generated from Field `Track`.`isCommunity` of type `Boolean!`)
+  """
+  isCommunity_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Track`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`prompt` of type `String`
+  """
+  prompt: String
+  """
+  ✨ `_expr` server value variant of `prompt` (✨ Generated from Field `Track`.`prompt` of type `String`)
+  """
+  prompt_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`visibility` of type `String!`
+  """
+  visibility: String
+  """
+  ✨ `_expr` server value variant of `visibility` (✨ Generated from Field `Track`.`visibility` of type `String!`)
+  """
+  visibility_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Track`.`bookmarkedTracks_on_track` of type `[BookmarkedTrack!]!`
+  """
+  bookmarkedTracks_on_track: [BookmarkedTrack_Data!]
+  """
+  ✨ Generated from Field `Track`.`likedTracks_on_track` of type `[LikedTrack!]!`
+  """
+  likedTracks_on_track: [LikedTrack_Data!]
+  """
+  ✨ Generated from Field `Track`.`playlistEntries_on_track` of type `[PlaylistEntry!]!`
+  """
+  playlistEntries_on_track: [PlaylistEntry_Data!]
+}
+"""
+✨ Generated filter input type for table 'Track'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Track_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Track_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Track_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Track_Filter!]
+  """
+  ✨ Generated from Field `Track`.`id` of type `String!`
+  """
+  id: String_Filter
+  """
+  ✨ Generated from Field `Track`.`ownerUid` of type `String!`
+  """
+  ownerUid: String_Filter
+  """
+  ✨ Generated from Field `Track`.`owner` of type `User!`
+  """
+  owner: User_Filter
+  """
+  ✨ Generated from Field `Track`.`albumName` of type `String!`
+  """
+  albumName: String_Filter
+  """
+  ✨ Generated from Field `Track`.`artistName` of type `String!`
+  """
+  artistName: String_Filter
+  """
+  ✨ Generated from Field `Track`.`audioUrl` of type `String`
+  """
+  audioUrl: String_Filter
+  """
+  ✨ Generated from Field `Track`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Track`.`imageUrl` of type `String`
+  """
+  imageUrl: String_Filter
+  """
+  ✨ Generated from Field `Track`.`isCommunity` of type `Boolean!`
+  """
+  isCommunity: Boolean_Filter
+  """
+  ✨ Generated from Field `Track`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Track`.`prompt` of type `String`
+  """
+  prompt: String_Filter
+  """
+  ✨ Generated from Field `Track`.`visibility` of type `String!`
+  """
+  visibility: String_Filter
+  """
+  ✨ Generated from Field `Track`.`bookmarkedTracks_on_track` of type `[BookmarkedTrack!]!`
+  """
+  bookmarkedTracks_on_track: BookmarkedTrack_ListFilter
+  """
+  ✨ Generated from Field `Track`.`likedTracks_on_track` of type `[LikedTrack!]!`
+  """
+  likedTracks_on_track: LikedTrack_ListFilter
+  """
+  ✨ Generated from Field `Track`.`playlistEntries_on_track` of type `[PlaylistEntry!]!`
+  """
+  playlistEntries_on_track: PlaylistEntry_ListFilter
+  """
+  ✨ Generated from Field `Track`.`playlists_via_PlaylistEntry` of type `[Playlist!]!`
+  """
+  playlists_via_PlaylistEntry: Playlist_ListFilter
+  """
+  ✨ Generated from Field `Track`.`users_via_BookmarkedTrack` of type `[User!]!`
+  """
+  users_via_BookmarkedTrack: User_ListFilter
+  """
+  ✨ Generated from Field `Track`.`users_via_LikedTrack` of type `[User!]!`
+  """
+  users_via_LikedTrack: User_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Track'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Track_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Track_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Track_Filter
+}
+"""
+✨ Generated having input type for table 'Track'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Track_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Track_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Track_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Track_Having!]
+  """
+  ✨ Generated from Field `Track`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`albumName_count` of type `Int!`
+  """
+  albumName_count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`artistName_count` of type `Int!`
+  """
+  artistName_count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`audioUrl_count` of type `Int!`
+  """
+  audioUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`isCommunity_count` of type `Int!`
+  """
+  isCommunity_count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`ownerUid_count` of type `Int!`
+  """
+  ownerUid_count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`prompt_count` of type `Int!`
+  """
+  prompt_count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`visibility_count` of type `Int!`
+  """
+  visibility_count: Int_Filter
+  """
+  ✨ Generated from Field `Track`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Track`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'Track'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Track_Key {
+  """
+  ✨ Generated from Field `Track`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Track`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Track'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Track_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Track_Filter
+}
+"""
+✨ Generated order input type for table 'Track'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Track_Order {
+  """
+  ✨ Generated from Field `Track`.`id` of type `String!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`ownerUid` of type `String!`
+  """
+  ownerUid: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`owner` of type `User!`
+  """
+  owner: User_Order
+  """
+  ✨ Generated from Field `Track`.`albumName` of type `String!`
+  """
+  albumName: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`artistName` of type `String!`
+  """
+  artistName: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`audioUrl` of type `String`
+  """
+  audioUrl: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`imageUrl` of type `String`
+  """
+  imageUrl: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`isCommunity` of type `Boolean!`
+  """
+  isCommunity: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`prompt` of type `String`
+  """
+  prompt: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`visibility` of type `String!`
+  """
+  visibility: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`albumName_count` of type `Int!`
+  """
+  albumName_count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`artistName_count` of type `Int!`
+  """
+  artistName_count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`audioUrl_count` of type `Int!`
+  """
+  audioUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`isCommunity_count` of type `Int!`
+  """
+  isCommunity_count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`ownerUid_count` of type `Int!`
+  """
+  ownerUid_count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`prompt_count` of type `Int!`
+  """
+  prompt_count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`visibility_count` of type `Int!`
+  """
+  visibility_count: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Track`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input User_Data {
+  """
+  ✨ Generated from Field `User`.`uid` of type `String!`
+  """
+  uid: String
+  """
+  ✨ `_expr` server value variant of `uid` (✨ Generated from Field `User`.`uid` of type `String!`)
+  """
+  uid_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`avatarUrl` of type `String`
+  """
+  avatarUrl: String
+  """
+  ✨ `_expr` server value variant of `avatarUrl` (✨ Generated from Field `User`.`avatarUrl` of type `String`)
+  """
+  avatarUrl_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String`
+  """
+  displayName: String
+  """
+  ✨ `_expr` server value variant of `displayName` (✨ Generated from Field `User`.`displayName` of type `String`)
+  """
+  displayName_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`email` of type `String`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `User`.`email` of type `String`)
+  """
+  email_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`favoriteArtists` of type `[String!]`
+  """
+  favoriteArtists: [String!]
+  """
+  ✨ `_update` server value variant of `favoriteArtists` (✨ Generated from Field `User`.`favoriteArtists` of type `[String!]`)
+  """
+  favoriteArtists_update: [String_ListUpdate!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`favoriteGenres` of type `[String!]`
+  """
+  favoriteGenres: [String!]
+  """
+  ✨ `_update` server value variant of `favoriteGenres` (✨ Generated from Field `User`.`favoriteGenres` of type `[String!]`)
+  """
+  favoriteGenres_update: [String_ListUpdate!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`bookmarkedTracks_on_user` of type `[BookmarkedTrack!]!`
+  """
+  bookmarkedTracks_on_user: [BookmarkedTrack_Data!]
+  """
+  ✨ Generated from Field `User`.`likedTracks_on_user` of type `[LikedTrack!]!`
+  """
+  likedTracks_on_user: [LikedTrack_Data!]
+  """
+  ✨ Generated from Field `User`.`paymentHistories_on_user` of type `[PaymentHistory!]!`
+  """
+  paymentHistories_on_user: [PaymentHistory_Data!]
+  """
+  ✨ Generated from Field `User`.`playlists_on_owner` of type `[Playlist!]!`
+  """
+  playlists_on_owner: [Playlist_Data!]
+  """
+  ✨ Generated from Field `User`.`tracks_on_owner` of type `[Track!]!`
+  """
+  tracks_on_owner: [Track_Data!]
+}
+"""
+✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [User_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: User_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [User_Filter!]
+  """
+  ✨ Generated from Field `User`.`uid` of type `String!`
+  """
+  uid: String_Filter
+  """
+  ✨ Generated from Field `User`.`avatarUrl` of type `String`
+  """
+  avatarUrl: String_Filter
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String`
+  """
+  displayName: String_Filter
+  """
+  ✨ Generated from Field `User`.`email` of type `String`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `User`.`favoriteArtists` of type `[String!]`
+  """
+  favoriteArtists: String_ListFilter
+  """
+  ✨ Generated from Field `User`.`favoriteGenres` of type `[String!]`
+  """
+  favoriteGenres: String_ListFilter
+  """
+  ✨ Generated from Field `User`.`bookmarkedTracks_on_user` of type `[BookmarkedTrack!]!`
+  """
+  bookmarkedTracks_on_user: BookmarkedTrack_ListFilter
+  """
+  ✨ Generated from Field `User`.`likedTracks_on_user` of type `[LikedTrack!]!`
+  """
+  likedTracks_on_user: LikedTrack_ListFilter
+  """
+  ✨ Generated from Field `User`.`paymentHistories_on_user` of type `[PaymentHistory!]!`
+  """
+  paymentHistories_on_user: PaymentHistory_ListFilter
+  """
+  ✨ Generated from Field `User`.`playlists_on_owner` of type `[Playlist!]!`
+  """
+  playlists_on_owner: Playlist_ListFilter
+  """
+  ✨ Generated from Field `User`.`tracks_on_owner` of type `[Track!]!`
+  """
+  tracks_on_owner: Track_ListFilter
+  """
+  ✨ Generated from Field `User`.`userSettings_on_user` of type `UserSettings`
+  """
+  userSettings_on_user: UserSettings_Filter
+  """
+  ✨ Generated from Field `User`.`tracks_via_BookmarkedTrack` of type `[Track!]!`
+  """
+  tracks_via_BookmarkedTrack: Track_ListFilter
+  """
+  ✨ Generated from Field `User`.`tracks_via_LikedTrack` of type `[Track!]!`
+  """
+  tracks_via_LikedTrack: Track_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input User_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [User_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: User_Filter
+}
+"""
+✨ Generated having input type for table 'User'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [User_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: User_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [User_Having!]
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`avatarUrl_count` of type `Int!`
+  """
+  avatarUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`displayName_count` of type `Int!`
+  """
+  displayName_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`uid_count` of type `Int!`
+  """
+  uid_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'User'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input User_Key {
+  """
+  ✨ Generated from Field `User`.`uid` of type `String!`
+  """
+  uid: String
+  """
+  ✨ `_expr` server value variant of `uid` (✨ Generated from Field `User`.`uid` of type `String!`)
+  """
+  uid_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input User_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: User_Filter
+}
+"""
+✨ Generated order input type for table 'User'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input User_Order {
+  """
+  ✨ Generated from Field `User`.`uid` of type `String!`
+  """
+  uid: OrderDirection
+  """
+  ✨ Generated from Field `User`.`avatarUrl` of type `String`
+  """
+  avatarUrl: OrderDirection
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String`
+  """
+  displayName: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email` of type `String`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`avatarUrl_count` of type `Int!`
+  """
+  avatarUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`displayName_count` of type `Int!`
+  """
+  displayName_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`uid_count` of type `Int!`
+  """
+  uid_count: OrderDirection
+}
+"""
+✨ Generated data input type for table 'UserSettings'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input UserSettings_Data {
+  """
+  ✨ Generated from Field `UserSettings`.`userId` of type `String!`
+  """
+  userId: String
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `UserSettings`.`userId` of type `String!`)
+  """
+  userId_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserSettings`.`userUid` of type `String!`
+  """
+  userUid: String
+  """
+  ✨ `_expr` server value variant of `userUid` (✨ Generated from Field `UserSettings`.`userUid` of type `String!`)
+  """
+  userUid_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserSettings`.`user` of type `User!`
+  """
+  user: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserSettings`.`isPremium` of type `Boolean!`
+  """
+  isPremium: Boolean
+  """
+  ✨ `_expr` server value variant of `isPremium` (✨ Generated from Field `UserSettings`.`isPremium` of type `Boolean!`)
+  """
+  isPremium_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserSettings`.`parentalControlsEnabled` of type `Boolean!`
+  """
+  parentalControlsEnabled: Boolean
+  """
+  ✨ `_expr` server value variant of `parentalControlsEnabled` (✨ Generated from Field `UserSettings`.`parentalControlsEnabled` of type `Boolean!`)
+  """
+  parentalControlsEnabled_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserSettings`.`stripeCustomerId` of type `String`
+  """
+  stripeCustomerId: String
+  """
+  ✨ `_expr` server value variant of `stripeCustomerId` (✨ Generated from Field `UserSettings`.`stripeCustomerId` of type `String`)
+  """
+  stripeCustomerId_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `UserSettings`.`theme` of type `String!`
+  """
+  theme: String
+  """
+  ✨ `_expr` server value variant of `theme` (✨ Generated from Field `UserSettings`.`theme` of type `String!`)
+  """
+  theme_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'UserSettings'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserSettings_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [UserSettings_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: UserSettings_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [UserSettings_Filter!]
+  """
+  ✨ Generated from Field `UserSettings`.`userId` of type `String!`
+  """
+  userId: String_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`userUid` of type `String!`
+  """
+  userUid: String_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`isPremium` of type `Boolean!`
+  """
+  isPremium: Boolean_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`parentalControlsEnabled` of type `Boolean!`
+  """
+  parentalControlsEnabled: Boolean_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`stripeCustomerId` of type `String`
+  """
+  stripeCustomerId: String_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`theme` of type `String!`
+  """
+  theme: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'UserSettings'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input UserSettings_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [UserSettings_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: UserSettings_Filter
+}
+"""
+✨ Generated having input type for table 'UserSettings'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserSettings_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [UserSettings_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: UserSettings_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [UserSettings_Having!]
+  """
+  ✨ Generated from Field `UserSettings`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`isPremium_count` of type `Int!`
+  """
+  isPremium_count: Int_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`parentalControlsEnabled_count` of type `Int!`
+  """
+  parentalControlsEnabled_count: Int_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`stripeCustomerId_count` of type `Int!`
+  """
+  stripeCustomerId_count: Int_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`theme_count` of type `Int!`
+  """
+  theme_count: Int_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `UserSettings`.`userUid_count` of type `Int!`
+  """
+  userUid_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'UserSettings'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input UserSettings_Key {
+  """
+  ✨ Generated from Field `UserSettings`.`userId` of type `String!`
+  """
+  userId: String
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `UserSettings`.`userId` of type `String!`)
+  """
+  userId_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'UserSettings'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input UserSettings_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: UserSettings_Filter
+}
+"""
+✨ Generated order input type for table 'UserSettings'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input UserSettings_Order {
+  """
+  ✨ Generated from Field `UserSettings`.`userId` of type `String!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`userUid` of type `String!`
+  """
+  userUid: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `UserSettings`.`isPremium` of type `Boolean!`
+  """
+  isPremium: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`parentalControlsEnabled` of type `Boolean!`
+  """
+  parentalControlsEnabled: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`stripeCustomerId` of type `String`
+  """
+  stripeCustomerId: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`theme` of type `String!`
+  """
+  theme: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`isPremium_count` of type `Int!`
+  """
+  isPremium_count: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`parentalControlsEnabled_count` of type `Int!`
+  """
+  parentalControlsEnabled_count: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`stripeCustomerId_count` of type `Int!`
+  """
+  stripeCustomerId_count: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`theme_count` of type `Int!`
+  """
+  theme_count: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `UserSettings`.`userUid_count` of type `Int!`
+  """
+  userUid_count: OrderDirection
+}

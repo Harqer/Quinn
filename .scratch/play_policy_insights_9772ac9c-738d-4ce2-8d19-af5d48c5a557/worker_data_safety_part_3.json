@@ -1,0 +1,57 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "CRASH_LOGS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "dist/assets/jsx-runtime-KJkY8l8U.js"
+      ],
+      "evidence": "process.emit('uncaughtException',e) (Line 1 of jsx-runtime-KJkY8l8U.js)",
+      "recommendation": "None. The evidence provided is local error emission and does not transfer crash logs off-device.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "PERFORMANCE_DIAGNOSTICS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "**Background Transfer (Disclosure Claimed)**: Evidence found; requires Critic verification.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "app/src/main/java/com/musically/studio/MyApplication.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+      ],
+      "evidence": "FirebaseAnalytics and FirebaseCrashlytics are initialized in MyApplication.kt. The gatekeeper AlertDialog in WelcomeScreen.kt requires the user to accept a privacy policy covering crash logs and camera/mic.",
+      "recommendation": "Review the disclosure to ensure it fully covers all data types being transmitted in the background.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "DISCLOSED",
+      "purpose": "Analytics",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "OTHER_AUDIO",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt"
+      ],
+      "evidence": "generatePodcast method takes a String topic, not audio. Launching MainActivity with a text prompt does not collect audio.",
+      "recommendation": "None. This is a false positive for audio collection.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    }
+  ]
+}

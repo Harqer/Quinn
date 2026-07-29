@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="luxury">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scalable & Low-Latency Backend Architecture</title>
+  
+  <!-- Tailwind CSS & DaisyUI -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+
+  <!-- Layout Safety -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :where(.grid, .flex, .layout-grid, .layout-flex) > *,
+    :where([style*="display: grid"], [style*="display:grid"], [style*="display: flex"], [style*="display:flex"]) > * {
+      min-width: 0;
+    }
+    :where(p, h1, h2, h3, h4, h5, h6, li, dd, blockquote, figcaption, td, th, .badge, .label) {
+      overflow-wrap: anywhere;
+    }
+    :where(img, svg, video, canvas, iframe) {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+
+  <!-- Mermaid Setup -->
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.15.0/dist/mermaid.esm.min.mjs";
+
+    const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const paint = document.createElement("canvas").getContext("2d");
+    function toRgba(color) {
+      paint.clearRect(0, 0, 1, 1);
+      paint.fillStyle = "#000";
+      paint.fillStyle = color;
+      paint.fillRect(0, 0, 1, 1);
+      return paint.getImageData(0, 0, 1, 1).data;
+    }
+
+    function compositeRgba(foreground, background) {
+      const foregroundAlpha = foreground[3] / 255;
+      const backgroundAlpha = background[3] / 255;
+      const alpha = foregroundAlpha + backgroundAlpha * (1 - foregroundAlpha);
+      if (alpha === 0) return [0, 0, 0, 0];
+      return [
+        (foreground[0] * foregroundAlpha + background[0] * backgroundAlpha * (1 - foregroundAlpha)) / alpha,
+        (foreground[1] * foregroundAlpha + background[1] * backgroundAlpha * (1 - foregroundAlpha)) / alpha,
+        (foreground[2] * foregroundAlpha + background[2] * backgroundAlpha * (1 - foregroundAlpha)) / alpha,
+        alpha * 255,
+      ];
+    }
+
+    function pageIsDark() {
+      const root = document.documentElement;
+      const rootBackground = toRgba(getComputedStyle(root).backgroundColor);
+      const bodyBackground = document.body ? toRgba(getComputedStyle(document.body).backgroundColor) : [0, 0, 0, 0];
+      const [r, g, b, a] = compositeRgba(bodyBackground, rootBackground);
+      if (a > 0) {
+        return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 < 0.5;
+      }
+      const colorScheme = getComputedStyle(root).colorScheme;
+      if (colorScheme.includes("dark") && !colorScheme.includes("light")) return true;
+      if (colorScheme.includes("light") && !colorScheme.includes("dark")) return false;
+      return darkQuery.matches;
+    }
+
+    const diagrams = [...document.querySelectorAll(".mermaid")].map((el) => ({ el, src: el.textContent }));
+    let applied;
+    let rendering = false;
+    let queued = false;
+    function queueRender() {
+      queued = true;
+      if (rendering) return;
+      void render();
+    }
+    async function render() {
+      rendering = true;
+      try {
+        while (queued) {
+          queued = false;
+          const theme = pageIsDark() ? "dark" : "default";
+          if (theme === applied) continue;
+          mermaid.initialize({ startOnLoad: false, theme, securityLevel: "strict" });
+          for (const { el, src } of diagrams) {
+            el.removeAttribute("data-processed");
+            el.textContent = src;
+          }
+          try {
+            await mermaid.run({ nodes: diagrams.map((d) => d.el) });
+          } catch (error) {
+            console.error("Mermaid diagram render failed:", error);
+            return;
+          }
+          applied = theme;
+        }
+      } finally {
+        rendering = false;
+        if (queued) queueRender();
+      }
+    }
+
+    if (document.readyState === "complete") queueRender();
+    else window.addEventListener("load", queueRender, { once: true });
+    const themeObserver = new MutationObserver(queueRender);
+    for (const el of [document.documentElement, document.body]) {
+      if (!el) continue;
+      themeObserver.observe(el, {
+        attributes: true,
+        attributeFilter: ["data-theme", "class", "style"],
+      });
+    }
+    document.addEventListener("change", queueRender, true);
+    document.addEventListener(
+      "transitionend",
+      ({ propertyName }) => {
+        if (propertyName === "background-color") queueRender();
+      },
+      true,
+    );
+    darkQuery.addEventListener("change", queueRender);
+  </script>
+</head>
+<body class="bg-base-200 text-base-content min-h-screen pb-20">
+  <main class="mx-auto max-w-6xl p-6 lg:p-10 flex flex-col gap-8">
+    <section class="hero bg-base-100 rounded-box shadow-sm">
+      <div class="hero-content text-center py-10">
+        <div class="max-w-3xl">
+          <h1 class="text-4xl font-bold">Scalability & Latency Optimization</h1>
+          <p class="py-4 text-lg text-base-content/80">
+            A deep dive into how Lyria's backend avoids bottlenecks, guarantees real-time audio generation latency, and scales horizontally under heavy load.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagram Section -->
+    <div class="card card-border bg-base-100 shadow-md">
+      <div class="card-body">
+        <h2 class="card-title text-2xl mb-4">Backend Infrastructure</h2>
+        <div class="mermaid flex justify-center py-4 bg-base-100 rounded">
+flowchart TD
+    %% Clients
+    Client["Clients\n(Web, Android, Glasses)"]
+    CDN["Global Edge CDN\n(Firebase Hosting)"]
+
+    %% Direct Streaming (Lowest Latency)
+    subgraph DirectStream["Ultra-Low Latency Direct Streaming"]
+        VertexAI["Vertex AI for Firebase\n(Gemini Live API)"]
+    end
+    
+    %% Serverless Orchestration
+    subgraph AppLogic["Auto-Scaling App Logic"]
+        LB["Cloud Load Balancing"]
+        CloudRunNode["Node.js + Firebase Genkit\n(Cloud Run)"]
+        Redis["Memorystore (Redis)\n(Session / Audio Metadata Cache)"]
+    end
+    
+    %% Heavy Compute
+    subgraph ComputeGPU["High-Performance GPU Compute"]
+        CloudRunPy["Magenta Realtime (MRT2)\n(Cloud Run w/ GPUs)"]
+    end
+    
+    %% Persistence
+    subgraph Persistence["Scalable Persistence"]
+        Firestore["Cloud Firestore\n(Real-time Sync)"]
+    end
+
+    %% Flows
+    Client -. "Static Assets" .-> CDN
+    
+    Client <-->|"Bidirectional WebSockets/gRPC\n(Bypasses our backend!)"| VertexAI
+    
+    Client -->|"API / Orchestration / Auth"| LB
+    LB --> CloudRunNode
+    
+    CloudRunNode <-->|"Context / Rate Limits"| Redis
+    CloudRunNode -->|"Offload Heavy Audio Gen Tasks"| CloudRunPy
+    
+    CloudRunNode -->|"CRUD"| Firestore
+    Client -. "Real-time UI Listeners" .-> Firestore
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Card 1 -->
+      <div class="card card-border bg-base-100 shadow-sm">
+        <div class="card-body">
+          <div class="badge badge-primary badge-sm mb-2">Latency</div>
+          <h3 class="card-title text-xl">Direct-to-Vertex Streaming</h3>
+          <p class="text-base-content/80">
+            By connecting clients directly to the Gemini Live API via <strong>Vertex AI for Firebase</strong> (bypassing the Node backend entirely for live video/audio streams), we eliminate middleman server hops. This guarantees the absolute lowest latency possible for multimodal chat.
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card card-border bg-base-100 shadow-sm">
+        <div class="card-body">
+          <div class="badge badge-success badge-sm mb-2">Scale</div>
+          <h3 class="card-title text-xl">Serverless Auto-Scaling</h3>
+          <p class="text-base-content/80">
+            The Node.js Genkit orchestration layer is deployed on <strong>Cloud Run</strong>, which auto-scales horizontally from 0 to thousands of instances based on traffic, ensuring consistent latency during usage spikes without paying for idle capacity.
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card card-border bg-base-100 shadow-sm">
+        <div class="card-body">
+          <div class="badge badge-accent badge-sm mb-2">Compute Isolation</div>
+          <h3 class="card-title text-xl">Dedicated GPU Compute for Audio</h3>
+          <p class="text-base-content/80">
+            The Python MRT2 microservice handles heavy, continuous audio generation. Separating this from the Node orchestration allows us to provision expensive GPU instances (via Cloud Run for GPUs or GKE) <em>only</em> where strictly necessary, scaling compute independently from regular app logic.
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="card card-border bg-base-100 shadow-sm">
+        <div class="card-body">
+          <div class="badge badge-info badge-sm mb-2">Data</div>
+          <h3 class="card-title text-xl">Edge Caching & Real-time State</h3>
+          <p class="text-base-content/80">
+            <strong>Memorystore (Redis)</strong> caches intermediate AI contexts, Spotify embeddings, and handles rate-limiting to keep response times sub-millisecond. <strong>Cloud Firestore</strong> pushes UI updates (like new tracks or playlist changes) globally in real-time.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

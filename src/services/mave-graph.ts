@@ -1,41 +1,7 @@
-import { getSecret } from "../config/secrets.js";
-import { StateGraph, Annotation, START, END } from "@langchain/langgraph";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { GoogleGenAI } from "@google/genai";
+import { getAi, ensureContextCache } from "./ai.js";
 import { cacheVisionResult, getCachedVisionResult } from "../config/redis.js";
-import { getContextCacheId, ensureContextCache, getAi } from "./ai.js";
 import crypto from "crypto";
 import logger from "../config/logger.js";
-
-// Define the state schema
-const MaveState = Annotation.Root({
-  image: Annotation<string>(),
-  visionDescription: Annotation<string>(),
-  directorReasoning: Annotation<string>(),
-  musicalPrompts: Annotation<string[]>(),
-  podcastScript: Annotation<string>(),
-  audiobookScript: Annotation<string>(),
-  userFeedback: Annotation<string>(),
-  modality: Annotation<'music' | 'podcast' | 'audiobook' | 'mixed'>(),
-  previousInteractionId: Annotation<string>(),
-  generatedAudio: Annotation<string>(), // Base64 audio block
-  coverArtUrl: Annotation<string>(),
-  videoMotionUrl: Annotation<string>(),
-  locale: Annotation<string>(),
-});
-
-// Helper to create model instance with context caching
-const getCachedModel = async (modelName: string, temperature: number = 0.7) => {
-  const cacheId = await getContextCacheId();
-  return new ChatGoogleGenerativeAI({
-    model: modelName,
-    apiKey: getSecret("GEMINI_API_KEY"),
-    temperature: temperature,
-    // Support for cached content ID
-    // @ts-ignore
-    cachedContent: cacheId || undefined,
-  });
-};
 
 function encodeWAV(samples: Int16Array, sampleRate: number = 48000, numChannels: number = 1) {
   const buffer = new ArrayBuffer(44 + samples.length * 2);
@@ -139,8 +105,7 @@ const createMusicInteraction = async (input: string, image?: string, previousId?
     });
 };
 
-// Nodes
-const visualAnalyzerNode = async (state: typeof MaveState.State, config: any) => {
+const visualAnalyzerNode = async (state: any, config: any) => {
   if (!state.image && state.visionDescription) {
     return { visionDescription: state.visionDescription };
   }
@@ -155,10 +120,8 @@ const visualAnalyzerNode = async (state: typeof MaveState.State, config: any) =>
     return { visionDescription: cached };
   }
 
-  // Ensure context cache is active before large vision task
   await ensureContextCache();
 
-  // Use flagship 3.6 model for ultra-fast, high-fidelity visual interpretation
   const ai = getAi();
   const stream = await ai.models.generateContentStream({
     model: "gemini-3.6-flash",
@@ -192,20 +155,18 @@ const visualAnalyzerNode = async (state: typeof MaveState.State, config: any) =>
   return { visionDescription: fullDescription };
 };
 
-const directorNode = async (state: typeof MaveState.State, config: any) => {
+const directorNode = async (state: any, config: any) => {
   const userText = (state.userFeedback || "").toLowerCase();
   
   let modality: 'music' | 'podcast' | 'audiobook' | 'mixed' = 'music';
   let visualIntent: 'none' | 'cover_art' | 'video_motion' = 'none';
   let reasoning = "";
 
-  // ensure context cache is active for the director's persona
   await ensureContextCache();
 
-  // Use the 3.1 Pro model for high-fidelity creative orchestration reasoning
   const ai = getAi();
   const stream = await ai.models.generateContentStream({
-    model: "gemini-3.1-pro-preview",
+    model: "gemini-3.6-flash",
     contents: [
       `You are the Mave Orchestra Director. Your role is to reason about the visual atmosphere and user intent to orchestrate a world-class audio-visual experience.
 Reason naturally about what you see and what the user wants.
@@ -242,12 +203,9 @@ Speak naturally to the user about your creative choices. Support 70+ languages. 
         const text = part.text;
         fullResponse += text;
 
-        // Direct pipe of natural reasoning and dialogue to the user
-        // We attempt to stop streaming if we detect the start of the JSON block
         if (config.configurable?.onChunk) {
           if (!isJsonDetected && fullResponse.includes("```json")) {
             isJsonDetected = true;
-            // Emit only the part before the JSON block
             const preJson = text.split("```json")[0];
             if (preJson) {
                config.configurable.onChunk({ type: "mave_thinking", text: preJson });
@@ -260,14 +218,12 @@ Speak naturally to the user about your creative choices. Support 70+ languages. 
     }
   }
 
-  // Parse the JSON block from the natural response
   const jsonMatch = fullResponse.match(/```json\n([\s\S]*?)\n```/);
   if (jsonMatch) {
     try {
       const params = JSON.parse(jsonMatch[1]);
       modality = params.modality || 'music';
       visualIntent = params.visualIntent || 'none';
-      // Clean up the response for the reasoning field if needed
       reasoning = fullResponse.replace(jsonMatch[0], "").trim();
     } catch (e) {
       logger.warn("[MAVE_GRAPH] Failed to parse params from reasoning", { error: e });
@@ -279,11 +235,10 @@ Speak naturally to the user about your creative choices. Support 70+ languages. 
   return { directorReasoning: reasoning, modality, visualIntent };
 };
 
-const musicDirectorNode = async (state: typeof MaveState.State, config: any) => {
+const musicDirectorNode = async (state: any, config: any) => {
   if (state.modality !== 'music' && state.modality !== 'mixed') return {};
 
   const input = `Visual Vibe: ${state.visionDescription}\nUser Feedback: ${state.userFeedback || "Generate music fitting this atmosphere"}`;
-
   const interaction = await createMusicInteraction(input, state.image, state.previousInteractionId, config.configurable?.onChunk);
 
   const prompts = interaction.output_text?.split("\n").filter((l: string) => l.trim().length > 0) || [];
@@ -296,10 +251,9 @@ const musicDirectorNode = async (state: typeof MaveState.State, config: any) => 
   };
 };
 
-const podcastNarratorNode = async (state: typeof MaveState.State, config: any) => {
+const podcastNarratorNode = async (state: any, config: any) => {
   if (state.modality === 'music') return {};
 
-  // Use flagship 3.1 Pro model for natural storytelling and narration
   const ai = getAi();
   const feedbackContext = state.userFeedback ? `\nUser Input/Feedback: ${state.userFeedback}` : "";
 
@@ -309,7 +263,7 @@ const podcastNarratorNode = async (state: typeof MaveState.State, config: any) =
     : `You are Mave, the narrator. Based on the visual vibe and user instructions, generate a short, engaging narrative segment (2-4 sentences) for 'Mave POV'. If user gave feedback, acknowledge it naturally in your tone. No technical jargon. You MUST respond in the language corresponding to this locale: ${state.locale || 'en'}.`;
 
   const stream = await ai.models.generateContentStream({
-    model: "gemini-3.1-pro-preview",
+    model: "gemini-3.6-flash",
     contents: [
       systemPrompt,
       `Visual Vibe: ${state.visionDescription}${feedbackContext}`
@@ -342,14 +296,14 @@ const podcastNarratorNode = async (state: typeof MaveState.State, config: any) =
   return { podcastScript: fullScript };
 };
 
-const mediaGeneratorNode = async (state: any, config: any) => {
-  const intent = (state as any).visualIntent;
+const mediaGeneratorNode = async (state: any) => {
+  const intent = state.visualIntent;
   if (!intent || intent === 'none') return {};
 
   logger.info("[MAVE_GRAPH] Generating visual media from music context", { intent });
   const { generateCoverMedia } = await import("./ai.js");
 
-  const prompts = (state as any).musicalPrompts;
+  const prompts = state.musicalPrompts;
   const vision = state.visionDescription;
 
   const visualPrompt = prompts && prompts.length > 0
@@ -371,22 +325,53 @@ const mediaGeneratorNode = async (state: any, config: any) => {
 };
 
 /**
- * Orchestrator Graph (Mave v3.2)
- * Parallelizes Music and Narrative generation nodes.
- * Adds sequential visual media generation node.
+ * Native sequential orchestration workflow.
+ * Replaces @langchain/langgraph for simplicity and latency.
  */
-const workflow = new StateGraph(MaveState)
-  .addNode("visualAnalyzer", visualAnalyzerNode)
-  .addNode("director", directorNode)
-  .addNode("musicDirector", musicDirectorNode)
-  .addNode("podcastNarrator", podcastNarratorNode)
-  .addNode("mediaGenerator", mediaGeneratorNode)
-  .addEdge(START, "visualAnalyzer")
-  .addEdge("visualAnalyzer", "director")
-  .addEdge("director", "musicDirector")
-  .addEdge("director", "podcastNarrator")
-  .addEdge("musicDirector", "mediaGenerator")
-  .addEdge("podcastNarrator", "mediaGenerator")
-  .addEdge("mediaGenerator", END);
+export const maveGraph = {
+  stream: async function*(state: any, config: any) {
+    // 1. Visual Analyzer
+    const visualRes = await visualAnalyzerNode(state, config);
+    Object.assign(state, visualRes);
+    yield { visualAnalyzer: visualRes };
 
-export const maveGraph = workflow.compile();
+    // 2. Director
+    const directorRes = await directorNode(state, config);
+    Object.assign(state, directorRes);
+    yield { director: directorRes };
+
+    // 3. Parallel Music/Podcast
+    const [musicRes, podcastRes] = await Promise.all([
+      musicDirectorNode(state, config),
+      podcastNarratorNode(state, config)
+    ]);
+    
+    Object.assign(state, musicRes, podcastRes);
+    if (Object.keys(musicRes).length > 0) yield { musicDirector: musicRes };
+    if (Object.keys(podcastRes).length > 0) yield { podcastNarrator: podcastRes };
+
+    // 4. Media Generator
+    const mediaRes = await mediaGeneratorNode(state);
+    Object.assign(state, mediaRes);
+    if (Object.keys(mediaRes).length > 0) yield { mediaGenerator: mediaRes };
+  },
+  invoke: async function(state: any) {
+    const config = {};
+    const visualRes = await visualAnalyzerNode(state, config);
+    Object.assign(state, visualRes);
+
+    const directorRes = await directorNode(state, config);
+    Object.assign(state, directorRes);
+
+    const [musicRes, podcastRes] = await Promise.all([
+      musicDirectorNode(state, config),
+      podcastNarratorNode(state, config)
+    ]);
+    Object.assign(state, musicRes, podcastRes);
+
+    const mediaRes = await mediaGeneratorNode(state);
+    Object.assign(state, mediaRes);
+
+    return state;
+  }
+};

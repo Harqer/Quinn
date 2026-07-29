@@ -80,8 +80,8 @@ export const LoginScreen: React.FC<{ onLogin: () => void, initialMode?: 'login' 
       <footer className="absolute bottom-0 left-0 w-full px-6 py-6 text-center text-[11px] leading-relaxed text-gray-400 pointer-events-none">
         <p className="max-w-[400px] mx-auto pointer-events-auto">
           This site is protected by reCAPTCHA and the Google 
-          <a className="underline ml-1 mr-1 hover:text-white" href="#">Privacy Policy</a> and 
-          <a className="underline ml-1 hover:text-white" href="#">Terms of Service</a> apply.
+          <a className="underline ml-1 mr-1 hover:text-white" href="/privacy">Privacy Policy</a> and 
+          <a className="underline ml-1 hover:text-white" href="/terms">Terms of Service</a> apply.
         </p>
       </footer>
     </div>

@@ -1,12 +1,9 @@
 import { getSecret } from "../config/secrets.js";
-import { GoogleGenAI } from "@google/genai";
-import { genkit, z } from "genkit";
-import { googleAI } from "@genkit-ai/googleai";
+import { GoogleGenAI, Type } from "@google/genai";
 import logger from "../config/logger.js";
 import { getRedis } from "../config/redis.js";
 
 let ai: GoogleGenAI;
-let gk: ReturnType<typeof genkit>;
 
 const MASSIVE_DEVELOPER_INSTRUCTIONS = `
 You are Mave, the Executive Creative Director, Master Musical Orchestrator, and AI companion for Billboard Top-100 productions and Vogue high-fashion audio-visual experiences.
@@ -22,27 +19,22 @@ Key Creative Principles:
 `;
 
 export const initAi = async () => {
-  if (process.env.GOOGLE_CLOUD_PROJECT) {
+  const geminiKey = getSecret("GEMINI_API_KEY");
+  if (geminiKey) {
+    ai = new GoogleGenAI({
+      apiKey: geminiKey as string,
+      httpOptions: { apiVersion: "v1beta" }
+    });
+  } else if (process.env.GOOGLE_CLOUD_PROJECT) {
     ai = new GoogleGenAI({
       vertexai: true,
       project: process.env.GOOGLE_CLOUD_PROJECT,
       location: process.env.GOOGLE_CLOUD_LOCATION || "us-central1",
-      httpOptions: { apiVersion: "v1alpha" }
-    });
-  } else if (getSecret("GEMINI_API_KEY")) {
-    ai = new GoogleGenAI({
-      apiKey: getSecret("GEMINI_API_KEY") as string,
-      httpOptions: { apiVersion: "v1alpha" }
+      httpOptions: { apiVersion: "v1beta" }
     });
   } else {
     throw new Error("GEMINI_API_KEY or GOOGLE_CLOUD_PROJECT is not set in environment.");
   }
-
-  // Initialize Genkit for Prompt Abstraction and Structured Output
-  gk = genkit({
-    plugins: [googleAI({ apiKey: getSecret("GEMINI_API_KEY") })],
-    model: "gemini-3.6-flash",
-  });
 
   await ensureContextCache();
 };
@@ -98,11 +90,6 @@ export const getAi = () => {
   return ai;
 };
 
-export const getGenkit = () => {
-  if (!gk) throw new Error("Genkit not initialized. Call initAi() first.");
-  return gk;
-};
-
 export const getContextCacheId = async (): Promise<string | null> => {
   const redis = getRedis();
   if (!redis) return null;
@@ -123,8 +110,7 @@ export const generateLiveEphemeralToken = async (
     const config: any = {
       responseModalities: ["audio"],
       thinkingConfig: {
-        includeThoughts: true,
-        thinkingLevel: 'HIGH'
+        includeThoughts: true
       },
       ...(systemInstruction && { systemInstruction: { parts: [{ text: systemInstruction }] } }),
       ...(voice && { speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } }),
@@ -150,24 +136,14 @@ export const generateLiveEphemeralToken = async (
   }
 };
 
-/**
- * Context-Aware Executive Art Director Prompt Engine for Imagen 3 Models.
- * Dynamically deconstructs user input and synthesizes a high-fidelity 5-part visual prompt:
- * [Subject & Composition, Environment & Atmosphere, Contextual Lighting & Optics, Textures & Materiality, Color & Aesthetic Grade].
- */
 export const enhanceImagePrompt = async (userPrompt: string): Promise<string> => {
   try {
-    const genkitInstance = getGenkit();
-    const enhancePrompt = genkitInstance.definePrompt({
-      name: 'enhanceImagePrompt',
-      model: 'googleai/gemini-3.6-flash',
+    const aiInstance = getAi();
+    const response = await aiInstance.models.generateContent({
+      model: 'gemini-3.6-flash',
+      contents: `User Concept: "${userPrompt}"`,
       config: {
-        thinkingConfig: {
-          includeThoughts: true,
-          thinkingLevel: 'HIGH'
-        }
-      },
-      system: `You are a world-class Executive Art Director for Billboard and Vogue luxury campaigns.
+        systemInstruction: `You are a world-class Executive Art Director for Billboard and Vogue luxury campaigns.
 Your task is to take a user concept and dynamically synthesize a highly detailed, context-aware 5-part visual prompt for Imagen 3 image generation.
 Do NOT use static copy-pasted buzzwords. Analyze the specific mood, subject, and medium of the concept, then construct a cohesive prompt containing:
 1. SUBJECT & COMPOSITION: Precise focal subject, dynamic framing (rule of thirds/golden ratio), spatial alignment.
@@ -177,15 +153,14 @@ Do NOT use static copy-pasted buzzwords. Analyze the specific mood, subject, and
 5. COLOR PALETTE & GRADE: Curated color harmony, shadow depth, and overall visual mood fit for an iconic album cover.
 
 Return ONLY the synthesized prompt text, without introductory filler or markdown tags.`,
+        thinkingConfig: {
+          includeThoughts: true
+        }
+      }
     });
 
-    const response = await enhancePrompt({ prompt: `User Concept: "${userPrompt}"` });
-    const enhanced = response.text.trim();
-    
-    if (!enhanced) {
-      throw new Error("Failed to generate an enhanced image prompt");
-    }
-    
+    const enhanced = (response.text || "").trim();
+    if (!enhanced) throw new Error("Failed to generate an enhanced image prompt");
     logger.info("[ART_DIRECTOR] Contextual Dynamic Image Prompt", { original: userPrompt, enhanced });
     return enhanced;
   } catch (err) {
@@ -194,24 +169,14 @@ Return ONLY the synthesized prompt text, without introductory filler or markdown
   }
 };
 
-/**
- * Context-Aware Master Cinematographer Prompt Engineer for Veo 2.0 Models.
- * Dynamically synthesizes a 5-part 35mm photorealistic motion control video prompt:
- * [Subject Kinetic Pose, Camera Optics & Movement, Environmental Physics & Particles, Dynamic Lighting, Temporal Coherence].
- */
 export const enhanceVideoPrompt = async (userPrompt: string): Promise<string> => {
   try {
-    const genkitInstance = getGenkit();
-    const enhancePrompt = genkitInstance.definePrompt({
-      name: 'enhanceVideoPrompt',
-      model: 'googleai/gemini-3.6-flash',
+    const aiInstance = getAi();
+    const response = await aiInstance.models.generateContent({
+      model: 'gemini-3.6-flash',
+      contents: `User Concept: "${userPrompt}"`,
       config: {
-        thinkingConfig: {
-          includeThoughts: true,
-          thinkingLevel: 'HIGH'
-        }
-      },
-      system: `You are a legendary Master Cinematographer and Commercial Video Director.
+        systemInstruction: `You are a legendary Master Cinematographer and Commercial Video Director.
 Your task is to convert a user concept into an in-depth, 35mm photorealistic video motion prompt for Veo video models.
 Do NOT use static copy-pasted buzzwords. Analyze the user's intent and construct a cohesive, dynamic video motion prompt containing:
 1. SUBJECT & KINETIC POSE: Primary subject and natural motion trajectory.
@@ -221,15 +186,14 @@ Do NOT use static copy-pasted buzzwords. Analyze the user's intent and construct
 5. TEMPORAL COHERENCE: Seamless looping motion, fluid transitions, cinema-grade color science.
 
 Return ONLY the synthesized video motion prompt text, without introductory filler or markdown tags.`,
+        thinkingConfig: {
+          includeThoughts: true
+        }
+      }
     });
 
-    const response = await enhancePrompt({ prompt: `User Concept: "${userPrompt}"` });
-    const enhanced = response.text.trim();
-    
-    if (!enhanced) {
-      throw new Error("Failed to generate an enhanced video prompt");
-    }
-    
+    const enhanced = (response.text || "").trim();
+    if (!enhanced) throw new Error("Failed to generate an enhanced video prompt");
     logger.info("[CINEMATOGRAPHER] Contextual Dynamic Video Prompt", { original: userPrompt, enhanced });
     return enhanced;
   } catch (err) {
@@ -238,72 +202,70 @@ Return ONLY the synthesized video motion prompt text, without introductory fille
   }
 };
 
-/**
- * Genkit Structured Output: Parses hand gestures into typed actions for real-time music control.
- */
-export const HandGestureSchema = z.object({
-  action: z.enum(["modify_pitch", "modify_tempo", "add_instrument", "remove_instrument", "play", "pause", "unknown"]),
-  value: z.string().optional().describe("E.g. '+2', '1.5x', 'guitar'"),
-  target: z.string().optional().describe("E.g. 'synth', 'drums', 'master'"),
-});
+export const HandGestureSchema = {
+  type: Type.OBJECT,
+  properties: {
+    action: { type: Type.STRING, enum: ["modify_pitch", "modify_tempo", "add_instrument", "remove_instrument", "play", "pause", "unknown"] },
+    value: { type: Type.STRING, description: "E.g. '+2', '1.5x', 'guitar'" },
+    target: { type: Type.STRING, description: "E.g. 'synth', 'drums', 'master'" },
+  },
+  required: ["action"]
+};
 
 export const parseHandGesture = async (gestureDescription: string) => {
   try {
-    const genkitInstance = getGenkit();
-    const parsePrompt = genkitInstance.definePrompt({
-      name: 'parseHandGesture',
-      model: 'googleai/gemini-3.6-flash',
-      output: { schema: HandGestureSchema },
+    const aiInstance = getAi();
+    const response = await aiInstance.models.generateContent({
+      model: 'gemini-3.6-flash',
+      contents: `Gesture: "${gestureDescription}"`,
       config: {
-        thinkingConfig: {
-          includeThoughts: true,
-          thinkingLevel: 'HIGH'
-        }
-      },
-      system: `You are the orchestration controller. You will receive a description of a user's hand gesture or physical motion.
+        systemInstruction: `You are the orchestration controller. You will receive a description of a user's hand gesture or physical motion.
 Map this gesture to a specific music control action, such as modifying pitch, tempo, or adding/removing instruments.
 Be precise and return ONLY the JSON object.`,
+        responseMimeType: "application/json",
+        responseSchema: HandGestureSchema as any,
+        thinkingConfig: {
+          includeThoughts: true
+        }
+      }
     });
 
-    const response = await parsePrompt({ prompt: `Gesture: "${gestureDescription}"` });
-    return response.output;
+    return JSON.parse(response.text || "{}");
   } catch (err) {
     logger.error("[GESTURE_CONTROL] Failed to parse hand gesture", { error: err });
     throw err;
   }
 };
 
-/**
- * Models for Image & Video Generation.
- */
 export const MODEL_GARDEN_REGISTRY = {
   IMAGE: {
-    LATEST: "imagen-3",
-    FLASH: "imagen-3-fast"
+    LATEST: "gemini-3-pro-image",
+    FLASH: "gemini-3.1-flash-image"
   },
   VIDEO: {
-    LATEST: "veo-2-flash",
-    FLASH: "veo-2-flash"
+    LATEST: "gemini-omni-flash-preview",
+    FLASH: "gemini-omni-flash-preview"
   }
 };
 
-/**
- * Dedicated Lyria Music Models.
- */
 export const LYRIA_REGISTRY = {
   FULL_TRACK: "lyria-3-pro-preview",
-  REALTIME: "lyria-realtime-exp"
+  REALTIME: "models/lyria-realtime-exp"
 };
 
-/**
- * Generates dynamic visual or video cover via Google Cloud AI Model Garden endpoints.
- * Supports both Latest (High-Fidelity Pro) and Flash (Low-Latency Fast) model variants.
- */
+const coverMediaCache = new Map<string, { url: string; prompt: string; modelUsed: string }>();
+
 export const generateCoverMedia = async (
   userPrompt: string, 
   type: 'cover_art' | 'video_motion',
   modelVariant: 'latest' | 'flash' = 'latest'
 ): Promise<{ url: string; prompt: string; modelUsed: string }> => {
+  const cacheKey = `${type}:${modelVariant}:${userPrompt}`;
+  if (coverMediaCache.has(cacheKey)) {
+    logger.info("[CACHE] Cover media cache hit", { cacheKey });
+    return coverMediaCache.get(cacheKey)!;
+  }
+
   const enhancedPrompt = type === 'cover_art' 
     ? await enhanceImagePrompt(userPrompt) 
     : await enhanceVideoPrompt(userPrompt);
@@ -314,7 +276,6 @@ export const generateCoverMedia = async (
 
   try {
     const aiInstance = getAi();
-    // Primary invocation via Interactions API
     const response = await aiInstance.interactions.create({
       model: modelName,
       input: enhancedPrompt,
@@ -324,7 +285,6 @@ export const generateCoverMedia = async (
     const imageBytes = response.output_image?.data;
     const mimeType = response.output_image?.mime_type || (type === 'cover_art' ? "image/jpeg" : "image/png");
     
-    // For video, we might get output_file_uri or output_video.
     if (type === 'video_motion' && response.output_file_uri) {
       logger.info("[INTERACTIONS_API] Cover Media Generated (Video URI)", { model: modelName, type });
       return { url: response.output_file_uri, prompt: enhancedPrompt, modelUsed: modelName };
@@ -333,12 +293,18 @@ export const generateCoverMedia = async (
     if (imageBytes) {
       const url = `data:${mimeType};base64,${imageBytes}`;
       logger.info("[INTERACTIONS_API] Cover Media Generated", { model: modelName, type, promptLength: enhancedPrompt.length });
-      return { url, prompt: enhancedPrompt, modelUsed: modelName };
+      
+      const result = { url, prompt: enhancedPrompt, modelUsed: modelName };
+      coverMediaCache.set(cacheKey, result);
+      if (coverMediaCache.size > 100) {
+        const firstKey = coverMediaCache.keys().next().value;
+        if (firstKey) coverMediaCache.delete(firstKey);
+      }
+      return result;
     }
   } catch (err) {
     logger.warn("[INTERACTIONS_API] Primary model call failed, trying Flash model fallback", { primaryModel: modelName, error: err });
     
-    // Fallback to Flash model variant if primary call fails
     try {
       const fallbackModel = type === 'cover_art' ? MODEL_GARDEN_REGISTRY.IMAGE.FLASH : MODEL_GARDEN_REGISTRY.VIDEO.FLASH;
       const aiInstance = getAi();
@@ -359,7 +325,14 @@ export const generateCoverMedia = async (
       if (imageBytes) {
         const url = `data:${mimeType};base64,${imageBytes}`;
         logger.info("[INTERACTIONS_API] Flash Fallback Cover Media Generated", { model: fallbackModel, type });
-        return { url, prompt: enhancedPrompt, modelUsed: fallbackModel };
+        
+        const result = { url, prompt: enhancedPrompt, modelUsed: fallbackModel };
+        coverMediaCache.set(cacheKey, result);
+        if (coverMediaCache.size > 100) {
+          const firstKey = coverMediaCache.keys().next().value;
+          if (firstKey) coverMediaCache.delete(firstKey);
+        }
+        return result;
       }
     } catch (fallbackErr) {
       logger.warn("[INTERACTIONS_API] Fallback model call failed", { error: fallbackErr });
@@ -369,5 +342,3 @@ export const generateCoverMedia = async (
 
   throw new Error("Media generation returned no image data.");
 };
-
-

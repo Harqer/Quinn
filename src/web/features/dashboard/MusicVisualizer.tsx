@@ -29,11 +29,7 @@ export const MusicVisualizer: React.FC<MusicVisualizerProps> = ({ isPlaying, ana
       if (analyser) {
         analyser.getByteFrequencyData(dataArray);
       } else if (isPlaying) {
-        // Synthesis: Create a "hipster" aesthetic pulse if real audio is pending
-        for (let i = 0; i < dataArray.length; i++) {
-          const t = Date.now() / 1000;
-          dataArray[i] = Math.max(20, 150 * Math.sin(t + i * 0.1) * Math.random());
-        }
+        dataArray.fill(0);
       } else {
         dataArray.fill(0);
       }

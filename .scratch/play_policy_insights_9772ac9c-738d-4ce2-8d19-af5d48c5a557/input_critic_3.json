@@ -1,0 +1,63 @@
+{
+    "14": {
+        "psl_constant": "PHOTOS",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "**Background Transfer (Disclosure Claimed)**: Evidence found; requires Critic verification.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+            "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+        ],
+        "evidence": "Wearable camera frames are transmitted in the background via maveSessionManager.sendVideoFrame. A compliant gatekeeper dialog was verified in WelcomeScreen.kt.",
+        "recommendation": "Ensure the Play Store Data Safety section also declares this transmission.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "DISCLOSED",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_5.json",
+        "finding_id": "14"
+    },
+    "15": {
+        "psl_constant": "PHOTOS",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "Background Transfer (Disclosure Claimed)",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt",
+            "dist/assets/ChatScreen-9DCyr41R.js"
+        ],
+        "evidence": "WearableStreamingService.kt automatically streams cameraFrames to the backend when active. WelcomeScreen.kt provides a prominent disclosure that explicitly covers camera data collection before access is granted. ChatScreen-9DCyr41R.js also allows user-initiated photo uploads.",
+        "recommendation": "The prominent disclosure adequately covers the background camera streaming. Ensure this collection is properly declared in the Google Play Data Safety form.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "DISCLOSED",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_6.json",
+        "finding_id": "15"
+    },
+    "16": {
+        "psl_constant": "APP_INTERACTIONS",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "Silent Background Transfer",
+        "severity": "CRITICAL",
+        "files_involved": [
+            "app/src/main/java/com/musically/studio/MyApplication.kt",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+        ],
+        "evidence": "MyApplication.kt initializes FirebaseAnalytics to collect app interactions in the background after the privacy policy is accepted. However, the prominent disclosure in WelcomeScreen.kt completely omits any mention of analytics or app interaction tracking, only mentioning camera, microphone, and crash logs.",
+        "recommendation": "Update the prominent disclosure in WelcomeScreen.kt to explicitly state that app interactions and analytics data are collected and explain their purpose.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "MISSING",
+        "purpose": "Analytics",
+        "linked_to_user": false,
+        "worker_file": "worker_data_safety_part_6.json",
+        "finding_id": "16"
+    }
+}

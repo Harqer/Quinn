@@ -21,6 +21,16 @@ fun LyricsBottomSheet(
 ) {
     val tracks by viewModel.tracks.collectAsState()
     val track = tracks.find { it.id == trackId }
+    val lyrics by viewModel.lyrics.collectAsState()
+
+    androidx.compose.runtime.LaunchedEffect(trackId, track?.audioUrl) {
+        if (trackId != null) {
+            val audioUrl = track?.audioUrl
+            if (audioUrl != null) {
+                viewModel.generateLyrics(trackId, audioUrl)
+            }
+        }
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -42,7 +52,7 @@ fun LyricsBottomSheet(
             Spacer(modifier = Modifier.height(16.dp))
             
             Text(
-                text = "No lyrics available.",
+                text = lyrics ?: "Generating lyrics with Gemini Flash...",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyLarge
             )

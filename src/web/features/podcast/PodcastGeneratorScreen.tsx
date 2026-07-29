@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Typography } from '../../components/atoms/Typography';
 import { Icon } from '../../components/atoms/Icon';
 import { narrativeService } from '../../services/narrativeService';
@@ -10,30 +10,52 @@ import { Shimmer } from '../../components/atoms/Shimmer';
 
 export const PodcastGeneratorScreen: React.FC = () => {
   const [prompt, setPrompt] = useState('');
-  const [selectedVoice, setSelectedVoice] = useState('AOEDE');
+  const [selectedVoice] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [podcastResult, setPodcastResult] = useState<any | null>(null);
   const [thinkingText, setThinkingText] = useState('');
-  const [voices, setVoices] = useState<any[]>([]);
   const { setCurrentTrack, setIsPlaying } = useAppContext();
 
-  const [voicesError, setVoicesError] = useState<string | null>(null);
-
-  const fetchVoices = async () => {
-    try {
-      setVoicesError(null);
-      const fetchedVoices = await narrativeService.getVoices();
-      setVoices(fetchedVoices);
-    } catch (err) {
-      setVoicesError("Failed to load voices.");
-      logger.error("Failed to load voices", err);
-    }
-  };
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
-    fetchVoices();
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      
+      recognition.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join('');
+        setPrompt(transcript);
+      };
+      
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+      
+      recognitionRef.current = recognition;
+    }
   }, []);
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      recognitionRef.current?.stop();
+      setIsRecording(false);
+    } else {
+      if (recognitionRef.current) {
+        setPrompt('');
+        recognitionRef.current.start();
+        setIsRecording(true);
+      } else {
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: 'Speech recognition not supported in this browser' }));
+      }
+    }
+  };
 
   const handleAction = async (action: 'like' | 'share', targetId?: string) => {
     if (!targetId) return;
@@ -106,6 +128,8 @@ export const PodcastGeneratorScreen: React.FC = () => {
                   audioPlayer.queueAudioChunk(data.data);
                 } else if (data.type === 'complete') {
                   setPodcastResult(data.track);
+                  setCurrentTrack(data.track);
+                  setIsPlaying(true);
                   setThinkingText('');
                 } else if (data.type === 'error') {
                   setError(data.error);
@@ -122,13 +146,7 @@ export const PodcastGeneratorScreen: React.FC = () => {
       
       // Fallback or disconnect recovery if streaming drops midway
       if (!done && scriptBuffer.length > 0 && !podcastResult) {
-        setPodcastResult({
-          title: prompt,
-          voice: selectedVoice,
-          script: scriptBuffer,
-          duration: "Stream Interrupted",
-          coverUrl: ""
-        });
+        setError('Stream interrupted. Please try generating again.');
         setThinkingText('');
       }
     } catch (err: any) {
@@ -145,70 +163,55 @@ export const PodcastGeneratorScreen: React.FC = () => {
         <Icon name="podcasts" size="xl" color="primary" />
         <div>
           <Typography variant="headline" className="font-bold">Podcast Studio</Typography>
-          <Typography variant="label-sm" color="secondary">Powered by Google Cloud</Typography>
         </div>
       </div>
 
-      {/* Voice Selector */}
-      <div className="flex flex-col gap-2">
-        <Typography variant="title-md" className="font-bold">Select Voice Profile</Typography>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-          {voices.map((v) => (
-            <button
-              key={v.id}
-              onClick={() => setSelectedVoice(v.id)}
-              className={`p-3 rounded-xl border text-left transition-all ${
-                selectedVoice === v.id
-                  ? 'border-primary bg-primary/10 text-white shadow-lg'
-                  : 'border-surface-container bg-surface hover:border-outline/50 text-text-secondary'
-              }`}
+      {/* Bottom Input Bar Section */}
+      <div className="absolute bottom-0 left-0 w-full px-4 pb-8 pt-4 bg-gradient-to-t from-background via-background to-transparent z-50">
+        {error && <div className="max-w-4xl mx-auto mb-2"><ErrorAlert message={error} /></div>}
+        <div className="max-w-4xl mx-auto flex items-end gap-2 bg-surface-container-high rounded-full p-2 shadow-2xl border border-outline-variant/20 backdrop-blur-xl">
+          <div className="relative flex-shrink-0">
+            <button 
+              className="w-10 h-10 flex items-center justify-center rounded-full transition-colors text-primary hover:bg-surface-container-highest opacity-50 cursor-not-allowed"
             >
-              <div className="text-xs font-bold text-white">{v.name}</div>
-              <div className="text-[10px] text-text-secondary">{v.desc}</div>
+              <Icon name="add" />
             </button>
-          ))}
-          {voices.length === 0 && !voicesError && (
-             <div className="col-span-full">
-               <Shimmer className="w-full h-16 rounded-xl" />
-             </div>
-          )}
-          {voicesError && (
-             <div className="col-span-full">
-               <ErrorAlert message={voicesError} onRetry={fetchVoices} />
-             </div>
+          </div>
+          
+          <textarea 
+            className="flex-1 bg-transparent border-none focus:ring-0 text-on-surface text-body-md py-2 resize-none placeholder:text-text-secondary max-h-32 min-h-[40px] outline-none" 
+            placeholder="What should the podcast be about?" 
+            rows={1}
+            value={prompt}
+            onChange={(e) => {
+              setPrompt(e.target.value);
+              if (error) setError(null);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleGenerate();
+              }
+            }}
+          />
+          
+          {prompt.trim() ? (
+             <button onClick={handleGenerate} disabled={loading} className="w-10 h-10 flex items-center justify-center bg-primary text-on-primary rounded-full transition-all shadow-lg shadow-primary/20 flex-shrink-0 disabled:opacity-50">
+               <Icon name={loading ? "hourglass_empty" : "send"} />
+             </button>
+          ) : (
+            <div className="flex items-center flex-shrink-0">
+              <button 
+                onClick={toggleRecording} 
+                disabled={loading}
+                className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors disabled:opacity-50 ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'text-text-secondary hover:bg-surface-container-highest'}`}
+              >
+                <Icon name="mic" />
+              </button>
+            </div>
           )}
         </div>
       </div>
-
-      {/* Prompt Input */}
-      <div className="flex flex-col gap-2">
-        <Typography variant="title-md" className="font-bold">Podcast Topic / Concept</Typography>
-        <textarea
-          value={prompt}
-          onChange={(e) => {
-            setPrompt(e.target.value);
-            if (error) setError(null);
-          }}
-          placeholder="e.g. The evolution of ambient synth music in 1980s Tokyo nightlife..."
-          rows={4}
-          className="w-full bg-surface border border-outline/30 rounded-xl p-3 text-sm text-white placeholder-text-secondary outline-none focus:border-primary transition-colors resize-none"
-        />
-        {error && <ErrorAlert message={error} />}
-      </div>
-
-      {/* Action Button */}
-      <button
-        onClick={handleGenerate}
-        disabled={loading || !prompt.trim()}
-        className="w-full py-3.5 bg-primary text-black rounded-full font-bold text-sm flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 disabled:opacity-50 transition-all shadow-lg"
-        title="Create Podcast"
-      >
-        {loading ? (
-          <Icon name="hourglass_empty" />
-        ) : (
-          <Icon name="auto_awesome" />
-        )}
-      </button>
 
       {/* Streaming Thoughts */}
       {loading && thinkingText && (

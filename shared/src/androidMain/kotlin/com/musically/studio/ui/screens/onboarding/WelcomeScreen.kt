@@ -50,7 +50,7 @@ fun WelcomeScreen(
             },
             text = {
                 Text(
-                    text = "Mave collects and transmits camera and microphone data to enable real-time AI music generation during active sessions.\n\nMave also collects crash logs to improve app stability.\n\nTap 'I Agree' to consent to this data collection.",
+                    text = "Mave collects and transmits camera and microphone data to enable real-time AI music generation during active sessions.\n\nMave also collects app interactions and analytics data, as well as crash logs, to improve app stability and user experience.\n\nTap 'I Agree' to consent to this data collection.",
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
@@ -94,7 +94,7 @@ fun WelcomeScreen(
             com.musically.studio.ui.components.atoms.MaveLogo(size = 220)
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Millions of Vibes.\nOrchestrated by Mave.",
+                text = "Millions of Songs.\nOrchestrated by Mave.",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,

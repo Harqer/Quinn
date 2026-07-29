@@ -11,20 +11,33 @@ const PodcastGeneratorScreen = lazy(() => import('./features/podcast/PodcastGene
 const DevicesScreen = lazy(() => import('./features/devices/DevicesScreen').then(m => ({ default: m.DevicesScreen })));
 const DeleteAccountScreen = lazy(() => import('./features/auth/DeleteAccountScreen').then(m => ({ default: m.DeleteAccountScreen })));
 const ChatScreen = lazy(() => import('./features/chat/ChatScreen').then(m => ({ default: m.ChatScreen })));
+const ProfileScreen = lazy(() => import('./features/profile/ProfileScreen').then(m => ({ default: m.ProfileScreen })));
+const SettingsScreen = lazy(() => import('./features/settings/SettingsScreen').then(m => ({ default: m.SettingsScreen })));
+const PremiumPlansScreen = lazy(() => import('./features/settings/PremiumPlansScreen').then(m => ({ default: m.PremiumPlansScreen })));
 
 import { BottomNav } from './components/organisms/BottomNav';
 import { PlayerBar } from './components/organisms/PlayerBar';
+import { MobilePlayerScreen } from './components/organisms/MobilePlayerScreen';
+import { ProfileSettingsButton } from './components/molecules/ProfileSettingsButton';
 import { useAppContext } from './contexts/AppContext';
 import { PlayerProvider, usePlayerContext } from './contexts/PlayerContext';
 
-type Route = 'welcome' | 'login' | 'home' | 'search' | 'library' | 'album' | 'podcast' | 'devices' | 'delete-account' | 'chat';
+type Route = 'welcome' | 'login' | 'home' | 'search' | 'library' | 'album' | 'podcast' | 'devices' | 'delete-account' | 'chat' | 'profile' | 'settings' | 'premium';
 
 export const NavigationContext = createContext<(route: Route) => void>(() => {});
 export const useNavigate = () => useContext(NavigationContext);
 
+interface SidebarContextType {
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
+}
+export const SidebarContext = createContext<SidebarContextType>({ isSidebarOpen: true, toggleSidebar: () => {} });
+export const useSidebar = () => useContext(SidebarContext);
+
 export const App: React.FC = () => {
   const [route, setRoute] = useState<Route>('welcome');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     const auth = getAuth();
@@ -54,18 +67,19 @@ export const App: React.FC = () => {
     setRoute('home');
   };
 
-  const showBottomNav = ['home', 'search', 'library', 'podcast', 'devices', 'chat'].includes(route);
-  const showPlayerBar = ['home', 'search', 'library', 'album', 'podcast', 'devices', 'chat'].includes(route);
+  const showBottomNav = ['home', 'search', 'library', 'podcast', 'devices', 'chat', 'profile', 'settings', 'premium'].includes(route);
+  const showPlayerBar = ['home', 'search', 'library', 'album', 'podcast', 'devices', 'chat', 'profile', 'settings', 'premium'].includes(route);
 
   return (
-    <NavigationContext.Provider value={setRoute}>
-      <div className="flex h-full w-full p-0 md:p-6 md:gap-6 gap-2 text-text-primary font-sans overflow-hidden bg-black pb-0 md:pb-[92px]">
-        
-        {showBottomNav && (
-          <aside className="hidden md:flex w-[280px] lg:w-[420px] h-full flex-col gap-6 z-40">
-            <BottomNav currentRoute={route} onNavigate={(r: any) => setRoute(r)} />
-          </aside>
-        )}
+    <SidebarContext.Provider value={{ isSidebarOpen, toggleSidebar: () => setIsSidebarOpen(prev => !prev) }}>
+      <NavigationContext.Provider value={setRoute}>
+        <div className="flex h-full w-full p-0 md:p-6 md:gap-6 gap-2 text-text-primary font-sans overflow-hidden bg-black pb-0 md:pb-[92px]">
+          
+          {showBottomNav && (
+            <aside className={`hidden md:flex flex-col gap-6 z-40 transition-all duration-300 ${isSidebarOpen ? 'w-[280px] lg:w-[420px] opacity-100' : 'w-0 opacity-0 overflow-hidden'}`}>
+              <BottomNav currentRoute={route} onNavigate={(r: any) => setRoute(r)} />
+            </aside>
+          )}
 
         <main className="flex-1 bg-[#121212] md:rounded-xl flex flex-col overflow-hidden relative group">
           <div className="flex-1 overflow-y-auto custom-scrollbar w-full relative pb-24 md:pb-0">
@@ -85,14 +99,32 @@ export const App: React.FC = () => {
               {route === 'album' && <AlbumView onBack={() => setRoute('home')} />}
               {route === 'delete-account' && <DeleteAccountScreen />}
               {route === 'chat' && <ChatScreen />}
+              {route === 'profile' && <ProfileScreen />}
+              {route === 'settings' && <SettingsScreen />}
+              {route === 'premium' && <PremiumPlansScreen />}
             </Suspense>
           </div>
+
+          {/* Top Right Profile/Settings for Web */}
+          {currentUser && showBottomNav && (
+            <div className="hidden md:block absolute top-6 right-6 z-50">
+              <ProfileSettingsButton />
+            </div>
+          )}
         </main>
 
         {showBottomNav && (
-          <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-outline/30 bg-background pb-safe">
-            <BottomNav currentRoute={route} onNavigate={(r: any) => setRoute(r)} />
-          </div>
+          <>
+            {/* Bottom Left Profile/Settings for Mobile (above BottomNav) */}
+            {currentUser && (
+              <div className="md:hidden fixed bottom-[90px] left-4 z-50">
+                <ProfileSettingsButton />
+              </div>
+            )}
+            <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-outline/30 bg-background pb-safe">
+              <BottomNav currentRoute={route} onNavigate={(r: any) => setRoute(r)} />
+            </div>
+          </>
         )}
         
         {showPlayerBar && (
@@ -100,35 +132,84 @@ export const App: React.FC = () => {
         )}
       </div>
     </NavigationContext.Provider>
+    </SidebarContext.Provider>
   );
 };
 
 const PlayerBarWrapper: React.FC<{ onAlbumClick: () => void }> = ({ onAlbumClick }) => {
-  const { currentTrack, playerState, currentTime, duration, togglePlayPause, seek } = usePlayerContext();
-  const { sendPlaybackCommand } = useAppContext();
+  const { 
+    currentTrack, 
+    playerState, 
+    currentTime, 
+    duration, 
+    shuffle,
+    repeat,
+    skipNext,
+    skipPrevious,
+    toggleShuffle,
+    toggleRepeat,
+    togglePlayPause, 
+    seek 
+  } = usePlayerContext();
+  
+  const { isMobilePlayerExpanded, setIsMobilePlayerExpanded } = useAppContext();
+  const navigate = useNavigate();
   
   return (
-    <footer 
-      onClick={onAlbumClick} 
-      className="fixed bottom-[60px] md:bottom-0 left-0 right-0 h-[72px] md:h-[92px] bg-black px-2 md:px-6 flex items-center justify-between z-40 cursor-pointer hover:bg-surface-container transition-colors border-t border-surface-container md:border-t-0"
-    >
-      <PlayerBar 
-        trackName={currentTrack?.title}
-        artistName={currentTrack?.artist}
-        albumArtUrl={currentTrack?.albumArtUrl}
-        isPlaying={playerState === 'playing'}
-        currentTime={currentTime}
-        duration={duration}
-        onSeek={seek}
-        onPlayPause={(e) => {
-          e.stopPropagation();
-          togglePlayPause();
-        }}
-        onShuffle={() => sendPlaybackCommand('toggle_shuffle')}
-        onSkipPrevious={() => sendPlaybackCommand('skip_previous')}
-        onSkipNext={() => sendPlaybackCommand('skip_next')}
-        onRepeat={() => sendPlaybackCommand('toggle_repeat')}
-      />
-    </footer>
+    <>
+      <footer 
+        onClick={() => {
+          if (window.innerWidth < 768) {
+            setIsMobilePlayerExpanded(true);
+          } else {
+            onAlbumClick();
+          }
+        }} 
+        className="fixed bottom-[60px] md:bottom-0 left-0 right-0 h-[72px] md:h-[92px] bg-black px-2 md:px-6 flex items-center justify-between z-40 cursor-pointer hover:bg-surface-container transition-colors border-t border-surface-container md:border-t-0"
+      >
+        <PlayerBar 
+          trackName={currentTrack?.title}
+          artistName={currentTrack?.artist}
+          albumArtUrl={currentTrack?.albumArtUrl}
+          isPlaying={playerState === 'playing'}
+          currentTime={currentTime}
+          duration={duration}
+          isShuffleEnabled={shuffle}
+          repeatMode={repeat}
+          onSeek={seek}
+          onPlayPause={(e) => {
+            e.stopPropagation();
+            togglePlayPause();
+          }}
+          onShuffle={(e) => { e.stopPropagation(); toggleShuffle(); }}
+          onSkipPrevious={(e) => { e.stopPropagation(); skipPrevious(); }}
+          onSkipNext={(e) => { e.stopPropagation(); skipNext(); }}
+          onRepeat={(e) => { e.stopPropagation(); toggleRepeat(); }}
+        />
+      </footer>
+      
+      {isMobilePlayerExpanded && (
+        <MobilePlayerScreen
+          track={currentTrack}
+          isPlaying={playerState === 'playing'}
+          currentTime={currentTime}
+          duration={duration}
+          onPlayPause={(e) => {
+            e.stopPropagation();
+            togglePlayPause();
+          }}
+          onSeek={seek}
+          onShuffle={() => toggleShuffle()}
+          onSkipPrevious={() => skipPrevious()}
+          onSkipNext={() => skipNext()}
+          onRepeat={() => toggleRepeat()}
+          onClose={() => setIsMobilePlayerExpanded(false)}
+          onDevicesClick={() => {
+            setIsMobilePlayerExpanded(false);
+            navigate('devices');
+          }}
+        />
+      )}
+    </>
   );
 };

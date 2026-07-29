@@ -48,6 +48,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.style.Style
 import androidx.compose.foundation.style.rememberUpdatedStyleState
 import androidx.compose.foundation.style.styleable
+import androidx.compose.ui.graphics.vector.path
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import androidx.compose.foundation.style.styleable
 import androidx.compose.runtime.remember
 import com.musically.studio.ui.theme.MaveStyles
 
@@ -72,12 +75,17 @@ fun LibraryScreen(
 
     val playlists by viewModel.playlists.collectAsStateWithLifecycle()
     val albums by viewModel.albums.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchUserTracks()
-    }
+    
+    val spotifyConnected by viewModel.spotifyConnected.collectAsStateWithLifecycle()
+    val youtubeConnected by viewModel.youtubeConnected.collectAsStateWithLifecycle()
 
     val context = androidx.compose.ui.platform.LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.oauthUrl.collect { url ->
+            val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
+            context.startActivity(intent)
+        }
+    }
     val selectedFilterState = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
@@ -178,6 +186,13 @@ fun LibraryScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(bottom = 120.dp)
                 ) {
+                    item {
+                        ConnectionsSection(
+                            viewModel = viewModel,
+                            spotifyConnected = spotifyConnected,
+                            youtubeConnected = youtubeConnected
+                        )
+                    }
                     items(tracks) { track ->
                         TrackItem(
                             track = track,
@@ -317,14 +332,14 @@ private fun EmptyLibraryState(onNavigateToHome: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Strike your first vibe with Mave to start building your personal orchestra.",
+                text = "Strike your first song with Mave to start building your personal orchestra.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(32.dp))
             MaveButton(
-                text = "Strike a Vibe",
+                text = "Create a Song",
                 onClick = onNavigateToHome,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -355,6 +370,139 @@ fun FilterPill(
         Text(text, color = Color.White, style = MaterialTheme.typography.bodyMedium)
     }
 }
+
+@Composable
+fun ConnectionsSection(
+    viewModel: MainViewModel,
+    spotifyConnected: Boolean,
+    youtubeConnected: Boolean
+) {
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+    val isCompact = windowSizeClass == WindowWidthSizeClass.COMPACT
+    
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
+        Text("Connections", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        if (isCompact) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                ConnectionButton("Spotify", spotifyConnected) { viewModel.connectSpotify() }
+                ConnectionButton("YouTube", youtubeConnected) { viewModel.connectYouTube() }
+            }
+        } else {
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                ConnectionButton("Spotify", spotifyConnected, modifier = Modifier.weight(1f)) { viewModel.connectSpotify() }
+                ConnectionButton("YouTube", youtubeConnected, modifier = Modifier.weight(1f)) { viewModel.connectYouTube() }
+            }
+        }
+    }
+}
+
+@Composable
+fun ConnectionButton(
+    platform: String,
+    isConnected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val bgColor = if (isConnected) {
+        if (platform == "Spotify") Color(0xFF1DB954).copy(alpha = 0.2f) else Color(0xFFFF0000).copy(alpha = 0.2f)
+    } else {
+        Color.White.copy(alpha = 0.05f)
+    }
+    val textColor = if (isConnected) {
+        if (platform == "Spotify") Color(0xFF1DB954) else Color(0xFFFF0000)
+    } else {
+        Color.White
+    }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .clickable { if (!isConnected) onClick() }
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (platform == "Spotify") {
+                Icon(
+                    painter = androidx.compose.ui.res.painterResource(id = com.musically.studio.shared.R.drawable.ic_spotify),
+                    contentDescription = "Spotify",
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.Unspecified
+                )
+            } else {
+                Icon(
+                    painter = androidx.compose.ui.res.painterResource(id = com.musically.studio.shared.R.drawable.ic_youtube),
+                    contentDescription = "YouTube",
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.Unspecified
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = if (isConnected) "$platform Connected" else "Connect $platform",
+                color = textColor,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        if (!isConnected) {
+            Icon(
+                imageVector = OpenInNewIcon,
+                contentDescription = "Open in new window",
+                tint = Color(0xFFE3E3E3),
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
+val OpenInNewIcon: androidx.compose.ui.graphics.vector.ImageVector
+    get() = androidx.compose.ui.graphics.vector.ImageVector.Builder(
+        name = "OpenInNew",
+        defaultWidth = 24.dp,
+        defaultHeight = 24.dp,
+        viewportWidth = 960f,
+        viewportHeight = 960f
+    ).apply {
+        path(
+            fill = androidx.compose.ui.graphics.SolidColor(Color.White)
+        ) {
+            moveTo(200f, 840f)
+            quadToRelative(-33f, 0f, -56.5f, -23.5f)
+            reflectiveQuadTo(120f, 760f)
+            verticalLineToRelative(-560f)
+            quadToRelative(0f, -33f, 23.5f, -56.5f)
+            reflectiveQuadTo(200f, 120f)
+            horizontalLineToRelative(280f)
+            verticalLineToRelative(80f)
+            horizontalLineTo(200f)
+            verticalLineToRelative(560f)
+            horizontalLineToRelative(560f)
+            verticalLineToRelative(-280f)
+            horizontalLineToRelative(80f)
+            verticalLineToRelative(280f)
+            quadToRelative(0f, 33f, -23.5f, 56.5f)
+            reflectiveQuadTo(760f, 840f)
+            horizontalLineTo(200f)
+            close()
+            moveToRelative(188f, -212f)
+            lineToRelative(-56f, -56f)
+            lineToRelative(372f, -372f)
+            horizontalLineTo(560f)
+            verticalLineToRelative(-80f)
+            horizontalLineToRelative(280f)
+            verticalLineToRelative(280f)
+            horizontalLineToRelative(-80f)
+            verticalLineToRelative(-144f)
+            lineTo(388f, 628f)
+            close()
+        }
+    }.build()
 
 @FormFactorPreviews
 @Composable

@@ -77,6 +77,104 @@ exports.createPodcast = function createPodcast(dcOrVars, vars) {
 }
 ;
 
+const upsertUserSettingsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpsertUserSettings', inputVars);
+}
+upsertUserSettingsRef.operationName = 'UpsertUserSettings';
+exports.upsertUserSettingsRef = upsertUserSettingsRef;
+
+exports.upsertUserSettings = function upsertUserSettings(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars);
+  return executeMutation(upsertUserSettingsRef(dcInstance, inputVars));
+}
+;
+
+const updateUserPreferencesRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateUserPreferences', inputVars);
+}
+updateUserPreferencesRef.operationName = 'UpdateUserPreferences';
+exports.updateUserPreferencesRef = updateUserPreferencesRef;
+
+exports.updateUserPreferences = function updateUserPreferences(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars);
+  return executeMutation(updateUserPreferencesRef(dcInstance, inputVars));
+}
+;
+
+const recordPaymentRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'RecordPayment', inputVars);
+}
+recordPaymentRef.operationName = 'RecordPayment';
+exports.recordPaymentRef = recordPaymentRef;
+
+exports.recordPayment = function recordPayment(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(recordPaymentRef(dcInstance, inputVars));
+}
+;
+
+const likeTrackRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'LikeTrack', inputVars);
+}
+likeTrackRef.operationName = 'LikeTrack';
+exports.likeTrackRef = likeTrackRef;
+
+exports.likeTrack = function likeTrack(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(likeTrackRef(dcInstance, inputVars));
+}
+;
+
+const removeLikedTrackRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'RemoveLikedTrack', inputVars);
+}
+removeLikedTrackRef.operationName = 'RemoveLikedTrack';
+exports.removeLikedTrackRef = removeLikedTrackRef;
+
+exports.removeLikedTrack = function removeLikedTrack(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(removeLikedTrackRef(dcInstance, inputVars));
+}
+;
+
+const bookmarkTrackRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'BookmarkTrack', inputVars);
+}
+bookmarkTrackRef.operationName = 'BookmarkTrack';
+exports.bookmarkTrackRef = bookmarkTrackRef;
+
+exports.bookmarkTrack = function bookmarkTrack(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(bookmarkTrackRef(dcInstance, inputVars));
+}
+;
+
+const removeBookmarkedTrackRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'RemoveBookmarkedTrack', inputVars);
+}
+removeBookmarkedTrackRef.operationName = 'RemoveBookmarkedTrack';
+exports.removeBookmarkedTrackRef = removeBookmarkedTrackRef;
+
+exports.removeBookmarkedTrack = function removeBookmarkedTrack(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(removeBookmarkedTrackRef(dcInstance, inputVars));
+}
+;
+
 const getUserTracksRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
@@ -179,5 +277,65 @@ exports.getAudiobooks = function getAudiobooks(dcOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
   return executeQuery(getAudiobooksRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getUserSettingsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetUserSettings');
+}
+getUserSettingsRef.operationName = 'GetUserSettings';
+exports.getUserSettingsRef = getUserSettingsRef;
+
+exports.getUserSettings = function getUserSettings(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(getUserSettingsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getPaymentHistoryRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetPaymentHistory');
+}
+getPaymentHistoryRef.operationName = 'GetPaymentHistory';
+exports.getPaymentHistoryRef = getPaymentHistoryRef;
+
+exports.getPaymentHistory = function getPaymentHistory(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(getPaymentHistoryRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getLikedTracksRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetLikedTracks');
+}
+getLikedTracksRef.operationName = 'GetLikedTracks';
+exports.getLikedTracksRef = getLikedTracksRef;
+
+exports.getLikedTracks = function getLikedTracks(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(getLikedTracksRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getBookmarkedTracksRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetBookmarkedTracks');
+}
+getBookmarkedTracksRef.operationName = 'GetBookmarkedTracks';
+exports.getBookmarkedTracksRef = getBookmarkedTracksRef;
+
+exports.getBookmarkedTracks = function getBookmarkedTracks(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(getBookmarkedTracksRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;

@@ -21,6 +21,8 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val addTrackToPlaylist: AddTrackToPlaylistMutation
   
+    public val bookmarkTrack: BookmarkTrackMutation
+  
     public val createPlaylist: CreatePlaylistMutation
   
     public val createPodcast: CreatePodcastMutation
@@ -31,17 +33,37 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val getAudiobooks: GetAudiobooksQuery
   
+    public val getBookmarkedTracks: GetBookmarkedTracksQuery
+  
     public val getCategories: GetCategoriesQuery
   
     public val getCommunityTracks: GetCommunityTracksQuery
+  
+    public val getLikedTracks: GetLikedTracksQuery
+  
+    public val getPaymentHistory: GetPaymentHistoryQuery
   
     public val getPlaylists: GetPlaylistsQuery
   
     public val getPodcasts: GetPodcastsQuery
   
+    public val getUserSettings: GetUserSettingsQuery
+  
     public val getUserTracks: GetUserTracksQuery
   
+    public val likeTrack: LikeTrackMutation
+  
+    public val recordPayment: RecordPaymentMutation
+  
+    public val removeBookmarkedTrack: RemoveBookmarkedTrackMutation
+  
+    public val removeLikedTrack: RemoveLikedTrackMutation
+  
+    public val updateUserPreferences: UpdateUserPreferencesMutation
+  
     public val upsertUser: UpsertUserMutation
+  
+    public val upsertUserSettings: UpsertUserSettingsMutation
   
 
   public companion object {
@@ -90,6 +112,10 @@ private class DefaultConnectorImpl(
       AddTrackToPlaylistMutationImpl(this)
     }
   
+    override val bookmarkTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      BookmarkTrackMutationImpl(this)
+    }
+  
     override val createPlaylist by lazy(LazyThreadSafetyMode.PUBLICATION) {
       CreatePlaylistMutationImpl(this)
     }
@@ -110,12 +136,24 @@ private class DefaultConnectorImpl(
       GetAudiobooksQueryImpl(this)
     }
   
+    override val getBookmarkedTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetBookmarkedTracksQueryImpl(this)
+    }
+  
     override val getCategories by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetCategoriesQueryImpl(this)
     }
   
     override val getCommunityTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetCommunityTracksQueryImpl(this)
+    }
+  
+    override val getLikedTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetLikedTracksQueryImpl(this)
+    }
+  
+    override val getPaymentHistory by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetPaymentHistoryQueryImpl(this)
     }
   
     override val getPlaylists by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -126,12 +164,40 @@ private class DefaultConnectorImpl(
       GetPodcastsQueryImpl(this)
     }
   
+    override val getUserSettings by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetUserSettingsQueryImpl(this)
+    }
+  
     override val getUserTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetUserTracksQueryImpl(this)
     }
   
+    override val likeTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      LikeTrackMutationImpl(this)
+    }
+  
+    override val recordPayment by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      RecordPaymentMutationImpl(this)
+    }
+  
+    override val removeBookmarkedTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      RemoveBookmarkedTrackMutationImpl(this)
+    }
+  
+    override val removeLikedTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      RemoveLikedTrackMutationImpl(this)
+    }
+  
+    override val updateUserPreferences by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      UpdateUserPreferencesMutationImpl(this)
+    }
+  
     override val upsertUser by lazy(LazyThreadSafetyMode.PUBLICATION) {
       UpsertUserMutationImpl(this)
+    }
+  
+    override val upsertUserSettings by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      UpsertUserSettingsMutationImpl(this)
     }
   
 
@@ -143,10 +209,17 @@ private class DefaultConnectorImpl(
   override fun mutations(): List<com.google.firebase.dataconnect.generated.GeneratedMutation<DefaultConnector, *, *>> =
     listOf(
       addTrackToPlaylist,
+        bookmarkTrack,
         createPlaylist,
         createPodcast,
         createTrack,
+        likeTrack,
+        recordPayment,
+        removeBookmarkedTrack,
+        removeLikedTrack,
+        updateUserPreferences,
         upsertUser,
+        upsertUserSettings,
         
     )
 
@@ -155,10 +228,14 @@ private class DefaultConnectorImpl(
     listOf(
       getAlbums,
         getAudiobooks,
+        getBookmarkedTracks,
         getCategories,
         getCommunityTracks,
+        getLikedTracks,
+        getPaymentHistory,
         getPlaylists,
         getPodcasts,
+        getUserSettings,
         getUserTracks,
         
     )
@@ -310,6 +387,21 @@ private class AddTrackToPlaylistMutationImpl(
   )
 
 
+private class BookmarkTrackMutationImpl(
+  connector: DefaultConnector
+):
+  BookmarkTrackMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      BookmarkTrackMutation.Data,
+      BookmarkTrackMutation.Variables
+  >(
+    connector,
+    BookmarkTrackMutation.Companion.operationName,
+    BookmarkTrackMutation.Companion.dataDeserializer,
+    BookmarkTrackMutation.Companion.variablesSerializer,
+  )
+
+
 private class CreatePlaylistMutationImpl(
   connector: DefaultConnector
 ):
@@ -385,6 +477,21 @@ private class GetAudiobooksQueryImpl(
   )
 
 
+private class GetBookmarkedTracksQueryImpl(
+  connector: DefaultConnector
+):
+  GetBookmarkedTracksQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetBookmarkedTracksQuery.Data,
+      Unit
+  >(
+    connector,
+    GetBookmarkedTracksQuery.Companion.operationName,
+    GetBookmarkedTracksQuery.Companion.dataDeserializer,
+    GetBookmarkedTracksQuery.Companion.variablesSerializer,
+  )
+
+
 private class GetCategoriesQueryImpl(
   connector: DefaultConnector
 ):
@@ -412,6 +519,36 @@ private class GetCommunityTracksQueryImpl(
     GetCommunityTracksQuery.Companion.operationName,
     GetCommunityTracksQuery.Companion.dataDeserializer,
     GetCommunityTracksQuery.Companion.variablesSerializer,
+  )
+
+
+private class GetLikedTracksQueryImpl(
+  connector: DefaultConnector
+):
+  GetLikedTracksQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetLikedTracksQuery.Data,
+      Unit
+  >(
+    connector,
+    GetLikedTracksQuery.Companion.operationName,
+    GetLikedTracksQuery.Companion.dataDeserializer,
+    GetLikedTracksQuery.Companion.variablesSerializer,
+  )
+
+
+private class GetPaymentHistoryQueryImpl(
+  connector: DefaultConnector
+):
+  GetPaymentHistoryQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetPaymentHistoryQuery.Data,
+      Unit
+  >(
+    connector,
+    GetPaymentHistoryQuery.Companion.operationName,
+    GetPaymentHistoryQuery.Companion.dataDeserializer,
+    GetPaymentHistoryQuery.Companion.variablesSerializer,
   )
 
 
@@ -445,6 +582,21 @@ private class GetPodcastsQueryImpl(
   )
 
 
+private class GetUserSettingsQueryImpl(
+  connector: DefaultConnector
+):
+  GetUserSettingsQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetUserSettingsQuery.Data,
+      Unit
+  >(
+    connector,
+    GetUserSettingsQuery.Companion.operationName,
+    GetUserSettingsQuery.Companion.dataDeserializer,
+    GetUserSettingsQuery.Companion.variablesSerializer,
+  )
+
+
 private class GetUserTracksQueryImpl(
   connector: DefaultConnector
 ):
@@ -460,6 +612,81 @@ private class GetUserTracksQueryImpl(
   )
 
 
+private class LikeTrackMutationImpl(
+  connector: DefaultConnector
+):
+  LikeTrackMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      LikeTrackMutation.Data,
+      LikeTrackMutation.Variables
+  >(
+    connector,
+    LikeTrackMutation.Companion.operationName,
+    LikeTrackMutation.Companion.dataDeserializer,
+    LikeTrackMutation.Companion.variablesSerializer,
+  )
+
+
+private class RecordPaymentMutationImpl(
+  connector: DefaultConnector
+):
+  RecordPaymentMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      RecordPaymentMutation.Data,
+      RecordPaymentMutation.Variables
+  >(
+    connector,
+    RecordPaymentMutation.Companion.operationName,
+    RecordPaymentMutation.Companion.dataDeserializer,
+    RecordPaymentMutation.Companion.variablesSerializer,
+  )
+
+
+private class RemoveBookmarkedTrackMutationImpl(
+  connector: DefaultConnector
+):
+  RemoveBookmarkedTrackMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      RemoveBookmarkedTrackMutation.Data,
+      RemoveBookmarkedTrackMutation.Variables
+  >(
+    connector,
+    RemoveBookmarkedTrackMutation.Companion.operationName,
+    RemoveBookmarkedTrackMutation.Companion.dataDeserializer,
+    RemoveBookmarkedTrackMutation.Companion.variablesSerializer,
+  )
+
+
+private class RemoveLikedTrackMutationImpl(
+  connector: DefaultConnector
+):
+  RemoveLikedTrackMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      RemoveLikedTrackMutation.Data,
+      RemoveLikedTrackMutation.Variables
+  >(
+    connector,
+    RemoveLikedTrackMutation.Companion.operationName,
+    RemoveLikedTrackMutation.Companion.dataDeserializer,
+    RemoveLikedTrackMutation.Companion.variablesSerializer,
+  )
+
+
+private class UpdateUserPreferencesMutationImpl(
+  connector: DefaultConnector
+):
+  UpdateUserPreferencesMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      UpdateUserPreferencesMutation.Data,
+      UpdateUserPreferencesMutation.Variables
+  >(
+    connector,
+    UpdateUserPreferencesMutation.Companion.operationName,
+    UpdateUserPreferencesMutation.Companion.dataDeserializer,
+    UpdateUserPreferencesMutation.Companion.variablesSerializer,
+  )
+
+
 private class UpsertUserMutationImpl(
   connector: DefaultConnector
 ):
@@ -472,6 +699,21 @@ private class UpsertUserMutationImpl(
     UpsertUserMutation.Companion.operationName,
     UpsertUserMutation.Companion.dataDeserializer,
     UpsertUserMutation.Companion.variablesSerializer,
+  )
+
+
+private class UpsertUserSettingsMutationImpl(
+  connector: DefaultConnector
+):
+  UpsertUserSettingsMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      UpsertUserSettingsMutation.Data,
+      UpsertUserSettingsMutation.Variables
+  >(
+    connector,
+    UpsertUserSettingsMutation.Companion.operationName,
+    UpsertUserSettingsMutation.Companion.dataDeserializer,
+    UpsertUserSettingsMutation.Companion.variablesSerializer,
   )
 
 

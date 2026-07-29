@@ -35,7 +35,6 @@ public interface UpsertUserMutation :
       
       @kotlin.DslMarker public annotation class BuilderDsl
 
-      
       @BuilderDsl
       public interface Builder {
         public var displayName: String?
@@ -44,7 +43,6 @@ public interface UpsertUserMutation :
       }
 
       public companion object {
-        
         @Suppress("NAME_SHADOWING")
         public fun build(
           

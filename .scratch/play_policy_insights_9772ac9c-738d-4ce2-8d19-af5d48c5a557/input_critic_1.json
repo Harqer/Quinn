@@ -1,0 +1,62 @@
+{
+    "1": {
+        "psl_constant": "USER_ACCOUNT",
+        "policy_id": "data_safety_section",
+        "issue_summary": "User-Initiated Collection",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/di/NetworkModule.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/service/LiveApiService.kt"
+        ],
+        "evidence": "User logs in using Firebase Auth via loginWithGoogle and loginWithVerifiedEmail in MainActivity.kt, sending the account identifier to Firebase.",
+        "recommendation": "Ensure this data collection is declared in the Play Store Data Safety form.",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_1.json",
+        "finding_id": "1"
+    },
+    "5": {
+        "psl_constant": "CRASH_LOGS",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "**Background Transfer (Disclosure Claimed)**: Evidence found; requires Critic verification.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt"
+        ],
+        "evidence": "FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true) is gated by has_accepted_privacy_policy in MyApplication.kt.",
+        "recommendation": "Ensure the privacy policy dialog explicitly mentions crash log collection and meets Play Store prominent disclosure requirements.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "DISCLOSED",
+        "purpose": "Analytics",
+        "linked_to_user": false,
+        "worker_file": "worker_data_safety_part_2.json",
+        "finding_id": "5"
+    },
+    "7": {
+        "psl_constant": "PERFORMANCE_DIAGNOSTICS",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "**Background Transfer (Disclosure Claimed)**: Evidence found; requires Critic verification.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "app/src/main/java/com/musically/studio/MyApplication.kt",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+        ],
+        "evidence": "FirebaseAnalytics and FirebaseCrashlytics are initialized in MyApplication.kt. The gatekeeper AlertDialog in WelcomeScreen.kt requires the user to accept a privacy policy covering crash logs and camera/mic.",
+        "recommendation": "Review the disclosure to ensure it fully covers all data types being transmitted in the background.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "DISCLOSED",
+        "purpose": "Analytics",
+        "linked_to_user": false,
+        "worker_file": "worker_data_safety_part_3.json",
+        "finding_id": "7"
+    }
+}

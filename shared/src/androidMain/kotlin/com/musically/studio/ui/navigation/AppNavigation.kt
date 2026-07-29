@@ -20,6 +20,11 @@ import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Podcasts
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -99,8 +104,15 @@ fun MaveApp(
     val currentRoute = navigationState.backStacks[navigationState.topLevelRoute]?.last() ?: navigationState.topLevelRoute
     val showNavSuite = currentRoute in listOf(Route.Home, Route.Discover, Route.Search, Route.Chat, Route.Podcast, Route.Library, Route.Devices) || currentRoute is Route.AlbumView || currentRoute is Route.UserProfile
     
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
     val layoutType = if (showNavSuite) {
-        androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+        val defaultType = androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+        if (defaultType == androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.NavigationDrawer) {
+            androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.None
+        } else {
+            defaultType
+        }
     } else {
         androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.None
     }
@@ -110,7 +122,9 @@ fun MaveApp(
         navigator = navigator,
         onAcknowledgePermissions = onAcknowledgePermissions,
         onMenuClick = {
-            navigator.navigate(Route.UserProfile("me"))
+            coroutineScope.launch {
+                drawerState.open()
+            }
         },
         onLikeClick = { id -> viewModel.bookmarkTrack(id) },
         onDownloadClick = { id -> 
@@ -124,6 +138,75 @@ fun MaveApp(
             downloadManager.enqueue(request)
         }
     )
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                androidx.compose.foundation.layout.Spacer(Modifier.height(12.dp))
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.Default.Home, contentDescription = null) },
+                    label = { Text("Home") },
+                    selected = currentRoute == Route.Home,
+                    onClick = { 
+                        navigator.navigate(Route.Home) 
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
+                )
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    label = { Text("Search") },
+                    selected = currentRoute == Route.Search,
+                    onClick = { 
+                        navigator.navigate(Route.Search) 
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
+                )
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.Default.AutoAwesome, contentDescription = null) },
+                    label = { Text("Mave") },
+                    selected = currentRoute == Route.Chat,
+                    onClick = { 
+                        navigator.navigate(Route.Chat) 
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
+                )
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.Default.Podcasts, contentDescription = null) },
+                    label = { Text("Podcast") },
+                    selected = currentRoute == Route.Podcast,
+                    onClick = { 
+                        navigator.navigate(Route.Podcast) 
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
+                )
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.Default.PhoneAndroid, contentDescription = null) },
+                    label = { Text("Devices") },
+                    selected = currentRoute == Route.Devices,
+                    onClick = { 
+                        navigator.navigate(Route.Devices) 
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
+                )
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.Default.LibraryMusic, contentDescription = null) },
+                    label = { Text("Library") },
+                    selected = currentRoute == Route.Library,
+                    onClick = { 
+                        navigator.navigate(Route.Library) 
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
+                )
+            }
+        }
+    ) {
 
     NavigationSuiteScaffold(
         layoutType = layoutType,
@@ -224,4 +307,5 @@ fun MaveApp(
             }
         }
     }
+}
 }

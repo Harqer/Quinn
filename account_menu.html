@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Spotify - Music for everyone</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#0d0e0f",
+                        "outline-variant": "#3d4a3d",
+                        "inverse-primary": "#006e2d",
+                        "surface-container": "#1e2020",
+                        "surface-variant": "#343535",
+                        "surface": "#121414",
+                        "on-primary-container": "#004118",
+                        "surface-container-low": "#1a1c1c",
+                        "surface-bright": "#38393a",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "primary-fixed-dim": "#53e076",
+                        "surface-container-highest": "#343535",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "on-primary-fixed": "#002108",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#005320",
+                        "surface-container-high": "#292a2a",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-background": "#e3e2e2",
+                        "background": "#121414",
+                        "primary-fixed": "#72fe8f",
+                        "surface-tint": "#53e076",
+                        "on-tertiary": "#313030",
+                        "outline": "#869585",
+                        "on-primary": "#003914",
+                        "inverse-surface": "#e3e2e2",
+                        "on-secondary-fixed-variant": "#474646",
+                        "tertiary-fixed": "#e5e2e1",
+                        "primary": "#53e076",
+                        "secondary-fixed": "#e5e2e1",
+                        "inverse-on-surface": "#2f3131",
+                        "error-container": "#93000a",
+                        "on-surface": "#e3e2e2",
+                        "on-surface-variant": "#bccbb9",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "secondary": "#c8c6c5",
+                        "tertiary": "#c8c6c5",
+                        "on-error": "#690005",
+                        "tertiary-container": "#a3a1a0",
+                        "on-tertiary-container": "#383838",
+                        "on-secondary-container": "#bab8b7",
+                        "on-secondary": "#313030",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "secondary-container": "#4a4949",
+                        "primary-container": "#1db954",
+                        "surface-dim": "#121414"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-grid": "24px",
+                        "card-padding": "16px",
+                        "unit": "8px",
+                        "section-gap": "40px",
+                        "container-margin": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #121414;
+            color: #e3e2e2;
+            overflow: hidden;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 12px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4D4D4D;
+            border: 3px solid #121212;
+            border-radius: 6px;
+        }
+        .card-hover:hover .play-button {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .play-button {
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.3s ease;
+        }
+        .sidebar-mask {
+            mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen font-body-md text-body-md">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-30 h-16 w-full flex items-center justify-between px-gutter-grid bg-surface-dim/80 backdrop-blur-md">
+<div class="flex items-center gap-4 flex-1">
+<div class="p-2 rounded-full bg-black flex items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined text-on-surface">home</span>
+</div>
+<div class="relative w-full max-w-[400px]">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-secondary">search</span>
+</div>
+<input class="w-full h-11 bg-surface-container rounded-full border-none pl-10 pr-12 text-on-surface focus:ring-2 focus:ring-primary font-body-md" placeholder="What do you want to play?" type="text"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+<span class="material-symbols-outlined text-secondary border-l border-outline-variant pl-2">inventory_2</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="bg-on-surface text-background font-bold px-4 py-2 rounded-full hover:scale-105 transition-transform text-label-md">Explore Premium</button>
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="material-symbols-outlined text-secondary group-hover:text-on-surface transition-colors">download_for_offline</span>
+<span class="text-label-md font-bold text-secondary group-hover:text-on-surface transition-colors">Install App</span>
+</div>
+<div class="flex items-center gap-4 relative">
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-on-surface">notifications</span>
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-on-surface">group</span>
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary font-bold text-[12px] border-4 border-black box-content">N</div><div class="absolute right-0 top-12 w-[280px] bg-[#282828] rounded shadow-xl z-50 py-1 flex flex-col text-on-surface font-body-md">
+<a class="flex items-center justify-between px-4 py-3 hover:bg-surface-container-highest transition-colors" href="#">
+<span>Account</span>
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</a>
+<a class="px-4 py-3 hover:bg-surface-container-highest transition-colors" href="#">Profile</a>
+<a class="px-4 py-3 hover:bg-surface-container-highest transition-colors" href="#">Recents</a>
+<a class="flex items-center justify-between px-4 py-3 hover:bg-surface-container-highest transition-colors" href="#">
+<span>Upgrade to Premium</span>
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</a>
+<a class="flex items-center justify-between px-4 py-3 hover:bg-surface-container-highest transition-colors" href="#">
+<span>Support</span>
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</a>
+<a class="flex items-center justify-between px-4 py-3 hover:bg-surface-container-highest transition-colors" href="#">
+<span>Download</span>
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</a>
+<a class="px-4 py-3 hover:bg-surface-container-highest transition-colors" href="#">Settings</a>
+<div class="h-[1px] bg-outline-variant/20 my-1"></div>
+<a class="px-4 py-3 hover:bg-surface-container-highest transition-colors" href="#">Log out</a>
+<div class="h-[1px] bg-outline-variant/20 my-1"></div>
+<div class="px-4 py-3">
+<h5 class="font-bold text-[13px] mb-2">Your Updates</h5>
+<div class="flex gap-3 items-start bg-surface-container-highest/50 p-3 rounded">
+<span class="material-symbols-outlined text-secondary">campaign</span>
+<p class="text-[12px] text-secondary leading-tight">
+                Say hello to Your Updates. Check here for news on your followers, playlists, events and more • 3w
+            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden p-2 gap-2">
+<!-- Left Sidebar (SideNavBar) -->
+<nav class="w-[280px] h-full flex flex-col gap-2 z-40 shrink-0">
+<div class="bg-surface-container-low rounded-lg p-container-margin flex flex-col gap-4">
+<div class="flex items-center gap-4 text-on-surface font-bold border-l-4 border-primary pl-4 cursor-pointer">
+<span class="material-symbols-outlined">home</span>
+<span class="font-headline-md text-[16px]">Home</span>
+</div>
+<div class="flex items-center gap-4 text-secondary hover:text-on-surface pl-5 transition-colors cursor-pointer group">
+<span class="material-symbols-outlined">search</span>
+<span class="font-headline-md text-[16px]">Search</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg flex-1 overflow-hidden flex flex-col">
+<div class="p-container-margin flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-3 text-secondary hover:text-on-surface transition-colors cursor-pointer">
+<span class="material-symbols-outlined">library_music</span>
+<span class="font-bold text-[16px]">Your Library</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary hover:bg-surface-container-high p-1 rounded-full cursor-pointer">add</span>
+<span class="material-symbols-outlined text-secondary hover:bg-surface-container-high p-1 rounded-full cursor-pointer">arrow_forward</span>
+</div>
+</div>
+<div class="px-2 overflow-y-auto custom-scrollbar flex flex-col gap-2">
+<div class="bg-surface-container rounded-lg p-4 flex flex-col gap-3 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2">
+<span class="material-symbols-outlined text-secondary text-sm cursor-pointer">close</span>
+</div>
+<h4 class="font-bold text-on-surface">Create your first playlist</h4>
+<p class="text-[13px] text-secondary">It's easy, we'll help you</p>
+<button class="bg-on-surface text-background font-bold px-4 py-1.5 rounded-full w-fit text-label-md hover:scale-105 transition-transform">Create playlist</button>
+</div>
+<div class="bg-surface-container rounded-lg p-4 flex flex-col gap-3">
+<h4 class="font-bold text-on-surface">Let's find some podcasts to follow</h4>
+<p class="text-[13px] text-secondary">We'll keep you updated on new episodes</p>
+<button class="bg-on-surface text-background font-bold px-4 py-1.5 rounded-full w-fit text-label-md hover:scale-105 transition-transform">Browse podcasts</button>
+</div>
+<div class="p-4 mt-auto">
+<div class="flex flex-wrap gap-x-4 gap-y-2 mb-6">
+<a class="text-[11px] text-secondary hover:underline" href="#">Legal</a>
+<a class="text-[11px] text-secondary hover:underline" href="#">Privacy Center</a>
+<a class="text-[11px] text-secondary hover:underline" href="#">Cookies</a>
+<a class="text-[11px] text-secondary hover:underline" href="#">About Ads</a>
+<a class="text-[11px] text-secondary hover:underline" href="#">Accessibility</a>
+</div>
+<button class="flex items-center gap-1 border border-outline px-3 py-1 rounded-full text-on-surface text-label-md font-bold hover:scale-105 transition-transform border-2">
+<span class="material-symbols-outlined text-[18px]">language</span>
+                            English
+                        </button>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 bg-surface-container-low rounded-lg overflow-y-auto custom-scrollbar relative">
+<!-- Filter Chips -->
+<div class="sticky top-0 z-20 px-8 py-4 bg-surface-container-low/95 backdrop-blur-sm flex items-center gap-2">
+<button class="bg-on-surface text-background px-3 py-1.5 rounded-full text-label-md font-bold">All</button>
+<button class="bg-surface-container-high text-on-surface px-3 py-1.5 rounded-full text-label-md font-bold hover:bg-surface-variant transition-colors">Music</button>
+<button class="bg-surface-container-high text-on-surface px-3 py-1.5 rounded-full text-label-md font-bold hover:bg-surface-variant transition-colors">Podcasts</button>
+<button class="bg-surface-container-high text-on-surface px-3 py-1.5 rounded-full text-label-md font-bold hover:bg-surface-variant transition-colors">Audiobooks</button>
+</div>
+<div class="px-8 pb-32">
+<!-- Getting Started Hero -->
+<section class="mb-section-gap">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Getting started</h2>
+<div class="flex items-center gap-2">
+<button class="bg-black/40 p-2 rounded-full text-secondary hover:text-on-surface"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="bg-black/40 p-2 rounded-full text-secondary hover:text-on-surface"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter-grid">
+<div class="bg-gradient-to-br from-[#8C6D00] to-[#513F00] p-8 rounded-xl flex flex-col justify-between min-h-[300px] relative overflow-hidden">
+<div>
+<h3 class="font-display-lg text-display-lg text-on-surface mb-2">1. Start playing</h3>
+<p class="text-on-surface/80 max-w-sm font-body-lg">Search, browse, and play your favorite artists and creators.</p>
+</div>
+<div class="flex items-center gap-4 z-10">
+<button class="bg-primary text-background font-bold px-6 py-3 rounded-full hover:scale-105 transition-transform">Search</button>
+<button class="text-on-surface font-bold hover:underline">Show more tips</button>
+</div>
+<!-- Artistic Element - Stack of Album Arts -->
+<div class="absolute -right-8 -bottom-8 flex rotate-12 scale-110 opacity-80 pointer-events-none">
+<div class="w-32 h-32 bg-surface-container-highest rounded shadow-2xl -mr-4 border-2 border-black/20 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A stylized music album cover with vibrant neon colors and abstract geometric shapes, featuring a modern vaporwave aesthetic with soft pinks and deep purples, reflecting high-energy electronic music vibes for a streaming service UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcLlbHp-RJbhrebqHxPQOSKge1rbpw5UkUpL2DDUHVxRvWVaE4-JENyMExfD9w4tJzocVvV921CcitRmtwBhqfqAtoJuws0qWviSz7VP3OV6wQSgJBaWfNXpuGS_S1hNQmQKSVbX7GDP3vwAvqp61TORVlp4W9Uxb_pd1tTQeHHz0RJgCMpJF3ZxLFL33M6HYCScfLmdjvVseEdTJ8fFJ7bglSdysZAsRtBQp5XO0SvdKcvIUC-RXhDw"/>
+</div>
+<div class="w-32 h-32 bg-surface-container rounded shadow-2xl mt-8 -mr-4 border-2 border-black/20 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A minimalist indie rock album cover with a grainy film texture, showing a lone electric guitar leaning against a sun-drenched brick wall, using warm amber and earthy brown tones for an authentic, organic feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUt9FqRMln6_bR9oP8CqIs0BSjkR5pKdZ-uIvy55ZJAIqQaP4BP2F-sQyTC1cJ9cs5zmkOegJb09v8GohZND-koSmx-MRGL8jkU5hMKZHjRwAPpJhQWH9mdZXEx03qVd9ETyOEOX2PJJXKcVut1_K414MOfNVUgvSUADxqGPlIY4jRvMQYx0dG33O7W_YSNKhPgm195rF2UQEkVg7NsrIa8jODGj0QIS29bGB5NkCFjVa3HXPNPWbBew"/>
+</div>
+<div class="w-32 h-32 bg-primary/20 rounded shadow-2xl mt-16 border-2 border-black/20 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A dynamic pop music album cover featuring high-contrast portrait photography with bold typography, using primary colors like electric blue and bright yellow, creating a striking visual for a featured playlist." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtNGLdIxDbLKcqvzo5m5AKlUaiMql6TKq-Opj3nEGpt4YO-ToahB7RrFIRo6H3DEc-jt7AXS4C6ceBGYPqmvY5IVIvIKE6_nGKvUYPQgUf8K8wGQZKeItvjkvyzdXusP9LuDEdLe4DkLUTUziVo4EGtAuVzRN56iMJWoACOjvMdUzm63aMHs2hq_fT6xo0MDtm1aq66BNoHamUhAoabCB1ao5aDH4iZpvPCQj__VojR0zmeOkM3iS3WA"/>
+</div>
+</div>
+</div>
+<!-- Second card in Getting Started -->
+<div class="bg-surface-container p-6 rounded-xl flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-on-surface">Featured Charts</h3>
+<a class="text-label-md font-bold text-secondary hover:underline" href="#">Show all</a>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-gradient-to-b from-[#6D47FF] to-[#3B268B] p-4 rounded-lg flex flex-col justify-between aspect-square relative group cursor-pointer overflow-hidden">
+<h4 class="font-bold text-[20px] text-on-surface leading-tight">Top Songs<br/>Global</h4>
+<div class="absolute bottom-4 right-4 bg-primary w-12 h-12 rounded-full flex items-center justify-center shadow-2xl translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="bg-gradient-to-b from-[#E61E32] to-[#8C121F] p-4 rounded-lg flex flex-col justify-between aspect-square relative group cursor-pointer overflow-hidden">
+<h4 class="font-bold text-[20px] text-on-surface leading-tight">Top Songs<br/>USA</h4>
+<div class="absolute bottom-4 right-4 bg-primary w-12 h-12 rounded-full flex items-center justify-center shadow-2xl translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Popular Radio -->
+<section class="mb-section-gap">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Popular radio</h2>
+<a class="text-label-md font-bold text-secondary hover:underline" href="#">Show all</a>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-6">
+<!-- Radio Card Component -->
+<div class="bg-surface-container p-card-padding rounded-lg group cursor-pointer hover:bg-surface-container-high transition-colors card-hover">
+<div class="relative mb-4 aspect-square">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/40 rounded-lg"></div>
+<div class="w-full h-full overflow-hidden rounded-lg bg-secondary-container">
+<img class="w-full h-full object-cover" data-alt="A portrait of the artist Drake looking off-camera with a contemplative expression, set against a split-color background of soft pink and electric blue, framed in the iconic circular Spotify Radio layout." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpRBWQ4KlQcDlkooa9LXWWp1o4QSbXxBI3Qt6pI6yOkEVDbYjKgf04Z15T2e_b9nbxZ3zI1BWTXefl2oYX73mLDBPc-FhQV2sn4-5kPdVd8uEulfhq4F3DicSooi2zDVnCeGB89YsDrXdbdUyGCy44TW9ANAl8u3he7J0JRU_sh-OQszQEULZeVdHqYBjeoN_0sBmzB5FcutgtlAFKLwfUBZ7KM8Ap0sZvg1AcL1L93Y_BzUZJuLpvcg"/>
+</div>
+<div class="absolute bottom-2 right-2 bg-primary w-10 h-10 rounded-full flex items-center justify-center shadow-xl play-button">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-black/40 backdrop-blur-sm rounded text-[10px] font-bold tracking-widest uppercase text-on-surface">Radio</div>
+</div>
+<h3 class="font-bold text-on-surface truncate">Drake Radio</h3>
+<p class="text-[12px] text-secondary line-clamp-2 mt-1">With J. Cole, PARTYNEXTDOOR, and more</p>
+</div>
+<div class="bg-surface-container p-card-padding rounded-lg group cursor-pointer hover:bg-surface-container-high transition-colors card-hover">
+<div class="relative mb-4 aspect-square">
+<div class="w-full h-full overflow-hidden rounded-lg bg-[#EBCB8B]">
+<img class="w-full h-full object-cover" data-alt="Classic band portrait of Fleetwood Mac from their prime era, stylized with a vintage sepia filter and integrated into a circular radio card layout with a warm mustard yellow accent background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxokvuVynE0yiaX-fegjNhpgk-oGYhe6p1TGH9uBiuWPVnbiksjr1GKh5p3BAVG_mft6Tgy8tJMIrNGwYSOjsLqlhTsHhzW79D0Etr2HYS5dYB9KdV8_7JDHb2nbAqlvmWDjUNjJAS2wDbP4i4dSSqUtB3O0osgAgQR8vqXZlOJdASNS8vcAh-ovqBxvkQex-Ta-hpRKFrsUi2EmajckGbN0rTJ6UBil8WK479ZOZ4WOuzVUvMYZXspA"/>
+</div>
+<div class="absolute bottom-2 right-2 bg-primary w-10 h-10 rounded-full flex items-center justify-center shadow-xl play-button">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-black/40 backdrop-blur-sm rounded text-[10px] font-bold tracking-widest uppercase text-on-surface">Radio</div>
+</div>
+<h3 class="font-bold text-on-surface truncate">Fleetwood Mac</h3>
+<p class="text-[12px] text-secondary line-clamp-2 mt-1">With Frank Ocean, Kendrick Lamar, and more</p>
+</div>
+<div class="bg-surface-container p-card-padding rounded-lg group cursor-pointer hover:bg-surface-container-high transition-colors card-hover">
+<div class="relative mb-4 aspect-square">
+<div class="w-full h-full overflow-hidden rounded-lg bg-[#5E81AC]">
+<img class="w-full h-full object-cover" data-alt="Artist SZA posing in a lush forest setting with cinematic green lighting, the image is cropped into a modern circular radio layout with a soft blue atmospheric background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBkqU82oMOQyyLuhfwW19ik7ztlooCsabeMiM9o0gvfAEpRZ7T_ZnvTPfioeezxKqwcV-MMXSyQ1F2ncQtolWukNe2JByXbJN-ajzidOCLCNgbZ4q6YNp86tcDw8YenZNkJwzUeMegv-t-0XzChGo-akB5hkRTEjntqAlCdFvAvPT5dQEsw1KT-p3eK1c31n7Yz1zejb1TB3ESsjQ2kZXcJjdkvB02ySeVjv7vg7BHgbQ0auFByaI64A"/>
+</div>
+<div class="absolute bottom-2 right-2 bg-primary w-10 h-10 rounded-full flex items-center justify-center shadow-xl play-button">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-black/40 backdrop-blur-sm rounded text-[10px] font-bold tracking-widest uppercase text-on-surface">Radio</div>
+</div>
+<h3 class="font-bold text-on-surface truncate">SZA Radio</h3>
+<p class="text-[12px] text-secondary line-clamp-2 mt-1">By Spotify</p>
+</div>
+<div class="bg-surface-container p-card-padding rounded-lg group cursor-pointer hover:bg-surface-container-high transition-colors card-hover">
+<div class="relative mb-4 aspect-square">
+<div class="w-full h-full overflow-hidden rounded-lg bg-[#A3BE8C]">
+<img class="w-full h-full object-cover" data-alt="Taylor Swift in a glamorous, high-fashion pose with shimmering lighting effects, featured in a circular radio card layout with a cool mint green aesthetic background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY-J_kUJJBFZeCVuVnCe72FUkvboSCtu1LhLrtM5q0nNgplJWzkVqDpDB4Xrvto6TrnkzD7Zk6MCCi8w0Ar_e-f87RLx6xW4ROLhQrCHfNkn-PhdAthbhx1Q7H7X_59Yw8gGLmnUwISGCIikLFVq9OPBTXTFppsKNXqdHrKpZG9lMk1heZZyu8xv7wXzL1zBe71GV1WuivYLutSLymvGmQIiHxAW_94i_r4N1QlghwmoEflvm2crnrwQ"/>
+</div>
+<div class="absolute bottom-2 right-2 bg-primary w-10 h-10 rounded-full flex items-center justify-center shadow-xl play-button">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-black/40 backdrop-blur-sm rounded text-[10px] font-bold tracking-widest uppercase text-on-surface">Radio</div>
+</div>
+<h3 class="font-bold text-on-surface truncate">Taylor Swift</h3>
+<p class="text-[12px] text-secondary line-clamp-2 mt-1">By Spotify</p>
+</div>
+<div class="bg-surface-container p-card-padding rounded-lg group cursor-pointer hover:bg-surface-container-high transition-colors card-hover">
+<div class="relative mb-4 aspect-square">
+<div class="w-full h-full overflow-hidden rounded-lg bg-[#D08770]">
+<img class="w-full h-full object-cover" data-alt="Sabrina Carpenter on stage with a retro pop star aesthetic, warm stage lighting casting long shadows, framed in a circular Spotify Radio layout with a coral pink accent." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVkNoW4T0r7z2yU2uMuMAXOmAhVEeo8iR7QwAdU_YosHgUW7OwWYXv_5vOgHqHgx_8_coZHuR0rBmheCd5z0R3gld89jJ9FIcEJ8Mr9nfDbtFjsdGFhmDLcR9J5FIfoDw89XjCGbuA7OwSXaE0vgxL36_gjx9xGLv6KR9DV5tXKB8SkEPliC95SYC0epUWjw8qFyssDtLwzuk43lZWuN4zqfzuw0SvrZjWLpmBtCLsyv6ycOq0-yoKyQ"/>
+</div>
+<div class="absolute bottom-2 right-2 bg-primary w-10 h-10 rounded-full flex items-center justify-center shadow-xl play-button">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-black/40 backdrop-blur-sm rounded text-[10px] font-bold tracking-widest uppercase text-on-surface">Radio</div>
+</div>
+<h3 class="font-bold text-on-surface truncate">Sabrina Carpenter</h3>
+<p class="text-[12px] text-secondary line-clamp-2 mt-1">By Spotify</p>
+</div>
+<div class="bg-surface-container p-card-padding rounded-lg group cursor-pointer hover:bg-surface-container-high transition-colors card-hover">
+<div class="relative mb-4 aspect-square">
+<div class="w-full h-full overflow-hidden rounded-lg bg-[#BF616A]">
+<img class="w-full h-full object-cover" data-alt="Post Malone with his characteristic tattoos and a relaxed, gritty vibe, set against a dark moody red background in a circular radio card layout." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUj2rNxN67Nn3B9v_CFajwL974DBbehU-iXvR4kuJXyKvRlQGdQw1kcnsYvvaACgX6ED49yejZGDEU0WqnYCJXuvBqRjc7VI8uK_zF3VmXXmFzYWDfwOOkfejLkLVsecrOGemBKyV_nO8xvzuoEmNZGZ2PUmeWQBv5d6X6zFnuPv0NtqyaHmQfFqYcuehWKdrwBFCR2gkhzVGal7UWAxfNmDNXksL79ceki6z6iumauLtrTzmRffpVMw"/>
+</div>
+<div class="absolute bottom-2 right-2 bg-primary w-10 h-10 rounded-full flex items-center justify-center shadow-xl play-button">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-black/40 backdrop-blur-sm rounded text-[10px] font-bold tracking-widest uppercase text-on-surface">Radio</div>
+</div>
+<h3 class="font-bold text-on-surface truncate">Post Malone</h3>
+<p class="text-[12px] text-secondary line-clamp-2 mt-1">By Spotify</p>
+</div>
+<div class="bg-surface-container p-card-padding rounded-lg group cursor-pointer hover:bg-surface-container-high transition-colors card-hover">
+<div class="relative mb-4 aspect-square">
+<div class="w-full h-full overflow-hidden rounded-lg bg-[#B48EAD]">
+<img class="w-full h-full object-cover" data-alt="Morgan Wallen with a country music aesthetic, featuring warm outdoor lighting and a rural setting, in a circular Spotify Radio layout with a lavender purple accent." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVs6bcp85KfuXAbn5tDPTWZLLVNPDcEvCXuTGHrl2rzS1FWJYeoCtr9OsKjkawKnl_tCj0Q0vMQI0pAhFxLnEd536oa-KjC4A0-0ubTOR3ABhh_bdO31EwurShBae75hPF1K_JJ6Ve47BJaDs_ieBLlNEZWuK5Fwybxmd47LfhfBtZzr9jd0ikhS5eBBM1XY4TispLhnrJ2VrLzG2HmsqJ0u9LSatODsw52GdiWeSYOqNHHOzW5TtL2Q"/>
+</div>
+<div class="absolute bottom-2 right-2 bg-primary w-10 h-10 rounded-full flex items-center justify-center shadow-xl play-button">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-black/40 backdrop-blur-sm rounded text-[10px] font-bold tracking-widest uppercase text-on-surface">Radio</div>
+</div>
+<h3 class="font-bold text-on-surface truncate">Morgan Wallen</h3>
+<p class="text-[12px] text-secondary line-clamp-2 mt-1">By Spotify</p>
+</div>
+</div>
+</section>
+<!-- Popular albums and singles -->
+<section class="mb-section-gap">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Popular albums and singles</h2>
+<a class="text-label-md font-bold text-secondary hover:underline" href="#">Show all</a>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-6">
+<!-- Repeat Album Cards -->
+<div class="bg-surface-container p-card-padding rounded-lg group cursor-pointer hover:bg-surface-container-high transition-colors card-hover">
+<div class="relative mb-4 aspect-square rounded shadow-xl overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="The Weeknd album art featuring cinematic, dark lighting with deep red accents, showing a highly stylized portrait that captures a moody and atmospheric R&amp;B aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDic0--1uU81XYRxMD_8lCfiYvU7iHEGkg0woCbUkffIp5404-Q02qRTI5Z2VHZ-kMQOsa7Q2810qRTZQEPcRsLyT3b8lHjVKs9t1hOTwOAPbxp5gPxl6DbihxT4O_jqbN5z72wiVz0713_FJAVb510ke8n2O370EoyX0Zk_PhVGyJmtfBzkGyVPXiCS6lT5eEM0GkMdAqJoejwUPCciNVns26MOdKqSBJI6YAY_wxzwJMeHdIs6VoAKg"/>
+<div class="absolute bottom-2 right-2 bg-primary w-10 h-10 rounded-full flex items-center justify-center shadow-xl play-button">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<h3 class="font-bold text-on-surface truncate">After Hours</h3>
+<p class="text-[12px] text-secondary truncate">The Weeknd</p>
+</div>
+<!-- More albums placeholder cards -->
+<div class="bg-surface-container p-card-padding rounded-lg group cursor-pointer hover:bg-surface-container-high transition-colors card-hover">
+<div class="relative mb-4 aspect-square rounded shadow-xl overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Billie Eilish album cover with a minimalist dark aesthetic, featuring experimental photography and cool-toned lighting, reflecting a moody alternative pop vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOYTajcmwcZrTF4Nj8C7lkAmj3Mo9ptfZyZCQHUMamy0XcMHtd8yDJh2nWePFfIkIGiRbyoOrqZADY5GELzYY-ZlYDGvzJ8epVztvFuYGBrMkP-uxE6Khar_56RCVkf1LgeipBhjCe57_SDP_ll0NWCQWfs8i7c9taD5By6VIQdA4Xdp66wEYYPWVJ_RgiPo-ZX_PakDdLf54t90Sz1G4S4KHnttWHeQ28ujbR6B3yuqNcEawsm-wglw"/>
+<div class="absolute bottom-2 right-2 bg-primary w-10 h-10 rounded-full flex items-center justify-center shadow-xl play-button">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<h3 class="font-bold text-on-surface truncate">HIT ME HARD AND SOFT</h3>
+<p class="text-[12px] text-secondary truncate">Billie Eilish</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- Persistent Bottom Media Player -->
+<footer class="h-24 bg-black border-t border-outline-variant/10 flex items-center justify-between px-gutter-grid z-50">
+<!-- Current Track Info -->
+<div class="flex items-center gap-4 w-[30%]">
+<div class="w-14 h-14 bg-surface-container rounded-lg overflow-hidden shadow-lg">
+<img class="w-full h-full object-cover" data-alt="Album art for a current playing song, showing a dreamy landscape with surreal lighting and vibrant purple and gold hues, reflecting a modern indie-pop aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWXAqQoAjbbQE1RQ_jQDhR5_bsl6Pqaw_tmkfc4cRm2WtlrpFY7mDqEsgvGlK8mFkj9-2Ybjt54-4PqQKzjXQ-VpEqW-mGD-ZZ_s0sP-M-Xwou2yUEIpPzEJvzwG90qEAHUVT9EKPaO8JVJFrd-sMONzJepY9OkBc1RMIhRwgwrVVPpT7nZGJkhhkosR_cx_gpYsUVhqNX02U165iMg9NOs0vJMTcRar7kOlu-zh4s_LSkHSy9ozFs6w"/>
+</div>
+<div class="flex flex-col">
+<h4 class="font-bold text-on-surface text-[14px] hover:underline cursor-pointer">Moonlight Sonata</h4>
+<p class="text-[11px] text-secondary hover:underline cursor-pointer">The Dreamers</p>
+</div>
+<span class="material-symbols-outlined text-primary ml-2 cursor-pointer" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Playback Controls -->
+<div class="flex flex-col items-center gap-2 max-w-[40%] w-full">
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-secondary hover:text-on-surface cursor-pointer text-[20px]">shuffle</span>
+<span class="material-symbols-outlined text-secondary hover:text-on-surface cursor-pointer text-[28px]">skip_previous</span>
+<div class="w-8 h-8 rounded-full bg-on-surface flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-background" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<span class="material-symbols-outlined text-secondary hover:text-on-surface cursor-pointer text-[28px]">skip_next</span>
+<span class="material-symbols-outlined text-secondary hover:text-on-surface cursor-pointer text-[20px]">repeat</span>
+</div>
+<div class="flex items-center gap-2 w-full">
+<span class="text-[11px] text-secondary">1:24</span>
+<div class="relative w-full h-1 bg-[#4D4D4D] rounded-full group cursor-pointer">
+<div class="absolute top-0 left-0 w-1/3 h-full bg-on-surface group-hover:bg-primary transition-colors rounded-full"></div>
+<div class="absolute top-1/2 left-1/3 -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-on-surface rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<span class="text-[11px] text-secondary">3:42</span>
+</div>
+</div>
+<!-- Extra Controls -->
+<div class="flex items-center justify-end gap-3 w-[30%]">
+<span class="material-symbols-outlined text-secondary hover:text-on-surface cursor-pointer text-[20px]">slideshow</span>
+<span class="material-symbols-outlined text-secondary hover:text-on-surface cursor-pointer text-[20px]">mic_external_on</span>
+<span class="material-symbols-outlined text-secondary hover:text-on-surface cursor-pointer text-[20px]">queue_music</span>
+<span class="material-symbols-outlined text-secondary hover:text-on-surface cursor-pointer text-[20px]">devices</span>
+<div class="flex items-center gap-2 w-24">
+<span class="material-symbols-outlined text-secondary hover:text-on-surface cursor-pointer text-[20px]">volume_up</span>
+<div class="w-full h-1 bg-[#4D4D4D] rounded-full relative group">
+<div class="absolute top-0 left-0 w-2/3 h-full bg-on-surface group-hover:bg-primary transition-colors rounded-full"></div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary hover:text-on-surface cursor-pointer text-[20px]">open_in_full</span>
+</div>
+</footer>
+<script>
+        // Micro-interaction: Update active state on hover/click for sidebar
+        document.querySelectorAll('nav .flex').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                if (!item.classList.contains('border-primary')) {
+                    item.classList.add('scale-105');
+                }
+            });
+            item.addEventListener('mouseleave', () => {
+                item.classList.remove('scale-105');
+            });
+        });
+
+        // Simple play/pause state toggle for the main hero card
+        const heroPlayBtn = document.querySelector('section .bg-primary');
+        if (heroPlayBtn) {
+            heroPlayBtn.addEventListener('click', () => {
+                heroPlayBtn.classList.toggle('bg-on-surface');
+            });
+        }
+    </script>
+</body></html>

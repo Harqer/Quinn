@@ -14,7 +14,7 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { createTrack, upsertUser, createPlaylist, addTrackToPlaylist, createPodcast, getUserTracks, getCommunityTracks, getCategories, getPlaylists, getAlbums } from '@musically/dataconnect';
+import { createTrack, upsertUser, createPlaylist, addTrackToPlaylist, createPodcast, upsertUserSettings, updateUserPreferences, recordPayment, likeTrack, removeLikedTrack } from '@musically/dataconnect';
 
 
 // Operation CreateTrack:  For variables, look at type CreateTrackVars in ../index.d.ts
@@ -32,20 +32,20 @@ const { data } = await AddTrackToPlaylist(dataConnect, addTrackToPlaylistVars);
 // Operation CreatePodcast:  For variables, look at type CreatePodcastVars in ../index.d.ts
 const { data } = await CreatePodcast(dataConnect, createPodcastVars);
 
-// Operation GetUserTracks: 
-const { data } = await GetUserTracks(dataConnect);
+// Operation UpsertUserSettings:  For variables, look at type UpsertUserSettingsVars in ../index.d.ts
+const { data } = await UpsertUserSettings(dataConnect, upsertUserSettingsVars);
 
-// Operation GetCommunityTracks: 
-const { data } = await GetCommunityTracks(dataConnect);
+// Operation UpdateUserPreferences:  For variables, look at type UpdateUserPreferencesVars in ../index.d.ts
+const { data } = await UpdateUserPreferences(dataConnect, updateUserPreferencesVars);
 
-// Operation GetCategories: 
-const { data } = await GetCategories(dataConnect);
+// Operation RecordPayment:  For variables, look at type RecordPaymentVars in ../index.d.ts
+const { data } = await RecordPayment(dataConnect, recordPaymentVars);
 
-// Operation GetPlaylists: 
-const { data } = await GetPlaylists(dataConnect);
+// Operation LikeTrack:  For variables, look at type LikeTrackVars in ../index.d.ts
+const { data } = await LikeTrack(dataConnect, likeTrackVars);
 
-// Operation GetAlbums: 
-const { data } = await GetAlbums(dataConnect);
+// Operation RemoveLikedTrack:  For variables, look at type RemoveLikedTrackVars in ../index.d.ts
+const { data } = await RemoveLikedTrack(dataConnect, removeLikedTrackVars);
 
 
 ```

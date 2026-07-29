@@ -9,12 +9,12 @@ import { useTracks } from '../../hooks/useTracks';
 import { getAuth } from 'firebase/auth';
 import { EmptyState } from '../../components/molecules/EmptyState';
 import { ErrorAlert } from '../../components/molecules/ErrorAlert';
+import { Shimmer } from '../../components/atoms/Shimmer';
 
 export const LibraryScreen: React.FC = () => {
   const { userTracks, communityTracks, spotifyTracks, loading, error, retry } = useTracks();
   const auth = getAuth();
   const user = auth.currentUser;
-  const userInitial = user?.displayName ? user.displayName[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'M');
   const navigate = useNavigate();
   const { setActiveAlbumId } = useAppContext();
 
@@ -30,7 +30,11 @@ export const LibraryScreen: React.FC = () => {
     <div className="flex flex-col h-full w-full bg-background overflow-y-auto pb-32">
       <div className="flex items-center gap-4 px-4 pt-12 pb-4 sticky top-0 bg-background/90 backdrop-blur-md z-10 border-b border-surface-container">
         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-black overflow-hidden shadow-inner">
-           {userInitial}
+           {user?.photoURL ? (
+             <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+           ) : (
+             <Icon name="account_circle" size="md" />
+           )}
         </div>
         <Typography variant="headline" className="font-bold tracking-tight flex-1">Your Library</Typography>
         <div className="flex gap-4 text-white">
@@ -46,8 +50,19 @@ export const LibraryScreen: React.FC = () => {
       </div>
 
       {loading ? (
-        <div className="p-8 text-center">
-          <Typography variant="body-md">Loading Library...</Typography>
+        <div className="flex flex-col px-0 gap-0">
+          <Shimmer className="h-5 w-40 mx-4 my-2 rounded" />
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between py-2 px-4">
+              <div className="flex items-center gap-3 w-full">
+                <Shimmer className="w-12 h-12 rounded flex-shrink-0" />
+                <div className="flex flex-col gap-2 w-full max-w-[200px]">
+                  <Shimmer className="h-4 w-full rounded" />
+                  <Shimmer className="h-3 w-2/3 rounded" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : error ? (
         <ErrorAlert message={error} onRetry={retry} />
@@ -96,8 +111,8 @@ export const LibraryScreen: React.FC = () => {
         <div className="flex-1">
           <EmptyState 
             icon="library_music" 
-            title="No saved vibes yet" 
-            description="Create your first vibe in the Studio and it will appear here." 
+            title="No saved songs yet" 
+            description="Create your first song in the Studio and it will appear here." 
           />
         </div>
       )}

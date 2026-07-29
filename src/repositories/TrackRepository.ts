@@ -35,11 +35,14 @@ export class TrackRepository {
     return shortCode;
   }
 
-  /**
-   * Resolves a track ID by checking shortlinks or just assuming the ID is literal for now.
-   * If a real database query is needed, use the Data Connect REST API or client SDK.
-   */
-  // Removed mock getTrackById - Data Connect handles track resolution natively
+  async resolveShortLink(shortCode: string): Promise<string | null> {
+    const redis = getRedis();
+    if (redis) {
+      const trackId = await redis.get(`shortlink:${shortCode}`);
+      return trackId;
+    }
+    return null;
+  }
 }
 
 export const trackRepository = new TrackRepository();

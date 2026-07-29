@@ -63,7 +63,7 @@ fun LoginScreen(
                 com.musically.studio.ui.components.atoms.MaveLogo(size = 220)
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Millions of Vibes.\nOrchestrated by Mave.",
+                text = "Millions of Songs.\nOrchestrated by Mave.",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,

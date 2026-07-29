@@ -54,6 +54,7 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.androidx.palette.ktx)
+            implementation(libs.firebase.vertexai)
 
             implementation(libs.mwdat.core)
             implementation(libs.mwdat.camera)
@@ -120,6 +121,9 @@ kotlin {
             implementation(libs.media3.exoplayer)
             implementation(libs.media3.session)
             implementation(libs.media3.ui)
+            
+            // Google Play Billing
+            implementation(libs.android.billing)
         }
         
         val androidUnitTest by getting {

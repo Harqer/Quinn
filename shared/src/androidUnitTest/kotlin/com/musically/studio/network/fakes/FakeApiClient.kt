@@ -54,4 +54,9 @@ class FakeApiClient : ApiClient {
     override suspend fun getAudiobooks() = getAudiobooksResult
     override suspend fun getSpotifyLibraryTracks() = getSpotifyLibraryTracksResult
     override suspend fun deleteAccount() = deleteAccountResult
+    override suspend fun likeTrack(trackId: String) = true
+    override suspend fun generateLyrics(trackId: String, audioUrl: String) = "Lyrics"
+    override suspend fun generateMusicFromMedia(base64: String, mimeType: String) = null
+    override suspend fun createStripeCheckoutSession(returnUrl: String) = "checkout_session"
+    override suspend fun createStripePortalSession(returnUrl: String) = "portal_session"
 }

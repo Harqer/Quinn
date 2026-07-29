@@ -14,6 +14,8 @@ interface AppContextType {
   setIsQueueVisible: (visible: boolean) => void;
   globalVolume: number;
   setGlobalVolume: (vol: number) => void;
+  isMobilePlayerExpanded: boolean;
+  setIsMobilePlayerExpanded: (expanded: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -25,6 +27,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [playbackSender, setPlaybackSender] = useState<(cmd: string) => void>(() => () => {});
   const [isQueueVisible, setIsQueueVisible] = useState(false);
   const [globalVolume, setGlobalVolume] = useState(1.0);
+  const [isMobilePlayerExpanded, setIsMobilePlayerExpanded] = useState(false);
 
   const sendPlaybackCommand = (cmd: string) => {
     playbackSender(cmd);
@@ -37,7 +40,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       isPlaying, setIsPlaying,
       sendPlaybackCommand, setPlaybackCommandSender: setPlaybackSender,
       isQueueVisible, setIsQueueVisible,
-      globalVolume, setGlobalVolume
+      globalVolume, setGlobalVolume,
+      isMobilePlayerExpanded, setIsMobilePlayerExpanded
     }}>
       {children}
     </AppContext.Provider>

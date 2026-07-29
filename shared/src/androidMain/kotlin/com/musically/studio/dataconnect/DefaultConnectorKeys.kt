@@ -14,6 +14,40 @@ package com.musically.studio.dataconnect
 
 
   @kotlinx.serialization.Serializable
+  public data class BookmarkedTrackKey(
+  
+    val userUid: String,
+  
+    val trackId: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
+  public data class LikedTrackKey(
+  
+    val userUid: String,
+  
+    val trackId: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
+  public data class PaymentHistoryKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
   public data class PlaylistEntryKey(
   
     val playlistId: String,
@@ -59,6 +93,16 @@ package com.musically.studio.dataconnect
   public data class UserKey(
   
     val uid: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
+  public data class UserSettingsKey(
+  
+    val userId: String,
   
   ) {
     
