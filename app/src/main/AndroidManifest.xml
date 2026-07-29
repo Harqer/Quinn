@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.musically.studio">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -36,11 +35,9 @@
             <data android:mimeType="text/plain" />
         </intent>
         <intent>
-            <action android:name="android.support.customtabs.action.CustomTabsService" />
+            <action android:name="androidx.browser.customtabs.action.CustomTabsService" />
         </intent>
     </queries>
-
-    <uses-permission android:name="android.permission.USE_FINGERPRINT" tools:node="remove" />
 
     <application
         android:name=".MyApplication"
@@ -114,7 +111,7 @@
         </provider>
 
         <receiver
-            android:name="com.musically.studio.engage.EngageBroadcastReceiver"
+            android:name=".engage.EngageBroadcastReceiver"
             android:permission="com.google.android.engage.REQUEST_ENGAGE_DATA"
             android:enabled="true"
             android:exported="true">

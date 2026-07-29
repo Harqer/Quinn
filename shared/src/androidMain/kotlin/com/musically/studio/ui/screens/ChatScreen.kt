@@ -157,7 +157,9 @@ fun ChatScreen(
                             interactionSource = interactionSource,
                             modifier = Modifier.styleable(styleState = styleState, style = MaveStyles.sendButtonStyle)
                         ) {
-                            Icon(Icons.Default.Send, contentDescription = "Send", tint = Color.Black)
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "Send", tint = Color.Black)
                         }
                     } else {
                         val context = LocalContext.current

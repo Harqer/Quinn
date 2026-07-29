@@ -57,7 +57,7 @@ fun NowPlayingScreen(
     val localCtx = androidx.compose.ui.platform.LocalContext.current
 
     val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isExpanded = adaptiveInfo.windowSizeClass.windowWidthDp >= 840
+    val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == androidx.window.core.layout.WindowWidthSizeClass.EXPANDED
 
 
 
