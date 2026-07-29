@@ -57,7 +57,9 @@ class MaveFunctions @Inject constructor(
      */
     @AppFunction(isDescribedByKDoc = true)
     suspend fun narratePOV(context: AppFunctionContext) {
-        WearableStreamingService.startVoiceRecording(applicationContext)
+        val intent = Intent(applicationContext, WearableStreamingService::class.java)
+        applicationContext.startForegroundService(intent)
+        WearableStreamingService.startVoiceRecording()
     }
 
     /**
