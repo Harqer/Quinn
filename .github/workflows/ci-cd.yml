@@ -40,6 +40,33 @@ jobs:
           java-version: '21'
           cache: 'gradle'
 
+      - name: Create Mock google-services.json
+        run: |
+          cat << 'EOF' > app/google-services.json
+          {
+            "project_info": {
+              "project_number": "123456789012",
+              "project_id": "dummy-project"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:123456789012:android:abcdef1234567890",
+                  "android_client_info": {
+                    "package_name": "com.musically.studio"
+                  }
+                },
+                "api_key": [
+                  {
+                    "current_key": "dummy-api-key"
+                  }
+                ]
+              }
+            ],
+            "configuration_version": "1"
+          }
+          EOF
+
       - name: Run Android Unit & Roborazzi Screenshot Tests
         run: ./gradlew testDebugUnitTest --no-daemon
 
@@ -81,6 +108,33 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
           cache: 'gradle'
+
+      - name: Create Mock google-services.json
+        run: |
+          cat << 'EOF' > app/google-services.json
+          {
+            "project_info": {
+              "project_number": "123456789012",
+              "project_id": "dummy-project"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:123456789012:android:abcdef1234567890",
+                  "android_client_info": {
+                    "package_name": "com.musically.studio"
+                  }
+                },
+                "api_key": [
+                  {
+                    "current_key": "dummy-api-key"
+                  }
+                ]
+              }
+            ],
+            "configuration_version": "1"
+          }
+          EOF
 
       - name: Build Release APK & Generate R8 Mapping
         run: ./gradlew assembleRelease --no-daemon
