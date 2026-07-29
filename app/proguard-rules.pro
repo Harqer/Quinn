@@ -13,7 +13,7 @@
 -keep,allowobfuscation class com.musically.studio.network.**
 
 # ViewModels and UI State (Shared Module)
--keep class com.musically.studio.ui.** { *; }
+# (Removed broad keep rule for UI package to resolve BroadKeepRule lint error)
 
 # Interactions API Models (if any are added later to src/types)
 -keepattributes Signature, InnerClasses, EnclosingMethod
