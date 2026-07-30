@@ -21,6 +21,35 @@ val localProperties = Properties().apply {
     }
 }
 
+// Auto-generate a mock google-services.json if it doesn't exist to prevent CI failures
+val googleServicesFile = file("google-services.json")
+if (!googleServicesFile.exists()) {
+    googleServicesFile.writeText("""
+        {
+          "project_info": {
+            "project_number": "123456789012",
+            "project_id": "dummy-project"
+          },
+          "client": [
+            {
+              "client_info": {
+                "mobilesdk_app_id": "1:123456789012:android:abcdef1234567890",
+                "android_client_info": {
+                  "package_name": "com.musically.studio"
+                }
+              },
+              "api_key": [
+                {
+                  "current_key": "dummy-api-key"
+                }
+              ]
+            }
+          ],
+          "configuration_version": "1"
+        }
+    """.trimIndent())
+}
+
 val mwdatApplicationId: String =
     System.getenv("MWDAT_APPLICATION_ID") ?: localProperties.getProperty("mwdat_application_id") ?: ""
 val mwdatClientToken: String =
