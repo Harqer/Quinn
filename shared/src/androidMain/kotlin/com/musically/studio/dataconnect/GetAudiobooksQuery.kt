@@ -42,17 +42,29 @@ public interface GetAudiobooksQuery :
   
     val title: String,
   
-    val author: String,
+    val author: Author,
   
     val narrator: String?,
   
-    val imageUrl: String?,
+    val coverUrl: String?,
   
-    val duration: Int?,
-  
-    val audioUrl: String?,
+    val totalDurationMs: Int?,
   
   ) {
+    
+      
+        @kotlinx.serialization.Serializable
+  public data class Author(
+  
+    val id: String,
+  
+    val name: String,
+  
+  ) {
+    
+    
+  }
+      
     
     
   }

@@ -1,7 +1,8 @@
-import express, { Response, NextFunction } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { optionalFirebaseToken, AuthenticatedRequest } from "../middlewares/auth.js";
 import logger from "../config/logger.js";
 import { stripeService } from "../services/StripeService.js";
+import { getSecret } from "../config/secrets.js";
 
 const router = express.Router();
 
@@ -41,5 +42,35 @@ router.post("/portal-session", optionalFirebaseToken, async (req: AuthenticatedR
     next(err);
   }
 });
+
+/**
+ * POST /api/stripe/webhook
+ * Handles incoming raw Stripe webhook notifications.
+ * Validates Stripe signature using raw request body.
+ */
+router.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  async (req: Request, res: Response) => {
+    const signature = req.headers["stripe-signature"];
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || getSecret("STRIPE_WEBHOOK_SECRET");
+
+    if (!signature || !webhookSecret) {
+      logger.warn("[STRIPE_WEBHOOK] Missing Stripe signature or webhook secret");
+      return res.status(400).send("Webhook Error: Signature or secret missing");
+    }
+
+    try {
+      const stripe = stripeService.getStripe();
+      const event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
+
+      await stripeService.handleWebhookEvent(event);
+      res.json({ received: true });
+    } catch (err: any) {
+      logger.error("[STRIPE_WEBHOOK] Webhook signature verification or execution failed:", { error: err.message });
+      res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+  }
+);
 
 export default router;

@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { Router, Response } from "express";
 import { optionalFirebaseToken, verifyFirebaseToken, AuthenticatedRequest, checkDailyQuota, verifyAppCheck } from "../middlewares/auth.js";
+import { checkMonthlyQuota, incrementMonthlyUsage } from "../middlewares/quota.js";
 import { auth, appCheck } from "../config/firebase.js";
 import { GenerateSchema, ShareVibeSchema } from "../schemas/api.js";
 import { WebSocketServer, WebSocket } from "ws";
@@ -81,7 +82,7 @@ router.post("/live-token", optionalFirebaseToken, verifyAppCheck, async (req: Au
   }
 });
 
-router.post("/lyria/full", optionalFirebaseToken, verifyAppCheck, checkDailyQuota, async (req: AuthenticatedRequest, res: Response) => {
+router.post("/lyria/full", optionalFirebaseToken, verifyAppCheck, checkMonthlyQuota("song"), checkDailyQuota, async (req: AuthenticatedRequest, res: Response) => {
   const { prompt } = req.body;
   if (!prompt || typeof prompt !== 'string') {
     return res.status(400).json({ error: 'prompt is required' });
@@ -267,6 +268,9 @@ router.post("/lyria/full", optionalFirebaseToken, verifyAppCheck, checkDailyQuot
     const audioUrl = `data:audio/wav;base64,${wavBuffer.toString('base64')}`;
 
     sendEvent('done', { audioUrl, trackName, artistName });
+    if (req.user?.uid && !req.user?.isGuest) {
+      incrementMonthlyUsage(req.user.uid, "song");
+    }
     res.end();
   } catch (err) {
     logger.error('[LYRIA_FULL] Generation failed', { error: err });
@@ -453,7 +457,7 @@ router.post("/lyria/steer", optionalFirebaseToken, verifyAppCheck, async (req: A
   }
 });
 
-router.post("/cover", optionalFirebaseToken, verifyAppCheck, checkDailyQuota, async (req: AuthenticatedRequest, res: Response, next: import("express").NextFunction) => {
+router.post("/cover", optionalFirebaseToken, verifyAppCheck, checkMonthlyQuota("song"), checkDailyQuota, async (req: AuthenticatedRequest, res: Response, next: import("express").NextFunction) => {
   const { prompt, hq } = req.body;
   if (!prompt || typeof prompt !== 'string') {
     return res.status(400).json({ error: 'prompt is required' });
@@ -469,7 +473,7 @@ router.post("/cover", optionalFirebaseToken, verifyAppCheck, checkDailyQuota, as
   }
 });
 
-router.post("/video", verifyFirebaseToken, verifyAppCheck, checkDailyQuota, async (req: AuthenticatedRequest, res: Response, next: import("express").NextFunction) => {
+router.post("/video", verifyFirebaseToken, verifyAppCheck, checkMonthlyQuota("song"), checkDailyQuota, async (req: AuthenticatedRequest, res: Response, next: import("express").NextFunction) => {
   const { prompt } = req.body;
   if (!prompt || typeof prompt !== 'string') {
     return res.status(400).json({ error: 'prompt is required' });
@@ -485,7 +489,7 @@ router.post("/video", verifyFirebaseToken, verifyAppCheck, checkDailyQuota, asyn
   }
 });
 
-router.post("/generate", optionalFirebaseToken, verifyAppCheck, checkDailyQuota, async (req: AuthenticatedRequest, res: Response, next: import("express").NextFunction) => {
+router.post("/generate", optionalFirebaseToken, verifyAppCheck, checkMonthlyQuota("song"), checkDailyQuota, async (req: AuthenticatedRequest, res: Response, next: import("express").NextFunction) => {
   const result = GenerateSchema.safeParse(req.body);
   if (!result.success) return res.status(400).json({ error: result.error.issues });
 
@@ -575,7 +579,7 @@ router.get("/podcast/voices", optionalFirebaseToken, verifyAppCheck, async (req:
 });
 
 
-router.post("/podcast/generate", optionalFirebaseToken, verifyAppCheck, checkDailyQuota, async (req: AuthenticatedRequest, res: Response) => {
+router.post("/podcast/generate", optionalFirebaseToken, verifyAppCheck, checkMonthlyQuota("podcast"), checkDailyQuota, async (req: AuthenticatedRequest, res: Response) => {
   const { prompt, voice } = req.body;
   const locale = req.headers["accept-language"] || "en";
   if (!prompt || typeof prompt !== "string" || prompt.trim().length === 0) {
@@ -588,6 +592,9 @@ router.post("/podcast/generate", optionalFirebaseToken, verifyAppCheck, checkDai
 
   try {
     await narrativeService.generateStream(prompt.trim(), "podcast", voice || "AOEDE", locale, res);
+    if (req.user?.uid && !req.user?.isGuest) {
+      incrementMonthlyUsage(req.user.uid, "podcast");
+    }
   } catch (err) {
     logger.error("[PODCAST_ROUTE] Generation Stream Failed", { error: err });
     res.write(`data: ${JSON.stringify({ type: 'error', error: "Podcast Generation Failed" })}\n\n`);

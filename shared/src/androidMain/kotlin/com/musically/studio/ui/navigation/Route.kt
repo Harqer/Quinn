@@ -9,6 +9,7 @@ sealed interface Route : NavKey {
     @Serializable data object Login : Route
     @Serializable data object Home : Route
     @Serializable data object Discover : Route
+
     @Serializable data object Search : Route
     @Serializable data object Chat : Route
     @Serializable data object Library : Route
@@ -22,6 +23,7 @@ sealed interface Route : NavKey {
     @Serializable data class PlaylistView(val playlistId: String) : Route
     @Serializable data class CategoryView(val categoryId: String) : Route
     @Serializable data object Settings : Route
+    @Serializable data object Premium : Route
     // Onboarding Sequence
     @Serializable data object Welcome : Route
     @Serializable data object AuthOptions : Route
@@ -40,6 +42,7 @@ sealed interface Route : NavKey {
     @Serializable data object Queue : Route
     @Serializable data class Lyrics(val trackId: String?) : Route
     @Serializable data object LiveSessionOptions : Route
+    @Serializable data class UsageLimitSheet(val reasonName: String) : Route
 }
 
 data class TopLevelRoute<T : Any>(val name: String, val route: T, val icon: ImageVector)

@@ -26,7 +26,7 @@ export const PersonalInfoSection: React.FC = () => {
       await updateProfile(user, { displayName, photoURL });
       
       try {
-        await upsertUser({ displayName, email: user.email });
+        await upsertUser({ displayName, email: user.email || "", username: user.email?.split("@")[0] || "user" });
       } catch (dcErr) {
         console.error("DataConnect sync failed:", dcErr);
       }

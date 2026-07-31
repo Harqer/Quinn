@@ -41,6 +41,7 @@ public interface RecordPaymentMutation :
       
       @kotlin.DslMarker public annotation class BuilderDsl
 
+      
       @BuilderDsl
       public interface Builder {
         public var userUid: String
@@ -52,6 +53,7 @@ public interface RecordPaymentMutation :
       }
 
       public companion object {
+        
         @Suppress("NAME_SHADOWING")
         public fun build(
           userUid: String,amount: Double,currency: String,status: String,

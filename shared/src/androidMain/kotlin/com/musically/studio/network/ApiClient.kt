@@ -46,23 +46,27 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
     private val JSON = "application/json; charset=utf-8".toMediaType()
 
     override suspend fun bookmarkTrack(trackId: String): Boolean {
-        return try {
-            DefaultConnector.instance.bookmarkTrack.execute(trackId)
-            true
-        } catch (e: Exception) {
-            Timber.e(e, "Error bookmarking track")
-            false
-        }
+        return sendInteraction("BOOKMARK", trackId, "TRACK")
     }
 
     override suspend fun likeTrack(trackId: String): Boolean {
-        return try {
-            DefaultConnector.instance.likeTrack.execute(trackId)
-            true
-        } catch (e: Exception) {
-            Timber.e(e, "Error liking track")
-            false
+        return sendInteraction("LIKE", trackId, "TRACK")
+    }
+
+    private suspend fun sendInteraction(type: String, entityId: String, entityType: String): Boolean {
+        val token = TokenManager.getValidToken() ?: return false
+        val json = JSONObject().apply {
+            put("type", type)
+            put("entityId", entityId)
+            put("entityType", entityType)
         }
+        val body = json.toString().toRequestBody(JSON)
+        val request = Request.Builder()
+            .url("$BASE_URL/api/interactions")
+            .header("Authorization", "Bearer $token")
+            .post(body)
+            .build()
+        return executeRequest(request)
     }
 
     override suspend fun shareVibe(trackId: String): String? {
@@ -215,16 +219,24 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
         return executeRequest(request)
     }
     override suspend fun getUserTracks(): List<MaveTrack>? {
-        val res = DefaultConnector.instance.getUserTracks.execute()
-        return res.data.tracks.map { t ->
-            MaveTrack(
-                id = t.id,
-                name = t.name,
-                artists = listOf(MaveArtist(id = UUID.nameUUIDFromBytes(t.artistName.toByteArray()).toString(), name = t.artistName)),
-                album = MaveAlbum(id = UUID.nameUUIDFromBytes(t.albumName.toByteArray()).toString(), name = t.albumName, images = listOfNotNull(t.imageUrl?.let { MaveImage(url = it) })),
-                durationMs = 210000L // 3:30 standard placeholder for unbound durations in prod
-            )
-        }
+        val token = TokenManager.getValidToken() ?: return null
+        val request = Request.Builder()
+            .url("$BASE_URL/api/user/tracks")
+            .header("Authorization", "Bearer $token")
+            .get()
+            .build()
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        val gson = com.google.gson.Gson()
+                        val trackResponse = gson.fromJson(body, MaveTracksResponse::class.java)
+                        trackResponse?.items?.map { it.track } ?: emptyList()
+                    } else emptyList()
+                } else null
+            }
+        } catch (e: Exception) { null }
     }
 
     override suspend fun getVibesByUserId(userId: String): List<MaveTrack>? {
@@ -268,16 +280,22 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
     }
 
     override suspend fun getCommunityTracks(): List<MaveTrack>? {
-        val res = DefaultConnector.instance.getCommunityTracks.execute()
-        return res.data.tracks.map { t ->
-            MaveTrack(
-                id = t.id,
-                name = t.name,
-                artists = listOf(MaveArtist(id = t.owner.uid, name = t.artistName)),
-                album = MaveAlbum(id = UUID.nameUUIDFromBytes(t.albumName.toByteArray()).toString(), name = t.albumName, images = listOfNotNull(t.imageUrl?.let { MaveImage(url = it) })),
-                durationMs = 210000L
-            )
-        }
+        val request = Request.Builder()
+            .url("$BASE_URL/api/community/tracks")
+            .get()
+            .build()
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        val gson = com.google.gson.Gson()
+                        val trackResponse = gson.fromJson(body, MaveTracksResponse::class.java)
+                        trackResponse?.items?.map { it.track } ?: emptyList()
+                    } else emptyList()
+                } else null
+            }
+        } catch (e: Exception) { null }
     }
 
 
@@ -432,68 +450,98 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
     }
 
     override suspend fun getPlaylists(): List<MavePlaylist>? {
-        val res = DefaultConnector.instance.getPlaylists.execute()
-        return res.data.playlists.map { p ->
-            MavePlaylist(
-                id = p.id,
-                name = p.name,
-                coverUrl = p.imageUrl,
-                description = p.description
-            )
-        }
+        val request = Request.Builder()
+            .url("$BASE_URL/api/playlists")
+            .get()
+            .build()
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        val gson = com.google.gson.Gson()
+                        val listType = object : com.google.gson.reflect.TypeToken<List<MavePlaylist>>() {}.type
+                        gson.fromJson(body, listType)
+                    } else emptyList()
+                } else null
+            }
+        } catch (e: Exception) { null }
     }
 
     override suspend fun getCategories(): List<MaveCategory>? {
-        val res = DefaultConnector.instance.getCategories.execute()
-        return res.data.categories.map { c ->
-            MaveCategory(
-                id = c.id,
-                name = c.name,
-                imageUrl = c.imageUrl,
-                colorHex = "#8B5CF6"
-            )
-        }
+        val request = Request.Builder()
+            .url("$BASE_URL/api/categories")
+            .get()
+            .build()
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        val gson = com.google.gson.Gson()
+                        val listType = object : com.google.gson.reflect.TypeToken<List<MaveCategory>>() {}.type
+                        gson.fromJson(body, listType)
+                    } else emptyList()
+                } else null
+            }
+        } catch (e: Exception) { null }
     }
 
     override suspend fun getAlbums(): List<MaveAlbum>? {
-        val res = DefaultConnector.instance.getAlbums.execute()
-        return res.data.albums.map { a ->
-            MaveAlbum(
-                id = a.id,
-                name = a.name,
-                artists = listOf(MaveArtist(id = UUID.nameUUIDFromBytes(a.artistName.toByteArray()).toString(), name = a.artistName)),
-                images = listOfNotNull(a.imageUrl?.takeIf { it.isNotEmpty() }?.let { MaveImage(it) }),
-                description = "Release Year: ${a.releaseYear ?: "Unknown"}"
-            )
-        }
+        val request = Request.Builder()
+            .url("$BASE_URL/api/albums")
+            .get()
+            .build()
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        val gson = com.google.gson.Gson()
+                        val listType = object : com.google.gson.reflect.TypeToken<List<MaveAlbum>>() {}.type
+                        gson.fromJson(body, listType)
+                    } else emptyList()
+                } else null
+            }
+        } catch (e: Exception) { null }
     }
 
     override suspend fun getPodcasts(): List<MavePodcast>? {
-        val res = DefaultConnector.instance.getPodcasts.execute()
-        return res.data.podcasts.map { p ->
-            MavePodcast(
-                id = p.id,
-                name = p.name,
-                publisher = p.publisher,
-                imageUrl = p.imageUrl,
-                description = p.description
-            )
-        }
+        val request = Request.Builder()
+            .url("$BASE_URL/api/podcasts")
+            .get()
+            .build()
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        val gson = com.google.gson.Gson()
+                        val listType = object : com.google.gson.reflect.TypeToken<List<MavePodcast>>() {}.type
+                        gson.fromJson(body, listType)
+                    } else emptyList()
+                } else null
+            }
+        } catch (e: Exception) { null }
     }
 
     override suspend fun getAudiobooks(): List<MaveAudiobook>? {
-        val res = DefaultConnector.instance.getAudiobooks.execute()
-        return res.data.audiobooks.map { a ->
-            MaveAudiobook(
-                id = a.id,
-                title = a.title,
-                author = a.author,
-                narrator = a.narrator,
-                imageUrl = a.imageUrl,
-                duration = a.duration,
-                audioUrl = a.audioUrl
-            )
-        }
+        val request = Request.Builder()
+            .url("$BASE_URL/api/audiobooks")
+            .get()
+            .build()
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        val gson = com.google.gson.Gson()
+                        val listType = object : com.google.gson.reflect.TypeToken<List<MaveAudiobook>>() {}.type
+                        gson.fromJson(body, listType)
+                    } else emptyList()
+                } else null
+            }
+        } catch (e: Exception) { null }
     }
 
     override suspend fun getSpotifyLibraryTracks(): List<MaveTrack>? {

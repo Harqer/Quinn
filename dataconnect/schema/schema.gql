@@ -1,10 +1,19 @@
+# -------------------------------------
+# DOMAIN: USERS & SOCIAL
+# -------------------------------------
+enum SubscriptionTier { FREE PREMIUM FAMILY }
+
 type User @table(key: "uid") {
   uid: String! @default(expr: "auth.uid")
+  username: String! @unique
+  email: String! @unique
   displayName: String
-  email: String
   avatarUrl: String
+  subscriptionTier: SubscriptionTier! @default(value: FREE)
+  region: String
   favoriteArtists: [String!]
   favoriteGenres: [String!]
+  createdAt: Timestamp! @default(expr: "request.time")
 }
 
 type AuthIdentity @table(key: ["provider", "providerSubject"]) {
@@ -33,75 +42,68 @@ type PaymentHistory @table {
   createdAt: Timestamp! @default(expr: "request.time")
 }
 
-type Track @table {
-  id: String! @default(expr: "uuidV4()")
-  name: String!
-  artistName: String!
-  albumName: String!
-  imageUrl: String
-  audioUrl: String
-  prompt: String
-  visibility: String! @default(value: "public")
-  createdAt: Timestamp! @default(expr: "request.time")
-  owner: User!
-  isCommunity: Boolean! @default(value: false)
-}
-
-type Category @table {
-  id: String! @default(expr: "uuidV4()")
-  name: String!
-  imageUrl: String
-  type: String! # e.g., "MUSIC", "PODCAST", "AUDIOBOOK"
-}
-
 type Playlist @table {
   id: String! @default(expr: "uuidV4()")
   name: String!
   description: String
-  imageUrl: String
   owner: User!
   isPublic: Boolean! @default(value: true)
+  isCollaborative: Boolean! @default(value: false)
+  coverUrl: String
+  createdAt: Timestamp! @default(expr: "request.time")
 }
 
 type PlaylistEntry @table(key: ["playlist", "track"]) {
   playlist: Playlist!
   track: Track!
+  addedBy: User!
+  orderIndex: Int
   addedAt: Timestamp! @default(expr: "request.time")
+}
+
+# -------------------------------------
+# DOMAIN: MUSIC CATALOG
+# -------------------------------------
+type Artist @table {
+  id: String! @default(expr: "uuidV4()")
+  name: String! @searchable
+  bio: String
+  monthlyListeners: Int
+  imageUrl: String
 }
 
 type Album @table {
   id: String! @default(expr: "uuidV4()")
-  name: String!
-  artistName: String!
-  imageUrl: String
-  releaseYear: Int
+  title: String! @searchable
+  primaryArtist: Artist!
+  releaseDate: Date
+  label: String
+  coverUrl: String
 }
 
-type Podcast @table {
+type Track @table {
   id: String! @default(expr: "uuidV4()")
-  name: String!
-  publisher: String!
-  imageUrl: String
-  description: String
+  title: String! @searchable
+  album: Album!
+  durationMs: Int!
+  isrcCode: String @unique
+  audioUrl: String!
+  coverUrl: String
+  playCount: Int64! @default(value: 0)
+  
+  # Lyria-specific AI Generation Metadata
+  prompt: String
+  visibility: String! @default(value: "public")
+  owner: User!
+  isCommunity: Boolean! @default(value: false)
+  createdAt: Timestamp! @default(expr: "request.time")
 }
 
-type PodcastEpisode @table {
-  id: String! @default(expr: "uuidV4()")
-  podcast: Podcast!
-  title: String!
-  duration: Int
-  publishDate: Timestamp
-  audioUrl: String
-}
-
-type Audiobook @table {
-  id: String! @default(expr: "uuidV4()")
-  title: String!
-  author: String!
-  narrator: String
-  imageUrl: String
-  duration: Int
-  audioUrl: String
+# Many-to-Many: Track <-> Artist
+type TrackArtist @table(key: ["track", "artist"]) {
+  track: Track!
+  artist: Artist!
+  role: String! # e.g., 'primary', 'featured', 'producer'
 }
 
 type LikedTrack @table(key: ["user", "track"]) {
@@ -116,6 +118,88 @@ type BookmarkedTrack @table(key: ["user", "track"]) {
   addedAt: Timestamp! @default(expr: "request.time")
 }
 
+# -------------------------------------
+# DOMAIN: PODCASTS CATALOG
+# -------------------------------------
+type Show @table {
+  id: String! @default(expr: "uuidV4()")
+  title: String! @searchable
+  publisher: String!
+  description: String
+  rssFeedUrl: String
+  coverUrl: String
+  isExclusive: Boolean! @default(value: false)
+}
+
+type Episode @table {
+  id: String! @default(expr: "uuidV4()")
+  show: Show!
+  title: String! @searchable
+  description: String
+  publishDate: Timestamp
+  durationMs: Int!
+  audioUrl: String!
+}
+
+type UserEpisodeProgress @table(key: ["user", "episode"]) {
+  user: User!
+  episode: Episode!
+  progressMs: Int!
+  lastPlayedAt: Timestamp! @default(expr: "request.time")
+}
+
+# -------------------------------------
+# DOMAIN: AUDIOBOOKS CATALOG
+# -------------------------------------
+type Author @table {
+  id: String! @default(expr: "uuidV4()")
+  name: String! @searchable
+  bio: String
+}
+
+type Audiobook @table {
+  id: String! @default(expr: "uuidV4()")
+  title: String! @searchable
+  author: Author!
+  narrator: String
+  isbn: String
+  coverUrl: String
+  totalDurationMs: Int
+}
+
+type Chapter @table {
+  id: String! @default(expr: "uuidV4()")
+  audiobook: Audiobook!
+  title: String!
+  chapterNumber: Int!
+  durationMs: Int!
+  audioUrl: String!
+}
+
+# -------------------------------------
+# CATEGORIES & TAXONOMY (Many-to-Many)
+# -------------------------------------
+enum CategoryType { GENRE MOOD ACTIVITY }
+
+type Category @table {
+  id: String! @default(expr: "uuidV4()")
+  name: String! @unique
+  type: CategoryType!
+}
+
+type MusicCategory @table(key: ["track", "category"]) {
+  track: Track!
+  category: Category!
+}
+
+type PodcastCategory @table(key: ["show", "category"]) {
+  show: Show!
+  category: Category!
+}
+
+# -------------------------------------
+# LYRIA-SPECIFIC: CAPTURES & GENERATION
+# -------------------------------------
 type CameraCapture @table {
   id: String! @default(expr: "uuidV4()")
   user: User!

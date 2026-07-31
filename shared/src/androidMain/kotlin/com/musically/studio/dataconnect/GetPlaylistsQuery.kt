@@ -44,7 +44,7 @@ public interface GetPlaylistsQuery :
   
     val description: String?,
   
-    val imageUrl: String?,
+    val coverUrl: String?,
   
     val isPublic: Boolean,
   

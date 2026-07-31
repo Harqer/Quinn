@@ -27,7 +27,9 @@ public interface UpsertUserMutation :
   
     val displayName: com.google.firebase.dataconnect.OptionalVariable<String?>,
   
-    val email: com.google.firebase.dataconnect.OptionalVariable<String?>,
+    val username: String,
+  
+    val email: String,
   
   ) {
     
@@ -35,23 +37,26 @@ public interface UpsertUserMutation :
       
       @kotlin.DslMarker public annotation class BuilderDsl
 
+      
       @BuilderDsl
       public interface Builder {
         public var displayName: String?
-        public var email: String?
+        public var username: String
+        public var email: String
         
       }
 
       public companion object {
+        
         @Suppress("NAME_SHADOWING")
         public fun build(
-          
+          username: String,email: String,
           block_: Builder.() -> Unit
         ): Variables {
           var displayName: com.google.firebase.dataconnect.OptionalVariable<String?> =
                 com.google.firebase.dataconnect.OptionalVariable.Undefined
-            var email: com.google.firebase.dataconnect.OptionalVariable<String?> =
-                com.google.firebase.dataconnect.OptionalVariable.Undefined
+            var username= username
+            var email= email
             
 
           return object : Builder {
@@ -59,15 +64,19 @@ public interface UpsertUserMutation :
               get() = throw UnsupportedOperationException("getting builder values is not supported")
               set(value_) { displayName = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
               
-            override var email: String?
+            override var username: String
               get() = throw UnsupportedOperationException("getting builder values is not supported")
-              set(value_) { email = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
+              set(value_) { username = value_ }
+              
+            override var email: String
+              get() = throw UnsupportedOperationException("getting builder values is not supported")
+              set(value_) { email = value_ }
               
             
           }.apply(block_)
           .let {
             Variables(
-              displayName=displayName,email=email,
+              displayName=displayName,username=username,email=email,
             )
           }
         }
@@ -101,7 +110,7 @@ public interface UpsertUserMutation :
 
 public fun UpsertUserMutation.ref(
   
-    
+    username: String,email: String,
 
   
     block_: UpsertUserMutation.Variables.Builder.() -> Unit = {}
@@ -113,7 +122,7 @@ public fun UpsertUserMutation.ref(
   ref(
     
       UpsertUserMutation.Variables.build(
-        
+        username=username,email=email,
   
     block_
       )
@@ -124,7 +133,7 @@ public suspend fun UpsertUserMutation.execute(
 
   
     
-      
+      username: String,email: String,
 
   
     block_: UpsertUserMutation.Variables.Builder.() -> Unit = {}
@@ -135,7 +144,7 @@ public suspend fun UpsertUserMutation.execute(
   > =
   ref(
     
-      
+      username=username,email=email,
   
     block_
     

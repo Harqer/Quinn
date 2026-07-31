@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 import { rateLimit } from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
 import Redis from "ioredis";
-import { musicRouter, spotifyRouter, chatRouter, stripeRouter } from "./routes/index.js";
+import { musicRouter, spotifyRouter, chatRouter, stripeRouter, authRouter, billingRouter } from "./routes/index.js";
 import youtubeRouter from "./routes/youtube.js";
 import { getRedis } from "./config/redis.js";
 import logger from "./config/logger.js";
@@ -41,7 +41,16 @@ const globalLimiter = rateLimit({
 });
 
 app.use(globalLimiter);
-app.use(express.json());
+
+// Parse JSON for all routes except raw Stripe webhook endpoint
+app.use((req, res, next) => {
+  if (req.originalUrl === "/api/stripe/webhook") {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
+
 app.use(helmet());
 app.use(compression());
 
@@ -66,7 +75,9 @@ app.use("/api/music", musicRouter);
 app.use("/api/spotify", spotifyRouter);
 app.use("/api/chat", chatRouter);
 app.use("/api/stripe", stripeRouter);
+app.use("/api/billing", billingRouter);
 app.use("/api/youtube", youtubeRouter);
+app.use("/api/auth", authRouter);
 
 // URL Redirect Service
 app.get("/s/:shortCode", async (req, res, next) => {

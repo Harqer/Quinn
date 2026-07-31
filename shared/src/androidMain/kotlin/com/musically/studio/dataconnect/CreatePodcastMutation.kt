@@ -25,11 +25,11 @@ public interface CreatePodcastMutation :
     @kotlinx.serialization.Serializable
   public data class Variables(
   
-    val name: String,
+    val title: String,
   
     val publisher: String,
   
-    val imageUrl: com.google.firebase.dataconnect.OptionalVariable<String?>,
+    val coverUrl: com.google.firebase.dataconnect.OptionalVariable<String?>,
   
     val description: com.google.firebase.dataconnect.OptionalVariable<String?>,
   
@@ -39,41 +39,43 @@ public interface CreatePodcastMutation :
       
       @kotlin.DslMarker public annotation class BuilderDsl
 
+      
       @BuilderDsl
       public interface Builder {
-        public var name: String
+        public var title: String
         public var publisher: String
-        public var imageUrl: String?
+        public var coverUrl: String?
         public var description: String?
         
       }
 
       public companion object {
+        
         @Suppress("NAME_SHADOWING")
         public fun build(
-          name: String,publisher: String,
+          title: String,publisher: String,
           block_: Builder.() -> Unit
         ): Variables {
-          var name= name
+          var title= title
             var publisher= publisher
-            var imageUrl: com.google.firebase.dataconnect.OptionalVariable<String?> =
+            var coverUrl: com.google.firebase.dataconnect.OptionalVariable<String?> =
                 com.google.firebase.dataconnect.OptionalVariable.Undefined
             var description: com.google.firebase.dataconnect.OptionalVariable<String?> =
                 com.google.firebase.dataconnect.OptionalVariable.Undefined
             
 
           return object : Builder {
-            override var name: String
+            override var title: String
               get() = throw UnsupportedOperationException("getting builder values is not supported")
-              set(value_) { name = value_ }
+              set(value_) { title = value_ }
               
             override var publisher: String
               get() = throw UnsupportedOperationException("getting builder values is not supported")
               set(value_) { publisher = value_ }
               
-            override var imageUrl: String?
+            override var coverUrl: String?
               get() = throw UnsupportedOperationException("getting builder values is not supported")
-              set(value_) { imageUrl = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
+              set(value_) { coverUrl = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
               
             override var description: String?
               get() = throw UnsupportedOperationException("getting builder values is not supported")
@@ -83,7 +85,7 @@ public interface CreatePodcastMutation :
           }.apply(block_)
           .let {
             Variables(
-              name=name,publisher=publisher,imageUrl=imageUrl,description=description,
+              title=title,publisher=publisher,coverUrl=coverUrl,description=description,
             )
           }
         }
@@ -96,7 +98,7 @@ public interface CreatePodcastMutation :
     @kotlinx.serialization.Serializable
   public data class Data(
   
-    val podcast_insert: PodcastKey,
+    val show_insert: ShowKey,
   
   ) {
     
@@ -117,7 +119,7 @@ public interface CreatePodcastMutation :
 
 public fun CreatePodcastMutation.ref(
   
-    name: String,publisher: String,
+    title: String,publisher: String,
 
   
     block_: CreatePodcastMutation.Variables.Builder.() -> Unit = {}
@@ -129,7 +131,7 @@ public fun CreatePodcastMutation.ref(
   ref(
     
       CreatePodcastMutation.Variables.build(
-        name=name,publisher=publisher,
+        title=title,publisher=publisher,
   
     block_
       )
@@ -140,7 +142,7 @@ public suspend fun CreatePodcastMutation.execute(
 
   
     
-      name: String,publisher: String,
+      title: String,publisher: String,
 
   
     block_: CreatePodcastMutation.Variables.Builder.() -> Unit = {}
@@ -151,7 +153,7 @@ public suspend fun CreatePodcastMutation.execute(
   > =
   ref(
     
-      name=name,publisher=publisher,
+      title=title,publisher=publisher,
   
     block_
     

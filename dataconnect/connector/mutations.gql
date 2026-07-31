@@ -1,27 +1,30 @@
 mutation CreateTrack(
-  $name: String!,
-  $artistName: String!,
-  $albumName: String!,
-  $imageUrl: String,
+  $title: String!,
+  $albumId: String!,
+  $audioUrl: String!,
+  $coverUrl: String,
   $isCommunity: Boolean!
 ) @auth(level: USER) {
   track_insert(data: {
-    name: $name,
-    artistName: $artistName,
-    albumName: $albumName,
-    imageUrl: $imageUrl,
+    title: $title,
+    albumId: $albumId,
+    audioUrl: $audioUrl,
+    coverUrl: $coverUrl,
     isCommunity: $isCommunity,
-    owner: { uid_expr: "auth.uid" }
+    durationMs: 0,
+    ownerUid_expr: "auth.uid"
   })
 }
 
 mutation UpsertUser(
   $displayName: String,
-  $email: String
+  $username: String!,
+  $email: String!
 ) @auth(level: USER) {
   user_upsert(data: {
     uid_expr: "auth.uid",
     displayName: $displayName,
+    username: $username,
     email: $email
   })
 }
@@ -33,7 +36,7 @@ mutation CreatePlaylist(
   playlist_insert(data: {
     name: $name,
     description: $description,
-    owner: { uid_expr: "auth.uid" }
+    ownerUid_expr: "auth.uid"
   })
 }
 
@@ -43,20 +46,21 @@ mutation AddTrackToPlaylist(
 ) @auth(level: USER) {
   playlistEntry_insert(data: {
     playlistId: $playlistId,
-    trackId: $trackId
+    trackId: $trackId,
+    addedByUid_expr: "auth.uid"
   })
 }
 
 mutation CreatePodcast(
-  $name: String!,
+  $title: String!,
   $publisher: String!,
-  $imageUrl: String,
+  $coverUrl: String,
   $description: String
 ) @auth(level: PUBLIC) {
-  podcast_insert(data: {
-    name: $name,
+  show_insert(data: {
+    title: $title,
     publisher: $publisher,
-    imageUrl: $imageUrl,
+    coverUrl: $coverUrl,
     description: $description
   })
 }
@@ -79,9 +83,9 @@ mutation UpdateUserPreferences(
   $favoriteArtists: [String!],
   $favoriteGenres: [String!]
 ) @auth(level: USER) {
-  user_upsert(
+  user_update(
+    key: { uid_expr: "auth.uid" },
     data: {
-      uid_expr: "auth.uid",
       favoriteArtists: $favoriteArtists,
       favoriteGenres: $favoriteGenres
     }

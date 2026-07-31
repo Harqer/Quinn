@@ -30,21 +30,21 @@ public interface GetPodcastsQuery :
     @kotlinx.serialization.Serializable
   public data class Data(
   
-    val podcasts: List<PodcastsItem>,
+    val shows: List<ShowsItem>,
   
   ) {
     
       
         @kotlinx.serialization.Serializable
-  public data class PodcastsItem(
+  public data class ShowsItem(
   
     val id: String,
   
-    val name: String,
+    val title: String,
   
     val publisher: String,
   
-    val imageUrl: String?,
+    val coverUrl: String?,
   
     val description: String?,
   

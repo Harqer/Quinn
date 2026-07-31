@@ -60,7 +60,9 @@ fun NowPlayingScreen(
     val adaptiveInfo = currentWindowAdaptiveInfo()
     val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
 
-
+    LaunchedEffect(Unit) {
+        viewModel.loadAudioDevices()
+    }
 
     val bgColor = remember(track?.id) {
         val hash = abs(track?.id?.hashCode() ?: 0)

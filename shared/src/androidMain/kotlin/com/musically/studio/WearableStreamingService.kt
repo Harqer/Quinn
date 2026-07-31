@@ -174,15 +174,20 @@ class WearableStreamingService : Service() {
         }
     }
 
-    fun updateWearableUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false) {
-        val onPlayPause = { emitInteraction("play_pause") }
-        val onSkipNext = { emitInteraction("next") }
+    private var autoDismissJob: Job? = null
 
+    fun showTransientCard(
+        title: String,
+        subtitle: String? = null,
+        iconName: IconName = IconName.MUSIC_NOTE,
+        durationMs: Long = 4000L
+    ) {
+        autoDismissJob?.cancel()
         scope.launch {
             activeDisplay?.sendContent {
                 flexBox(
                     direction = Direction.COLUMN,
-                    gap = 12,
+                    gap = 8,
                     paddingBottom = 16,
                     paddingEnd = 16,
                     paddingStart = 16,
@@ -190,33 +195,71 @@ class WearableStreamingService : Service() {
                     alignment = Alignment.CENTER,
                     crossAlignment = Alignment.CENTER
                 ) {
-                    if (coverArtUrl != null) {
-                        image(
-                            uri = coverArtUrl
-                        )
-                    } else {
-                        icon(name = IconName.MUSIC_NOTE)
-                    }
-                    
-                    val displayTitle = when {
-                        isThinking -> "Mave is thinking..."
-                        songTitle.isNotEmpty() -> songTitle
-                        else -> "Mave Studio"
-                    }
-                    text(content = displayTitle, style = TextStyle.HEADING)
-                    
-                    if (geminiResponse.isNotEmpty()) {
-                        text(content = geminiResponse, style = TextStyle.BODY)
-                    }
-
-                    flexBox(direction = Direction.ROW, gap = 16, alignment = Alignment.CENTER) {
-                        button(label = "", style = ButtonStyle.PRIMARY, iconName = IconName.TRIANGLE_RIGHT, onClick = onPlayPause)
-                        button(label = "", style = ButtonStyle.SECONDARY, iconName = IconName.TRIANGLE_RIGHT_VERTICAL_LINE, onClick = onSkipNext)
+                    icon(name = iconName)
+                    text(content = title, style = TextStyle.HEADING)
+                    if (!subtitle.isNullOrEmpty()) {
+                        text(content = subtitle, style = TextStyle.BODY)
                     }
                 }
             }?.onFailure { error, _ ->
                 Timber.e("Failed to send display content: ${error.description}")
             }
+
+            // Auto-dismiss back to clean empty view after duration
+            autoDismissJob = scope.launch {
+                delay(durationMs)
+                clearDisplay()
+            }
+        }
+    }
+
+    fun showSteeringNotice(bpm: Int, densityPercent: Int, brightnessPercent: Int) {
+        showTransientCard(
+            title = "$bpm BPM",
+            subtitle = "Density: $densityPercent% • Brightness: $brightnessPercent%",
+            iconName = IconName.GEAR,
+            durationMs = 3000L
+        )
+    }
+
+    fun showTrackNotice(songTitle: String, artist: String = "Mave AI") {
+        showTransientCard(
+            title = songTitle,
+            subtitle = artist,
+            iconName = IconName.MUSIC_NOTE,
+            durationMs = 4000L
+        )
+    }
+
+    fun showThinkingNotice() {
+        showTransientCard(
+            title = "Mave is thinking...",
+            subtitle = "Crafting audio steering",
+            iconName = IconName.MUSIC_NOTE,
+            durationMs = 6000L
+        )
+    }
+
+    fun clearDisplay() {
+        autoDismissJob?.cancel()
+        scope.launch {
+            activeDisplay?.sendContent {
+                flexBox(
+                    direction = Direction.COLUMN,
+                    alignment = Alignment.CENTER,
+                    crossAlignment = Alignment.CENTER
+                ) {}
+            }?.onFailure { error, _ ->
+                Timber.e("Failed to clear display: ${error.description}")
+            }
+        }
+    }
+
+    fun updateWearableUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false) {
+        when {
+            isThinking -> showThinkingNotice()
+            songTitle.isNotEmpty() -> showTrackNotice(songTitle, geminiResponse)
+            else -> clearDisplay()
         }
     }
 

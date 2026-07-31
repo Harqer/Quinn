@@ -74,12 +74,36 @@ fun maveEntryProvider(
             }
         )
     }
-        // Discover logic removed, handled by Home/Search
+
+    entry<Route.Discover> {
+        DiscoverScreen(
+            viewModel = viewModel,
+            onNavigateToSettings = onMenuClick,
+            onNavigateToLibrary = { navigator.navigate(Route.Library) },
+            onNavigateToDevices = { navigator.navigate(Route.Devices) },
+            onNavigateToMore = { navigator.navigate(Route.Search) },
+            onNavigateToCamera = { navigator.navigate(Route.Camera) },
+            onNavigateToLiveSession = { navigator.navigate(Route.LiveSession) },
+            onNavigateToCategory = { navigator.navigate(Route.CategoryView(it)) },
+            onNavigateToTrack = { trackId ->
+                viewModel.tracks.value.find { it.id == trackId }?.let {
+                    viewModel.playTrack(it)
+                } ?: viewModel.communityTracks.value.find { it.id == trackId }?.let {
+                    viewModel.playTrack(it)
+                }
+            },
+            onNavigateToPlaylist = { navigator.navigate(Route.PlaylistView(it)) }
+        )
+    }
 
     entry<Route.Camera> {
         CameraCaptureScreen(
             onImageCaptured = { base64 ->
-                viewModel.generateMusicPrompts(base64)
+                if (viewModel.isLiveSessionActive.value) {
+                    viewModel.sendFrame(base64)
+                } else {
+                    viewModel.generateMusicPrompts(base64)
+                }
                 navigator.goBack()
             },
             onClose = { navigator.goBack() }
@@ -112,7 +136,7 @@ fun maveEntryProvider(
     entry<Route.Search>(
         metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
             Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
-                androidx.compose.material3.Text("Search for something") 
+                androidx.compose.material3.Text("Search for something", color = androidx.compose.ui.graphics.Color.Gray) 
             }
         }
     ) {
@@ -136,7 +160,7 @@ fun maveEntryProvider(
     entry<Route.Chat>(
         metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
             Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
-                androidx.compose.material3.Text("Chat") 
+                androidx.compose.material3.Text("Chat", color = androidx.compose.ui.graphics.Color.Gray) 
             }
         }
     ) {
@@ -156,7 +180,7 @@ fun maveEntryProvider(
     entry<Route.Library>(
         metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
             Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
-                androidx.compose.material3.Text("Select an item") 
+                androidx.compose.material3.Text("Select an item", color = androidx.compose.ui.graphics.Color.Gray) 
             }
         }
     ) {
@@ -178,7 +202,7 @@ fun maveEntryProvider(
     entry<Route.Devices>(
         metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
             Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
-                androidx.compose.material3.Text("Devices") 
+                androidx.compose.material3.Text("Devices", color = androidx.compose.ui.graphics.Color.Gray) 
             }
         }
     ) {
@@ -253,6 +277,16 @@ fun maveEntryProvider(
         metadata = maveVerticalTransitionMetadata()
     ) {
         SettingsScreen(
+            viewModel = viewModel,
+            onBack = { navigator.goBack() },
+            onNavigateToPremium = { navigator.navigate(Route.Premium) }
+        )
+    }
+
+    entry<Route.Premium>(
+        metadata = maveVerticalTransitionMetadata()
+    ) {
+        PremiumPlansScreen(
             viewModel = viewModel,
             onBack = { navigator.goBack() }
         )
@@ -392,6 +426,17 @@ fun maveEntryProvider(
     ) {
         LiveSessionOptionsBottomSheet(
             viewModel = viewModel,
+            onDismiss = { navigator.goBack() }
+        )
+    }
+
+    entry<Route.UsageLimitSheet>(
+        metadata = BottomSheetSceneStrategy.bottomSheet()
+    ) { key ->
+        UsageLimitBottomSheet(
+            reasonName = key.reasonName,
+            viewModel = viewModel,
+            onNavigateToPremium = { navigator.navigate(Route.Premium) },
             onDismiss = { navigator.goBack() }
         )
     }

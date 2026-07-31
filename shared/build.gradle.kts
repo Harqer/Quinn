@@ -111,7 +111,7 @@ kotlin {
             implementation(libs.hilt.android)
             implementation(libs.androidx.appfunctions)
             implementation(libs.androidx.appfunctions.service)
-            implementation(libs.firebase.dataconnect)
+            api(libs.firebase.dataconnect)
             
             // Engage SDK & WorkManager
             implementation(libs.engage.core)
@@ -150,8 +150,8 @@ android {
 
     defaultConfig {
         minSdk = 34
-        buildConfigField("String", "API_BASE_URL", "\"https://musically-studio.run.app/api\"")
-        buildConfigField("String", "WS_BASE_URL", "\"wss://musically-studio.run.app/api/music/ws\"")
+        buildConfigField("String", "API_BASE_URL", "\"https://musically-studio.web.app/api\"")
+        buildConfigField("String", "WS_BASE_URL", "\"wss://musically-studio.web.app/api/music/ws\"")
     }
 
     buildFeatures {

@@ -20,7 +20,8 @@ import javax.inject.Singleton
 class LiveApiService @Inject constructor(
     private val auth: FirebaseAuth
 ) {
-    private val baseUrl = "http://10.0.2.2:8081" // Backend endpoint for emulators
+    // Production Cloud Run URL (routed via Firebase Hosting) — defined in shared/build.gradle.kts
+    private val baseUrl = com.musically.studio.shared.BuildConfig.API_BASE_URL
     
     // Define the three primary tools for music generation and real-time tweaking
     private val tools = listOf(

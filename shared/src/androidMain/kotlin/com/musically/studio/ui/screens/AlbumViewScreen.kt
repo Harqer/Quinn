@@ -106,7 +106,7 @@ fun AlbumViewScreen(
                         horizontalAlignment = Alignment.Start
                     ) {
                         com.musically.studio.ui.components.MediaCoverCard(
-                            title = "Album",
+                            title = albumInfo?.name ?: "Unknown Album",
                             subtitle = albumInfo?.description ?: albumInfo?.artists?.joinToString { it.name } ?: "Unknown Artist",
                             imageUrl = albumInfo?.images?.firstOrNull()?.url,
                             isLiked = false,

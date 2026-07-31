@@ -64,11 +64,14 @@ class MainViewModelTest {
         viewModel = MainViewModel(
             context = context,
             apiClient = fakeApiClient,
-            streamingApiClient = mockk(relaxed = true),
             maveSessionManager = fakeMaveSessionManager,
             geminiLiveManager = mockGeminiLive,
+            streamingApiClient = mockk(relaxed = true),
             auth = mockAuth,
-            rtdb = mockDb
+            rtdb = mockDb,
+            dataConnectRepository = mockk(relaxed = true),
+            authRepository = mockk(relaxed = true),
+            rtdbSessionManager = mockk(relaxed = true)
         )
     }
 

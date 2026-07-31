@@ -4,10 +4,16 @@ query GetUserTracks @auth(level: USER) {
     orderBy: [{ createdAt: DESC }]
   ) {
     id
-    name
-    artistName
-    albumName
-    imageUrl
+    title
+    album {
+      id
+      title
+      primaryArtist {
+        id
+        name
+      }
+    }
+    coverUrl
     audioUrl
     prompt
     visibility
@@ -22,10 +28,16 @@ query GetCommunityTracks @auth(level: PUBLIC) {
     orderBy: [{ createdAt: DESC }]
   ) {
     id
-    name
-    artistName
-    albumName
-    imageUrl
+    title
+    album {
+      id
+      title
+      primaryArtist {
+        id
+        name
+      }
+    }
+    coverUrl
     createdAt
     owner {
       uid
@@ -38,7 +50,6 @@ query GetCategories @auth(level: PUBLIC) {
   categories {
     id
     name
-    imageUrl
     type
   }
 }
@@ -48,7 +59,7 @@ query GetPlaylists @auth(level: USER) {
     id
     name
     description
-    imageUrl
+    coverUrl
     isPublic
   }
 }
@@ -56,19 +67,22 @@ query GetPlaylists @auth(level: USER) {
 query GetAlbums @auth(level: PUBLIC) {
   albums {
     id
-    name
-    artistName
-    imageUrl
-    releaseYear
+    title
+    primaryArtist {
+      id
+      name
+    }
+    coverUrl
+    releaseDate
   }
 }
 
 query GetPodcasts @auth(level: PUBLIC) {
-  podcasts {
+  shows {
     id
-    name
+    title
     publisher
-    imageUrl
+    coverUrl
     description
   }
 }
@@ -77,11 +91,13 @@ query GetAudiobooks @auth(level: PUBLIC) {
   audiobooks {
     id
     title
-    author
+    author {
+      id
+      name
+    }
     narrator
-    imageUrl
-    duration
-    audioUrl
+    coverUrl
+    totalDurationMs
   }
 }
 
@@ -92,6 +108,10 @@ query GetUserSettings @auth(level: USER) {
     theme
     parentalControlsEnabled
     stripeCustomerId
+    user {
+      displayName
+      avatarUrl
+    }
   }
 }
 
@@ -116,10 +136,16 @@ query GetLikedTracks @auth(level: USER) {
   ) {
     track {
       id
-      name
-      artistName
-      albumName
-      imageUrl
+      title
+      album {
+        id
+        title
+        primaryArtist {
+          id
+          name
+        }
+      }
+      coverUrl
       audioUrl
       prompt
       visibility
@@ -137,10 +163,16 @@ query GetBookmarkedTracks @auth(level: USER) {
   ) {
     track {
       id
-      name
-      artistName
-      albumName
-      imageUrl
+      title
+      album {
+        id
+        title
+        primaryArtist {
+          id
+          name
+        }
+      }
+      coverUrl
       audioUrl
       prompt
       visibility
@@ -163,8 +195,8 @@ query GetUserCameraCaptures @auth(level: USER) {
     createdAt
     generatedTrack {
       id
-      name
-      imageUrl
+      title
+      coverUrl
       audioUrl
     }
   }
@@ -182,8 +214,8 @@ query GetUserVideoDigestions @auth(level: USER) {
     createdAt
     generatedTrack {
       id
-      name
-      imageUrl
+      title
+      coverUrl
       audioUrl
     }
   }

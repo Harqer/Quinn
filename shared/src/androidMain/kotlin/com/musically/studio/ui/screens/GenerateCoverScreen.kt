@@ -299,7 +299,7 @@ fun GenerateCoverScreen(
                     viewModel.sendTextCommand("Generate $coverType cover: ${customPrompt.ifEmpty { selectedPreset }}")
                     
                     val apiType = if (coverType == "image") "cover_art" else "video_motion"
-                    viewModel.generateCoverMedia(customPrompt.ifEmpty { selectedPreset }, apiType) { resultUrl ->
+                    viewModel.generateCoverMedia(trackId, customPrompt.ifEmpty { selectedPreset }, apiType) { resultUrl ->
                         isGenerating = false
                         if (resultUrl != null) {
                             generatedCoverUrl = resultUrl

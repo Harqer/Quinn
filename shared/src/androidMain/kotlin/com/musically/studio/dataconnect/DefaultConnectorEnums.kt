@@ -13,3 +13,16 @@
 package com.musically.studio.dataconnect
 
 
+  
+  
+  public enum class CategoryType {
+  GENRE,
+  MOOD,
+  ACTIVITY;
+  
+  
+    public object EnumValueSerializer :
+      com.musically.studio.dataconnect.EnumValueSerializer<CategoryType>(CategoryType.entries)
+  
+  }
+

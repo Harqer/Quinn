@@ -8,6 +8,12 @@ export type Int64String = string;
 export type DateString = string;
 
 
+export enum CategoryType {
+  GENRE = "GENRE",
+  MOOD = "MOOD",
+  ACTIVITY = "ACTIVITY",
+};
+
 
 
 export interface AddTrackToPlaylistData {
@@ -24,9 +30,25 @@ export interface Album_Key {
   __typename?: 'Album_Key';
 }
 
+export interface Artist_Key {
+  id: string;
+  __typename?: 'Artist_Key';
+}
+
 export interface Audiobook_Key {
   id: string;
   __typename?: 'Audiobook_Key';
+}
+
+export interface AuthIdentity_Key {
+  provider: string;
+  providerSubject: string;
+  __typename?: 'AuthIdentity_Key';
+}
+
+export interface Author_Key {
+  id: string;
+  __typename?: 'Author_Key';
 }
 
 export interface BookmarkTrackData {
@@ -43,9 +65,30 @@ export interface BookmarkedTrack_Key {
   __typename?: 'BookmarkedTrack_Key';
 }
 
+export interface CameraCapture_Key {
+  id: string;
+  __typename?: 'CameraCapture_Key';
+}
+
 export interface Category_Key {
   id: string;
   __typename?: 'Category_Key';
+}
+
+export interface Chapter_Key {
+  id: string;
+  __typename?: 'Chapter_Key';
+}
+
+export interface CreateCameraCaptureData {
+  cameraCapture_insert: CameraCapture_Key;
+}
+
+export interface CreateCameraCaptureVariables {
+  imageUrl?: string | null;
+  videoUrl?: string | null;
+  environmentData?: string | null;
+  generatedTrackId?: string | null;
 }
 
 export interface CreatePlaylistData {
@@ -58,13 +101,13 @@ export interface CreatePlaylistVariables {
 }
 
 export interface CreatePodcastData {
-  podcast_insert: Podcast_Key;
+  show_insert: Show_Key;
 }
 
 export interface CreatePodcastVariables {
-  name: string;
+  title: string;
   publisher: string;
-  imageUrl?: string | null;
+  coverUrl?: string | null;
   description?: string | null;
 }
 
@@ -73,20 +116,39 @@ export interface CreateTrackData {
 }
 
 export interface CreateTrackVariables {
-  name: string;
-  artistName: string;
-  albumName: string;
-  imageUrl?: string | null;
+  title: string;
+  albumId: string;
+  audioUrl: string;
+  coverUrl?: string | null;
   isCommunity: boolean;
+}
+
+export interface CreateVideoDigestionData {
+  videoDigestion_insert: VideoDigestion_Key;
+}
+
+export interface CreateVideoDigestionVariables {
+  videoUrl: string;
+  extractedAudioUrl?: string | null;
+  atmosphereSummary?: string | null;
+  generatedTrackId?: string | null;
+}
+
+export interface Episode_Key {
+  id: string;
+  __typename?: 'Episode_Key';
 }
 
 export interface GetAlbumsData {
   albums: ({
     id: string;
-    name: string;
-    artistName: string;
-    imageUrl?: string | null;
-    releaseYear?: number | null;
+    title: string;
+    primaryArtist: {
+      id: string;
+      name: string;
+    } & Artist_Key;
+    coverUrl?: string | null;
+    releaseDate?: DateString | null;
   } & Album_Key)[];
 }
 
@@ -94,11 +156,13 @@ export interface GetAudiobooksData {
   audiobooks: ({
     id: string;
     title: string;
-    author: string;
+    author: {
+      id: string;
+      name: string;
+    } & Author_Key;
     narrator?: string | null;
-    imageUrl?: string | null;
-    duration?: number | null;
-    audioUrl?: string | null;
+    coverUrl?: string | null;
+    totalDurationMs?: number | null;
   } & Audiobook_Key)[];
 }
 
@@ -106,11 +170,17 @@ export interface GetBookmarkedTracksData {
   bookmarkedTracks: ({
     track: {
       id: string;
-      name: string;
-      artistName: string;
-      albumName: string;
-      imageUrl?: string | null;
-      audioUrl?: string | null;
+      title: string;
+      album: {
+        id: string;
+        title: string;
+        primaryArtist: {
+          id: string;
+          name: string;
+        } & Artist_Key;
+      } & Album_Key;
+      coverUrl?: string | null;
+      audioUrl: string;
       prompt?: string | null;
       visibility: string;
       isCommunity: boolean;
@@ -124,18 +194,23 @@ export interface GetCategoriesData {
   categories: ({
     id: string;
     name: string;
-    imageUrl?: string | null;
-    type: string;
+    type: CategoryType;
   } & Category_Key)[];
 }
 
 export interface GetCommunityTracksData {
   tracks: ({
     id: string;
-    name: string;
-    artistName: string;
-    albumName: string;
-    imageUrl?: string | null;
+    title: string;
+    album: {
+      id: string;
+      title: string;
+      primaryArtist: {
+        id: string;
+        name: string;
+      } & Artist_Key;
+    } & Album_Key;
+    coverUrl?: string | null;
     createdAt: TimestampString;
     owner: {
       uid: string;
@@ -148,11 +223,17 @@ export interface GetLikedTracksData {
   likedTracks: ({
     track: {
       id: string;
-      name: string;
-      artistName: string;
-      albumName: string;
-      imageUrl?: string | null;
-      audioUrl?: string | null;
+      title: string;
+      album: {
+        id: string;
+        title: string;
+        primaryArtist: {
+          id: string;
+          name: string;
+        } & Artist_Key;
+      } & Album_Key;
+      coverUrl?: string | null;
+      audioUrl: string;
       prompt?: string | null;
       visibility: string;
       isCommunity: boolean;
@@ -178,19 +259,35 @@ export interface GetPlaylistsData {
     id: string;
     name: string;
     description?: string | null;
-    imageUrl?: string | null;
+    coverUrl?: string | null;
     isPublic: boolean;
   } & Playlist_Key)[];
 }
 
 export interface GetPodcastsData {
-  podcasts: ({
+  shows: ({
     id: string;
-    name: string;
+    title: string;
     publisher: string;
-    imageUrl?: string | null;
+    coverUrl?: string | null;
     description?: string | null;
-  } & Podcast_Key)[];
+  } & Show_Key)[];
+}
+
+export interface GetUserCameraCapturesData {
+  cameraCaptures: ({
+    id: string;
+    imageUrl?: string | null;
+    videoUrl?: string | null;
+    environmentData?: string | null;
+    createdAt: TimestampString;
+    generatedTrack?: {
+      id: string;
+      title: string;
+      coverUrl?: string | null;
+      audioUrl: string;
+    } & Track_Key;
+  } & CameraCapture_Key)[];
 }
 
 export interface GetUserSettingsData {
@@ -200,22 +297,48 @@ export interface GetUserSettingsData {
     theme: string;
     parentalControlsEnabled: boolean;
     stripeCustomerId?: string | null;
+    user: {
+      displayName?: string | null;
+      avatarUrl?: string | null;
+    };
   } & UserSettings_Key;
 }
 
 export interface GetUserTracksData {
   tracks: ({
     id: string;
-    name: string;
-    artistName: string;
-    albumName: string;
-    imageUrl?: string | null;
-    audioUrl?: string | null;
+    title: string;
+    album: {
+      id: string;
+      title: string;
+      primaryArtist: {
+        id: string;
+        name: string;
+      } & Artist_Key;
+    } & Album_Key;
+    coverUrl?: string | null;
+    audioUrl: string;
     prompt?: string | null;
     visibility: string;
     isCommunity: boolean;
     createdAt: TimestampString;
   } & Track_Key)[];
+}
+
+export interface GetUserVideoDigestionsData {
+  videoDigestions: ({
+    id: string;
+    videoUrl: string;
+    extractedAudioUrl?: string | null;
+    atmosphereSummary?: string | null;
+    createdAt: TimestampString;
+    generatedTrack?: {
+      id: string;
+      title: string;
+      coverUrl?: string | null;
+      audioUrl: string;
+    } & Track_Key;
+  } & VideoDigestion_Key)[];
 }
 
 export interface LikeTrackData {
@@ -230,6 +353,12 @@ export interface LikedTrack_Key {
   userUid: string;
   trackId: string;
   __typename?: 'LikedTrack_Key';
+}
+
+export interface MusicCategory_Key {
+  trackId: string;
+  categoryId: string;
+  __typename?: 'MusicCategory_Key';
 }
 
 export interface PaymentHistory_Key {
@@ -248,14 +377,10 @@ export interface Playlist_Key {
   __typename?: 'Playlist_Key';
 }
 
-export interface PodcastEpisode_Key {
-  id: string;
-  __typename?: 'PodcastEpisode_Key';
-}
-
-export interface Podcast_Key {
-  id: string;
-  __typename?: 'Podcast_Key';
+export interface PodcastCategory_Key {
+  showId: string;
+  categoryId: string;
+  __typename?: 'PodcastCategory_Key';
 }
 
 export interface RecordPaymentData {
@@ -286,13 +411,24 @@ export interface RemoveLikedTrackVariables {
   trackId: string;
 }
 
+export interface Show_Key {
+  id: string;
+  __typename?: 'Show_Key';
+}
+
+export interface TrackArtist_Key {
+  trackId: string;
+  artistId: string;
+  __typename?: 'TrackArtist_Key';
+}
+
 export interface Track_Key {
   id: string;
   __typename?: 'Track_Key';
 }
 
 export interface UpdateUserPreferencesData {
-  user_upsert: User_Key;
+  user_update?: User_Key | null;
 }
 
 export interface UpdateUserPreferencesVariables {
@@ -316,7 +452,14 @@ export interface UpsertUserSettingsVariables {
 
 export interface UpsertUserVariables {
   displayName?: string | null;
-  email?: string | null;
+  username: string;
+  email: string;
+}
+
+export interface UserEpisodeProgress_Key {
+  userUid: string;
+  episodeId: string;
+  __typename?: 'UserEpisodeProgress_Key';
 }
 
 export interface UserSettings_Key {
@@ -327,6 +470,11 @@ export interface UserSettings_Key {
 export interface User_Key {
   uid: string;
   __typename?: 'User_Key';
+}
+
+export interface VideoDigestion_Key {
+  id: string;
+  __typename?: 'VideoDigestion_Key';
 }
 
 interface CreateTrackRef {
@@ -343,15 +491,15 @@ export function createTrack(dc: DataConnect, vars: CreateTrackVariables): Mutati
 
 interface UpsertUserRef {
   /* Allow users to create refs without passing in DataConnect */
-  (vars?: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+  (vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars?: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+  (dc: DataConnect, vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
   operationName: string;
 }
 export const upsertUserRef: UpsertUserRef;
 
-export function upsertUser(vars?: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
-export function upsertUser(dc: DataConnect, vars?: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+export function upsertUser(vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+export function upsertUser(dc: DataConnect, vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
 
 interface CreatePlaylistRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -472,6 +620,30 @@ export const removeBookmarkedTrackRef: RemoveBookmarkedTrackRef;
 
 export function removeBookmarkedTrack(vars: RemoveBookmarkedTrackVariables): MutationPromise<RemoveBookmarkedTrackData, RemoveBookmarkedTrackVariables>;
 export function removeBookmarkedTrack(dc: DataConnect, vars: RemoveBookmarkedTrackVariables): MutationPromise<RemoveBookmarkedTrackData, RemoveBookmarkedTrackVariables>;
+
+interface CreateCameraCaptureRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars?: CreateCameraCaptureVariables): MutationRef<CreateCameraCaptureData, CreateCameraCaptureVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars?: CreateCameraCaptureVariables): MutationRef<CreateCameraCaptureData, CreateCameraCaptureVariables>;
+  operationName: string;
+}
+export const createCameraCaptureRef: CreateCameraCaptureRef;
+
+export function createCameraCapture(vars?: CreateCameraCaptureVariables): MutationPromise<CreateCameraCaptureData, CreateCameraCaptureVariables>;
+export function createCameraCapture(dc: DataConnect, vars?: CreateCameraCaptureVariables): MutationPromise<CreateCameraCaptureData, CreateCameraCaptureVariables>;
+
+interface CreateVideoDigestionRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateVideoDigestionVariables): MutationRef<CreateVideoDigestionData, CreateVideoDigestionVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateVideoDigestionVariables): MutationRef<CreateVideoDigestionData, CreateVideoDigestionVariables>;
+  operationName: string;
+}
+export const createVideoDigestionRef: CreateVideoDigestionRef;
+
+export function createVideoDigestion(vars: CreateVideoDigestionVariables): MutationPromise<CreateVideoDigestionData, CreateVideoDigestionVariables>;
+export function createVideoDigestion(dc: DataConnect, vars: CreateVideoDigestionVariables): MutationPromise<CreateVideoDigestionData, CreateVideoDigestionVariables>;
 
 interface GetUserTracksRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -604,4 +776,28 @@ export const getBookmarkedTracksRef: GetBookmarkedTracksRef;
 
 export function getBookmarkedTracks(options?: ExecuteQueryOptions): QueryPromise<GetBookmarkedTracksData, undefined>;
 export function getBookmarkedTracks(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetBookmarkedTracksData, undefined>;
+
+interface GetUserCameraCapturesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetUserCameraCapturesData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<GetUserCameraCapturesData, undefined>;
+  operationName: string;
+}
+export const getUserCameraCapturesRef: GetUserCameraCapturesRef;
+
+export function getUserCameraCaptures(options?: ExecuteQueryOptions): QueryPromise<GetUserCameraCapturesData, undefined>;
+export function getUserCameraCaptures(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetUserCameraCapturesData, undefined>;
+
+interface GetUserVideoDigestionsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetUserVideoDigestionsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<GetUserVideoDigestionsData, undefined>;
+  operationName: string;
+}
+export const getUserVideoDigestionsRef: GetUserVideoDigestionsRef;
+
+export function getUserVideoDigestions(options?: ExecuteQueryOptions): QueryPromise<GetUserVideoDigestionsData, undefined>;
+export function getUserVideoDigestions(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetUserVideoDigestionsData, undefined>;
 

@@ -80,9 +80,9 @@ val connector: DefaultConnector = DefaultConnector.getInstance(
 ### DefaultConnector - Query and Mutation Properties
 
 The `default` Data Connect connector defines
-11 queries and
-12 mutations,
-a total of 23 operations.
+13 queries and
+14 mutations,
+a total of 27 operations.
 Each of these operations is exposed
 as a property of [DefaultConnector].
 
@@ -207,13 +207,13 @@ last argument of the `execute()` method.
 If a mutation has _required_ variables then they must be specified as
 arguments to the `execute()` method.
 
-For example, the "CreateTrack" mutation has 4 required variables ("name", "artistName", "albumName", and "isCommunity")
+For example, the "CreateTrack" mutation has 4 required variables ("title", "albumId", "audioUrl", and "isCommunity")
 and can be executed via the [DefaultConnector.createTrack]
 property as follows:
 
 ```kotlin
 val connector = DefaultConnector.instance
-val mutationResult = connector.createTrack.execute(name="waldo", artistName="baz", albumName="garply", isCommunity=false)
+val mutationResult = connector.createTrack.execute(title="thud", albumId="quux", audioUrl="bar", isCommunity=false)
 println("CreateTrack mutation returned: ${mutationResult.data}")
 ```
 
@@ -226,17 +226,18 @@ however, if they _are_ specified,
 then they are specified in a Kotlin DSL block as the last argument
 of the `execute()` method.
 
-For example, the "UpsertUserSettings" mutation has 3 optional variables ("theme", "parentalControlsEnabled", and "stripeCustomerId")
-and can be executed via the [DefaultConnector.upsertUserSettings]
+For example, the "CreateCameraCapture" mutation has 4 optional variables ("imageUrl", "videoUrl", "environmentData", and "generatedTrackId")
+and can be executed via the [DefaultConnector.createCameraCapture]
 property as follows:
 
 ```kotlin
 val connector = DefaultConnector.instance
-val mutationResult = connector.upsertUserSettings.execute {
-  theme = "corge"
-  parentalControlsEnabled = true
-  stripeCustomerId = "qux"
+val mutationResult = connector.createCameraCapture.execute {
+  imageUrl = "grault"
+  videoUrl = "waldo"
+  environmentData = "fred"
+  generatedTrackId = "grault"
 }
-println("UpsertUserSettings mutation returned: ${mutationResult.data}")
+println("CreateCameraCapture mutation returned: ${mutationResult.data}")
 ```
 

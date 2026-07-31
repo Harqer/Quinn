@@ -8,6 +8,16 @@
 - [x] `PodcastGeneratorScreen.tsx`: Replace the dummy `/placeholder-audio.mp3` with the dynamic audio blob returned by `NarrativeService`.
 - [x] `AlbumView.tsx` & `LoginScreen.tsx`: Replace dummy background artwork and static routing params with real context states.
 
+# Backend Tasks
+- [x] Create `src/middlewares/quota.ts` (monthly tier quota enforcement middleware)
+- [x] Create `src/services/QuotaResetService.ts` (monthly RTDB usage reset & archiving)
+- [x] Create `src/routes/billing.ts` (Google Play RTDN webhook & cron endpoint)
+- [x] Modify `src/services/StripeService.ts` (handle webhook event processing & DB tier update)
+- [x] Modify `src/routes/stripe.ts` (add `/webhook` endpoint with raw body parser and signature verification)
+- [x] Modify `src/routes/music.ts` (attach `checkMonthlyQuota` middleware to generation endpoints)
+- [x] Modify `src/app.ts` (mount billing router, configure stripe raw body middleware)
+- [x] Verification: `npx tsc --noEmit` ✓ (0 errors) & `npm run test` ✓ (5/5 tests passed)
+
 # Android UI Tasks
 - [x] 1. Delete `WearableActivity.kt` and rewrite its UI functionality into `WearableStreamingService.kt` using `session.addDisplay().sendContent { flexBox {} }`.
 - [x] 2. Update `ChatScreen.kt` to hydrate real track data from the backend instead of using the `dummy` ID, and fix placeholder images. Wire up Settings/Attachment buttons to simple snackbar/toast messages.

@@ -61,7 +61,7 @@ fun PodcastGeneratorScreen(
             TopAppBar(
                 title = { 
                     Text(
-                        "Auralis AI Studio", 
+                        "Mave Studio", 
                         color = onSurfaceColor,
                         fontWeight = FontWeight.Bold
                     ) 
@@ -100,7 +100,7 @@ fun PodcastGeneratorScreen(
                         value = promptText,
                         onValueChange = { promptText = it },
                         modifier = Modifier.weight(1f),
-                        placeholder = { Text("Compose a cinematic synthwave track...", color = Color.Gray) },
+                        placeholder = { Text("Describe the podcast you want to create...", color = Color.Gray) },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,

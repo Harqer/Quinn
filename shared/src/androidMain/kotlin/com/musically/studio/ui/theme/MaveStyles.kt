@@ -7,6 +7,9 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Typography
 
 object MaveStyles {
+    val scaffoldStyle = Style {
+        background(colors.background)
+    }
     val primaryButton = Style {}
     val outlinedButton = Style {}
     val maveCardStyle = Style {}
@@ -25,12 +28,15 @@ object MaveStyles {
     val listRowItemStyle = Style {}
     val libraryRowItemStyle = Style {}
     val filterPillStyle = Style {}
+
+    // Premium / Subscription screen styles
+    val premiumPlanCardStyle = Style {}
+    val premiumBadgeStyle = Style {}
+    val premiumCTAButtonStyle = Style {}
 }
 
 val StyleScope.colors: ColorScheme
-    @androidx.compose.runtime.Composable
-    get() = LocalMaveColorScheme.current
+    get() = LocalMaveColorScheme.currentValue
 
 val StyleScope.typography: Typography
-    @androidx.compose.runtime.Composable
-    get() = MaterialTheme.typography
+    get() = com.musically.studio.ui.theme.Typography

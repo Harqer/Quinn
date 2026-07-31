@@ -1,5 +1,12 @@
 const { queryRef, executeQuery, validateArgsWithOptions, mutationRef, executeMutation, validateArgs } = require('firebase/data-connect');
 
+const CategoryType = {
+  GENRE: "GENRE",
+  MOOD: "MOOD",
+  ACTIVITY: "ACTIVITY",
+}
+exports.CategoryType = CategoryType;
+
 const connectorConfig = {
   connector: 'default',
   service: 'musically-studio',
@@ -22,7 +29,7 @@ exports.createTrack = function createTrack(dcOrVars, vars) {
 ;
 
 const upsertUserRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return mutationRef(dcInstance, 'UpsertUser', inputVars);
 }
@@ -30,7 +37,7 @@ upsertUserRef.operationName = 'UpsertUser';
 exports.upsertUserRef = upsertUserRef;
 
 exports.upsertUser = function upsertUser(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars);
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
   return executeMutation(upsertUserRef(dcInstance, inputVars));
 }
 ;
@@ -172,6 +179,34 @@ exports.removeBookmarkedTrackRef = removeBookmarkedTrackRef;
 exports.removeBookmarkedTrack = function removeBookmarkedTrack(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
   return executeMutation(removeBookmarkedTrackRef(dcInstance, inputVars));
+}
+;
+
+const createCameraCaptureRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateCameraCapture', inputVars);
+}
+createCameraCaptureRef.operationName = 'CreateCameraCapture';
+exports.createCameraCaptureRef = createCameraCaptureRef;
+
+exports.createCameraCapture = function createCameraCapture(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars);
+  return executeMutation(createCameraCaptureRef(dcInstance, inputVars));
+}
+;
+
+const createVideoDigestionRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateVideoDigestion', inputVars);
+}
+createVideoDigestionRef.operationName = 'CreateVideoDigestion';
+exports.createVideoDigestionRef = createVideoDigestionRef;
+
+exports.createVideoDigestion = function createVideoDigestion(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createVideoDigestionRef(dcInstance, inputVars));
 }
 ;
 
@@ -337,5 +372,35 @@ exports.getBookmarkedTracks = function getBookmarkedTracks(dcOrOptions, options)
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
   return executeQuery(getBookmarkedTracksRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getUserCameraCapturesRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetUserCameraCaptures');
+}
+getUserCameraCapturesRef.operationName = 'GetUserCameraCaptures';
+exports.getUserCameraCapturesRef = getUserCameraCapturesRef;
+
+exports.getUserCameraCaptures = function getUserCameraCaptures(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(getUserCameraCapturesRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getUserVideoDigestionsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetUserVideoDigestions');
+}
+getUserVideoDigestionsRef.operationName = 'GetUserVideoDigestions';
+exports.getUserVideoDigestionsRef = getUserVideoDigestionsRef;
+
+exports.getUserVideoDigestions = function getUserVideoDigestions(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(getUserVideoDigestionsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;

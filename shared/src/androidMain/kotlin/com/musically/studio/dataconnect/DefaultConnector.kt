@@ -23,11 +23,15 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val bookmarkTrack: BookmarkTrackMutation
   
+    public val createCameraCapture: CreateCameraCaptureMutation
+  
     public val createPlaylist: CreatePlaylistMutation
   
     public val createPodcast: CreatePodcastMutation
   
     public val createTrack: CreateTrackMutation
+  
+    public val createVideoDigestion: CreateVideoDigestionMutation
   
     public val getAlbums: GetAlbumsQuery
   
@@ -47,9 +51,13 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val getPodcasts: GetPodcastsQuery
   
+    public val getUserCameraCaptures: GetUserCameraCapturesQuery
+  
     public val getUserSettings: GetUserSettingsQuery
   
     public val getUserTracks: GetUserTracksQuery
+  
+    public val getUserVideoDigestions: GetUserVideoDigestionsQuery
   
     public val likeTrack: LikeTrackMutation
   
@@ -116,6 +124,10 @@ private class DefaultConnectorImpl(
       BookmarkTrackMutationImpl(this)
     }
   
+    override val createCameraCapture by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      CreateCameraCaptureMutationImpl(this)
+    }
+  
     override val createPlaylist by lazy(LazyThreadSafetyMode.PUBLICATION) {
       CreatePlaylistMutationImpl(this)
     }
@@ -126,6 +138,10 @@ private class DefaultConnectorImpl(
   
     override val createTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
       CreateTrackMutationImpl(this)
+    }
+  
+    override val createVideoDigestion by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      CreateVideoDigestionMutationImpl(this)
     }
   
     override val getAlbums by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -164,12 +180,20 @@ private class DefaultConnectorImpl(
       GetPodcastsQueryImpl(this)
     }
   
+    override val getUserCameraCaptures by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetUserCameraCapturesQueryImpl(this)
+    }
+  
     override val getUserSettings by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetUserSettingsQueryImpl(this)
     }
   
     override val getUserTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetUserTracksQueryImpl(this)
+    }
+  
+    override val getUserVideoDigestions by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetUserVideoDigestionsQueryImpl(this)
     }
   
     override val likeTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -210,9 +234,11 @@ private class DefaultConnectorImpl(
     listOf(
       addTrackToPlaylist,
         bookmarkTrack,
+        createCameraCapture,
         createPlaylist,
         createPodcast,
         createTrack,
+        createVideoDigestion,
         likeTrack,
         recordPayment,
         removeBookmarkedTrack,
@@ -235,8 +261,10 @@ private class DefaultConnectorImpl(
         getPaymentHistory,
         getPlaylists,
         getPodcasts,
+        getUserCameraCaptures,
         getUserSettings,
         getUserTracks,
+        getUserVideoDigestions,
         
     )
 
@@ -402,6 +430,21 @@ private class BookmarkTrackMutationImpl(
   )
 
 
+private class CreateCameraCaptureMutationImpl(
+  connector: DefaultConnector
+):
+  CreateCameraCaptureMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      CreateCameraCaptureMutation.Data,
+      CreateCameraCaptureMutation.Variables
+  >(
+    connector,
+    CreateCameraCaptureMutation.Companion.operationName,
+    CreateCameraCaptureMutation.Companion.dataDeserializer,
+    CreateCameraCaptureMutation.Companion.variablesSerializer,
+  )
+
+
 private class CreatePlaylistMutationImpl(
   connector: DefaultConnector
 ):
@@ -444,6 +487,21 @@ private class CreateTrackMutationImpl(
     CreateTrackMutation.Companion.operationName,
     CreateTrackMutation.Companion.dataDeserializer,
     CreateTrackMutation.Companion.variablesSerializer,
+  )
+
+
+private class CreateVideoDigestionMutationImpl(
+  connector: DefaultConnector
+):
+  CreateVideoDigestionMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      CreateVideoDigestionMutation.Data,
+      CreateVideoDigestionMutation.Variables
+  >(
+    connector,
+    CreateVideoDigestionMutation.Companion.operationName,
+    CreateVideoDigestionMutation.Companion.dataDeserializer,
+    CreateVideoDigestionMutation.Companion.variablesSerializer,
   )
 
 
@@ -582,6 +640,21 @@ private class GetPodcastsQueryImpl(
   )
 
 
+private class GetUserCameraCapturesQueryImpl(
+  connector: DefaultConnector
+):
+  GetUserCameraCapturesQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetUserCameraCapturesQuery.Data,
+      Unit
+  >(
+    connector,
+    GetUserCameraCapturesQuery.Companion.operationName,
+    GetUserCameraCapturesQuery.Companion.dataDeserializer,
+    GetUserCameraCapturesQuery.Companion.variablesSerializer,
+  )
+
+
 private class GetUserSettingsQueryImpl(
   connector: DefaultConnector
 ):
@@ -609,6 +682,21 @@ private class GetUserTracksQueryImpl(
     GetUserTracksQuery.Companion.operationName,
     GetUserTracksQuery.Companion.dataDeserializer,
     GetUserTracksQuery.Companion.variablesSerializer,
+  )
+
+
+private class GetUserVideoDigestionsQueryImpl(
+  connector: DefaultConnector
+):
+  GetUserVideoDigestionsQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetUserVideoDigestionsQuery.Data,
+      Unit
+  >(
+    connector,
+    GetUserVideoDigestionsQuery.Companion.operationName,
+    GetUserVideoDigestionsQuery.Companion.dataDeserializer,
+    GetUserVideoDigestionsQuery.Companion.variablesSerializer,
   )
 
 

@@ -37,6 +37,7 @@ public interface UpsertUserSettingsMutation :
       
       @kotlin.DslMarker public annotation class BuilderDsl
 
+      
       @BuilderDsl
       public interface Builder {
         public var theme: String?
@@ -46,6 +47,7 @@ public interface UpsertUserSettingsMutation :
       }
 
       public companion object {
+        
         @Suppress("NAME_SHADOWING")
         public fun build(
           

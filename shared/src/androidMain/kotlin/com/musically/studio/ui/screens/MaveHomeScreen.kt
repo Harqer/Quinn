@@ -54,20 +54,34 @@ fun MaveHomeScreen(
             TopAppBar(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(CircleShape)
-                                .background(com.musically.studio.ui.theme.MaveBrand)
-                                .clickable { onNavigateToProfile() },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "M",
-                                color = Color.Black,
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.labelLarge
+                        val photoUrl = viewModel.getUserPhotoUrl()
+                        if (photoUrl != null) {
+                            AsyncImage(
+                                model = photoUrl,
+                                contentDescription = "Profile",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .clickable { onNavigateToProfile() }
                             )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(com.musically.studio.ui.theme.MaveBrand)
+                                    .clickable { onNavigateToProfile() },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                val initial = viewModel.getUserDisplayName()?.firstOrNull()?.toString()?.uppercase() ?: "M"
+                                Text(
+                                    text = initial,
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
@@ -99,6 +113,7 @@ fun MaveHomeScreen(
                     com.musically.studio.ui.components.atoms.MaveButton(
                         text = "Retry",
                         onClick = { 
+                            viewModel.clearCatalogError()
                             viewModel.fetchUserTracks()
                             viewModel.fetchCommunityTracks() 
                         }

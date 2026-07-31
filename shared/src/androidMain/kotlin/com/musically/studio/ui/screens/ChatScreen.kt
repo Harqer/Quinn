@@ -250,12 +250,23 @@ fun ChatScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable(interactionSource = trackInteractionSource, indication = null) {
-                                            onTrackClick(msg.id)
+                                            // Use Data Connect track ID if available; msg.id is the chat-message ID and must NOT be used as a track ID
+                                            val dcTrackId = msg.tracks?.firstOrNull()?.trackId
+                                            if (dcTrackId != null) onTrackClick(dcTrackId)
                                         }
                                         .styleable(styleState = trackStyleState, style = MaveStyles.musicTrackCardStyle), // Styles API compliance
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Box(modifier = Modifier.size(64.dp).background(Color.DarkGray, RoundedCornerShape(8.dp)))
+                                    if (msg.coverArtUrl != null) {
+                                        coil.compose.AsyncImage(
+                                            model = msg.coverArtUrl,
+                                            contentDescription = "Track Art",
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.size(64.dp).clip(RoundedCornerShape(8.dp))
+                                        )
+                                    } else {
+                                        Box(modifier = Modifier.size(64.dp).background(Color.DarkGray, RoundedCornerShape(8.dp)))
+                                    }
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(msg.tracks[0].title, fontWeight = FontWeight.Bold)

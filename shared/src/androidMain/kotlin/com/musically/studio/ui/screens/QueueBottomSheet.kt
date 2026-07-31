@@ -1,5 +1,6 @@
 package com.musically.studio.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -16,7 +17,8 @@ fun QueueBottomSheet(
     viewModel: MainViewModel,
     onDismiss: () -> Unit
 ) {
-    val tracks by viewModel.tracks.collectAsState()
+    val queue by viewModel.queue.collectAsState()
+    val queueIndex by viewModel.queueIndex.collectAsState()
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -31,13 +33,23 @@ fun QueueBottomSheet(
             )
             Spacer(modifier = Modifier.height(16.dp))
             
-            if (tracks.isEmpty()) {
+            if (queue.isEmpty()) {
                 Text("Queue is empty.", color = MaterialTheme.colorScheme.onSurfaceVariant)
             } else {
-                tracks.take(5).forEach { track ->
+                queue.forEachIndexed { index, track ->
+                    val isCurrent = index == queueIndex
                     ListItem(
-                        headlineContent = { Text(track.name, color = MaterialTheme.colorScheme.onSurface) },
-                        supportingContent = { Text(track.artists.joinToString { it.name }, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                        headlineContent = { 
+                            Text(
+                                track.name, 
+                                color = if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                                fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal
+                            ) 
+                        },
+                        supportingContent = { Text(track.artists.joinToString { it.name }, color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                        modifier = Modifier.clickable {
+                            viewModel.playQueue(queue, index)
+                        }
                     )
                 }
             }

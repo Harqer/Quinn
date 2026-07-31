@@ -1,4 +1,5 @@
-import { maveGraph } from "./mave-graph.js";
+import { maveVisionFlow, directorFlow, podcastNarratorFlow, generateMusicFlow, lyriaRealtimeFlow } from "./genkit-flows.js";
+import { v4 as uuidv4 } from "uuid";
 import { getAi, generateCoverMedia } from "./ai.js";
 import { WebSocket } from "ws";
 import logger from "../config/logger.js";
@@ -27,6 +28,60 @@ export interface MaveEvent {
 
 const visionLocks = new Map<string, Promise<any>>();
 
+function encodeWAV(samples: Int16Array, sampleRate: number = 48000, numChannels: number = 1) {
+  const buffer = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buffer);
+  
+  const writeString = (view: DataView, offset: number, string: string) => {
+    for (let i = 0; i < string.length; i++) {
+      view.setUint8(offset + i, string.charCodeAt(i));
+    }
+  };
+  
+  writeString(view, 0, 'RIFF');
+  view.setUint32(4, 36 + samples.length * 2, true);
+  writeString(view, 8, 'WAVE');
+  
+  writeString(view, 12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * numChannels * 2, true);
+  view.setUint16(32, numChannels * 2, true);
+  view.setUint16(34, 16, true);
+  
+  writeString(view, 36, 'data');
+  view.setUint32(40, samples.length * 2, true);
+  
+  const data = new Int16Array(buffer, 44);
+  data.set(samples);
+  
+  return Buffer.from(buffer);
+}
+
+const createMusicInteraction = async (input: string, image?: string, previousId?: string, onChunk?: any) => {
+    try {
+        const stream = await lyriaRealtimeFlow.stream({ input, image });
+        
+        for await (const chunk of stream.stream) {
+            if (onChunk) {
+                onChunk(chunk);
+            }
+        }
+        
+        const output = await stream.output;
+        return {
+            id: previousId || uuidv4(),
+            output_text: output.output_text,
+            output_audio: output.output_audio,
+        };
+    } catch (err) {
+        logger.error("Lyria RealTime flow error", { error: err });
+        throw err;
+    }
+};
+
 export class MusicService {
   /**
    * Processes vision event with Gemini Thinking SDK streaming and RTDB state sync.
@@ -39,94 +94,89 @@ export class MusicService {
     const newLock = existingLock.then(async () => {
       try {
         const previousState = await this.safeGetSession(sessionId) || {};
-
-        // Real-time piping of chunks from the graph nodes
-        const config = {
-          configurable: {
-            onChunk: (chunk: { type: string; text: string }) => {
-              // Forward everything from the graph directly as "thinking" for natural feedback
-              this.safeSend(ws, {
-                type: "mave_thinking",
-                chunk: chunk.text,
-                isThinking: true
-              });
-
-              // Synchronize to RTDB for multi-surface consistency
-              this.syncToRtdb(sessionId, { chunk: chunk.text, isThinking: true });
-            }
-          }
-        };
-
-        // Execute graph as a stream to handle node-level parallelism
-        const stream = await maveGraph.stream({
-          ...previousState,
-          image
-        }, config);
-
         let finalState = { ...previousState };
 
-        for await (const update of stream) {
-          if (update.visualAnalyzer) {
-            const vision = update.visualAnalyzer.visionDescription;
-            this.safeSend(ws, { type: "agent_update", vision });
-            await this.syncToRtdb(sessionId, { vision, isThinking: false });
-            finalState.visionDescription = vision;
-          }
+        // 1. Visual Analyzer Flow
+        const visualStream = await maveVisionFlow.stream({ image, locale: previousState.locale });
+        let vision = "";
+        for await (const chunk of visualStream.stream) {
+          this.safeSend(ws, { type: "mave_thinking", chunk, isThinking: true });
+          this.syncToRtdb(sessionId, { chunk, isThinking: true });
+        }
+        const visualOutput = await visualStream.output;
+        vision = visualOutput.visionDescription;
+        this.safeSend(ws, { type: "agent_update", vision });
+        await this.syncToRtdb(sessionId, { vision, isThinking: false });
+        finalState.visionDescription = vision;
 
-          if (update.director) {
-            const reasoning = update.director.directorReasoning;
-            const modality = update.director.modality;
-            this.safeSend(ws, { type: "agent_update", reasoning, modality });
-            await this.syncToRtdb(sessionId, { reasoning, modality, isThinking: false });
-            finalState.directorReasoning = reasoning;
-            finalState.modality = modality;
-          }
+        // 2. Director Flow
+        const directorOutput = await directorFlow({
+          visionDescription: vision,
+          userFeedback: previousState.userFeedback,
+          locale: previousState.locale
+        });
+        
+        const reasoning = directorOutput.reasoning;
+        const modality = directorOutput.modality;
+        this.safeSend(ws, { type: "agent_update", reasoning, modality });
+        await this.syncToRtdb(sessionId, { reasoning, modality, isThinking: false });
+        finalState.directorReasoning = reasoning;
+        finalState.modality = modality;
 
-          if (update.musicDirector) {
-            const prompts = update.musicDirector.musicalPrompts;
-            const audio = update.musicDirector.generatedAudio;
-            const prevId = update.musicDirector.previousInteractionId;
+        // 3. Modality branching
+        if (modality === 'music' || modality === 'mixed') {
+          const input = `Visual Vibe: ${vision}\nUser Feedback: ${previousState.userFeedback || "Generate music fitting this atmosphere"}`;
+          const interaction = await createMusicInteraction(input, image, previousState.previousInteractionId, (chunk: any) => {
+              this.safeSend(ws, { type: "mave_thinking", chunk: chunk.text, isThinking: true });
+              this.syncToRtdb(sessionId, { chunk: chunk.text, isThinking: true });
+          });
+          
+          const prompts = interaction.output_text?.split("\n").filter((l: string) => l.trim().length > 0) || [];
+          const audio = interaction.output_audio?.data;
 
-            // 1. Send metadata (prompts) to RTDB for persistent session state
-            await this.syncToRtdb(sessionId, {
-              prompts,
-              isThinking: false,
-              interactionId: prevId
-            });
+          await this.syncToRtdb(sessionId, { prompts, isThinking: false, interactionId: interaction.id });
+          this.safeSend(ws, { type: "agent_update", prompts, chunk: audio, interactionId: interaction.id });
+          finalState.musicalPrompts = prompts;
+          finalState.previousInteractionId = interaction.id;
+        }
 
-            // 2. Send structured audio block via WebSocket for low-latency playback
-            this.safeSend(ws, {
-              type: "agent_update",
-              prompts,
-              chunk: audio, // Forward structured audio as a "chunk"
-              interactionId: prevId
-            });
+        if (modality === 'podcast' || modality === 'audiobook' || modality === 'mixed') {
+           const podcastStream = await podcastNarratorFlow.stream({
+              visionDescription: vision,
+              userFeedback: previousState.userFeedback,
+              modality,
+              locale: previousState.locale
+           });
 
-            finalState.musicalPrompts = prompts;
-            finalState.previousInteractionId = prevId;
-          }
+           for await (const chunk of podcastStream.stream) {
+               this.safeSend(ws, { type: "mave_thinking", chunk, isThinking: true });
+               this.syncToRtdb(sessionId, { chunk, isThinking: true });
+           }
+           
+           const podcastOutput = await podcastStream.output;
+           const script = podcastOutput.script;
+           this.safeSend(ws, { type: "agent_update", script });
+           await this.syncToRtdb(sessionId, { script, isThinking: false });
+           finalState.podcastScript = script;
+        }
 
-          if (update.podcastNarrator) {
-            const script = update.podcastNarrator.podcastScript;
-            this.safeSend(ws, { type: "agent_update", script });
-            await this.syncToRtdb(sessionId, { script, isThinking: false });
-            finalState.podcastScript = script;
-          }
-
-          if (update.mediaGenerator) {
-            const cover = update.mediaGenerator.coverArtUrl;
-            const video = update.mediaGenerator.videoMotionUrl;
-            if (cover) {
-              this.safeSend(ws, { type: "cover_art_update", coverArtUrl: cover });
-              await this.syncToRtdb(sessionId, { coverArtUrl: cover, isThinking: false });
-              finalState.coverArtUrl = cover;
+        // 4. Media Generator Node (for cover_art / video_motion)
+        if (directorOutput.visualIntent && directorOutput.visualIntent !== 'none') {
+            const visualPrompt = `Scene: ${vision}. Create a visual atmosphere matching this POV.`;
+            try {
+              const result = await generateCoverMedia(visualPrompt, directorOutput.visualIntent === 'cover_art' ? 'cover_art' : 'video_motion', 'latest');
+              if (directorOutput.visualIntent === 'cover_art') {
+                this.safeSend(ws, { type: "cover_art_update", coverArtUrl: result.url });
+                await this.syncToRtdb(sessionId, { coverArtUrl: result.url, isThinking: false });
+                finalState.coverArtUrl = result.url;
+              } else {
+                this.safeSend(ws, { type: "video_motion_update", videoMotionUrl: result.url });
+                await this.syncToRtdb(sessionId, { videoMotionUrl: result.url, isThinking: false });
+                finalState.videoMotionUrl = result.url;
+              }
+            } catch (e) {
+                logger.warn("[MAVE_SERVICE] Visual media generation failed", { error: e });
             }
-            if (video) {
-              this.safeSend(ws, { type: "video_motion_update", videoMotionUrl: video });
-              await this.syncToRtdb(sessionId, { videoMotionUrl: video, isThinking: false });
-              finalState.videoMotionUrl = video;
-            }
-          }
         }
 
         await this.safeSaveSession(sessionId, finalState);
@@ -221,25 +271,21 @@ export class MusicService {
     try {
       const previousState = await this.safeGetSession(sessionId) || {};
 
-      const result = await (maveGraph as any).invoke({
-        ...previousState,
-        userFeedback: feedback
-      });
+      const directorOutput = await directorFlow({ visionDescription: previousState.visionDescription || "Unknown", userFeedback: feedback, locale: previousState.locale });
 
       const updatePayload: MaveEvent = {
         type: "agent_update",
-        prompts: result.musicalPrompts,
         feedback: feedback,
-        script: result.podcastScript,
-        reasoning: result.directorReasoning,
-        modality: result.modality
+        reasoning: directorOutput.reasoning,
+        modality: directorOutput.modality
       };
 
       this.safeSend(ws, updatePayload);
       await this.syncToRtdb(sessionId, updatePayload);
-      await this.safeSaveSession(sessionId, result);
+      const newState = { ...previousState, ...updatePayload };
+      await this.safeSaveSession(sessionId, newState);
 
-      return result;
+      return updatePayload;
     } catch (err) {
       logger.error("[MAVE_SERVICE] Failed to handle feedback", { error: err });
       throw err;
@@ -263,59 +309,18 @@ export class MusicService {
 
     const promptText = type || "Ambient electronic";
     
-    // Get track metadata from Gemini concurrently
-    let trackName = "Generated Track";
-    let artistName = "Mave AI";
-    let coverUrl = "";
-
     try {
-      const metaAi = getAi();
-      const metaRes = await metaAi.models.generateContent({
-        model: "gemini-3.6-flash",
-        contents: `Generate a JSON object with 'trackName' and 'artistName' for a song described as: ${promptText}. Do not use markdown tags, just return the JSON.`,
-      });
-      const metaData = JSON.parse(metaRes.text || "{}");
-      if (metaData.trackName) trackName = metaData.trackName;
-      if (metaData.artistName) artistName = metaData.artistName;
-    } catch (e) {
-      logger.warn("Failed to generate metadata for track", e);
-    }
-
-    try {
-      const metaAi = getAi();
-      const lyriaRes = await metaAi.models.generateContent({
-        model: "lyria-3-pro-preview",
-        contents: promptText
-      });
-
-      const audioChunks: Buffer[] = [];
-      if (lyriaRes.candidates?.[0]?.content?.parts) {
-        for (const part of lyriaRes.candidates[0].content.parts) {
-          if (part.inlineData?.data) {
-            audioChunks.push(Buffer.from(part.inlineData.data, "base64"));
-          }
-        }
-      }
-      
-      let audioUrl = "";
-      if (audioChunks.length > 0) {
-        // Assume audio comes back as raw PCM or already wav, let's wrap it in WAV to be safe or pass through
-        const combinedPcm = Buffer.concat(audioChunks);
-        const wavBuffer = encodeWAV(combinedPcm, 2, 48000);
-        audioUrl = `data:audio/wav;base64,${wavBuffer.toString("base64")}`;
-      } else {
-        throw new Error("No audio returned from Lyria 3");
-      }
+      const result = await generateMusicFlow({ promptText });
 
       return {
         response: `I've generated a new track based on your prompt: ${promptText}. Hope you enjoy it!`,
-        audioUrl,
-        coverUrl,
-        trackName,
-        artistName,
+        audioUrl: result.audioUrl,
+        coverUrl: "",
+        trackName: result.trackName,
+        artistName: result.artistName,
       };
     } catch (err) {
-      logger.error("Failed to generate music via Lyria 3 Pro", err);
+      logger.error("Failed to generate music via Genkit flow", err);
       throw err;
     }
   }

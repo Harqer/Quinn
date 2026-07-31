@@ -40,7 +40,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.style.styleable
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import com.musically.studio.ui.theme.MaveStyles
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.core.net.toUri
@@ -63,7 +72,7 @@ fun MaveApp(
     val adaptiveInfo = currentWindowAdaptiveInfo()
     val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
 
-    val topLevelRoutes = setOf<Route>(Route.Welcome, Route.Home, Route.Search, Route.Chat, Route.Podcast, Route.Devices, Route.Library)
+    val topLevelRoutes = setOf<Route>(Route.Welcome, Route.Home, Route.Discover, Route.Search, Route.Chat, Route.Podcast, Route.Devices, Route.Library)
     val startRoute: Route = Route.Welcome
 
     val sceneStrategies: List<androidx.navigation3.scene.SceneStrategy<Route>> = listOf(
@@ -98,6 +107,12 @@ fun MaveApp(
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collectLatest { route ->
             navigator.navigate(route)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.generationBlockedEvent.collectLatest { reason ->
+            navigator.navigate(Route.UsageLimitSheet(reason.name))
         }
     }
 
@@ -150,6 +165,16 @@ fun MaveApp(
                     selected = currentRoute == Route.Home,
                     onClick = { 
                         navigator.navigate(Route.Home) 
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
+                )
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.Default.Podcasts, contentDescription = null) },
+                    label = { Text("Discover") },
+                    selected = currentRoute == Route.Discover,
+                    onClick = { 
+                        navigator.navigate(Route.Discover) 
                         coroutineScope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
@@ -217,11 +242,12 @@ fun MaveApp(
                 selected = currentRoute == Route.Home,
                 onClick = { navigator.navigate(Route.Home) }
             )
+
             item(
-                icon = { Icon(Icons.Default.Search, contentDescription = null) },
-                label = { Text("Search") },
-                selected = currentRoute == Route.Search,
-                onClick = { navigator.navigate(Route.Search) }
+                icon = { Icon(Icons.Default.Podcasts, contentDescription = null) },
+                label = { Text("Discover") },
+                selected = currentRoute == Route.Discover,
+                onClick = { navigator.navigate(Route.Discover) }
             )
             item(
                 icon = { Icon(Icons.Default.AutoAwesome, contentDescription = null) },
@@ -291,21 +317,30 @@ fun MaveApp(
                 }
             }
         ) { paddingValues ->
+            val interactionSource = remember { MutableInteractionSource() }
+            val styleState = rememberUpdatedStyleState(interactionSource) {}
+            
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
+                    .styleable(styleState, MaveStyles.scaffoldStyle),
+                contentAlignment = Alignment.Center
             ) {
-                
-                NavDisplay(
-                    entries = navigationState.toEntries(entryProvider),
-                    onBack = { navigator.goBack() },
-                    transitionSpec = maveTransitionSpec(),
-                    popTransitionSpec = mavePopTransitionSpec(),
-                    sceneStrategies = sceneStrategies
-                )
+                Box(
+                    modifier = Modifier.fillMaxSize() // Will adjust to max width if necessary
+                ) {
+                    NavDisplay(
+                        entries = navigationState.toEntries(entryProvider),
+                        onBack = { navigator.goBack() },
+                        transitionSpec = maveTransitionSpec(),
+                        popTransitionSpec = mavePopTransitionSpec(),
+                        sceneStrategies = sceneStrategies
+                    )
+                }
             }
+        }
         }
     }
 }
-}
+

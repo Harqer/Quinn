@@ -45,8 +45,12 @@ fun UserProfileScreen(
     val vibes by viewModel.userVibes.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val deletionState by viewModel.accountDeletionState.collectAsStateWithLifecycle()
+    val userSettings by viewModel.userSettings.collectAsStateWithLifecycle()
 
     val isOwnProfile = remember(userId) { userId == viewModel.getUserId() }
+
+    val displayName = viewModel.getUserDisplayName() ?: userSettings?.user?.displayName ?: "Studio Creator"
+    val avatarUrl = viewModel.getUserPhotoUrl() ?: userSettings?.user?.avatarUrl
 
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
     var showSignOutConfirmDialog by remember { mutableStateOf(false) }
@@ -74,6 +78,7 @@ fun UserProfileScreen(
 
     LaunchedEffect(userId) {
         viewModel.fetchVibesByUserId(userId)
+        viewModel.fetchUserSettings() // Add a method to fetch settings if needed, or assume it's already fetched
     }
 
     // Delete Account Confirmation Dialog
@@ -251,10 +256,21 @@ fun UserProfileScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    MaveLogo(size = 120)
+                    if (avatarUrl != null) {
+                        coil.compose.AsyncImage(
+                            model = avatarUrl,
+                            contentDescription = "Avatar",
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(CircleShape),
+                            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                        )
+                    } else {
+                        MaveLogo(size = 120)
+                    }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Studio Creator",
+                    text = displayName,
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold

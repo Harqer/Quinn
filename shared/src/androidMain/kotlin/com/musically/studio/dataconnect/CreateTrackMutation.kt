@@ -25,13 +25,13 @@ public interface CreateTrackMutation :
     @kotlinx.serialization.Serializable
   public data class Variables(
   
-    val name: String,
+    val title: String,
   
-    val artistName: String,
+    val albumId: String,
   
-    val albumName: String,
+    val audioUrl: String,
   
-    val imageUrl: com.google.firebase.dataconnect.OptionalVariable<String?>,
+    val coverUrl: com.google.firebase.dataconnect.OptionalVariable<String?>,
   
     val isCommunity: Boolean,
   
@@ -41,46 +41,48 @@ public interface CreateTrackMutation :
       
       @kotlin.DslMarker public annotation class BuilderDsl
 
+      
       @BuilderDsl
       public interface Builder {
-        public var name: String
-        public var artistName: String
-        public var albumName: String
-        public var imageUrl: String?
+        public var title: String
+        public var albumId: String
+        public var audioUrl: String
+        public var coverUrl: String?
         public var isCommunity: Boolean
         
       }
 
       public companion object {
+        
         @Suppress("NAME_SHADOWING")
         public fun build(
-          name: String,artistName: String,albumName: String,isCommunity: Boolean,
+          title: String,albumId: String,audioUrl: String,isCommunity: Boolean,
           block_: Builder.() -> Unit
         ): Variables {
-          var name= name
-            var artistName= artistName
-            var albumName= albumName
-            var imageUrl: com.google.firebase.dataconnect.OptionalVariable<String?> =
+          var title= title
+            var albumId= albumId
+            var audioUrl= audioUrl
+            var coverUrl: com.google.firebase.dataconnect.OptionalVariable<String?> =
                 com.google.firebase.dataconnect.OptionalVariable.Undefined
             var isCommunity= isCommunity
             
 
           return object : Builder {
-            override var name: String
+            override var title: String
               get() = throw UnsupportedOperationException("getting builder values is not supported")
-              set(value_) { name = value_ }
+              set(value_) { title = value_ }
               
-            override var artistName: String
+            override var albumId: String
               get() = throw UnsupportedOperationException("getting builder values is not supported")
-              set(value_) { artistName = value_ }
+              set(value_) { albumId = value_ }
               
-            override var albumName: String
+            override var audioUrl: String
               get() = throw UnsupportedOperationException("getting builder values is not supported")
-              set(value_) { albumName = value_ }
+              set(value_) { audioUrl = value_ }
               
-            override var imageUrl: String?
+            override var coverUrl: String?
               get() = throw UnsupportedOperationException("getting builder values is not supported")
-              set(value_) { imageUrl = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
+              set(value_) { coverUrl = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
               
             override var isCommunity: Boolean
               get() = throw UnsupportedOperationException("getting builder values is not supported")
@@ -90,7 +92,7 @@ public interface CreateTrackMutation :
           }.apply(block_)
           .let {
             Variables(
-              name=name,artistName=artistName,albumName=albumName,imageUrl=imageUrl,isCommunity=isCommunity,
+              title=title,albumId=albumId,audioUrl=audioUrl,coverUrl=coverUrl,isCommunity=isCommunity,
             )
           }
         }
@@ -124,7 +126,7 @@ public interface CreateTrackMutation :
 
 public fun CreateTrackMutation.ref(
   
-    name: String,artistName: String,albumName: String,isCommunity: Boolean,
+    title: String,albumId: String,audioUrl: String,isCommunity: Boolean,
 
   
     block_: CreateTrackMutation.Variables.Builder.() -> Unit = {}
@@ -136,7 +138,7 @@ public fun CreateTrackMutation.ref(
   ref(
     
       CreateTrackMutation.Variables.build(
-        name=name,artistName=artistName,albumName=albumName,isCommunity=isCommunity,
+        title=title,albumId=albumId,audioUrl=audioUrl,isCommunity=isCommunity,
   
     block_
       )
@@ -147,7 +149,7 @@ public suspend fun CreateTrackMutation.execute(
 
   
     
-      name: String,artistName: String,albumName: String,isCommunity: Boolean,
+      title: String,albumId: String,audioUrl: String,isCommunity: Boolean,
 
   
     block_: CreateTrackMutation.Variables.Builder.() -> Unit = {}
@@ -158,7 +160,7 @@ public suspend fun CreateTrackMutation.execute(
   > =
   ref(
     
-      name=name,artistName=artistName,albumName=albumName,isCommunity=isCommunity,
+      title=title,albumId=albumId,audioUrl=audioUrl,isCommunity=isCommunity,
   
     block_
     

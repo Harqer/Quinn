@@ -28,7 +28,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.musically.studio.WearableStreamingService
+import com.musically.studio.billing.GenerationBlockReason
 import com.musically.studio.billing.PlayBillingManager
+import com.musically.studio.billing.SubscriptionTierLimits
+import com.musically.studio.billing.TierLimits
+import java.time.YearMonth
 import com.musically.studio.dataconnect.DefaultConnector
 import com.musically.studio.dataconnect.GetPaymentHistoryQuery.Data.PaymentHistoriesItem
 import com.musically.studio.dataconnect.GetUserSettingsQuery.Data.UserSettings
@@ -69,11 +73,29 @@ class MainViewModel @Inject constructor(
     private val geminiLiveManager: GeminiLiveManager,
     private val streamingApiClient: StreamingApiClient,
     private val auth: FirebaseAuth,
-    private val rtdb: FirebaseDatabase
+    private val rtdb: FirebaseDatabase,
+    private val dataConnectRepository: com.musically.studio.data.repository.DataConnectRepository,
+    private val authRepository: com.musically.studio.data.repository.AuthRepository,
+    private val rtdbSessionManager: com.musically.studio.network.RtdbSessionManager
 ) : ViewModel() {
 
-    private val playBillingManager = PlayBillingManager(context)
+    private val playBillingManager = PlayBillingManager(
+        context = context,
+        onPurchaseAcknowledged = { productId ->
+            // Optimistic update: re-sync settings so isPremium reflects the new state.
+            // The authoritative DB update happens via the Play Developer Notification webhook
+            // (server-side, not implemented in this client PR — see implementation_plan.md).
+            fetchUserSettings()
+        }
+    )
     val billingProductDetails = playBillingManager.productDetails
+
+    /** The Play product ID of the user's active subscription, or null if on free tier. */
+    val currentProductId: StateFlow<String?> = playBillingManager.currentProductId
+
+    /** Entitlement limits derived reactively from [currentProductId]. */
+    val tierLimits: TierLimits
+        get() = SubscriptionTierLimits.forProductId(currentProductId.value)
 
     fun launchBillingFlow(activity: Activity, productId: String) {
         playBillingManager.launchBillingFlow(activity, productId)
@@ -185,6 +207,28 @@ class MainViewModel @Inject constructor(
     private val _isPremium = MutableStateFlow(false)
     val isPremium: StateFlow<Boolean> = _isPremium.asStateFlow()
 
+    // ---------------------------------------------------------------------------
+    // Usage Counters (RTDB — path: users/{uid}/usage/{YYYY-MM}/)
+    // Reset is handled by a Cloud Scheduler job (server-side, separate from this PR).
+    // ---------------------------------------------------------------------------
+    private val _songsThisMonth = MutableStateFlow(0)
+    val songsThisMonth: StateFlow<Int> = _songsThisMonth.asStateFlow()
+
+    private val _podcastEpsThisMonth = MutableStateFlow(0)
+    val podcastEpsThisMonth: StateFlow<Int> = _podcastEpsThisMonth.asStateFlow()
+
+    private val _realtimeMinutesThisMonth = MutableStateFlow(0)
+    val realtimeMinutesThisMonth: StateFlow<Int> = _realtimeMinutesThisMonth.asStateFlow()
+
+    /**
+     * Emits whenever a generation attempt is blocked by the quota system.
+     * Consumed by [AppNavigation] to navigate to [Route.UsageLimitSheet].
+     * Prefer a SharedFlow over a StateFlow here so the event fires once and doesn't
+     * re-trigger on re-composition.
+     */
+    private val _generationBlockedEvent = MutableSharedFlow<GenerationBlockReason>(extraBufferCapacity = 1)
+    val generationBlockedEvent = _generationBlockedEvent.asSharedFlow()
+
     private val _stripeUrl = MutableSharedFlow<String>(extraBufferCapacity = 1)
     val stripeUrl = _stripeUrl.asSharedFlow()
 
@@ -228,7 +272,7 @@ class MainViewModel @Inject constructor(
     private val _lyrics = MutableStateFlow<String?>(null)
     val lyrics: StateFlow<String?> = _lyrics.asStateFlow()
 
-    private var rtdbListener: ValueEventListener? = null
+    private var rtdbSyncJob: Job? = null
     private var currentRtdbUid: String? = null
 
     // Registration State Accumulator
@@ -369,17 +413,53 @@ class MainViewModel @Inject constructor(
                 // Fetch settings
                 val settingsResult = DefaultConnector.instance.getUserSettings.execute()
                 _userSettings.value = settingsResult.data.userSettings
-                
+
                 // Fetch payment history
                 val historyResult = DefaultConnector.instance.getPaymentHistory.execute()
                 _paymentHistory.value = historyResult.data.paymentHistories
 
-                // Determine premium status based on active subscription in user settings
+                // Determine premium status from Data Connect (server-verified source).
+                // currentProductId comes from Play Billing (client-verified source).
+                // Both are kept in sync; neither alone is sufficient.
                 _isPremium.value = settingsResult.data.userSettings?.isPremium == true
             } catch (e: Exception) {
                 Timber.e(e, "Failed to load user settings from Data Connect")
             }
         }
+        // Load usage counters from RTDB for the current billing month
+        loadUsageCounters()
+    }
+
+    /**
+     * Reads this month's generation usage from RTDB.
+     * Path: users/{uid}/usage/{YYYY-MM}/{counter}
+     *
+     * RTDB is used rather than Data Connect because counters need fast increments per
+     * generation event and monthly resets via Cloud Scheduler — RTDB handles both
+     * without index or query complexity.
+     */
+    private fun loadUsageCounters() {
+        val uid = auth.currentUser?.uid ?: return
+        val monthKey = YearMonth.now().toString() // e.g. "2026-07"
+        val usageRef = rtdb.getReference("users/$uid/usage/$monthKey")
+        usageRef.addValueEventListener(object : com.google.firebase.database.ValueEventListener {
+            override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {
+                _songsThisMonth.value = snapshot.child("songs_generated").getValue(Int::class.java) ?: 0
+                _podcastEpsThisMonth.value = snapshot.child("podcast_eps_generated").getValue(Int::class.java) ?: 0
+                _realtimeMinutesThisMonth.value = snapshot.child("realtime_minutes").getValue(Int::class.java) ?: 0
+            }
+            override fun onCancelled(error: com.google.firebase.database.DatabaseError) {
+                Timber.e("Usage counter load cancelled: ${error.message}")
+            }
+        })
+    }
+
+    /** Increments a generation counter in RTDB for the current month. */
+    private fun incrementUsageCounter(counter: String, by: Int = 1) {
+        val uid = auth.currentUser?.uid ?: return
+        val monthKey = YearMonth.now().toString()
+        rtdb.getReference("users/$uid/usage/$monthKey/$counter")
+            .setValue(com.google.firebase.database.ServerValue.increment(by.toLong()))
     }
 
     fun updateTheme(theme: String) {
@@ -487,72 +567,96 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private var categoryJob: kotlinx.coroutines.Job? = null
     fun fetchCategories() {
-        viewModelScope.launch {
-            try {
-                val result = apiClient.getCategories()
-                if (result != null) {
-                    _categories.value = result
-                    _catalogErrorMessage.value = null
+        categoryJob?.cancel()
+        categoryJob = viewModelScope.launch {
+            dataConnectRepository.getCategories().collectLatest { items ->
+                _categories.value = items.map {
+                    com.musically.studio.network.MaveCategory(
+                        id = it.id,
+                        name = it.name,
+                        colorHex = "#808080",
+                        imageUrl = ""
+                    )
                 }
-            } catch (e: Exception) {
-                _catalogErrorMessage.value = e.message ?: "Failed to load categories."
+                _catalogErrorMessage.value = null
             }
         }
     }
 
+    private var playlistJob: kotlinx.coroutines.Job? = null
     fun fetchPlaylists() {
-        viewModelScope.launch {
-            try {
-                val result = apiClient.getPlaylists()
-                if (result != null) {
-                    _playlists.value = result
-                    _catalogErrorMessage.value = null
+        playlistJob?.cancel()
+        playlistJob = viewModelScope.launch {
+            dataConnectRepository.getPlaylists().collectLatest { items ->
+                _playlists.value = items.map {
+                    com.musically.studio.network.MavePlaylist(
+                        id = it.id,
+                        name = it.name,
+                        coverUrl = it.coverUrl,
+                        description = it.description
+                    )
                 }
-            } catch (e: Exception) {
-                _catalogErrorMessage.value = e.message ?: "Failed to load playlists."
+                _catalogErrorMessage.value = null
             }
         }
     }
 
+    private var albumJob: kotlinx.coroutines.Job? = null
     fun fetchAlbums() {
-        viewModelScope.launch {
-            try {
-                val result = apiClient.getAlbums()
-                if (result != null) {
-                    _albums.value = result
-                    _catalogErrorMessage.value = null
+        albumJob?.cancel()
+        albumJob = viewModelScope.launch {
+            dataConnectRepository.getAlbums().collectLatest { items ->
+                _albums.value = items.map {
+                    com.musically.studio.network.MaveAlbum(
+                        id = it.id,
+                        name = it.title,
+                        images = listOfNotNull(it.coverUrl?.let { url -> com.musically.studio.network.MaveImage(url = url) }),
+                        description = null
+                    )
                 }
-            } catch (e: Exception) {
-                _catalogErrorMessage.value = e.message ?: "Failed to load albums."
+                _catalogErrorMessage.value = null
             }
         }
     }
 
+    private var podcastJob: kotlinx.coroutines.Job? = null
     fun fetchPodcasts() {
-        viewModelScope.launch {
-            try {
-                val result = apiClient.getPodcasts()
-                if (result != null) {
-                    _podcasts.value = result
-                    _catalogErrorMessage.value = null
+        podcastJob?.cancel()
+        podcastJob = viewModelScope.launch {
+            dataConnectRepository.getPodcasts().collectLatest { items ->
+                _podcasts.value = items.map {
+                    com.musically.studio.network.MavePodcast(
+                        id = it.id,
+                        name = it.title,
+                        publisher = it.publisher,
+                        imageUrl = it.coverUrl,
+                        description = it.description
+                    )
                 }
-            } catch (e: Exception) {
-                _catalogErrorMessage.value = e.message ?: "Failed to load podcasts."
+                _catalogErrorMessage.value = null
             }
         }
     }
 
+    private var audiobookJob: kotlinx.coroutines.Job? = null
     fun fetchAudiobooks() {
-        viewModelScope.launch {
-            try {
-                val result = apiClient.getAudiobooks()
-                if (result != null) {
-                    _audiobooks.value = result
-                    _catalogErrorMessage.value = null
+        audiobookJob?.cancel()
+        audiobookJob = viewModelScope.launch {
+            dataConnectRepository.getAudiobooks().collectLatest { items ->
+                _audiobooks.value = items.map {
+                    com.musically.studio.network.MaveAudiobook(
+                        id = it.id,
+                        title = it.title,
+                        author = it.author.name,
+                        narrator = null,
+                        imageUrl = it.coverUrl,
+                        duration = null,
+                        audioUrl = null
+                    )
                 }
-            } catch (e: Exception) {
-                _catalogErrorMessage.value = e.message ?: "Failed to load audiobooks."
+                _catalogErrorMessage.value = null
             }
         }
     }
@@ -560,6 +664,10 @@ class MainViewModel @Inject constructor(
     fun isUserLoggedIn(): Boolean = auth.currentUser != null
 
     fun getUserId(): String = auth.currentUser?.uid ?: ""
+
+    fun getUserPhotoUrl(): String? = auth.currentUser?.photoUrl?.toString()
+
+    fun getUserDisplayName(): String? = auth.currentUser?.displayName
 
     fun loginWithEmail(email: String, pass: String, callback: (Boolean, String?) -> Unit) {
         _isLoading.value = true
@@ -660,9 +768,11 @@ class MainViewModel @Inject constructor(
                     if (user != null) {
                         viewModelScope.launch {
                             try {
-                                com.musically.studio.dataconnect.DefaultConnector.instance.upsertUser.execute {
+                                com.musically.studio.dataconnect.DefaultConnector.instance.upsertUser.execute(
+                                    username = regEmail.substringBefore("@"),
+                                    email = regEmail
+                                ) {
                                     this.displayName = regName
-                                    this.email = regEmail
                                 }
                                 _isLoading.value = false
                                 startRtdbSync()
@@ -756,12 +866,11 @@ class MainViewModel @Inject constructor(
         val user = auth.currentUser ?: return
         val uid = user.uid
         currentRtdbUid = uid
-        val stateRef = rtdb.getReference("sessions/$uid/state")
         
-        rtdbListener = stateRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
+        rtdbSyncJob?.cancel()
+        rtdbSyncJob = viewModelScope.launch {
+            rtdbSessionManager.observeSessionState(uid).collect { data ->
                 try {
-                    val data = snapshot.value as? Map<*, *>
                     val isThinking = data?.get("isThinking") as? Boolean ?: false
                     if (isThinking) {
                         val chunk = data?.get("chunk") as? String ?: ""
@@ -780,11 +889,7 @@ class MainViewModel @Inject constructor(
                     Timber.e(e, "RTDB Sync Parse Error")
                 }
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Timber.e(error.toException(), "RTDB Sync Error")
-            }
-        })
+        }
     }
 
     // Collect wearable POV camera frames and forward to backend when streaming is enabled
@@ -948,9 +1053,16 @@ class MainViewModel @Inject constructor(
         startLiveSession()
     }
 
-    fun generateCoverMedia(prompt: String, type: String, onResult: (String?) -> Unit) {
+    fun generateCoverMedia(trackId: String?, prompt: String, type: String, onResult: (String?) -> Unit) {
         viewModelScope.launch {
             val result = apiClient.generateCoverMedia(prompt, type)
+            if (result != null && trackId != null) {
+                _tracks.value = _tracks.value.map { track ->
+                    if (track.id == trackId) {
+                        track.copy(album = track.album.copy(images = listOf(com.musically.studio.network.MaveImage(result, 640, 640))))
+                    } else track
+                }
+            }
             onResult(result)
         }
     }
@@ -964,6 +1076,12 @@ class MainViewModel @Inject constructor(
     private var currentAudioPlayer: com.musically.studio.audio.StreamAudioPlayer? = null
 
     fun generatePodcast(text: String) {
+        // --- Quota guardrail ---
+        val limits = tierLimits
+        if (!limits.podcastsUnlimited && _podcastEpsThisMonth.value >= limits.podcastEpsPerMonth) {
+            viewModelScope.launch { _generationBlockedEvent.emit(GenerationBlockReason.PODCASTS_LIMIT_REACHED) }
+            return
+        }
         messages.add(0, ChatMessage(text, true))
         _thinkingText.value = ""
         currentAudioPlayer?.stop()
@@ -1235,6 +1353,12 @@ class MainViewModel @Inject constructor(
      * music prompts from visual context.
      */
     fun generateMusicPrompts(base64: String) {
+        // --- Quota guardrail (client-side UX; server-side enforcement is a separate requirement) ---
+        val limits = tierLimits
+        if (!limits.songsUnlimited && _songsThisMonth.value >= limits.songsPerMonth) {
+            viewModelScope.launch { _generationBlockedEvent.emit(GenerationBlockReason.SONGS_LIMIT_REACHED) }
+            return
+        }
         viewModelScope.launch {
             _isLoading.value = true
             _pendingGalleryImageBase64.value = base64
@@ -1247,6 +1371,8 @@ class MainViewModel @Inject constructor(
             val result = apiClient.generateMusicPrompts(base64)
             if (result != null) {
                 _generatedPrompts.value = result
+                // Increment the song counter on successful generation
+                incrementUsageCounter("songs_generated")
                 // Auto-send generated prompts to session if active
                 if (_isLiveSessionActive.value && result.isNotEmpty()) {
                     val promptMaps = result.map { mapOf("text" to it, "weight" to 1.0) }
@@ -1317,39 +1443,62 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private var userTracksJob: kotlinx.coroutines.Job? = null
     fun fetchUserTracks() {
-        viewModelScope.launch {
+        userTracksJob?.cancel()
+        userTracksJob = viewModelScope.launch {
             _isLoading.value = true
             try {
-                val maveTracks = apiClient.getUserTracks()
-                val spotifyTracks = apiClient.getSpotifyLibraryTracks()
-                if (maveTracks == null && spotifyTracks == null) {
-                    _catalogErrorMessage.value = "Failed to load library tracks."
-                    _tracks.value = emptyList()
-                } else {
-                    _tracks.value = (maveTracks ?: emptyList()) + (spotifyTracks ?: emptyList())
+                dataConnectRepository.getUserTracks().collectLatest { items ->
+                    val dcTracks = items.map {
+                        com.musically.studio.network.MaveTrack(
+                            id = it.id,
+                            name = it.title,
+                            artists = listOf(com.musically.studio.network.MaveArtist(id = it.album.primaryArtist.id, name = it.album.primaryArtist.name)),
+                            album = com.musically.studio.network.MaveAlbum(
+                                id = it.album.id,
+                                name = it.album.title,
+                                images = listOfNotNull(it.coverUrl?.let { url -> com.musically.studio.network.MaveImage(url) })
+                            ),
+                            userId = auth.currentUser?.uid ?: "",
+                            audioUrl = it.audioUrl,
+                            videoUrl = null
+                        )
+                    }
+                    val spotifyTracks = apiClient.getSpotifyLibraryTracks()
+                    _tracks.value = dcTracks + (spotifyTracks ?: emptyList())
                     _catalogErrorMessage.value = null
+                    _isLoading.value = false
                 }
             } catch (e: Exception) {
                 _catalogErrorMessage.value = e.message ?: "Failed to load library tracks."
-            } finally {
                 _isLoading.value = false
             }
         }
     }
 
+    private var communityTrackJob: kotlinx.coroutines.Job? = null
     fun fetchCommunityTracks() {
-        viewModelScope.launch {
+        communityTrackJob?.cancel()
+        communityTrackJob = viewModelScope.launch {
             _isLoading.value = true
-            try {
-                val result = apiClient.getCommunityTracks()
-                if (result != null) {
-                    _communityTracks.value = result
-                    _catalogErrorMessage.value = null
+            dataConnectRepository.getCommunityTracks().collectLatest { items ->
+                _communityTracks.value = items.map {
+                    com.musically.studio.network.MaveTrack(
+                        id = it.id,
+                        name = it.title,
+                        artists = listOf(com.musically.studio.network.MaveArtist(id = it.album.primaryArtist.id, name = it.album.primaryArtist.name)),
+                        album = com.musically.studio.network.MaveAlbum(
+                            id = it.album.id,
+                            name = it.album.title,
+                            images = emptyList()
+                        ),
+                        userId = it.owner.uid,
+                        audioUrl = null,
+                        videoUrl = null
+                    )
                 }
-            } catch (e: Exception) {
-                _catalogErrorMessage.value = e.message ?: "Failed to load community tracks."
-            } finally {
+                _catalogErrorMessage.value = null
                 _isLoading.value = false
             }
         }
@@ -1478,12 +1627,8 @@ class MainViewModel @Inject constructor(
      */
     fun signOut() {
         stopLiveSession()
-        rtdbListener?.let { listener ->
-            currentRtdbUid?.let { uid ->
-                rtdb.getReference("sessions/$uid/state").removeEventListener(listener)
-            }
-        }
-        rtdbListener = null
+        rtdbSyncJob?.cancel()
+        rtdbSyncJob = null
         currentRtdbUid = null
         auth.signOut()
         Timber.i("User signed out")
@@ -1523,10 +1668,8 @@ class MainViewModel @Inject constructor(
 
                 // 2. Disconnect live session and stop all ongoing services.
                 stopLiveSession()
-                rtdbListener?.let { listener ->
-                    rtdb.getReference("sessions/$uid/state").removeEventListener(listener)
-                }
-                rtdbListener = null
+                rtdbSyncJob?.cancel()
+                rtdbSyncJob = null
 
                 // 3. Delete the Firebase Auth account.
                 user.delete().await()
@@ -1558,12 +1701,8 @@ class MainViewModel @Inject constructor(
             stopRecording()
         }
         maveSessionManager.disconnect()
-        rtdbListener?.let { listener ->
-            val user = auth.currentUser
-            if (user != null) {
-                rtdb.getReference("sessions/${user.uid}/state").removeEventListener(listener)
-            }
-        }
+        rtdbSyncJob?.cancel()
+        rtdbSyncJob = null
         try {
             context.unregisterReceiver(bluetoothReceiver)
         } catch (e: Exception) {
@@ -1626,9 +1765,11 @@ class MainViewModel @Inject constructor(
                             auth.signInAnonymously().await()
                             
                             // 2. Upsert the user into Cloud SQL via Firebase Data Connect
-                            DefaultConnector.instance.upsertUser.execute {
+                            DefaultConnector.instance.upsertUser.execute(
+                                username = email.substringBefore("@"),
+                                email = email
+                            ) {
                                 this.displayName = name ?: "Verified User"
-                                this.email = email
                             }
                             
                             navigateTo(Route.Home)

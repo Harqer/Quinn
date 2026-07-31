@@ -42,9 +42,7 @@ public interface GetCategoriesQuery :
   
     val name: String,
   
-    val imageUrl: String?,
-  
-    val type: String,
+    val type: @kotlinx.serialization.Serializable(with = CategoryType.EnumValueSerializer::class) EnumValue<CategoryType>,
   
   ) {
     

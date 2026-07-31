@@ -40,13 +40,11 @@ public interface GetCommunityTracksQuery :
   
     val id: String,
   
-    val name: String,
+    val title: String,
   
-    val artistName: String,
+    val album: Album,
   
-    val albumName: String,
-  
-    val imageUrl: String?,
+    val coverUrl: String?,
   
     val createdAt: @kotlinx.serialization.Serializable(with = com.google.firebase.dataconnect.serializers.TimestampSerializer::class) com.google.firebase.Timestamp,
   
@@ -54,6 +52,34 @@ public interface GetCommunityTracksQuery :
   
   ) {
     
+      
+        @kotlinx.serialization.Serializable
+  public data class Album(
+  
+    val id: String,
+  
+    val title: String,
+  
+    val primaryArtist: PrimaryArtist,
+  
+  ) {
+    
+      
+        @kotlinx.serialization.Serializable
+  public data class PrimaryArtist(
+  
+    val id: String,
+  
+    val name: String,
+  
+  ) {
+    
+    
+  }
+      
+    
+    
+  }
       
         @kotlinx.serialization.Serializable
   public data class Owner(

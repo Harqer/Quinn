@@ -175,7 +175,10 @@ fun LibraryScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         MaveButton(
                             text = "Retry",
-                            onClick = { viewModel.fetchUserTracks() }
+                            onClick = { 
+                                viewModel.clearCatalogError()
+                                viewModel.fetchUserTracks() 
+                            }
                         )
                     }
                 }

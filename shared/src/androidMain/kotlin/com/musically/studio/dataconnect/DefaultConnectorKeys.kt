@@ -26,6 +26,16 @@ package com.musically.studio.dataconnect
   }
 
   @kotlinx.serialization.Serializable
+  public data class CameraCaptureKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
   public data class LikedTrackKey(
   
     val userUid: String,
@@ -70,7 +80,7 @@ package com.musically.studio.dataconnect
   }
 
   @kotlinx.serialization.Serializable
-  public data class PodcastKey(
+  public data class ShowKey(
   
     val id: String,
   
@@ -103,6 +113,16 @@ package com.musically.studio.dataconnect
   public data class UserSettingsKey(
   
     val userId: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
+  public data class VideoDigestionKey(
+  
+    val id: String,
   
   ) {
     

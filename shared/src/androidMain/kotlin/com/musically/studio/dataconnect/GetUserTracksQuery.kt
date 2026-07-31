@@ -40,15 +40,13 @@ public interface GetUserTracksQuery :
   
     val id: String,
   
-    val name: String,
+    val title: String,
   
-    val artistName: String,
+    val album: Album,
   
-    val albumName: String,
+    val coverUrl: String?,
   
-    val imageUrl: String?,
-  
-    val audioUrl: String?,
+    val audioUrl: String,
   
     val prompt: String?,
   
@@ -59,6 +57,36 @@ public interface GetUserTracksQuery :
     val createdAt: @kotlinx.serialization.Serializable(with = com.google.firebase.dataconnect.serializers.TimestampSerializer::class) com.google.firebase.Timestamp,
   
   ) {
+    
+      
+        @kotlinx.serialization.Serializable
+  public data class Album(
+  
+    val id: String,
+  
+    val title: String,
+  
+    val primaryArtist: PrimaryArtist,
+  
+  ) {
+    
+      
+        @kotlinx.serialization.Serializable
+  public data class PrimaryArtist(
+  
+    val id: String,
+  
+    val name: String,
+  
+  ) {
+    
+    
+  }
+      
+    
+    
+  }
+      
     
     
   }

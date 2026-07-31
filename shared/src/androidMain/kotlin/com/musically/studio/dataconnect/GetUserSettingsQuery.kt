@@ -48,7 +48,23 @@ public interface GetUserSettingsQuery :
   
     val stripeCustomerId: String?,
   
+    val user: User,
+  
   ) {
+    
+      
+        @kotlinx.serialization.Serializable
+  public data class User(
+  
+    val displayName: String?,
+  
+    val avatarUrl: String?,
+  
+  ) {
+    
+    
+  }
+      
     
     
   }

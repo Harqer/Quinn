@@ -35,6 +35,7 @@ public interface UpdateUserPreferencesMutation :
       
       @kotlin.DslMarker public annotation class BuilderDsl
 
+      
       @BuilderDsl
       public interface Builder {
         public var favoriteArtists: List<String>?
@@ -43,6 +44,7 @@ public interface UpdateUserPreferencesMutation :
       }
 
       public companion object {
+        
         @Suppress("NAME_SHADOWING")
         public fun build(
           
@@ -80,7 +82,7 @@ public interface UpdateUserPreferencesMutation :
     @kotlinx.serialization.Serializable
   public data class Data(
   
-    val user_upsert: UserKey,
+    val user_update: UserKey?,
   
   ) {
     

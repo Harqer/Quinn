@@ -39,12 +39,7 @@ import com.musically.studio.ui.theme.LocalMaveColorScheme
 import com.musically.studio.ui.theme.MaveStyles
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Devices
-
-@Preview(name = "Phone", device = Devices.PHONE, showBackground = true)
-@Preview(name = "Foldable", device = Devices.FOLDABLE, showBackground = true)
-@Preview(name = "Tablet", device = Devices.TABLET, showBackground = true)
-@Preview(name = "Desktop", device = Devices.DESKTOP, showBackground = true)
-annotation class FormFactorPreviews
+import com.musically.studio.ui.theme.FormFactorPreviews
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -40,15 +40,29 @@ public interface GetAlbumsQuery :
   
     val id: String,
   
-    val name: String,
+    val title: String,
   
-    val artistName: String,
+    val primaryArtist: PrimaryArtist,
   
-    val imageUrl: String?,
+    val coverUrl: String?,
   
-    val releaseYear: Int?,
+    val releaseDate: com.google.firebase.dataconnect.LocalDate?,
   
   ) {
+    
+      
+        @kotlinx.serialization.Serializable
+  public data class PrimaryArtist(
+  
+    val id: String,
+  
+    val name: String,
+  
+  ) {
+    
+    
+  }
+      
     
     
   }

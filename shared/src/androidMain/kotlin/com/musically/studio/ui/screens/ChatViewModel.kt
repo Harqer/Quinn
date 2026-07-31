@@ -1,5 +1,9 @@
 package com.musically.studio.ui.screens
 
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import com.musically.studio.data.repository.DataConnectRepository
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +22,9 @@ import com.google.firebase.vertexai.type.content
 
 data class MaveChatTrack(
     val title: String,
-    val artist: String
+    val artist: String,
+    /** Data Connect track ID — populated after generation persists to Cloud SQL via Data Connect. */
+    val trackId: String? = null
 )
 
 data class MaveChatMessage(
@@ -32,7 +38,10 @@ data class MaveChatMessage(
     val type: String? = null
 )
 
-class ChatViewModel : ViewModel() {
+@HiltViewModel
+class ChatViewModel @Inject constructor(
+    private val dataConnectRepository: DataConnectRepository
+) : ViewModel() {
     private val _messages = MutableStateFlow<List<MaveChatMessage>>(emptyList())
     val messages: StateFlow<List<MaveChatMessage>> = _messages.asStateFlow()
 

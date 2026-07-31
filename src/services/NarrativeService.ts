@@ -1,7 +1,7 @@
 import { getAi, generateCoverMedia } from "./ai.js";
 import { WebSocket } from "ws";
 import logger from "../config/logger.js";
-import { maveGraph } from "./mave-graph.js";
+import { maveVisionFlow, podcastNarratorFlow } from "./genkit-flows.js";
 
 export type NarrativeMode = 'podcast' | 'audiobook';
 
@@ -43,20 +43,21 @@ export class NarrativeService {
 
   async processVision(ws: WebSocket, image: string, mode: NarrativeMode, locale: string = "en") {
     try {
-      const result = await (maveGraph as any).invoke({ image, mode, locale });
+      const visionResult = await maveVisionFlow({ image, locale });
+      const narrativeResult = await podcastNarratorFlow({ visionDescription: visionResult.visionDescription, modality: mode, locale });
 
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           type: `${mode}_update`,
-          vision: result.visionDescription,
-          script: mode === 'audiobook' ? result.audiobookScript : result.podcastScript
+          vision: visionResult.visionDescription,
+          script: narrativeResult.script
         }));
       }
 
       // Generate a dynamic live background visual for this narrative segment using Omni Flash
       try {
-        if (result.visionDescription) {
-          const backgroundVideoUri = await this.generateOmniVisuals(`Generate an aesthetic background loop matching: ${result.visionDescription}`, 'video');
+        if (visionResult.visionDescription) {
+          const backgroundVideoUri = await this.generateOmniVisuals(`Generate an aesthetic background loop matching: ${visionResult.visionDescription}`, 'video');
           if (ws.readyState === WebSocket.OPEN && backgroundVideoUri) {
             ws.send(JSON.stringify({ type: "omni_visual_update", uri: backgroundVideoUri }));
           }
@@ -65,7 +66,7 @@ export class NarrativeService {
         logger.warn("[NARRATIVE_SERVICE] Non-fatal: Omni visual generation failed", { error: omniErr });
       }
 
-      return result;
+      return { visionDescription: visionResult.visionDescription, podcastScript: narrativeResult.script };
     } catch (err) {
       logger.error("[NARRATIVE_SERVICE] Vision processing failed", { error: err });
       throw err;

@@ -19,6 +19,8 @@ This README will guide you through the process of using the generated JavaScript
   - [*GetPaymentHistory*](#getpaymenthistory)
   - [*GetLikedTracks*](#getlikedtracks)
   - [*GetBookmarkedTracks*](#getbookmarkedtracks)
+  - [*GetUserCameraCaptures*](#getusercameracaptures)
+  - [*GetUserVideoDigestions*](#getuservideodigestions)
 - [**Mutations**](#mutations)
   - [*CreateTrack*](#createtrack)
   - [*UpsertUser*](#upsertuser)
@@ -32,6 +34,8 @@ This README will guide you through the process of using the generated JavaScript
   - [*RemoveLikedTrack*](#removelikedtrack)
   - [*BookmarkTrack*](#bookmarktrack)
   - [*RemoveBookmarkedTrack*](#removebookmarkedtrack)
+  - [*CreateCameraCapture*](#createcameracapture)
+  - [*CreateVideoDigestion*](#createvideodigestion)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `default`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -117,11 +121,17 @@ The `data` property is an object of type `GetUserTracksData`, which is defined i
 export interface GetUserTracksData {
   tracks: ({
     id: string;
-    name: string;
-    artistName: string;
-    albumName: string;
-    imageUrl?: string | null;
-    audioUrl?: string | null;
+    title: string;
+    album: {
+      id: string;
+      title: string;
+      primaryArtist: {
+        id: string;
+        name: string;
+      } & Artist_Key;
+    } & Album_Key;
+    coverUrl?: string | null;
+    audioUrl: string;
     prompt?: string | null;
     visibility: string;
     isCommunity: boolean;
@@ -219,10 +229,16 @@ The `data` property is an object of type `GetCommunityTracksData`, which is defi
 export interface GetCommunityTracksData {
   tracks: ({
     id: string;
-    name: string;
-    artistName: string;
-    albumName: string;
-    imageUrl?: string | null;
+    title: string;
+    album: {
+      id: string;
+      title: string;
+      primaryArtist: {
+        id: string;
+        name: string;
+      } & Artist_Key;
+    } & Album_Key;
+    coverUrl?: string | null;
     createdAt: TimestampString;
     owner: {
       uid: string;
@@ -322,8 +338,7 @@ export interface GetCategoriesData {
   categories: ({
     id: string;
     name: string;
-    imageUrl?: string | null;
-    type: string;
+    type: CategoryType;
   } & Category_Key)[];
 }
 ```
@@ -419,7 +434,7 @@ export interface GetPlaylistsData {
     id: string;
     name: string;
     description?: string | null;
-    imageUrl?: string | null;
+    coverUrl?: string | null;
     isPublic: boolean;
   } & Playlist_Key)[];
 }
@@ -514,10 +529,13 @@ The `data` property is an object of type `GetAlbumsData`, which is defined in [d
 export interface GetAlbumsData {
   albums: ({
     id: string;
-    name: string;
-    artistName: string;
-    imageUrl?: string | null;
-    releaseYear?: number | null;
+    title: string;
+    primaryArtist: {
+      id: string;
+      name: string;
+    } & Artist_Key;
+    coverUrl?: string | null;
+    releaseDate?: DateString | null;
   } & Album_Key)[];
 }
 ```
@@ -609,13 +627,13 @@ Recall that executing the `GetPodcasts` query returns a `QueryPromise` that reso
 The `data` property is an object of type `GetPodcastsData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface GetPodcastsData {
-  podcasts: ({
+  shows: ({
     id: string;
-    name: string;
+    title: string;
     publisher: string;
-    imageUrl?: string | null;
+    coverUrl?: string | null;
     description?: string | null;
-  } & Podcast_Key)[];
+  } & Show_Key)[];
 }
 ```
 ### Using `GetPodcasts`'s action shortcut function
@@ -633,12 +651,12 @@ const { data } = await getPodcasts();
 const dataConnect = getDataConnect(connectorConfig);
 const { data } = await getPodcasts(dataConnect);
 
-console.log(data.podcasts);
+console.log(data.shows);
 
 // Or, you can use the `Promise` API.
 getPodcasts().then((response) => {
   const data = response.data;
-  console.log(data.podcasts);
+  console.log(data.shows);
 });
 ```
 
@@ -660,12 +678,12 @@ const ref = getPodcastsRef(dataConnect);
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await executeQuery(ref);
 
-console.log(data.podcasts);
+console.log(data.shows);
 
 // Or, you can use the `Promise` API.
 executeQuery(ref).then((response) => {
   const data = response.data;
-  console.log(data.podcasts);
+  console.log(data.shows);
 });
 ```
 
@@ -709,11 +727,13 @@ export interface GetAudiobooksData {
   audiobooks: ({
     id: string;
     title: string;
-    author: string;
+    author: {
+      id: string;
+      name: string;
+    } & Author_Key;
     narrator?: string | null;
-    imageUrl?: string | null;
-    duration?: number | null;
-    audioUrl?: string | null;
+    coverUrl?: string | null;
+    totalDurationMs?: number | null;
   } & Audiobook_Key)[];
 }
 ```
@@ -811,6 +831,10 @@ export interface GetUserSettingsData {
     theme: string;
     parentalControlsEnabled: boolean;
     stripeCustomerId?: string | null;
+    user: {
+      displayName?: string | null;
+      avatarUrl?: string | null;
+    };
   } & UserSettings_Key;
 }
 ```
@@ -1003,11 +1027,17 @@ export interface GetLikedTracksData {
   likedTracks: ({
     track: {
       id: string;
-      name: string;
-      artistName: string;
-      albumName: string;
-      imageUrl?: string | null;
-      audioUrl?: string | null;
+      title: string;
+      album: {
+        id: string;
+        title: string;
+        primaryArtist: {
+          id: string;
+          name: string;
+        } & Artist_Key;
+      } & Album_Key;
+      coverUrl?: string | null;
+      audioUrl: string;
       prompt?: string | null;
       visibility: string;
       isCommunity: boolean;
@@ -1108,11 +1138,17 @@ export interface GetBookmarkedTracksData {
   bookmarkedTracks: ({
     track: {
       id: string;
-      name: string;
-      artistName: string;
-      albumName: string;
-      imageUrl?: string | null;
-      audioUrl?: string | null;
+      title: string;
+      album: {
+        id: string;
+        title: string;
+        primaryArtist: {
+          id: string;
+          name: string;
+        } & Artist_Key;
+      } & Album_Key;
+      coverUrl?: string | null;
+      audioUrl: string;
       prompt?: string | null;
       visibility: string;
       isCommunity: boolean;
@@ -1173,6 +1209,212 @@ executeQuery(ref).then((response) => {
 });
 ```
 
+## GetUserCameraCaptures
+You can execute the `GetUserCameraCaptures` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+getUserCameraCaptures(options?: ExecuteQueryOptions): QueryPromise<GetUserCameraCapturesData, undefined>;
+
+interface GetUserCameraCapturesRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetUserCameraCapturesData, undefined>;
+}
+export const getUserCameraCapturesRef: GetUserCameraCapturesRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getUserCameraCaptures(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetUserCameraCapturesData, undefined>;
+
+interface GetUserCameraCapturesRef {
+  ...
+  (dc: DataConnect): QueryRef<GetUserCameraCapturesData, undefined>;
+}
+export const getUserCameraCapturesRef: GetUserCameraCapturesRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getUserCameraCapturesRef:
+```typescript
+const name = getUserCameraCapturesRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetUserCameraCaptures` query has no variables.
+### Return Type
+Recall that executing the `GetUserCameraCaptures` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetUserCameraCapturesData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetUserCameraCapturesData {
+  cameraCaptures: ({
+    id: string;
+    imageUrl?: string | null;
+    videoUrl?: string | null;
+    environmentData?: string | null;
+    createdAt: TimestampString;
+    generatedTrack?: {
+      id: string;
+      title: string;
+      coverUrl?: string | null;
+      audioUrl: string;
+    } & Track_Key;
+  } & CameraCapture_Key)[];
+}
+```
+### Using `GetUserCameraCaptures`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getUserCameraCaptures } from '@musically/dataconnect';
+
+
+// Call the `getUserCameraCaptures()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getUserCameraCaptures();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getUserCameraCaptures(dataConnect);
+
+console.log(data.cameraCaptures);
+
+// Or, you can use the `Promise` API.
+getUserCameraCaptures().then((response) => {
+  const data = response.data;
+  console.log(data.cameraCaptures);
+});
+```
+
+### Using `GetUserCameraCaptures`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getUserCameraCapturesRef } from '@musically/dataconnect';
+
+
+// Call the `getUserCameraCapturesRef()` function to get a reference to the query.
+const ref = getUserCameraCapturesRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getUserCameraCapturesRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.cameraCaptures);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.cameraCaptures);
+});
+```
+
+## GetUserVideoDigestions
+You can execute the `GetUserVideoDigestions` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+getUserVideoDigestions(options?: ExecuteQueryOptions): QueryPromise<GetUserVideoDigestionsData, undefined>;
+
+interface GetUserVideoDigestionsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetUserVideoDigestionsData, undefined>;
+}
+export const getUserVideoDigestionsRef: GetUserVideoDigestionsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getUserVideoDigestions(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetUserVideoDigestionsData, undefined>;
+
+interface GetUserVideoDigestionsRef {
+  ...
+  (dc: DataConnect): QueryRef<GetUserVideoDigestionsData, undefined>;
+}
+export const getUserVideoDigestionsRef: GetUserVideoDigestionsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getUserVideoDigestionsRef:
+```typescript
+const name = getUserVideoDigestionsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetUserVideoDigestions` query has no variables.
+### Return Type
+Recall that executing the `GetUserVideoDigestions` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetUserVideoDigestionsData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetUserVideoDigestionsData {
+  videoDigestions: ({
+    id: string;
+    videoUrl: string;
+    extractedAudioUrl?: string | null;
+    atmosphereSummary?: string | null;
+    createdAt: TimestampString;
+    generatedTrack?: {
+      id: string;
+      title: string;
+      coverUrl?: string | null;
+      audioUrl: string;
+    } & Track_Key;
+  } & VideoDigestion_Key)[];
+}
+```
+### Using `GetUserVideoDigestions`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getUserVideoDigestions } from '@musically/dataconnect';
+
+
+// Call the `getUserVideoDigestions()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getUserVideoDigestions();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getUserVideoDigestions(dataConnect);
+
+console.log(data.videoDigestions);
+
+// Or, you can use the `Promise` API.
+getUserVideoDigestions().then((response) => {
+  const data = response.data;
+  console.log(data.videoDigestions);
+});
+```
+
+### Using `GetUserVideoDigestions`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getUserVideoDigestionsRef } from '@musically/dataconnect';
+
+
+// Call the `getUserVideoDigestionsRef()` function to get a reference to the query.
+const ref = getUserVideoDigestionsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getUserVideoDigestionsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.videoDigestions);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.videoDigestions);
+});
+```
+
 # Mutations
 
 There are two ways to execute a Data Connect Mutation using the generated Web SDK:
@@ -1222,10 +1464,10 @@ The `CreateTrack` mutation requires an argument of type `CreateTrackVariables`, 
 
 ```typescript
 export interface CreateTrackVariables {
-  name: string;
-  artistName: string;
-  albumName: string;
-  imageUrl?: string | null;
+  title: string;
+  albumId: string;
+  audioUrl: string;
+  coverUrl?: string | null;
   isCommunity: boolean;
 }
 ```
@@ -1246,10 +1488,10 @@ import { connectorConfig, createTrack, CreateTrackVariables } from '@musically/d
 
 // The `CreateTrack` mutation requires an argument of type `CreateTrackVariables`:
 const createTrackVars: CreateTrackVariables = {
-  name: ..., 
-  artistName: ..., 
-  albumName: ..., 
-  imageUrl: ..., // optional
+  title: ..., 
+  albumId: ..., 
+  audioUrl: ..., 
+  coverUrl: ..., // optional
   isCommunity: ..., 
 };
 
@@ -1257,7 +1499,7 @@ const createTrackVars: CreateTrackVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createTrack(createTrackVars);
 // Variables can be defined inline as well.
-const { data } = await createTrack({ name: ..., artistName: ..., albumName: ..., imageUrl: ..., isCommunity: ..., });
+const { data } = await createTrack({ title: ..., albumId: ..., audioUrl: ..., coverUrl: ..., isCommunity: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1280,17 +1522,17 @@ import { connectorConfig, createTrackRef, CreateTrackVariables } from '@musicall
 
 // The `CreateTrack` mutation requires an argument of type `CreateTrackVariables`:
 const createTrackVars: CreateTrackVariables = {
-  name: ..., 
-  artistName: ..., 
-  albumName: ..., 
-  imageUrl: ..., // optional
+  title: ..., 
+  albumId: ..., 
+  audioUrl: ..., 
+  coverUrl: ..., // optional
   isCommunity: ..., 
 };
 
 // Call the `createTrackRef()` function to get a reference to the mutation.
 const ref = createTrackRef(createTrackVars);
 // Variables can be defined inline as well.
-const ref = createTrackRef({ name: ..., artistName: ..., albumName: ..., imageUrl: ..., isCommunity: ..., });
+const ref = createTrackRef({ title: ..., albumId: ..., audioUrl: ..., coverUrl: ..., isCommunity: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1312,22 +1554,22 @@ executeMutation(ref).then((response) => {
 ## UpsertUser
 You can execute the `UpsertUser` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
 ```typescript
-upsertUser(vars?: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+upsertUser(vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
 
 interface UpsertUserRef {
   ...
   /* Allow users to create refs without passing in DataConnect */
-  (vars?: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+  (vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
 }
 export const upsertUserRef: UpsertUserRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
 ```typescript
-upsertUser(dc: DataConnect, vars?: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+upsertUser(dc: DataConnect, vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
 
 interface UpsertUserRef {
   ...
-  (dc: DataConnect, vars?: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+  (dc: DataConnect, vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
 }
 export const upsertUserRef: UpsertUserRef;
 ```
@@ -1339,12 +1581,13 @@ console.log(name);
 ```
 
 ### Variables
-The `UpsertUser` mutation has an optional argument of type `UpsertUserVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+The `UpsertUser` mutation requires an argument of type `UpsertUserVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface UpsertUserVariables {
   displayName?: string | null;
-  email?: string | null;
+  username: string;
+  email: string;
 }
 ```
 ### Return Type
@@ -1362,19 +1605,18 @@ export interface UpsertUserData {
 import { getDataConnect } from 'firebase/data-connect';
 import { connectorConfig, upsertUser, UpsertUserVariables } from '@musically/dataconnect';
 
-// The `UpsertUser` mutation has an optional argument of type `UpsertUserVariables`:
+// The `UpsertUser` mutation requires an argument of type `UpsertUserVariables`:
 const upsertUserVars: UpsertUserVariables = {
   displayName: ..., // optional
-  email: ..., // optional
+  username: ..., 
+  email: ..., 
 };
 
 // Call the `upsertUser()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await upsertUser(upsertUserVars);
 // Variables can be defined inline as well.
-const { data } = await upsertUser({ displayName: ..., email: ..., });
-// Since all variables are optional for this mutation, you can omit the `UpsertUserVariables` argument.
-const { data } = await upsertUser();
+const { data } = await upsertUser({ displayName: ..., username: ..., email: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1395,18 +1637,17 @@ upsertUser(upsertUserVars).then((response) => {
 import { getDataConnect, executeMutation } from 'firebase/data-connect';
 import { connectorConfig, upsertUserRef, UpsertUserVariables } from '@musically/dataconnect';
 
-// The `UpsertUser` mutation has an optional argument of type `UpsertUserVariables`:
+// The `UpsertUser` mutation requires an argument of type `UpsertUserVariables`:
 const upsertUserVars: UpsertUserVariables = {
   displayName: ..., // optional
-  email: ..., // optional
+  username: ..., 
+  email: ..., 
 };
 
 // Call the `upsertUserRef()` function to get a reference to the mutation.
 const ref = upsertUserRef(upsertUserVars);
 // Variables can be defined inline as well.
-const ref = upsertUserRef({ displayName: ..., email: ..., });
-// Since all variables are optional for this mutation, you can omit the `UpsertUserVariables` argument.
-const ref = upsertUserRef();
+const ref = upsertUserRef({ displayName: ..., username: ..., email: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1683,9 +1924,9 @@ The `CreatePodcast` mutation requires an argument of type `CreatePodcastVariable
 
 ```typescript
 export interface CreatePodcastVariables {
-  name: string;
+  title: string;
   publisher: string;
-  imageUrl?: string | null;
+  coverUrl?: string | null;
   description?: string | null;
 }
 ```
@@ -1695,7 +1936,7 @@ Recall that executing the `CreatePodcast` mutation returns a `MutationPromise` t
 The `data` property is an object of type `CreatePodcastData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface CreatePodcastData {
-  podcast_insert: Podcast_Key;
+  show_insert: Show_Key;
 }
 ```
 ### Using `CreatePodcast`'s action shortcut function
@@ -1706,9 +1947,9 @@ import { connectorConfig, createPodcast, CreatePodcastVariables } from '@musical
 
 // The `CreatePodcast` mutation requires an argument of type `CreatePodcastVariables`:
 const createPodcastVars: CreatePodcastVariables = {
-  name: ..., 
+  title: ..., 
   publisher: ..., 
-  imageUrl: ..., // optional
+  coverUrl: ..., // optional
   description: ..., // optional
 };
 
@@ -1716,18 +1957,18 @@ const createPodcastVars: CreatePodcastVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createPodcast(createPodcastVars);
 // Variables can be defined inline as well.
-const { data } = await createPodcast({ name: ..., publisher: ..., imageUrl: ..., description: ..., });
+const { data } = await createPodcast({ title: ..., publisher: ..., coverUrl: ..., description: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
 const { data } = await createPodcast(dataConnect, createPodcastVars);
 
-console.log(data.podcast_insert);
+console.log(data.show_insert);
 
 // Or, you can use the `Promise` API.
 createPodcast(createPodcastVars).then((response) => {
   const data = response.data;
-  console.log(data.podcast_insert);
+  console.log(data.show_insert);
 });
 ```
 
@@ -1739,16 +1980,16 @@ import { connectorConfig, createPodcastRef, CreatePodcastVariables } from '@musi
 
 // The `CreatePodcast` mutation requires an argument of type `CreatePodcastVariables`:
 const createPodcastVars: CreatePodcastVariables = {
-  name: ..., 
+  title: ..., 
   publisher: ..., 
-  imageUrl: ..., // optional
+  coverUrl: ..., // optional
   description: ..., // optional
 };
 
 // Call the `createPodcastRef()` function to get a reference to the mutation.
 const ref = createPodcastRef(createPodcastVars);
 // Variables can be defined inline as well.
-const ref = createPodcastRef({ name: ..., publisher: ..., imageUrl: ..., description: ..., });
+const ref = createPodcastRef({ title: ..., publisher: ..., coverUrl: ..., description: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1758,12 +1999,12 @@ const ref = createPodcastRef(dataConnect, createPodcastVars);
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await executeMutation(ref);
 
-console.log(data.podcast_insert);
+console.log(data.show_insert);
 
 // Or, you can use the `Promise` API.
 executeMutation(ref).then((response) => {
   const data = response.data;
-  console.log(data.podcast_insert);
+  console.log(data.show_insert);
 });
 ```
 
@@ -1930,7 +2171,7 @@ Recall that executing the `UpdateUserPreferences` mutation returns a `MutationPr
 The `data` property is an object of type `UpdateUserPreferencesData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface UpdateUserPreferencesData {
-  user_upsert: User_Key;
+  user_update?: User_Key | null;
 }
 ```
 ### Using `UpdateUserPreferences`'s action shortcut function
@@ -1957,12 +2198,12 @@ const { data } = await updateUserPreferences();
 const dataConnect = getDataConnect(connectorConfig);
 const { data } = await updateUserPreferences(dataConnect, updateUserPreferencesVars);
 
-console.log(data.user_upsert);
+console.log(data.user_update);
 
 // Or, you can use the `Promise` API.
 updateUserPreferences(updateUserPreferencesVars).then((response) => {
   const data = response.data;
-  console.log(data.user_upsert);
+  console.log(data.user_update);
 });
 ```
 
@@ -1993,12 +2234,12 @@ const ref = updateUserPreferencesRef(dataConnect, updateUserPreferencesVars);
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await executeMutation(ref);
 
-console.log(data.user_upsert);
+console.log(data.user_update);
 
 // Or, you can use the `Promise` API.
 executeMutation(ref).then((response) => {
   const data = response.data;
-  console.log(data.user_upsert);
+  console.log(data.user_update);
 });
 ```
 
@@ -2556,6 +2797,246 @@ console.log(data.bookmarkedTrack_delete);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.bookmarkedTrack_delete);
+});
+```
+
+## CreateCameraCapture
+You can execute the `CreateCameraCapture` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+createCameraCapture(vars?: CreateCameraCaptureVariables): MutationPromise<CreateCameraCaptureData, CreateCameraCaptureVariables>;
+
+interface CreateCameraCaptureRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars?: CreateCameraCaptureVariables): MutationRef<CreateCameraCaptureData, CreateCameraCaptureVariables>;
+}
+export const createCameraCaptureRef: CreateCameraCaptureRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+createCameraCapture(dc: DataConnect, vars?: CreateCameraCaptureVariables): MutationPromise<CreateCameraCaptureData, CreateCameraCaptureVariables>;
+
+interface CreateCameraCaptureRef {
+  ...
+  (dc: DataConnect, vars?: CreateCameraCaptureVariables): MutationRef<CreateCameraCaptureData, CreateCameraCaptureVariables>;
+}
+export const createCameraCaptureRef: CreateCameraCaptureRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the createCameraCaptureRef:
+```typescript
+const name = createCameraCaptureRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `CreateCameraCapture` mutation has an optional argument of type `CreateCameraCaptureVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface CreateCameraCaptureVariables {
+  imageUrl?: string | null;
+  videoUrl?: string | null;
+  environmentData?: string | null;
+  generatedTrackId?: string | null;
+}
+```
+### Return Type
+Recall that executing the `CreateCameraCapture` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `CreateCameraCaptureData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface CreateCameraCaptureData {
+  cameraCapture_insert: CameraCapture_Key;
+}
+```
+### Using `CreateCameraCapture`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, createCameraCapture, CreateCameraCaptureVariables } from '@musically/dataconnect';
+
+// The `CreateCameraCapture` mutation has an optional argument of type `CreateCameraCaptureVariables`:
+const createCameraCaptureVars: CreateCameraCaptureVariables = {
+  imageUrl: ..., // optional
+  videoUrl: ..., // optional
+  environmentData: ..., // optional
+  generatedTrackId: ..., // optional
+};
+
+// Call the `createCameraCapture()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await createCameraCapture(createCameraCaptureVars);
+// Variables can be defined inline as well.
+const { data } = await createCameraCapture({ imageUrl: ..., videoUrl: ..., environmentData: ..., generatedTrackId: ..., });
+// Since all variables are optional for this mutation, you can omit the `CreateCameraCaptureVariables` argument.
+const { data } = await createCameraCapture();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await createCameraCapture(dataConnect, createCameraCaptureVars);
+
+console.log(data.cameraCapture_insert);
+
+// Or, you can use the `Promise` API.
+createCameraCapture(createCameraCaptureVars).then((response) => {
+  const data = response.data;
+  console.log(data.cameraCapture_insert);
+});
+```
+
+### Using `CreateCameraCapture`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, createCameraCaptureRef, CreateCameraCaptureVariables } from '@musically/dataconnect';
+
+// The `CreateCameraCapture` mutation has an optional argument of type `CreateCameraCaptureVariables`:
+const createCameraCaptureVars: CreateCameraCaptureVariables = {
+  imageUrl: ..., // optional
+  videoUrl: ..., // optional
+  environmentData: ..., // optional
+  generatedTrackId: ..., // optional
+};
+
+// Call the `createCameraCaptureRef()` function to get a reference to the mutation.
+const ref = createCameraCaptureRef(createCameraCaptureVars);
+// Variables can be defined inline as well.
+const ref = createCameraCaptureRef({ imageUrl: ..., videoUrl: ..., environmentData: ..., generatedTrackId: ..., });
+// Since all variables are optional for this mutation, you can omit the `CreateCameraCaptureVariables` argument.
+const ref = createCameraCaptureRef();
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = createCameraCaptureRef(dataConnect, createCameraCaptureVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.cameraCapture_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.cameraCapture_insert);
+});
+```
+
+## CreateVideoDigestion
+You can execute the `CreateVideoDigestion` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+createVideoDigestion(vars: CreateVideoDigestionVariables): MutationPromise<CreateVideoDigestionData, CreateVideoDigestionVariables>;
+
+interface CreateVideoDigestionRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateVideoDigestionVariables): MutationRef<CreateVideoDigestionData, CreateVideoDigestionVariables>;
+}
+export const createVideoDigestionRef: CreateVideoDigestionRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+createVideoDigestion(dc: DataConnect, vars: CreateVideoDigestionVariables): MutationPromise<CreateVideoDigestionData, CreateVideoDigestionVariables>;
+
+interface CreateVideoDigestionRef {
+  ...
+  (dc: DataConnect, vars: CreateVideoDigestionVariables): MutationRef<CreateVideoDigestionData, CreateVideoDigestionVariables>;
+}
+export const createVideoDigestionRef: CreateVideoDigestionRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the createVideoDigestionRef:
+```typescript
+const name = createVideoDigestionRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `CreateVideoDigestion` mutation requires an argument of type `CreateVideoDigestionVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface CreateVideoDigestionVariables {
+  videoUrl: string;
+  extractedAudioUrl?: string | null;
+  atmosphereSummary?: string | null;
+  generatedTrackId?: string | null;
+}
+```
+### Return Type
+Recall that executing the `CreateVideoDigestion` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `CreateVideoDigestionData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface CreateVideoDigestionData {
+  videoDigestion_insert: VideoDigestion_Key;
+}
+```
+### Using `CreateVideoDigestion`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, createVideoDigestion, CreateVideoDigestionVariables } from '@musically/dataconnect';
+
+// The `CreateVideoDigestion` mutation requires an argument of type `CreateVideoDigestionVariables`:
+const createVideoDigestionVars: CreateVideoDigestionVariables = {
+  videoUrl: ..., 
+  extractedAudioUrl: ..., // optional
+  atmosphereSummary: ..., // optional
+  generatedTrackId: ..., // optional
+};
+
+// Call the `createVideoDigestion()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await createVideoDigestion(createVideoDigestionVars);
+// Variables can be defined inline as well.
+const { data } = await createVideoDigestion({ videoUrl: ..., extractedAudioUrl: ..., atmosphereSummary: ..., generatedTrackId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await createVideoDigestion(dataConnect, createVideoDigestionVars);
+
+console.log(data.videoDigestion_insert);
+
+// Or, you can use the `Promise` API.
+createVideoDigestion(createVideoDigestionVars).then((response) => {
+  const data = response.data;
+  console.log(data.videoDigestion_insert);
+});
+```
+
+### Using `CreateVideoDigestion`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, createVideoDigestionRef, CreateVideoDigestionVariables } from '@musically/dataconnect';
+
+// The `CreateVideoDigestion` mutation requires an argument of type `CreateVideoDigestionVariables`:
+const createVideoDigestionVars: CreateVideoDigestionVariables = {
+  videoUrl: ..., 
+  extractedAudioUrl: ..., // optional
+  atmosphereSummary: ..., // optional
+  generatedTrackId: ..., // optional
+};
+
+// Call the `createVideoDigestionRef()` function to get a reference to the mutation.
+const ref = createVideoDigestionRef(createVideoDigestionVars);
+// Variables can be defined inline as well.
+const ref = createVideoDigestionRef({ videoUrl: ..., extractedAudioUrl: ..., atmosphereSummary: ..., generatedTrackId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = createVideoDigestionRef(dataConnect, createVideoDigestionVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.videoDigestion_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.videoDigestion_insert);
 });
 ```
 

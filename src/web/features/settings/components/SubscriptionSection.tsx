@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
 import { getUserSettings } from '../../../../lib/dataconnect';
-import { collection, addDoc, onSnapshot, doc, getFirestore } from 'firebase/firestore';
+import { useNavigate } from '../../../App';
 
 interface Props {
   user: User | null;
@@ -10,6 +10,8 @@ interface Props {
 export const SubscriptionSection: React.FC<Props> = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [tierName, setTierName] = useState("Free");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) return;
@@ -17,7 +19,14 @@ export const SubscriptionSection: React.FC<Props> = ({ user }) => {
       try {
         const res = await getUserSettings();
         if (res.data?.userSettings) {
-          setIsPremium(res.data.userSettings.isPremium || false);
+          const premium = res.data.userSettings.isPremium || false;
+          setIsPremium(premium);
+          
+          const rawTier = (res.data.userSettings as any).subscriptionTier || (res.data.userSettings as any).theme || "free";
+          if (rawTier.includes("ultra")) setTierName("Ultra Unlimited");
+          else if (rawTier.includes("pro")) setTierName("Pro Studio");
+          else if (rawTier.includes("basic")) setTierName("Basic Creator");
+          else setTierName(premium ? "Premium" : "Free");
         }
       } catch (err) {
         console.error("Error fetching user settings via dataconnect", err);
@@ -26,44 +35,12 @@ export const SubscriptionSection: React.FC<Props> = ({ user }) => {
     fetchPlan();
   }, [user]);
 
-  const handleSubscribe = async () => {
-    if (!user) return;
-    try {
-      setLoading(true);
-      const db = getFirestore();
-      const docRef = await addDoc(collection(db, 'customers', user.uid, 'checkout_sessions'), {
-        price: import.meta.env.VITE_STRIPE_PRICE_ID || 'price_default',
-        success_url: window.location.href,
-        cancel_url: window.location.href,
-      });
-
-      // Listen to the document to get the url returned by the Stripe extension
-      onSnapshot(docRef, (snap) => {
-        const data = snap.data();
-        if (data?.error) {
-          console.error(`An error occurred: ${data.error.message}`);
-          setLoading(false);
-        }
-        if (data?.url) {
-          window.location.assign(data.url);
-        }
-      });
-    } catch (e) {
-      console.error(e);
-      setLoading(false);
-    }
-  };
-
   const handleManage = async () => {
     if (!user) return;
     try {
       setLoading(true);
-      // Wait for 200ms to allow UI to show loading state
-      await new Promise(r => setTimeout(r, 200));
-      // For managing, usually you use the Firebase extension's createPortalLink function
-      // Assuming a Cloud Function `ext-firestore-stripe-payments-createPortalLink` is deployed
       const token = await user.getIdToken();
-      const response = await fetch('/api/stripe/portal-session', { // Keep this for now if there isn't a direct subcollection pattern for portal in the extension
+      const response = await fetch('/api/stripe/portal-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +54,7 @@ export const SubscriptionSection: React.FC<Props> = ({ user }) => {
       if (data.url) {
         window.location.href = data.url;
       } else {
-          setLoading(false);
+        setLoading(false);
       }
     } catch (e) {
       console.error(e);
@@ -91,7 +68,7 @@ export const SubscriptionSection: React.FC<Props> = ({ user }) => {
         <div>
           <span className="text-[11px] font-bold uppercase text-gray-400 bg-black/40 px-2 py-1 rounded">Your plan</span>
           <h2 className="text-3xl font-extrabold mt-4 text-white">
-            {isPremium ? 'Mave Premium' : 'Mave Free'}
+            Mave {tierName}
           </h2>
           <p className="mt-2 text-sm text-gray-400">{user?.email || 'Not logged in'}</p>
         </div>
@@ -106,32 +83,30 @@ export const SubscriptionSection: React.FC<Props> = ({ user }) => {
         
         {!isPremium && (
           <button 
-            onClick={handleSubscribe} 
+            onClick={() => navigate('premium')} 
             disabled={loading}
-            className="font-bold text-sm hover:underline disabled:opacity-50"
+            className="font-bold text-sm bg-[#1db954] text-black px-6 py-2 rounded-full hover:scale-105 transition-transform disabled:opacity-50"
           >
-            {loading ? 'Processing...' : 'Join Premium'}
+            Upgrade Plan
           </button>
         )}
         
         {isPremium && (
-          <button 
-            onClick={handleManage} 
-            disabled={loading}
-            className="font-bold text-sm hover:underline disabled:opacity-50"
-          >
-            {loading ? 'Processing...' : 'Manage Subscription'}
-          </button>
-        )}
-        
-        {!isPremium && (
-          <button 
-            onClick={handleManage} 
-            disabled={loading}
-            className="text-xs text-gray-300 hover:underline disabled:opacity-50 mt-2"
-          >
-            Manage Subscription
-          </button>
+          <div className="flex flex-col gap-2 items-center">
+            <button 
+              onClick={() => navigate('premium')} 
+              className="text-xs text-white/80 hover:underline"
+            >
+              View All Plans
+            </button>
+            <button 
+              onClick={handleManage} 
+              disabled={loading}
+              className="font-bold text-sm bg-white/20 text-white px-6 py-2 rounded-full hover:bg-white/30 transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Processing...' : 'Manage Billing'}
+            </button>
+          </div>
         )}
       </div>
     </div>
