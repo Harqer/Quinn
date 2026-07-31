@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string msgid="881409763997275156" name="call_notification_answer_action">"応答"</string>
+    <string msgid="8793775615905189152" name="call_notification_answer_video_action">"ビデオ"</string>
+    <string msgid="3229508546291798546" name="call_notification_decline_action">"拒否"</string>
+    <string msgid="2659457946726154263" name="call_notification_hang_up_action">"通話終了"</string>
+    <string msgid="6107532579223922871" name="call_notification_incoming_text">"着信"</string>
+    <string msgid="8623827134497363134" name="call_notification_ongoing_text">"通話中"</string>
+    <string msgid="59049573811482460" name="call_notification_screening_text">"着信をスクリーニング中"</string>
+    <string gender="unknown" name="dat_error_permission_connection_error">デバイスとの通信中に接続エラーが発生しました</string>
+    <string gender="unknown" name="dat_error_permission_internal_error">予期しない内部エラーが発生しました</string>
+    <string gender="unknown" name="dat_error_permission_meta_ai_not_installed">Meta AIコンパニオンアプリがデバイスにインストールされていません</string>
+    <string gender="unknown" name="dat_error_permission_no_device">ウェアラブルデバイスが検出または登録されていません</string>
+    <string gender="unknown" name="dat_error_permission_no_device_with_connection">検出されたすべてのデバイスの電源が切れているか、接続が切断されています</string>
+    <string gender="unknown" name="dat_error_permission_request_in_progress">アクセス許可のリクエストはすでに処理中です</string>
+    <string gender="unknown" name="dat_error_permission_request_timeout">アクセス許可のリクエストが制限時間を超えました</string>
+    <string gender="unknown" name="dat_error_registration_already_registered">再登録しようとしているユーザーが登録済みです</string>
+    <string gender="unknown" name="dat_error_registration_configuration_invalid">Wearables Device Access Toolkitの設定が無効または不完全です</string>
+    <string gender="unknown" name="dat_error_registration_meta_ai_not_installed">Meta AIアプリがデバイスにインストールされていません。登録するにはインストールが必要です</string>
+    <string gender="unknown" name="dat_error_registration_network_unavailable">インターネット接続がありません。接続状況を確認してから、もう一度実行してください</string>
+    <string gender="unknown" name="dat_error_registration_unknown">登録中に不明なエラーが発生しました</string>
+    <string gender="unknown" name="dat_error_session_already_exists">このデバイスのセッションはすでに存在します</string>
+    <string gender="unknown" name="dat_error_session_already_stopped">セッションはすでに停止されています</string>
+    <string gender="unknown" name="dat_error_session_battery_critical">デバイスのバッテリー充電量が非常に低くなっています</string>
+    <string gender="unknown" name="dat_error_session_capability_already_active">このタイプの機能はセッションですでにアクティブになっています</string>
+    <string gender="unknown" name="dat_error_session_capability_not_found">このタイプの機能はセッションに付属されていません</string>
+    <string gender="unknown" name="dat_error_session_idle">セッションが待機状態です。機能を追加する前にセッションを開始してください</string>
+    <string gender="unknown" name="dat_error_session_no_eligible_device">対象のデバイスがありません</string>
+    <string gender="unknown" name="dat_error_session_peak_power_shutdown">デバイスのピーク電力によるシャットダウン</string>
+    <string gender="unknown" name="dat_error_session_thermal_critical">デバイスの温度が危機的状態です</string>
+    <string gender="unknown" name="dat_error_session_thermal_emergency">デバイスの温度が緊急状態です — シャットダウンします</string>
+    <string gender="unknown" name="dat_error_stream_battery_low">デバイスのバッテリー残量が低すぎるためストリーミングできません</string>
+    <string gender="unknown" name="dat_error_stream_critical_error">重大なエラー、ストリーミングを終了してください</string>
+    <string gender="unknown" name="dat_error_stream_error">不明なエラー、このままストリーミングを続けられます</string>
+    <string gender="unknown" name="dat_error_stream_hinge_closed">グラスのヒンジが閉じていました</string>
+    <string gender="unknown" name="dat_error_stream_peak_power_limit">デバイスのピーク電力の上限に達しました</string>
+    <string gender="unknown" name="dat_error_stream_permissions_denied">アクセス許可が拒否されました</string>
+    <string gender="unknown" name="dat_error_stream_thermal_emergency">デバイスの温度が急激に上昇したため、ストリーミングは停止されました</string>
+    <string gender="unknown" name="dat_error_stream_thermal_hot">デバイスの温度が高すぎるためストリーミングできません</string>
+    <string gender="unknown" name="dat_error_stream_timeout">操作がタイムアウトしました</string>
+    <string gender="unknown" name="dat_error_unregistration_already_unregistered">再登録解除しようとしているユーザーが登録解除済みです</string>
+    <string gender="unknown" name="dat_error_unregistration_configuration_invalid">Wearables Device Access Toolkitの設定が無効または不完全です</string>
+    <string gender="unknown" name="dat_error_unregistration_meta_ai_not_installed">Meta AIアプリがデバイスにインストールされていません。登録解除するにはインストールが必要です</string>
+    <string gender="unknown" name="dat_error_unregistration_unknown">登録解除中に不明なエラーが発生しました</string>
+    <string gender="unknown" name="dat_error_voice_action_failed">アクションを実行できませんでした</string>
+    <string gender="unknown" name="dat_error_voice_channel_setup_failed">AIアクションチャンネルを設定できませんでした</string>
+    <string gender="unknown" name="dat_error_voice_connection_not_available">デバイス接続は利用できません</string>
+    <string gender="unknown" name="dat_error_voice_device_not_found">デバイスが見つかりません</string>
+    <string gender="unknown" name="dat_error_voice_init_request_error">リクエストを初期化できませんでした</string>
+    <string gender="unknown" name="dat_error_voice_invalid_message_proto">メッセージのプロトが無効です</string>
+    <string gender="unknown" name="dat_error_voice_invalid_wearables_interface">提供されたウェアラブルインターフェイスが無効です</string>
+    <string gender="unknown" name="dat_error_voice_send_message_error">メッセージを送信できませんでした</string>
+    <string gender="unknown" name="dat_error_wearables_already_configured">すでに設定されています</string>
+    <string gender="unknown" name="dat_error_wearables_configuration_error">設定エラー</string>
+    <string gender="unknown" name="dat_error_wearables_internal_error">内部エラー</string>
+    <string gender="unknown" name="dat_error_wearables_url_registration_error">登録エラー</string>
+    <string gender="unknown" name="dat_error_wearables_url_unregistration_error">登録解除エラー</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+</resources>

@@ -1,0 +1,173 @@
+/home/shaolin/.gradle/caches/transforms-4/ad2cc1888efa1522fc5aa5ece6addf6e/transformed/lifecycle-livedata-core-2.9.4/jars/lint.jar: Warning: Lint found an issue registry (androidx.lifecycle.lint.LiveDataCoreIssueRegistry) which requires a newer API level. That means that the custom lint checks are intended for a newer lint version; please upgrade. [ObsoleteLintCustomCheck]
+
+   Explanation for issues of type "ObsoleteLintCustomCheck":
+   Lint can be extended with "custom checks": additional checks implemented by
+   developers and libraries to for example enforce specific API usages
+   required by a library or a company coding style guideline.
+
+   The Lint APIs are not yet stable, so these checks may either cause a
+   performance degradation, or stop working, or provide wrong results.
+
+   This warning flags custom lint checks that are found to be using obsolete
+   APIs and will need to be updated to run in the current lint environment.
+
+   It may also flag issues found to be using a newer version of the API,
+   meaning that you need to use a newer version of lint (or Android Studio or
+   Gradle plugin etc) to work with these checks.
+
+/home/shaolin/lyria/app/src/main/java/com/example/myapp/WearableStreamingService.kt:67: Warning: Field requires API level 30 (current min is 29): android.content.pm.ServiceInfo#FOREGROUND_SERVICE_TYPE_CAMERA [InlinedApi]
+                val foregroundType = ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or 
+                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/src/main/java/com/example/myapp/WearableStreamingService.kt:68: Warning: Field requires API level 30 (current min is 29): android.content.pm.ServiceInfo#FOREGROUND_SERVICE_TYPE_MICROPHONE [InlinedApi]
+                                     ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE or 
+                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "InlinedApi":
+   This check scans through all the Android API field references in the
+   application and flags certain constants, such as static final integers and
+   Strings, which were introduced in later versions. These will actually be
+   copied into the class files rather than being referenced, which means that
+   the value is available even when running on older devices. In some cases
+   that's fine, and in other cases it can result in a runtime crash or
+   incorrect behavior. It depends on the context, so consider the code
+   carefully and decide whether it's safe and can be suppressed or whether the
+   code needs to be guarded.
+
+   If you really want to use this API and don't need to support older devices
+   just set the minSdkVersion in your build.gradle or AndroidManifest.xml
+   files.
+
+   If your code is deliberately accessing newer APIs, and you have ensured
+   (e.g. with conditional execution) that this code will only ever be called
+   on a supported platform, then you can annotate your class or method with
+   the @TargetApi annotation specifying the local minimum SDK to apply, such
+   as @TargetApi(11), such that this check considers 11 rather than your
+   manifest file's minimum SDK as the required API level.
+
+/home/shaolin/lyria/app/build.gradle.kts:32: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
+        targetSdk = 35
+        ~~~~~~~~~~~~~~
+
+   Explanation for issues of type "OldTargetApi":
+   When your application runs on a version of Android that is more recent than
+   your targetSdkVersion specifies that it has been tested with, various
+   compatibility modes kick in. This ensures that your application continues
+   to work, but it may look out of place. For example, if the targetSdkVersion
+   is less than 14, your app may get an option button in the UI.
+
+   To fix this issue, set the targetSdkVersion to the highest available value.
+   Then test your app to make sure everything works correctly. You may want to
+   consult the compatibility notes to see what changes apply to each version
+   you are adding support for:
+   https://developer.android.com/reference/android/os/Build.VERSION_CODES.html
+   as well as follow this guide:
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.
+   html
+
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.html
+
+/home/shaolin/lyria/app/build.gradle.kts:79: Warning: A newer version of org.robolectric:robolectric than 4.11.1 is available: 4.16.1 [GradleDependency]
+    testImplementation("org.robolectric:robolectric:4.11.1")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:80: Warning: A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0 [GradleDependency]
+    testImplementation("androidx.test.ext:junit:1.1.5")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:81: Warning: A newer version of androidx.test:core than 1.5.0 is available: 1.7.0 [GradleDependency]
+    testImplementation("androidx.test:core:1.5.0")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:89: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-core than 1.9.0 is available: 1.11.0 [GradleDependency]
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:90: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.9.0 is available: 1.11.0 [GradleDependency]
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+/home/shaolin/lyria/app/src/main/java/com/example/myapp/MainActivity.kt:125: Warning: Using setJavaScriptEnabled can introduce XSS vulnerabilities into your application, review carefully [SetJavaScriptEnabled]
+                settings.javaScriptEnabled = true
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "SetJavaScriptEnabled":
+   Your code should not invoke setJavaScriptEnabled if you are not sure that
+   your app really requires JavaScript support.
+
+   https://goo.gle/SetJavaScriptEnabled
+   https://developer.android.com/training/articles/security-tips
+
+/home/shaolin/lyria/app/src/main/java/com/example/myapp/MainActivity.kt:165: Warning: Unnecessary; SDK_INT is always >= 29 [ObsoleteSdkInt]
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/src/main/java/com/example/myapp/WearableStreamingService.kt:66: Warning: Unnecessary; SDK_INT is always >= 29 [ObsoleteSdkInt]
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/src/main/java/com/example/myapp/WearableStreamingService.kt:193: Warning: Unnecessary; SDK_INT is always >= 29 [ObsoleteSdkInt]
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/src/main/java/com/example/myapp/WearableStreamingService.kt:211: Warning: Unnecessary; SDK_INT is always >= 29 [ObsoleteSdkInt]
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ObsoleteSdkInt":
+   This check flags version checks that are not necessary, because the
+   minSdkVersion (or surrounding known API level) is already at least as high
+   as the version checked for.
+
+   Similarly, it also looks for resources in -vNN folders, such as values-v14
+   where the version qualifier is less than or equal to the minSdkVersion,
+   where the contents should be merged into the best folder.
+
+/home/shaolin/lyria/app/src/main/AndroidManifest.xml:18: Warning: Should explicitly set android:icon, there is no default [MissingApplicationIcon]
+    <application
+     ~~~~~~~~~~~
+
+   Explanation for issues of type "MissingApplicationIcon":
+   You should set an icon for the application as whole because there is no
+   default. This attribute must be set as a reference to a drawable resource
+   containing the image (for example @drawable/icon).
+
+   https://developer.android.com/studio/publish/preparing#publishing-configure
+
+/home/shaolin/lyria/app/build.gradle.kts:78: Warning: Use version catalog instead [UseTomlInstead]
+    testImplementation("junit:junit:4.13.2")
+                       ~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:79: Warning: Use version catalog instead [UseTomlInstead]
+    testImplementation("org.robolectric:robolectric:4.11.1")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:80: Warning: Use version catalog instead [UseTomlInstead]
+    testImplementation("androidx.test.ext:junit:1.1.5")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:81: Warning: Use version catalog instead [UseTomlInstead]
+    testImplementation("androidx.test:core:1.5.0")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:82: Warning: Use the existing version catalog reference (libs.mwdat.mockdevice) instead [UseTomlInstead]
+    testImplementation("com.meta.wearable:mwdat-mockdevice:0.8.0")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:84: Warning: Use the existing version catalog reference (libs.mwdat.core) instead [UseTomlInstead]
+    implementation("com.meta.wearable:mwdat-core:0.8.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:85: Warning: Use the existing version catalog reference (libs.mwdat.camera) instead [UseTomlInstead]
+    implementation("com.meta.wearable:mwdat-camera:0.8.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:86: Warning: Use the existing version catalog reference (libs.mwdat.display) instead [UseTomlInstead]
+    implementation("com.meta.wearable:mwdat-display:0.8.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:89: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shaolin/lyria/app/build.gradle.kts:90: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseTomlInstead":
+   If your project is using a libs.versions.toml file, you should place all
+   Gradle dependencies in the TOML file. This lint check looks for version
+   declarations outside of the TOML file and suggests moving them (and in the
+   IDE, provides a quickfix to performing the operation automatically).
+
+0 errors, 25 warnings

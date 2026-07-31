@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.myapp.WearablesTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-07-31T05:49:24" hostname="kofi" time="0.074">
+  <properties/>
+  <testcase name="dumpMethods" classname="com.example.myapp.WearablesTest" time="0.074"/>
+  <system-out><![CDATA[=== WEARABLES METHODS ===
+Method: getDevices() -> StateFlow
+Method: buildDatAppUpdateDeepLink$fbandroid_java_com_meta_wearable_dat_core_core(String) -> Uri
+Method: buildDatDeepLink(String, String, Boolean) -> Uri
+Method: buildDatDeepLink$default(Wearables, String, String, Boolean, int, Object) -> Uri
+Method: checkPermissionStatus-DIlfXx4(Permission, Continuation) -> Object
+Method: createSession-QAxQwbw(DeviceSelector) -> Object
+Method: getAirshipProvider$fbandroid_java_com_meta_wearable_dat_core_core() -> Object
+Method: getContext$fbandroid_java_com_meta_wearable_dat_core_core() -> Context
+Method: getDeviceManager$fbandroid_java_com_meta_wearable_dat_core_core() -> DeviceManager
+Method: getDeviceState(DeviceIdentifier) -> StateFlow
+Method: getDevicesMetadata() -> Map
+Method: getHealthManager$fbandroid_java_com_meta_wearable_dat_core_core() -> DeviceHealthManager
+Method: getInstance$fbandroid_java_com_meta_wearable_dat_core_core() -> WearablesImpl
+Method: getRegistrationErrorStream() -> Flow
+Method: getRegistrationState() -> StateFlow
+Method: getSessionManager$fbandroid_java_com_meta_wearable_dat_core_core() -> SessionManager
+Method: initialize-DIlfXx4$fbandroid_java_com_meta_wearable_dat_core_core(Context, RegistrationManager) -> Object
+Method: initializeWithOptions-DIlfXx4$fbandroid_java_com_meta_wearable_dat_core_core(Context, StartupOptions) -> Object
+Method: isDevMode() -> boolean
+Method: openCompanionDestination-DIlfXx4(Activity, Uri) -> Object
+Method: openDATGlassesAppUpdate-QAxQwbw(Activity) -> Object
+Method: openFirmwareUpdate-QAxQwbw(Activity) -> Object
+Method: setDeviceManager$fbandroid_java_com_meta_wearable_dat_core_core(DeviceManager) -> void
+Method: setHealthManager$fbandroid_java_com_meta_wearable_dat_core_core(DeviceHealthManager) -> void
+Method: setSessionManager$fbandroid_java_com_meta_wearable_dat_core_core(SessionManager) -> void
+Method: setUsesDamOverride$fbandroid_java_com_meta_wearable_dat_core_core(boolean) -> void
+Method: startUnregistration(Activity) -> void
+Method: reset() -> void
+Method: startRegistration(Activity) -> void
+Method: initialize-QAxQwbw(Context) -> Object
+=========================
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

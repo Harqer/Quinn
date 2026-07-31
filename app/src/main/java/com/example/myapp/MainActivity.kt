@@ -1,33 +1,33 @@
 package com.example.myapp
 
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.webkit.JavascriptInterface
+import android.webkit.WebView
+import com.meta.wearable.dat.core.Wearables
+import com.meta.wearable.dat.core.types.RegistrationState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 /**
  * Meta Wearables Companion App Controller
  * Implements the Wearables Device Access Toolkit (WDAT) protocols on Android.
- * Manages device life cycle, secure API authorization, BLE discovery, telemetry tracking, and gesture subscribers.
+ * Connects to the real Meta Wearables SDK and launches the foreground streaming service.
  */
 class MainActivity : Activity() {
 
     private val TAG = "MetaWearablesWDAT"
-
-    // WDAT Session state enum
-    enum class WdatState {
-        IDLE,
-        AUTHENTICATING,
-        DISCOVERING,
-        CONNECTING,
-        SECURE_SESSION,
-        ACTIVE_STREAM
-    }
+    private val mainScope = CoroutineScope(Dispatchers.Main)
 
     // Telemetry and hardware state
     var currentBatteryLevel: Int = 100
     var isWearDetected: Boolean = true
     var isUsbCharging: Boolean = false
-    var activeState: WdatState = WdatState.IDLE
     var lastLoggedGesture: String = ""
     var isAppSwitcherOpen: Boolean = false
 
@@ -35,11 +35,11 @@ class MainActivity : Activity() {
     var metaAppId: String = ""
     var clientToken: String = ""
 
-    private var webView: android.webkit.WebView? = null
+    private var webView: WebView? = null
 
     // WebAppInterface for bridging Kotlin DAT events to WebView
     class WebAppInterface(private val activity: MainActivity) {
-        @android.webkit.JavascriptInterface
+        @JavascriptInterface
         fun onGestureEvent(gesture: String) {
             activity.runOnUiThread {
                 activity.logI("WebAppInterface", "Gesture event from glasses: $gesture")
@@ -47,7 +47,7 @@ class MainActivity : Activity() {
             }
         }
 
-        @android.webkit.JavascriptInterface
+        @JavascriptInterface
         fun triggerCameraFrame(base64Frame: String) {
             activity.runOnUiThread {
                 activity.logI("WebAppInterface", "Glasses POV camera frame injected")
@@ -55,7 +55,7 @@ class MainActivity : Activity() {
             }
         }
 
-        @android.webkit.JavascriptInterface
+        @JavascriptInterface
         fun triggerTelemetry(batteryLevel: Int, isWearDetected: Boolean) {
             activity.runOnUiThread {
                 activity.logI("WebAppInterface", "Telemetry status updated")
@@ -83,7 +83,7 @@ class MainActivity : Activity() {
     }
 
     // Safe logging utility to prevent JUnit runtime exceptions
-    private fun logI(tag: String, msg: String) {
+    fun logI(tag: String, msg: String) {
         try {
             android.util.Log.i(tag, msg)
         } catch (e: Exception) {
@@ -91,7 +91,7 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun logD(tag: String, msg: String) {
+    fun logD(tag: String, msg: String) {
         try {
             android.util.Log.d(tag, msg)
         } catch (e: Exception) {
@@ -99,7 +99,7 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun logW(tag: String, msg: String) {
+    fun logW(tag: String, msg: String) {
         try {
             android.util.Log.w(tag, msg)
         } catch (e: Exception) {
@@ -107,7 +107,7 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun logE(tag: String, msg: String) {
+    fun logE(tag: String, msg: String) {
         try {
             android.util.Log.e(tag, msg)
         } catch (e: Exception) {
@@ -121,7 +121,7 @@ class MainActivity : Activity() {
         
         // Initialize WebView programmatically for the companion app bridge
         try {
-            webView = android.webkit.WebView(this).apply {
+            webView = WebView(this).apply {
                 settings.javaScriptEnabled = true
                 addJavascriptInterface(WebAppInterface(this@MainActivity), "AndroidBridge")
             }
@@ -133,8 +133,40 @@ class MainActivity : Activity() {
         // Load configuration from manifest placeholders
         loadManifestCredentials()
 
-        // Automatically run internal hardware verification loop on boot
-        runAutomatedValidation()
+        // 1. Initialize SDK
+        Wearables.initialize(this).onFailure { error, _ ->
+            logE(TAG, "Failed to initialize DAT: ${error.description}")
+        }
+
+        // 2. Start Registration Flow with Meta AI App
+        Wearables.startRegistration(this)
+
+        // 3. Observe Registration State
+        mainScope.launch {
+            Wearables.registrationState.collect { state ->
+                logI(TAG, "WDAT Registration State changed: $state")
+                if (state == RegistrationState.REGISTERED) {
+                    logI(TAG, "App successfully registered with Meta Directory.")
+                    startForegroundStreamingService()
+                }
+            }
+        }
+
+        // 4. Observe Discovered Devices (For logging/UI purposes)
+        mainScope.launch {
+            Wearables.devices.collect { devices ->
+                logI(TAG, "Discovered bonded wearables: $devices")
+            }
+        }
+    }
+
+    private fun startForegroundStreamingService() {
+        val intent = Intent(this, WearableStreamingService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
     }
 
     /**
@@ -145,7 +177,6 @@ class MainActivity : Activity() {
             val appInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
             val bundle = appInfo.metaData
             if (bundle != null) {
-                // Read configuration matching placeholders
                 metaAppId = bundle.getString("mwdat_application_id") ?: ""
                 clientToken = bundle.getString("mwdat_client_token") ?: ""
                 logD(TAG, "Loaded WDAT AppID: $metaAppId")
@@ -153,56 +184,6 @@ class MainActivity : Activity() {
         } catch (e: Exception) {
             logE(TAG, "Failed to load manifest WDAT credentials: ${e.message}")
         }
-    }
-
-    /**
-     * Executes the secure cryptographic application handshake.
-     */
-    fun authenticateApp(): Boolean {
-        activeState = WdatState.AUTHENTICATING
-        logI(TAG, "Performing cryptographic handshake using ClientToken with Meta Directory...")
-        if (metaAppId.isEmpty() || clientToken.isEmpty()) {
-            logE(TAG, "Authentication failed: Missing App ID or Client Token in configuration.")
-            activeState = WdatState.IDLE
-            return false
-        }
-        
-        // Simulated authorization response
-        logI(TAG, "cryptographic secure handshakes complete. Application certified under AppID $metaAppId")
-        activeState = WdatState.DISCOVERING
-        return true
-    }
-
-    /**
-     * Scans for paired Bluetooth low-energy channels.
-     */
-    fun discoverDevices(): List<String> {
-        if (activeState != WdatState.DISCOVERING) {
-            logW(TAG, "Please authenticate application before initiating device discovery scan.")
-            return emptyList()
-        }
-        
-        logI(TAG, "Scanning nearby Bluetooth low-energy channels...")
-        val discoveredDevices = listOf("RBM-793X-ACTIVE")
-        logI(TAG, "Discovered bonded wearables: $discoveredDevices")
-        activeState = WdatState.CONNECTING
-        return discoveredDevices
-    }
-
-    /**
-     * Establishes secure WDAT connection with target wearable.
-     */
-    fun establishSession(deviceId: String): Boolean {
-        if (activeState != WdatState.CONNECTING) {
-            logW(TAG, "Connection cannot be established. No discovery scan has run.")
-            return false
-        }
-        
-        logI(TAG, "Establishing cryptographically secure session tunnel with $deviceId...")
-        // Secure keys exchange simulation
-        logI(TAG, "Secured Session with RBM-793X-ACTIVE completed successfully.")
-        activeState = WdatState.SECURE_SESSION
-        return true
     }
 
     /**
@@ -214,14 +195,10 @@ class MainActivity : Activity() {
         isUsbCharging = usbConnected
         
         logI(TAG, "TELEMETRY SYNCHRONIZED -> Battery: ${battery}%, Wear Detected: $onHead, Charging: $usbConnected")
-        
-        // Dispatch telemetry event to webview
         sendTelemetryToWebview(battery, onHead)
         
-        // Safety protocol: pause streaming when glasses are off head to conserve power
-        if (!onHead && activeState == WdatState.ACTIVE_STREAM) {
+        if (!onHead) {
             logW(TAG, "Wearer proximity lost! Suspending POV live camera stream.")
-            activeState = WdatState.SECURE_SESSION
         }
     }
 
@@ -231,19 +208,14 @@ class MainActivity : Activity() {
     fun registerGesture(gestureType: String) {
         lastLoggedGesture = gestureType
         logD(TAG, "GESTURE EVENT -> Captured: $gestureType")
-
-        // Dispatch gesture event to webview
         sendGestureToWebview(gestureType)
 
         when (gestureType) {
-            // Physical Touchpad
             "tap" -> logI(TAG, "Action: Single Tap -> Play / Pause Audio")
             "double_tap" -> logI(TAG, "Action: Double Tap -> Skip Track Forward")
             "triple_tap" -> logI(TAG, "Action: Triple Tap -> Go Back a Track")
             "swipe_forward" -> logI(TAG, "Action: Swipe Forward -> Volume Up")
             "swipe_backward" -> logI(TAG, "Action: Swipe Backward -> Volume Down")
-            
-            // Hand Air Gestures (WDAT Native Extension)
             "index_finger_turn_right" -> logI(TAG, "Action: Index Turn Right -> Volume Up")
             "index_finger_turn_left" -> logI(TAG, "Action: Index Turn Left -> Volume Down")
             "thumb_to_index_double_tap" -> logI(TAG, "Action: Thumb-Index Double Tap -> Toggle Meta Voice AI")
@@ -257,31 +229,8 @@ class MainActivity : Activity() {
         }
     }
 
-    /**
-     * Executes the self-contained production test suite to ensure secure integration pipeline readiness.
-     */
-    fun runAutomatedValidation(): Boolean {
-        logI(TAG, "======== STARTING WDAT HARDWARE COMPATIBILITY VALIDATION ========")
-        
-        // 1. App Auth
-        if (!authenticateApp()) return false
-        
-        // 2. Discover BLE
-        val devices = discoverDevices()
-        if (devices.isEmpty() || !devices.contains("RBM-793X-ACTIVE")) return false
-        
-        // 3. Connect Session
-        if (!establishSession("RBM-793X-ACTIVE")) return false
-        
-        // 4. Register Gestures Test
-        registerGesture("double_tap")
-        registerGesture("triple_tap")
-        registerGesture("middle_finger_to_thumb_hold")
-        
-        // 5. Telemetry update
-        handleTelemetryUpdate(85, true, false)
-        
-        logI(TAG, "======== WDAT HARDWARE VALIDATION PASSED SUCCESSFULLY ========")
-        return true
+    override fun onDestroy() {
+        super.onDestroy()
+        mainScope.cancel()
     }
 }

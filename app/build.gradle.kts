@@ -41,6 +41,12 @@ android {
         manifestPlaceholders["mwdat_client_token"] = mwdatClientToken
     }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -70,6 +76,11 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 dependencies {
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.11.1")
+    testImplementation("androidx.test.ext:junit:1.1.5")
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("com.meta.wearable:mwdat-mockdevice:0.8.0")
+
     implementation("com.meta.wearable:mwdat-core:0.8.0")
     implementation("com.meta.wearable:mwdat-camera:0.8.0")
     implementation("com.meta.wearable:mwdat-display:0.8.0")

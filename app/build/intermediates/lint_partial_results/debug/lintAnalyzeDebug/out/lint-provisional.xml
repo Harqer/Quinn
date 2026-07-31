@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.6.0" type="conditional_incidents">
+
+    <incident
+        id="InlinedApi"
+        severity="warning"
+        message="">
+        <fix-data minSdk="fffffffff0000000" requiresApi="ffffffffe0000000"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/myapp/WearableStreamingService.kt"
+            line="67"
+            column="38"
+            startOffset="2551"
+            endLine="67"
+            endColumn="80"
+            endOffset="2593"/>
+        <map>
+            <entry
+                name="owner"
+                string="android.content.pm.ServiceInfo"/>
+            <api-levels id="minSdk"
+                value="fffffffff0000000"/>
+            <api-levels id="requiresApi"
+                value="ffffffffe0000000"/>
+            <entry
+                name="name"
+                string="FOREGROUND_SERVICE_TYPE_CAMERA"/>
+            <entry
+                name="message"
+                string="Field requires API level 30 (current min is %1$s): `android.content.pm.ServiceInfo#FOREGROUND_SERVICE_TYPE_CAMERA`"/>
+        </map>
+    </incident>
+
+    <incident
+        id="InlinedApi"
+        severity="warning"
+        message="">
+        <fix-data minSdk="fffffffff0000000" requiresApi="ffffffffe0000000"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/myapp/WearableStreamingService.kt"
+            line="68"
+            column="38"
+            startOffset="2635"
+            endLine="68"
+            endColumn="84"
+            endOffset="2681"/>
+        <map>
+            <entry
+                name="owner"
+                string="android.content.pm.ServiceInfo"/>
+            <api-levels id="minSdk"
+                value="fffffffff0000000"/>
+            <api-levels id="requiresApi"
+                value="ffffffffe0000000"/>
+            <entry
+                name="name"
+                string="FOREGROUND_SERVICE_TYPE_MICROPHONE"/>
+            <entry
+                name="message"
+                string="Field requires API level 30 (current min is %1$s): `android.content.pm.ServiceInfo#FOREGROUND_SERVICE_TYPE_MICROPHONE`"/>
+        </map>
+    </incident>
+
+</incidents>
