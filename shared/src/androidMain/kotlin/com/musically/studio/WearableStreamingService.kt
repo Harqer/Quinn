@@ -322,16 +322,29 @@ class WearableStreamingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         stopAudioRecording()
+        autoDismissJob?.cancel()
         instance = null
         _isServiceActive.value = false
-        scope.cancel()
-        activeSession?.let { session ->
-            try {
-                // The SDK handles stream/display removal internally when stop() is called.
-                session.stop()
-            } catch (e: Exception) {
-                Timber.e(e, "Error stopping wearable session")
+        
+        scope.launch {
+            val session = activeSession
+            val display = activeDisplay
+            val stream = activeStream
+
+            if (session != null) {
+                try {
+                    if (activeDisplay != null) {
+                        session.removeDisplay()
+                    }
+                    if (activeStream != null) {
+                        session.removeStream()
+                    }
+                    session.stop()
+                } catch (e: Exception) {
+                    Timber.e(e, "Error during Meta Wearable session cleanup")
+                }
             }
+            scope.cancel()
         }
     }
 

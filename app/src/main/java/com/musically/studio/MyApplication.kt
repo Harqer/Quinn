@@ -54,16 +54,9 @@ class MyApplication : Application(), AppFunctionConfiguration.Provider {
             }
         }
 
-        val isEmulator = android.os.Build.HARDWARE.contains("ranchu") || android.os.Build.HARDWARE.contains("goldfish") || android.os.Build.HARDWARE.contains("qemu") || android.os.Build.FINGERPRINT.contains("generic") || android.os.Build.MODEL.contains("Emulator") || android.os.Build.PRODUCT.contains("sdk") || android.os.Build.BRAND.contains("google")
-        if (isEmulator) {
-            Timber.i("Running on emulator, using MockDeviceKit")
-            val mockDeviceKit = com.meta.wearable.dat.mockdevice.MockDeviceKit.getInstance(this)
-            mockDeviceKit.enable()
-        } else {
-            val result = Wearables.initialize(this)
-            result.onFailure { error ->
-                Timber.e("Failed to initialize DAT: $error")
-            }
+        val result = Wearables.initialize(this)
+        result.onFailure { error ->
+            Timber.e("Failed to initialize DAT: $error")
         }
 
 
