@@ -1,0 +1,40 @@
+{
+  "welcome": {
+    "title": "Millones de pistas.",
+    "signUp": "Regístrate gratis",
+    "logIn": "Iniciar sesión"
+  },
+  "cover": {
+    "generate": "Crear",
+    "imageCover": "Portada de Imagen",
+    "videoCover": "Portada de Video",
+    "stylePresets": "Estilos Preestablecidos",
+    "customPrompt": "Indicación Personalizada (Opcional)",
+    "promptPlaceholder": "Describe el estilo visual (ej. cuadrícula geométrica de neón)...",
+    "generatingImage": "Leyendo tu imagen...",
+    "generatingVideo": "Construyendo tu pista...",
+    "describeMood": "Describe un estilo para crear tu portada",
+    "switchToVideo": "Cambiar a Portada de Video",
+    "switchToImage": "Cambiar a Portada de Imagen"
+  },
+  "chat": {
+    "titleMusic": "Mave Música",
+    "titlePodcast": "Mave Podcast",
+    "emptyStateTitle": "¿Qué quieres escuchar?",
+    "emptyStateBody": "Pídele a Mave que cree música o un episodio de podcast.",
+    "placeholder": "Mensaje para Mave...",
+    "connecting": "Conectando..."
+  },
+  "dashboard": {
+    "welcome": "Bienvenido de nuevo",
+    "settings": "Ajustes",
+    "language": "Idioma",
+    "english": "Inglés",
+    "spanish": "Español",
+    "livePov": "POV EN VIVO",
+    "reasoningStream": "Analizando...",
+    "readingImage": "Leyendo tu imagen...",
+    "instructMusic": "Cambiar el estilo musical...",
+    "instructNarrative": "Cambiar el arco narrativo..."
+  }
+}

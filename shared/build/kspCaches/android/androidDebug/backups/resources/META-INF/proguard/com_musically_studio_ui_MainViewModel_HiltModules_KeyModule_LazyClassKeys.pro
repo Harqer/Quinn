@@ -1,0 +1,1 @@
+-keep,allowobfuscation,allowshrinking class com.musically.studio.ui.MainViewModel

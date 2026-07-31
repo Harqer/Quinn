@@ -1,0 +1,222 @@
+query GetUserTracks @auth(level: USER) {
+  tracks(
+    where: { owner: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    title
+    album {
+      id
+      title
+      primaryArtist {
+        id
+        name
+      }
+    }
+    coverUrl
+    audioUrl
+    prompt
+    visibility
+    isCommunity
+    createdAt
+  }
+}
+
+query GetCommunityTracks @auth(level: PUBLIC) {
+  tracks(
+    where: { isCommunity: { eq: true } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    title
+    album {
+      id
+      title
+      primaryArtist {
+        id
+        name
+      }
+    }
+    coverUrl
+    createdAt
+    owner {
+      uid
+      displayName
+    }
+  }
+}
+
+query GetCategories @auth(level: PUBLIC) {
+  categories {
+    id
+    name
+    type
+  }
+}
+
+query GetPlaylists @auth(level: USER) {
+  playlists(where: { owner: { uid: { eq_expr: "auth.uid" } } }) {
+    id
+    name
+    description
+    coverUrl
+    isPublic
+  }
+}
+
+query GetAlbums @auth(level: PUBLIC) {
+  albums {
+    id
+    title
+    primaryArtist {
+      id
+      name
+    }
+    coverUrl
+    releaseDate
+  }
+}
+
+query GetPodcasts @auth(level: PUBLIC) {
+  shows {
+    id
+    title
+    publisher
+    coverUrl
+    description
+  }
+}
+
+query GetAudiobooks @auth(level: PUBLIC) {
+  audiobooks {
+    id
+    title
+    author {
+      id
+      name
+    }
+    narrator
+    coverUrl
+    totalDurationMs
+  }
+}
+
+query GetUserSettings @auth(level: USER) {
+  userSettings(key: { userId_expr: "auth.uid" }) {
+    userId
+    isPremium
+    theme
+    parentalControlsEnabled
+    stripeCustomerId
+    user {
+      displayName
+      avatarUrl
+    }
+  }
+}
+
+query GetPaymentHistory @auth(level: USER) {
+  paymentHistories(
+    where: { user: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    amount
+    currency
+    status
+    stripeInvoiceId
+    createdAt
+  }
+}
+
+query GetLikedTracks @auth(level: USER) {
+  likedTracks(
+    where: { user: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ addedAt: DESC }]
+  ) {
+    track {
+      id
+      title
+      album {
+        id
+        title
+        primaryArtist {
+          id
+          name
+        }
+      }
+      coverUrl
+      audioUrl
+      prompt
+      visibility
+      isCommunity
+      createdAt
+    }
+    addedAt
+  }
+}
+
+query GetBookmarkedTracks @auth(level: USER) {
+  bookmarkedTracks(
+    where: { user: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ addedAt: DESC }]
+  ) {
+    track {
+      id
+      title
+      album {
+        id
+        title
+        primaryArtist {
+          id
+          name
+        }
+      }
+      coverUrl
+      audioUrl
+      prompt
+      visibility
+      isCommunity
+      createdAt
+    }
+    addedAt
+  }
+}
+
+query GetUserCameraCaptures @auth(level: USER) {
+  cameraCaptures(
+    where: { user: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    imageUrl
+    videoUrl
+    environmentData
+    createdAt
+    generatedTrack {
+      id
+      title
+      coverUrl
+      audioUrl
+    }
+  }
+}
+
+query GetUserVideoDigestions @auth(level: USER) {
+  videoDigestions(
+    where: { user: { uid: { eq_expr: "auth.uid" } } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    videoUrl
+    extractedAudioUrl
+    atmosphereSummary
+    createdAt
+    generatedTrack {
+      id
+      title
+      coverUrl
+      audioUrl
+    }
+  }
+}
