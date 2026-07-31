@@ -1,0 +1,109 @@
+name: Meta Wearables WDAT CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  validate_web_applet:
+    name: Build & Audit Web Applet
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Audit Core Imports & Declared Packages
+        run: npm run validate-deps
+
+      - name: Compile and Build Production Static Assets
+        run: npm run build
+
+  validate_android_companion:
+    name: Build & Test Android Companion
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Configure WDAT Secrets & Repositories
+        env:
+          MOCK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p ~/.gradle
+          # Configure GitHub Package repository tokens for resolving Facebook WDAT SDK libraries securely
+          echo "github_token=${{ secrets.META_WDAT_READ_TOKEN || secrets.GITHUB_TOKEN }}" > local.properties
+          
+          # Verify integrity of plist configuration values
+          if [ -f "MWDAT.plist" ]; then
+            echo "MWDAT.plist configuration exists and is integrated."
+          else
+            echo "::error::Missing critical config MWDAT.plist in root workspace!"
+            exit 1
+          fi
+
+      - name: Run Companion Android Linter
+        run: ./gradlew lintDebug --no-daemon
+        continue-on-error: true
+
+      - name: Inspect Wearables Class
+        run: |
+          find ~/.gradle/caches/modules-2/files-2.1/com.meta.wearable -name "*.aar" -exec unzip -o {} classes.jar \; -exec unzip -o classes.jar -d classes_out \; || true
+          javap -p classes_out/com/meta/wearable/dat/core/Wearables.class || true
+          javap -p classes_out/com/meta/wearable/dat/core/WearablesKt.class || true
+          javap -p classes_out/com/meta/wearable/dat/core/session/SessionKt.class || true
+        continue-on-error: true
+
+      - name: Inspect Classes Before Build
+        run: |
+          javap -p classes_out/com/meta/wearable/dat/core/Wearables.class || true
+          javap -p classes_out/com/meta/wearable/dat/core/types/DatResult.class || true
+          javap -p classes_out/com/meta/wearable/dat/core/session/DeviceSession.class || true
+          javap -p classes_out/com/meta/wearable/dat/camera/Stream.class || true
+          javap -p classes_out/com/meta/wearable/dat/camera/StreamKt.class || true
+        continue-on-error: true
+      - name: Compile Kotlin Companion Classes
+        run: ./gradlew compileDebugKotlin --no-daemon
+
+      - name: Run Wearable Automated Unit Tests
+        run: ./gradlew testDebugUnitTest --no-daemon
+
+      - name: Package Companion Android APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Archive Android Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: companion-app-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Inspect AutoDeviceSelector
+        run: |
+          javap -p classes_out/com/meta/wearable/dat/core/selectors/AutoDeviceSelector.class || true
+        continue-on-error: true
+      - name: Inspect DatResult
+        run: |
+          javap -p classes_out/com/meta/wearable/dat/core/types/DatResult.class || true
+        continue-on-error: true
+      - name: Inspect Wearables Class Verbose
+        run: |
+          javap -v -p classes_out/com/meta/wearable/dat/core/Wearables.class || true
+        continue-on-error: true

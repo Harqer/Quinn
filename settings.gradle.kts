@@ -11,8 +11,6 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-        // Compose Multiplatform plugin and dev snapshots
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 
@@ -32,13 +30,12 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://maven.pkg.github.com/facebook/meta-wearables-dat-android")
             credentials {
-                username = System.getenv("GITHUB_ACTOR") ?: "GITHUB_ACTOR"
+                username = "Harqer"
                 password = System.getenv("GITHUB_TOKEN") ?: localProperties.getProperty("github_token")
             }
         }
     }
 }
 
-rootProject.name = "Mave"
+rootProject.name = "MyExampleApp"
 include(":app")
-include(":shared")

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<!-- <key>MWDAT</key> -->
+<!--
+  Validation compliance:
+  AppID: 2561594630944553
+  ClientToken: AR|2561594630944553|ae56c0b0735f481616dd18d1edcc9d68
+-->
+<dict>
+	<!-- Set via an .xcconfig / build setting (e.g. MWDAT_APP_ID) rather than
+	     hardcoding the real value here. In Developer Mode these can be left
+	     unset/"0" — attestation isn't enforced until you distribute via a
+	     release channel. See Wearables Developer Center > Manage projects. -->
+	<key>MetaAppID</key>
+	<string>$(MWDAT_APP_ID)</string>
+	<key>ClientToken</key>
+	<string>$(MWDAT_CLIENT_TOKEN)</string>
+	<!-- Your Apple Developer Team ID - Set this in Xcode under Signing & Capabilities -->
+	<key>TeamID</key>
+	<string>$(DEVELOPMENT_TEAM)</string>
+</dict>
+</plist>

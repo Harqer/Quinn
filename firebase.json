@@ -1,52 +1,6 @@
 {
-  "hosting": {
-    "public": "dist",
-    "i18n": {
-      "root": "/"
-    },
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "/api/**",
-        "run": {
-          "serviceId": "musically-studio",
-          "region": "us-central1"
-        }
-      },
-      {
-        "source": "/vibe/**",
-        "run": {
-          "serviceId": "musically-studio",
-          "region": "us-central1"
-        }
-      },
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  },
-  "extensions": {
-    "firestore-stripe-payments": "stripe/firestore-stripe-payments@latest"
-  },
-  "dataconnect": {
-    "source": "dataconnect"
-  },
-  "database": {
-    "rules": "database.rules.json"
-  },
-  "auth": {
-    "providers": {
-      "anonymous": true,
-      "emailPassword": true,
-      "googleSignIn": {
-        "oAuthBrandDisplayName": "Mave Studio",
-        "supportEmail": "support@mave.app"
-      }
-    }
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   }
 }

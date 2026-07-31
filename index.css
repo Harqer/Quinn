@@ -1,133 +1,25 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap');
 
-@layer theme {
-  @theme {
-    /* Custom fonts */
-    --font-sans: "Plus Jakarta Sans", system-ui, Avenir, Helvetica, Arial, sans-serif;
-    
-    /* Semantic Colors based on Sonic Dark */
-    --color-primary: #1db954;
-    --color-primary-variant: #53e076;
-    --color-background: #121212;
-    --color-surface: #181818;
-    --color-surface-container: #282828;
-    --color-text-primary: #ffffff;
-    --color-text-secondary: #b3b3b3;
-    --color-error: #ffb4ab;
-    
-    /* Semantic typography */
-    --text-display-size: 2rem;
-    --text-display-line-height: 1.25;
-    --text-display-weight: 800;
-    --text-display-letter-spacing: -0.02em;
-
-    --text-headline-size: 1.5rem;
-    --text-headline-line-height: 1.25;
-    --text-headline-weight: 700;
-
-    --text-title-lg-size: 1.125rem;
-    --text-title-lg-line-height: 1.333;
-    --text-title-lg-weight: 700;
-
-    --text-title-md-size: 1rem;
-    --text-title-md-line-height: 1.5;
-    --text-title-md-weight: 500;
-
-    --text-title-sm-size: 0.875rem;
-    --text-title-sm-line-height: 1.428;
-    --text-title-sm-weight: 400;
-
-    --text-body-lg-size: 1rem;
-    --text-body-lg-line-height: 1.5;
-    --text-body-lg-weight: 500;
-
-    --text-body-md-size: 0.875rem;
-    --text-body-md-line-height: 1.428;
-    --text-body-md-weight: 400;
-
-    --text-body-sm-size: 0.75rem;
-    --text-body-sm-line-height: 1.333;
-    --text-body-sm-weight: 400;
-
-    --text-label-md-size: 0.75rem;
-    --text-label-md-line-height: 1.333;
-    --text-label-md-weight: 700;
-    --text-label-md-letter-spacing: 0.05em;
-
-    --text-label-sm-size: 0.75rem;
-    --text-label-sm-line-height: 1.333;
-    --text-label-sm-weight: 700;
-    --text-label-sm-letter-spacing: 0.05em;
-  }
-}
-
-@layer utilities {
-  .text-display { font-size: var(--text-display-size); font-weight: var(--text-display-weight); line-height: var(--text-display-line-height); }
-  .text-headline { font-size: var(--text-headline-size); font-weight: var(--text-headline-weight); line-height: var(--text-headline-line-height); }
-  .text-title-lg { font-size: var(--text-title-lg-size); font-weight: var(--text-title-lg-weight); line-height: var(--text-title-lg-line-height); }
-  .text-title-md { font-size: var(--text-title-md-size); font-weight: var(--text-title-md-weight); line-height: var(--text-title-md-line-height); }
-  .text-title-sm { font-size: var(--text-title-sm-size); font-weight: var(--text-title-sm-weight); line-height: var(--text-title-sm-line-height); }
-  .text-body-lg { font-size: var(--text-body-lg-size); font-weight: var(--text-body-lg-weight); line-height: var(--text-body-lg-line-height); }
-  .text-body-md { font-size: var(--text-body-md-size); font-weight: var(--text-body-md-weight); line-height: var(--text-body-md-line-height); }
-  .text-body-sm { font-size: var(--text-body-sm-size); font-weight: var(--text-body-sm-weight); line-height: var(--text-body-sm-line-height); }
-  .text-label-md { font-size: var(--text-label-md-size); font-weight: var(--text-label-md-weight); line-height: var(--text-label-md-line-height); }
-  .text-label-sm { font-size: var(--text-label-sm-size); font-weight: var(--text-label-sm-weight); line-height: var(--text-label-sm-line-height); }
-}
-
-:root {
-  font-family: 'Plus Jakarta Sans', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  background-color: var(--color-surface);
-  color: var(--color-on-surface);
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
+html,
 body {
-  margin: 0;
-  display: flex;
-  min-width: 320px;
+  width: 100%;
+  height: 100%;
   min-height: 100vh;
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
+  margin: 0;
+  padding: 0;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 16px;
   overflow: hidden;
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
-#root {
-  flex: 1;
-  display: flex;
+lyria-camera {
+  display: block;
+  flex: 1 1 auto;
   width: 100%;
   height: 100%;
 }
 
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 12px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #4D4D4D;
-  border: 3px solid #121212;
-  border-radius: 6px;
-}
-
-.custom-scrollbar-hidden::-webkit-scrollbar {
-  display: none;
-}
-.custom-scrollbar-hidden {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}

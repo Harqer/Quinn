@@ -1,2 +1,0 @@
--keep,allowobfuscation,allowshrinking class com.musically.studio.ui.MainViewModel
--keep,allowobfuscation,allowshrinking class com.musically.studio.ui.MainViewModel

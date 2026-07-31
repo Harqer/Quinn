@@ -1,56 +1,25 @@
-# IDE / System
-.idea/
-*.iml
-.DS_Store
-Thumbs.db
-*.hprof
-
-# Build
-/build/
-/app/build/
-/dist/
-/out/
-/.gradle/
-/.cxx/
-/.externalNativeBuild/
-
-# Dependencies
-/node_modules/
-
-# Local Config / Secrets
-local.properties
-/app/google-services.json
-google-services.json
-*.jks
-.env
-.env.*
-
-# Project Specific Leftovers
-/decompiled_musically/
-/decompiled_classes/
-/wearables.log
-/classes.log
-
 # Logs
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
-# Dotfiles Catch-All
-.*
-!.gitignore
-!/.github/
-!/.agents/
-!/.lavish/
-!.firebaserc
-!.infisical.json
+node_modules
+dist
+dist-ssr
+*.local
+.env
 
-# Exclude Specific Builds and Assets
-*.apk
-google-services.json
-node_modules/
-index.html
-script.js
-styles.css
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

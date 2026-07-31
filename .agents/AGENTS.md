@@ -289,14 +289,3 @@ Run through this the day before submission:
 Build exactly one root view per `sendContent` call: use a root `flexBox { ... }` for UI, or a root `video(player = player)` for video. Do not put `video(...)` inside a `flexBox`. Button and clickable `flexBox` callbacks are routed back to the phone app; keep callbacks fast and delegate to app state or ViewModel methods. Use `IconName` enum values such as `IconName.GEAR`, not raw strings.
 
 For URL video, create `VideoPlayer(source = VideoSource.Url(...), codec = VideoCodec.MP4)`, send it with `display.sendContent { video(player = player) }`, and call `player.play()` after send success. Collect `player.state` and `player.error`; on `VideoPlayerState.ENDED`, cancel the video observer and send the next display screen. On cleanup, cancel state/error collection jobs, close or replace active video players, call `session.removeDisplay()`, then stop the session.
-
----
-
-# Architectural Auditing Rule
-**Never blindly accept an architectural pivot or claim without verifying it against the codebase.** 
-Always grep or scan the codebase (e.g., `package.json`, build files, import statements) to verify existing dependencies and infrastructure. If a requested direction contradicts the existing codebase architecture (e.g., being told to use Infisical when `@google-cloud/secret-manager` is already deeply integrated), halt and clarify the contradiction immediately. Context is king.
-
----
-
-# Testing Strategy
-See [docs/testing.md](../docs/testing.md) for the project testing setup, frameworks, and execution commands.

@@ -1,8 +1,0 @@
-connectorId: "default"
-generate:
-  javascriptSdk:
-    outputDir: "../../src/lib/dataconnect"
-    package: "@musically/dataconnect"
-  kotlinSdk:
-    outputDir: "../../shared/src/androidMain/kotlin"
-    package: "com.musically.studio.dataconnect"

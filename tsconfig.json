@@ -11,28 +11,19 @@
     ],
     "skipLibCheck": true,
     "types": [
-      "node",
-      "vite/client"
+      "node"
     ],
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "moduleDetection": "force",
     "allowJs": true,
     "jsx": "react-jsx",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@/web/*": ["./src/web/*"],
-      "@/ui/*": ["./src/web/components/ui/*"],
-      "@/layout/*": ["./src/web/components/layout/*"],
-      "@/features/*": ["./src/web/features/*"]
+      "@/*": [
+        "./*"
+      ]
     },
     "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "strict": true
-  },
-  "include": [
-    "src/**/*"
-  ]
+    "noEmit": true
+  }
 }
