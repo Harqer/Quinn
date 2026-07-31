@@ -67,7 +67,7 @@ import javax.inject.Inject
 @android.annotation.SuppressLint("MissingPermission")
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val apiClient: ApiClient,
     private val maveSessionManager: MaveSessionManager,
     private val geminiLiveManager: GeminiLiveManager,
@@ -101,7 +101,10 @@ class MainViewModel @Inject constructor(
         playBillingManager.launchBillingFlow(activity, productId)
     }
 
-    
+    fun restorePurchases() {
+        playBillingManager.restorePurchases()
+    }
+
     private val prefs = context.getSharedPreferences("mave_prefs", Context.MODE_PRIVATE)
 
     private val _hasAcceptedPrivacyPolicy = MutableStateFlow(prefs.getBoolean("has_accepted_privacy_policy", false))
@@ -133,6 +136,9 @@ class MainViewModel @Inject constructor(
 
     private val _tracks = MutableStateFlow<List<MaveTrack>>(emptyList())
     val tracks: StateFlow<List<MaveTrack>> = _tracks.asStateFlow()
+
+    private val _likedTracks = MutableStateFlow<List<MaveTrack>>(emptyList())
+    val likedTracks: StateFlow<List<MaveTrack>> = _likedTracks.asStateFlow()
 
     private val _playlists = MutableStateFlow<List<com.musically.studio.network.MavePlaylist>>(emptyList())
     val playlists: StateFlow<List<com.musically.studio.network.MavePlaylist>> = _playlists.asStateFlow()
@@ -1444,6 +1450,15 @@ class MainViewModel @Inject constructor(
     }
 
     private var userTracksJob: kotlinx.coroutines.Job? = null
+    fun fetchLikedTracks() {
+        viewModelScope.launch {
+            val tracks = apiClient.getLikedTracks()
+            if (tracks != null) {
+                _likedTracks.value = tracks
+            }
+        }
+    }
+
     fun fetchUserTracks() {
         userTracksJob?.cancel()
         userTracksJob = viewModelScope.launch {
@@ -1523,7 +1538,10 @@ class MainViewModel @Inject constructor(
     fun loadAudioDevices() {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val outputs = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
-        val isBluetoothOn = audioManager.isBluetoothA2dpOn || audioManager.isBluetoothScoOn
+        val isBluetoothOn = outputs.any { 
+            it.type == android.media.AudioDeviceInfo.TYPE_BLUETOOTH_A2DP || 
+            it.type == android.media.AudioDeviceInfo.TYPE_BLUETOOTH_SCO
+        }
         _isBluetoothEnabled.value = isBluetoothOn
         @Suppress("DEPRECATION")
         val isWiredOn = audioManager.isWiredHeadsetOn

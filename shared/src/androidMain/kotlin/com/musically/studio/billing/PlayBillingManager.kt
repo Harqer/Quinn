@@ -30,7 +30,7 @@ class PlayBillingManager(
 
     private val billingClient = BillingClient.newBuilder(context)
         .setListener(this)
-        .enablePendingPurchases()
+        .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
         .build()
 
     private val _productDetails = MutableStateFlow<List<ProductDetails>>(emptyList())
@@ -64,6 +64,13 @@ class PlayBillingManager(
                 connectToBilling()
             }
         })
+    }
+
+    /**
+     * Triggers a manual sync of active purchases.
+     */
+    fun restorePurchases() {
+        queryActivePurchases()
     }
 
     /**
@@ -109,9 +116,9 @@ class PlayBillingManager(
         val params = QueryProductDetailsParams.newBuilder()
             .setProductList(productList)
             .build()
-        billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && productDetailsList != null) {
-                _productDetails.value = productDetailsList
+        billingClient.queryProductDetailsAsync(params) { billingResult, result ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                _productDetails.value = result.productDetailsList ?: emptyList()
             }
         }
     }

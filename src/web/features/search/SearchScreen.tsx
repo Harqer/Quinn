@@ -13,30 +13,41 @@ export const SearchScreen: React.FC = () => {
   const user = auth.currentUser;
 
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Track[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const { playQueue } = usePlayerContext();
 
   useEffect(() => {
     setCategoriesError(null);
-    musicService.getCategories().then(setCategories).catch(err => {
-      logger.error('Error fetching categories from MusicService', err);
-      setCategoriesError('Failed to load categories.');
-    });
+    setCategoriesLoading(true);
+    musicService.getCategories()
+      .then(setCategories)
+      .catch(err => {
+        logger.error('Error fetching categories from MusicService', err);
+        setCategoriesError('Failed to load categories.');
+      })
+      .finally(() => setCategoriesLoading(false));
   }, []);
 
   useEffect(() => {
     if (searchQuery.trim().length > 0) {
       setSearchError(null);
-      musicService.search(searchQuery).then(setSearchResults).catch(err => {
-        logger.error('Error searching tracks', err);
-        setSearchError('Failed to load search results.');
-      });
+      setSearchLoading(true);
+      musicService.search(searchQuery)
+        .then(setSearchResults)
+        .catch(err => {
+          logger.error('Error searching tracks', err);
+          setSearchError('Failed to load search results.');
+        })
+        .finally(() => setSearchLoading(false));
     } else {
       setSearchResults([]);
       setSearchError(null);
+      setSearchLoading(false);
     }
   }, [searchQuery]);
 
@@ -77,9 +88,22 @@ export const SearchScreen: React.FC = () => {
                 message={searchError} 
                 onRetry={() => {
                   setSearchError(null);
-                  musicService.search(searchQuery).then(setSearchResults).catch(err => setSearchError('Failed to load search results.'));
+                  setSearchLoading(true);
+                  musicService.search(searchQuery).then(setSearchResults).catch(err => setSearchError('Failed to load search results.')).finally(() => setSearchLoading(false));
                 }} 
               />
+            ) : searchLoading ? (
+              <div className="flex flex-col gap-2">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-3 p-2">
+                    <div className="w-10 h-10 rounded bg-surface-container animate-pulse flex-shrink-0" />
+                    <div className="flex flex-col gap-1 flex-1">
+                      <div className="h-4 w-32 bg-surface-container animate-pulse rounded" />
+                      <div className="h-3 w-20 bg-surface-container animate-pulse rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : searchResults.length > 0 ? (
               <div className="flex flex-col gap-2">
                 {searchResults.map((track, index) => (
@@ -105,6 +129,12 @@ export const SearchScreen: React.FC = () => {
                   }} 
                 />
               </div>
+            ) : categoriesLoading ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="aspect-[1.5] rounded-[4px] bg-surface-container animate-pulse" />
+                ))}
+              </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 {categories.map((cat) => (
@@ -123,8 +153,8 @@ export const SearchScreen: React.FC = () => {
                     <div className="absolute -bottom-2 -right-4 w-16 h-16 bg-black/20 rounded-[4px] transform rotate-[25deg] shadow-lg"></div>
                   </div>
                 ))}
-                {categories.length === 0 && (
-                   <div className="text-sm text-text-secondary italic col-span-2">Loading categories...</div>
+                {!categoriesLoading && categories.length === 0 && (
+                  <div className="text-sm text-text-secondary italic col-span-2">No categories available.</div>
                 )}
               </div>
             )}

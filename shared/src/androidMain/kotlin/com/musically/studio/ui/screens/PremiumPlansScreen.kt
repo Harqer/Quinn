@@ -312,7 +312,8 @@ fun PremiumPlansScreen(
             item(span = { GridItemSpan(maxLineSpan) }) {
                 PremiumFooter(
                     isPremium = isPremium,
-                    onManageSubscription = { viewModel.launchStripePortal() }
+                    onManageSubscription = { viewModel.launchStripePortal() },
+                    onRestorePurchases = { viewModel.restorePurchases() }
                 )
             }
         }
@@ -481,6 +482,7 @@ private fun FaqAccordionItem(faq: FaqItem) {
 private fun PremiumFooter(
     isPremium: Boolean,
     onManageSubscription: () -> Unit,
+    onRestorePurchases: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -505,7 +507,7 @@ private fun PremiumFooter(
             style = MaterialTheme.typography.bodySmall,
             color = MaveOnSurfaceVariant,
             textDecoration = TextDecoration.Underline,
-            modifier = Modifier.clickable { /* TODO: hook into billing client restorePurchases */ }
+            modifier = Modifier.clickable { onRestorePurchases() }
         )
 
         Spacer(modifier = Modifier.height(4.dp))

@@ -404,3 +404,63 @@ exports.getUserVideoDigestions = function getUserVideoDigestions(dcOrOptions, op
   return executeQuery(getUserVideoDigestionsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;
+
+const getPlaylistTracksRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetPlaylistTracks', inputVars);
+}
+getPlaylistTracksRef.operationName = 'GetPlaylistTracks';
+exports.getPlaylistTracksRef = getPlaylistTracksRef;
+
+exports.getPlaylistTracks = function getPlaylistTracks(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getPlaylistTracksRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getCategoryTracksRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetCategoryTracks', inputVars);
+}
+getCategoryTracksRef.operationName = 'GetCategoryTracks';
+exports.getCategoryTracksRef = getCategoryTracksRef;
+
+exports.getCategoryTracks = function getCategoryTracks(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getCategoryTracksRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getAlbumTracksRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetAlbumTracks', inputVars);
+}
+getAlbumTracksRef.operationName = 'GetAlbumTracks';
+exports.getAlbumTracksRef = getAlbumTracksRef;
+
+exports.getAlbumTracks = function getAlbumTracks(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getAlbumTracksRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const searchTracksRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'SearchTracks', inputVars);
+}
+searchTracksRef.operationName = 'SearchTracks';
+exports.searchTracksRef = searchTracksRef;
+
+exports.searchTracks = function searchTracks(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(searchTracksRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;

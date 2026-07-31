@@ -127,6 +127,17 @@ fun MaveHomeScreen(
                     .padding(paddingValues),
                 contentPadding = PaddingValues(bottom = 120.dp)
             ) {
+
+                // Category Cards
+                item {
+                    CategoryCardsRow(
+                        onCategoryClick = { category ->
+                            viewModel.sendTextCommand("Generate a $category song")
+                            viewModel.navigateTo(com.musically.studio.ui.navigation.Route.LiveSession)
+                        }
+                    )
+                }
+
                 // Recent Grid
                 val recentTracks = (if (tracks.isNotEmpty()) tracks else communityTracks).take(6)
                 if (recentTracks.isNotEmpty()) {
@@ -326,5 +337,52 @@ fun MaveCard(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(top = 4.dp)
         )
+    }
+}
+
+@Composable
+fun CategoryCardsRow(onCategoryClick: (String) -> Unit) {
+    val categories = listOf(
+        "Pop" to Color(0xFF9333EA), // Purple
+        "Indie" to Color(0xFF059669), // Emerald
+        "Workout" to Color(0xFFE11D48), // Rose
+        "Chill" to Color(0xFF0284C7) // Sky Blue
+    )
+    
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp)
+    ) {
+        Text(
+            text = "Generate a Vibe",
+            color = Color.White,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
+        )
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(categories) { (name, color) ->
+                Box(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(80.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(color)
+                        .clickable { onCategoryClick(name) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = name,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
+        }
     }
 }

@@ -21,6 +21,10 @@ This README will guide you through the process of using the generated JavaScript
   - [*GetBookmarkedTracks*](#getbookmarkedtracks)
   - [*GetUserCameraCaptures*](#getusercameracaptures)
   - [*GetUserVideoDigestions*](#getuservideodigestions)
+  - [*GetPlaylistTracks*](#getplaylisttracks)
+  - [*GetCategoryTracks*](#getcategorytracks)
+  - [*GetAlbumTracks*](#getalbumtracks)
+  - [*SearchTracks*](#searchtracks)
 - [**Mutations**](#mutations)
   - [*CreateTrack*](#createtrack)
   - [*UpsertUser*](#upsertuser)
@@ -1412,6 +1416,514 @@ console.log(data.videoDigestions);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.videoDigestions);
+});
+```
+
+## GetPlaylistTracks
+You can execute the `GetPlaylistTracks` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+getPlaylistTracks(vars: GetPlaylistTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetPlaylistTracksData, GetPlaylistTracksVariables>;
+
+interface GetPlaylistTracksRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetPlaylistTracksVariables): QueryRef<GetPlaylistTracksData, GetPlaylistTracksVariables>;
+}
+export const getPlaylistTracksRef: GetPlaylistTracksRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getPlaylistTracks(dc: DataConnect, vars: GetPlaylistTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetPlaylistTracksData, GetPlaylistTracksVariables>;
+
+interface GetPlaylistTracksRef {
+  ...
+  (dc: DataConnect, vars: GetPlaylistTracksVariables): QueryRef<GetPlaylistTracksData, GetPlaylistTracksVariables>;
+}
+export const getPlaylistTracksRef: GetPlaylistTracksRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getPlaylistTracksRef:
+```typescript
+const name = getPlaylistTracksRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetPlaylistTracks` query requires an argument of type `GetPlaylistTracksVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetPlaylistTracksVariables {
+  playlistId: string;
+}
+```
+### Return Type
+Recall that executing the `GetPlaylistTracks` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetPlaylistTracksData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetPlaylistTracksData {
+  playlistEntries: ({
+    track: {
+      id: string;
+      title: string;
+      album: {
+        id: string;
+        title: string;
+        primaryArtist: {
+          id: string;
+          name: string;
+        } & Artist_Key;
+      } & Album_Key;
+      coverUrl?: string | null;
+      audioUrl: string;
+      prompt?: string | null;
+      visibility: string;
+      isCommunity: boolean;
+      createdAt: TimestampString;
+    } & Track_Key;
+  })[];
+}
+```
+### Using `GetPlaylistTracks`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getPlaylistTracks, GetPlaylistTracksVariables } from '@musically/dataconnect';
+
+// The `GetPlaylistTracks` query requires an argument of type `GetPlaylistTracksVariables`:
+const getPlaylistTracksVars: GetPlaylistTracksVariables = {
+  playlistId: ..., 
+};
+
+// Call the `getPlaylistTracks()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getPlaylistTracks(getPlaylistTracksVars);
+// Variables can be defined inline as well.
+const { data } = await getPlaylistTracks({ playlistId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getPlaylistTracks(dataConnect, getPlaylistTracksVars);
+
+console.log(data.playlistEntries);
+
+// Or, you can use the `Promise` API.
+getPlaylistTracks(getPlaylistTracksVars).then((response) => {
+  const data = response.data;
+  console.log(data.playlistEntries);
+});
+```
+
+### Using `GetPlaylistTracks`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getPlaylistTracksRef, GetPlaylistTracksVariables } from '@musically/dataconnect';
+
+// The `GetPlaylistTracks` query requires an argument of type `GetPlaylistTracksVariables`:
+const getPlaylistTracksVars: GetPlaylistTracksVariables = {
+  playlistId: ..., 
+};
+
+// Call the `getPlaylistTracksRef()` function to get a reference to the query.
+const ref = getPlaylistTracksRef(getPlaylistTracksVars);
+// Variables can be defined inline as well.
+const ref = getPlaylistTracksRef({ playlistId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getPlaylistTracksRef(dataConnect, getPlaylistTracksVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.playlistEntries);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.playlistEntries);
+});
+```
+
+## GetCategoryTracks
+You can execute the `GetCategoryTracks` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+getCategoryTracks(vars: GetCategoryTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetCategoryTracksData, GetCategoryTracksVariables>;
+
+interface GetCategoryTracksRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetCategoryTracksVariables): QueryRef<GetCategoryTracksData, GetCategoryTracksVariables>;
+}
+export const getCategoryTracksRef: GetCategoryTracksRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getCategoryTracks(dc: DataConnect, vars: GetCategoryTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetCategoryTracksData, GetCategoryTracksVariables>;
+
+interface GetCategoryTracksRef {
+  ...
+  (dc: DataConnect, vars: GetCategoryTracksVariables): QueryRef<GetCategoryTracksData, GetCategoryTracksVariables>;
+}
+export const getCategoryTracksRef: GetCategoryTracksRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getCategoryTracksRef:
+```typescript
+const name = getCategoryTracksRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetCategoryTracks` query requires an argument of type `GetCategoryTracksVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetCategoryTracksVariables {
+  categoryId: string;
+}
+```
+### Return Type
+Recall that executing the `GetCategoryTracks` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetCategoryTracksData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetCategoryTracksData {
+  musicCategories: ({
+    track: {
+      id: string;
+      title: string;
+      album: {
+        id: string;
+        title: string;
+        primaryArtist: {
+          id: string;
+          name: string;
+        } & Artist_Key;
+      } & Album_Key;
+      coverUrl?: string | null;
+      audioUrl: string;
+      prompt?: string | null;
+      visibility: string;
+      isCommunity: boolean;
+      createdAt: TimestampString;
+    } & Track_Key;
+  })[];
+}
+```
+### Using `GetCategoryTracks`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getCategoryTracks, GetCategoryTracksVariables } from '@musically/dataconnect';
+
+// The `GetCategoryTracks` query requires an argument of type `GetCategoryTracksVariables`:
+const getCategoryTracksVars: GetCategoryTracksVariables = {
+  categoryId: ..., 
+};
+
+// Call the `getCategoryTracks()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getCategoryTracks(getCategoryTracksVars);
+// Variables can be defined inline as well.
+const { data } = await getCategoryTracks({ categoryId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getCategoryTracks(dataConnect, getCategoryTracksVars);
+
+console.log(data.musicCategories);
+
+// Or, you can use the `Promise` API.
+getCategoryTracks(getCategoryTracksVars).then((response) => {
+  const data = response.data;
+  console.log(data.musicCategories);
+});
+```
+
+### Using `GetCategoryTracks`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getCategoryTracksRef, GetCategoryTracksVariables } from '@musically/dataconnect';
+
+// The `GetCategoryTracks` query requires an argument of type `GetCategoryTracksVariables`:
+const getCategoryTracksVars: GetCategoryTracksVariables = {
+  categoryId: ..., 
+};
+
+// Call the `getCategoryTracksRef()` function to get a reference to the query.
+const ref = getCategoryTracksRef(getCategoryTracksVars);
+// Variables can be defined inline as well.
+const ref = getCategoryTracksRef({ categoryId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getCategoryTracksRef(dataConnect, getCategoryTracksVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.musicCategories);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.musicCategories);
+});
+```
+
+## GetAlbumTracks
+You can execute the `GetAlbumTracks` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+getAlbumTracks(vars: GetAlbumTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetAlbumTracksData, GetAlbumTracksVariables>;
+
+interface GetAlbumTracksRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetAlbumTracksVariables): QueryRef<GetAlbumTracksData, GetAlbumTracksVariables>;
+}
+export const getAlbumTracksRef: GetAlbumTracksRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getAlbumTracks(dc: DataConnect, vars: GetAlbumTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetAlbumTracksData, GetAlbumTracksVariables>;
+
+interface GetAlbumTracksRef {
+  ...
+  (dc: DataConnect, vars: GetAlbumTracksVariables): QueryRef<GetAlbumTracksData, GetAlbumTracksVariables>;
+}
+export const getAlbumTracksRef: GetAlbumTracksRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getAlbumTracksRef:
+```typescript
+const name = getAlbumTracksRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetAlbumTracks` query requires an argument of type `GetAlbumTracksVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetAlbumTracksVariables {
+  albumId: string;
+}
+```
+### Return Type
+Recall that executing the `GetAlbumTracks` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetAlbumTracksData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetAlbumTracksData {
+  tracks: ({
+    id: string;
+    title: string;
+    album: {
+      id: string;
+      title: string;
+      primaryArtist: {
+        id: string;
+        name: string;
+      } & Artist_Key;
+    } & Album_Key;
+    coverUrl?: string | null;
+    audioUrl: string;
+    prompt?: string | null;
+    visibility: string;
+    isCommunity: boolean;
+    createdAt: TimestampString;
+  } & Track_Key)[];
+}
+```
+### Using `GetAlbumTracks`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getAlbumTracks, GetAlbumTracksVariables } from '@musically/dataconnect';
+
+// The `GetAlbumTracks` query requires an argument of type `GetAlbumTracksVariables`:
+const getAlbumTracksVars: GetAlbumTracksVariables = {
+  albumId: ..., 
+};
+
+// Call the `getAlbumTracks()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getAlbumTracks(getAlbumTracksVars);
+// Variables can be defined inline as well.
+const { data } = await getAlbumTracks({ albumId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getAlbumTracks(dataConnect, getAlbumTracksVars);
+
+console.log(data.tracks);
+
+// Or, you can use the `Promise` API.
+getAlbumTracks(getAlbumTracksVars).then((response) => {
+  const data = response.data;
+  console.log(data.tracks);
+});
+```
+
+### Using `GetAlbumTracks`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getAlbumTracksRef, GetAlbumTracksVariables } from '@musically/dataconnect';
+
+// The `GetAlbumTracks` query requires an argument of type `GetAlbumTracksVariables`:
+const getAlbumTracksVars: GetAlbumTracksVariables = {
+  albumId: ..., 
+};
+
+// Call the `getAlbumTracksRef()` function to get a reference to the query.
+const ref = getAlbumTracksRef(getAlbumTracksVars);
+// Variables can be defined inline as well.
+const ref = getAlbumTracksRef({ albumId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getAlbumTracksRef(dataConnect, getAlbumTracksVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.tracks);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.tracks);
+});
+```
+
+## SearchTracks
+You can execute the `SearchTracks` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+searchTracks(vars: SearchTracksVariables, options?: ExecuteQueryOptions): QueryPromise<SearchTracksData, SearchTracksVariables>;
+
+interface SearchTracksRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SearchTracksVariables): QueryRef<SearchTracksData, SearchTracksVariables>;
+}
+export const searchTracksRef: SearchTracksRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+searchTracks(dc: DataConnect, vars: SearchTracksVariables, options?: ExecuteQueryOptions): QueryPromise<SearchTracksData, SearchTracksVariables>;
+
+interface SearchTracksRef {
+  ...
+  (dc: DataConnect, vars: SearchTracksVariables): QueryRef<SearchTracksData, SearchTracksVariables>;
+}
+export const searchTracksRef: SearchTracksRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the searchTracksRef:
+```typescript
+const name = searchTracksRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SearchTracks` query requires an argument of type `SearchTracksVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SearchTracksVariables {
+  query: string;
+}
+```
+### Return Type
+Recall that executing the `SearchTracks` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SearchTracksData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SearchTracksData {
+  tracks: ({
+    id: string;
+    title: string;
+    album: {
+      id: string;
+      title: string;
+      primaryArtist: {
+        id: string;
+        name: string;
+      } & Artist_Key;
+    } & Album_Key;
+    coverUrl?: string | null;
+    audioUrl: string;
+    prompt?: string | null;
+    visibility: string;
+    isCommunity: boolean;
+    createdAt: TimestampString;
+  } & Track_Key)[];
+}
+```
+### Using `SearchTracks`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, searchTracks, SearchTracksVariables } from '@musically/dataconnect';
+
+// The `SearchTracks` query requires an argument of type `SearchTracksVariables`:
+const searchTracksVars: SearchTracksVariables = {
+  query: ..., 
+};
+
+// Call the `searchTracks()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await searchTracks(searchTracksVars);
+// Variables can be defined inline as well.
+const { data } = await searchTracks({ query: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await searchTracks(dataConnect, searchTracksVars);
+
+console.log(data.tracks);
+
+// Or, you can use the `Promise` API.
+searchTracks(searchTracksVars).then((response) => {
+  const data = response.data;
+  console.log(data.tracks);
+});
+```
+
+### Using `SearchTracks`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, searchTracksRef, SearchTracksVariables } from '@musically/dataconnect';
+
+// The `SearchTracks` query requires an argument of type `SearchTracksVariables`:
+const searchTracksVars: SearchTracksVariables = {
+  query: ..., 
+};
+
+// Call the `searchTracksRef()` function to get a reference to the query.
+const ref = searchTracksRef(searchTracksVars);
+// Variables can be defined inline as well.
+const ref = searchTracksRef({ query: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = searchTracksRef(dataConnect, searchTracksVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.tracks);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.tracks);
 });
 ```
 

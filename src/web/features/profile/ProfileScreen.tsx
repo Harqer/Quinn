@@ -2,15 +2,19 @@ import React from 'react';
 import { useNavigate } from '../../App';
 import { getAuth } from 'firebase/auth';
 import { useTracks } from '../../hooks/useTracks';
+import { useAppContext } from '../../contexts/AppContext';
 import { Typography } from '../../components/atoms/Typography';
 import { Shimmer } from '../../components/atoms/Shimmer';
 import { Icon } from '../../components/atoms/Icon';
+import { usePlayerContext } from '../../contexts/PlayerContext';
 
 export const ProfileScreen: React.FC = () => {
   const navigate = useNavigate();
   const auth = getAuth();
   const user = auth.currentUser;
   const { userTracks } = useTracks();
+  const { setActiveAlbumId } = useAppContext();
+  const { playQueue } = usePlayerContext();
 
   return (
     <div className="flex flex-col h-full w-full bg-background overflow-y-auto pb-32">
@@ -61,7 +65,18 @@ export const ProfileScreen: React.FC = () => {
         {userTracks.length > 0 ? (
           <div className="flex flex-col">
             {userTracks.slice(0, 5).map((track, index) => (
-              <div key={track.id} className="flex items-center gap-4 p-2 rounded-md hover:bg-surface-variant transition-colors group cursor-pointer">
+              <div 
+                key={track.id} 
+                className="flex items-center gap-4 p-2 rounded-md hover:bg-surface-variant transition-colors group cursor-pointer"
+                onClick={() => {
+                  if (track.audioUrl) {
+                    playQueue(userTracks, index);
+                  } else {
+                    setActiveAlbumId(track.id);
+                    navigate('album');
+                  }
+                }}
+              >
                 <span className="text-secondary font-semibold w-4 text-right">{index + 1}</span>
                 <div className="w-10 h-10 bg-surface-container rounded-sm overflow-hidden flex-shrink-0">
                   {track.albumArtUrl ? (
@@ -75,13 +90,9 @@ export const ProfileScreen: React.FC = () => {
                   <span className="text-sm text-secondary truncate">{track.artist || 'Unknown'}</span>
                 </div>
                 <div className="text-secondary text-sm hidden sm:block w-32 truncate">
-                  {(track as any).type || 'Track'}
+                  Track
                 </div>
-                {(track as any).duration && (
-                  <div className="text-secondary text-sm">
-                    {(track as any).duration}
-                  </div>
-                )}
+                <Icon name="play_arrow" size="sm" className="opacity-0 group-hover:opacity-60 transition-opacity" />
               </div>
             ))}
           </div>

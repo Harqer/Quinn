@@ -10,6 +10,7 @@ export function useTracks() {
   const [userTracks, setUserTracks] = useState<Track[]>([]);
   const [communityTracks, setCommunityTracks] = useState<Track[]>([]);
   const [spotifyTracks, setSpotifyTracks] = useState<any[]>([]);
+  const [likedTracks, setLikedTracks] = useState<Track[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { getLibraryTracks } = useSpotify();
@@ -23,6 +24,13 @@ export function useTracks() {
         const discover = await musicService.getDiscoverTracks();
         const library = await musicService.getLibraryTracks();
         const spotify = await getLibraryTracks();
+        
+        try {
+          const liked = await musicService.getLikedTracks();
+          setLikedTracks(liked);
+        } catch (e) {
+          logger.warn('Could not fetch liked tracks', e);
+        }
         
         setCommunityTracks(discover);
         setUserTracks(library);
@@ -53,6 +61,13 @@ export function useTracks() {
         const library = await musicService.getLibraryTracks();
         const spotify = await getLibraryTracks();
         
+        try {
+          const liked = await musicService.getLikedTracks();
+          setLikedTracks(liked);
+        } catch (e) {
+          logger.warn('Could not fetch liked tracks on retry', e);
+        }
+        
         setCommunityTracks(discover);
         setUserTracks(library);
         setSpotifyTracks(spotify);
@@ -71,5 +86,5 @@ export function useTracks() {
     fetchTracks(0);
   };
 
-  return { userTracks, communityTracks, spotifyTracks, loading, error, retry };
+  return { userTracks, communityTracks, spotifyTracks, likedTracks, loading, error, retry };
 }

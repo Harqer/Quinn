@@ -50,12 +50,11 @@ fun LoginScreen(
     }
 
     Scaffold(containerColor = com.musically.studio.ui.theme.MaveBackground) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues).consumeWindowInsets(paddingValues)) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 32.dp, vertical = 48.dp)
-                    .imePadding()
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally

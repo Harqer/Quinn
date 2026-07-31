@@ -14,6 +14,10 @@ const ChatScreen = lazy(() => import('./features/chat/ChatScreen').then(m => ({ 
 const ProfileScreen = lazy(() => import('./features/profile/ProfileScreen').then(m => ({ default: m.ProfileScreen })));
 const SettingsScreen = lazy(() => import('./features/settings/SettingsScreen').then(m => ({ default: m.SettingsScreen })));
 const PremiumPlansScreen = lazy(() => import('./features/settings/PremiumPlansScreen').then(m => ({ default: m.PremiumPlansScreen })));
+const DiscoverScreen = lazy(() => import('./features/discover/DiscoverScreen').then(m => ({ default: m.DiscoverScreen })));
+const LiveSessionScreen = lazy(() => import('./features/live/LiveSessionScreen').then(m => ({ default: m.LiveSessionScreen })));
+const CategoryViewScreen = lazy(() => import('./features/discover/CategoryViewScreen').then(m => ({ default: m.CategoryViewScreen })));
+const PlaylistViewScreen = lazy(() => import('./features/library/PlaylistViewScreen').then(m => ({ default: m.PlaylistViewScreen })));
 
 import { BottomNav } from './components/organisms/BottomNav';
 import { PlayerBar } from './components/organisms/PlayerBar';
@@ -22,7 +26,7 @@ import { ProfileSettingsButton } from './components/molecules/ProfileSettingsBut
 import { useAppContext } from './contexts/AppContext';
 import { PlayerProvider, usePlayerContext } from './contexts/PlayerContext';
 
-type Route = 'welcome' | 'login' | 'home' | 'search' | 'library' | 'album' | 'podcast' | 'devices' | 'delete-account' | 'chat' | 'profile' | 'settings' | 'premium';
+type Route = 'welcome' | 'login' | 'home' | 'search' | 'library' | 'album' | 'podcast' | 'devices' | 'delete-account' | 'chat' | 'profile' | 'settings' | 'premium' | 'discover' | 'live' | 'category' | 'playlist';
 
 export const NavigationContext = createContext<(route: Route) => void>(() => {});
 export const useNavigate = () => useContext(NavigationContext);
@@ -67,8 +71,8 @@ export const App: React.FC = () => {
     setRoute('home');
   };
 
-  const showBottomNav = ['home', 'search', 'library', 'podcast', 'devices', 'chat', 'profile', 'settings', 'premium'].includes(route);
-  const showPlayerBar = ['home', 'search', 'library', 'album', 'podcast', 'devices', 'chat', 'profile', 'settings', 'premium'].includes(route);
+  const showBottomNav = ['home', 'discover', 'live', 'search', 'library', 'podcast', 'devices', 'chat', 'profile', 'settings', 'premium'].includes(route);
+  const showPlayerBar = ['home', 'discover', 'live', 'category', 'playlist', 'search', 'library', 'album', 'podcast', 'devices', 'chat', 'profile', 'settings', 'premium'].includes(route);
 
   return (
     <SidebarContext.Provider value={{ isSidebarOpen, toggleSidebar: () => setIsSidebarOpen(prev => !prev) }}>
@@ -82,7 +86,7 @@ export const App: React.FC = () => {
           )}
 
         <main className="flex-1 bg-[#121212] md:rounded-xl flex flex-col overflow-hidden relative group">
-          <div className="flex-1 overflow-y-auto custom-scrollbar w-full relative pb-24 md:pb-0">
+          <div className="flex-1 overflow-y-auto custom-scrollbar w-full relative pb-[160px] md:pb-0">
             <Suspense fallback={
               <div className="flex flex-col items-center justify-center h-full w-full bg-[#121414] text-[#1db954] gap-3">
                 <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -92,6 +96,10 @@ export const App: React.FC = () => {
               {route === 'welcome' && <LoginScreen onLogin={handleLogin} initialMode="signup" />}
               {route === 'login' && <LoginScreen onLogin={handleLogin} initialMode="login" />}
               {route === 'home' && <HomeScreen />}
+              {route === 'discover' && <DiscoverScreen />}
+              {route === 'live' && <LiveSessionScreen />}
+              {route === 'category' && <CategoryViewScreen onBack={() => setRoute('discover')} />}
+              {route === 'playlist' && <PlaylistViewScreen onBack={() => setRoute('library')} />}
               {route === 'search' && <SearchScreen />}
               {route === 'library' && <LibraryScreen />}
               {route === 'podcast' && <PodcastGeneratorScreen />}
@@ -117,7 +125,7 @@ export const App: React.FC = () => {
           <>
             {/* Bottom Left Profile/Settings for Mobile (above BottomNav) */}
             {currentUser && (
-              <div className="md:hidden fixed bottom-[90px] left-4 z-50">
+              <div className="md:hidden fixed top-6 right-4 z-50">
                 <ProfileSettingsButton />
               </div>
             )}
@@ -165,7 +173,7 @@ const PlayerBarWrapper: React.FC<{ onAlbumClick: () => void }> = ({ onAlbumClick
             onAlbumClick();
           }
         }} 
-        className="fixed bottom-[60px] md:bottom-0 left-0 right-0 h-[72px] md:h-[92px] bg-black px-2 md:px-6 flex items-center justify-between z-40 cursor-pointer hover:bg-surface-container transition-colors border-t border-surface-container md:border-t-0"
+        className="fixed bottom-[72px] md:bottom-0 left-0 right-0 h-[72px] md:h-[92px] bg-black px-2 md:px-6 flex items-center justify-between z-40 cursor-pointer hover:bg-surface-container transition-colors border-t border-surface-container md:border-t-0"
       >
         <PlayerBar 
           trackName={currentTrack?.title}

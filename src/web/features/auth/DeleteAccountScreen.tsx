@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getAuth, deleteUser } from "firebase/auth";
+import { useNavigate } from '../../App';
 
 import { Icon } from '../../components/atoms/Icon';
 import { logger } from "../../lib/logger";
@@ -7,6 +8,7 @@ import { logger } from "../../lib/logger";
 export const DeleteAccountScreen: React.FC = () => {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleDelete = async () => {
     const auth = getAuth();
@@ -70,14 +72,25 @@ export const DeleteAccountScreen: React.FC = () => {
             </div>
           )}
           
-          <button
-            onClick={handleDelete}
-            disabled={status === 'loading'}
-            className="w-full py-4 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold transition-colors disabled:opacity-50 flex items-center justify-center"
-            title="Delete My Account"
-          >
-            {status === 'loading' ? <Icon name="hourglass_empty" size="md" /> : <Icon name="delete_forever" size="md" />}
-          </button>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={handleDelete}
+              disabled={status === 'loading'}
+              className="w-full py-4 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              title="Delete My Account"
+            >
+              {status === 'loading' ? <Icon name="hourglass_empty" size="md" /> : <Icon name="delete_forever" size="md" />}
+              <span>Delete Account</span>
+            </button>
+            <button
+              onClick={() => navigate('settings')}
+              disabled={status === 'loading'}
+              className="w-full py-4 rounded-full bg-surface-container hover:bg-surface text-white font-bold transition-colors disabled:opacity-50"
+              title="Cancel"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
     </div>

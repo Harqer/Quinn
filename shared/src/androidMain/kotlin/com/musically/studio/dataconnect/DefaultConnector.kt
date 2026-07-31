@@ -33,6 +33,8 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val createVideoDigestion: CreateVideoDigestionMutation
   
+    public val getAlbumTracks: GetAlbumTracksQuery
+  
     public val getAlbums: GetAlbumsQuery
   
     public val getAudiobooks: GetAudiobooksQuery
@@ -41,11 +43,15 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val getCategories: GetCategoriesQuery
   
+    public val getCategoryTracks: GetCategoryTracksQuery
+  
     public val getCommunityTracks: GetCommunityTracksQuery
   
     public val getLikedTracks: GetLikedTracksQuery
   
     public val getPaymentHistory: GetPaymentHistoryQuery
+  
+    public val getPlaylistTracks: GetPlaylistTracksQuery
   
     public val getPlaylists: GetPlaylistsQuery
   
@@ -66,6 +72,8 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
     public val removeBookmarkedTrack: RemoveBookmarkedTrackMutation
   
     public val removeLikedTrack: RemoveLikedTrackMutation
+  
+    public val searchTracks: SearchTracksQuery
   
     public val updateUserPreferences: UpdateUserPreferencesMutation
   
@@ -144,6 +152,10 @@ private class DefaultConnectorImpl(
       CreateVideoDigestionMutationImpl(this)
     }
   
+    override val getAlbumTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetAlbumTracksQueryImpl(this)
+    }
+  
     override val getAlbums by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetAlbumsQueryImpl(this)
     }
@@ -160,6 +172,10 @@ private class DefaultConnectorImpl(
       GetCategoriesQueryImpl(this)
     }
   
+    override val getCategoryTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetCategoryTracksQueryImpl(this)
+    }
+  
     override val getCommunityTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetCommunityTracksQueryImpl(this)
     }
@@ -170,6 +186,10 @@ private class DefaultConnectorImpl(
   
     override val getPaymentHistory by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetPaymentHistoryQueryImpl(this)
+    }
+  
+    override val getPlaylistTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetPlaylistTracksQueryImpl(this)
     }
   
     override val getPlaylists by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -212,6 +232,10 @@ private class DefaultConnectorImpl(
       RemoveLikedTrackMutationImpl(this)
     }
   
+    override val searchTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      SearchTracksQueryImpl(this)
+    }
+  
     override val updateUserPreferences by lazy(LazyThreadSafetyMode.PUBLICATION) {
       UpdateUserPreferencesMutationImpl(this)
     }
@@ -252,19 +276,23 @@ private class DefaultConnectorImpl(
   @com.google.firebase.dataconnect.ExperimentalFirebaseDataConnect
   override fun queries(): List<com.google.firebase.dataconnect.generated.GeneratedQuery<DefaultConnector, *, *>> =
     listOf(
-      getAlbums,
+      getAlbumTracks,
+        getAlbums,
         getAudiobooks,
         getBookmarkedTracks,
         getCategories,
+        getCategoryTracks,
         getCommunityTracks,
         getLikedTracks,
         getPaymentHistory,
+        getPlaylistTracks,
         getPlaylists,
         getPodcasts,
         getUserCameraCaptures,
         getUserSettings,
         getUserTracks,
         getUserVideoDigestions,
+        searchTracks,
         
     )
 
@@ -505,6 +533,21 @@ private class CreateVideoDigestionMutationImpl(
   )
 
 
+private class GetAlbumTracksQueryImpl(
+  connector: DefaultConnector
+):
+  GetAlbumTracksQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetAlbumTracksQuery.Data,
+      GetAlbumTracksQuery.Variables
+  >(
+    connector,
+    GetAlbumTracksQuery.Companion.operationName,
+    GetAlbumTracksQuery.Companion.dataDeserializer,
+    GetAlbumTracksQuery.Companion.variablesSerializer,
+  )
+
+
 private class GetAlbumsQueryImpl(
   connector: DefaultConnector
 ):
@@ -565,6 +608,21 @@ private class GetCategoriesQueryImpl(
   )
 
 
+private class GetCategoryTracksQueryImpl(
+  connector: DefaultConnector
+):
+  GetCategoryTracksQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetCategoryTracksQuery.Data,
+      GetCategoryTracksQuery.Variables
+  >(
+    connector,
+    GetCategoryTracksQuery.Companion.operationName,
+    GetCategoryTracksQuery.Companion.dataDeserializer,
+    GetCategoryTracksQuery.Companion.variablesSerializer,
+  )
+
+
 private class GetCommunityTracksQueryImpl(
   connector: DefaultConnector
 ):
@@ -607,6 +665,21 @@ private class GetPaymentHistoryQueryImpl(
     GetPaymentHistoryQuery.Companion.operationName,
     GetPaymentHistoryQuery.Companion.dataDeserializer,
     GetPaymentHistoryQuery.Companion.variablesSerializer,
+  )
+
+
+private class GetPlaylistTracksQueryImpl(
+  connector: DefaultConnector
+):
+  GetPlaylistTracksQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetPlaylistTracksQuery.Data,
+      GetPlaylistTracksQuery.Variables
+  >(
+    connector,
+    GetPlaylistTracksQuery.Companion.operationName,
+    GetPlaylistTracksQuery.Companion.dataDeserializer,
+    GetPlaylistTracksQuery.Companion.variablesSerializer,
   )
 
 
@@ -757,6 +830,21 @@ private class RemoveLikedTrackMutationImpl(
     RemoveLikedTrackMutation.Companion.operationName,
     RemoveLikedTrackMutation.Companion.dataDeserializer,
     RemoveLikedTrackMutation.Companion.variablesSerializer,
+  )
+
+
+private class SearchTracksQueryImpl(
+  connector: DefaultConnector
+):
+  SearchTracksQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      SearchTracksQuery.Data,
+      SearchTracksQuery.Variables
+  >(
+    connector,
+    SearchTracksQuery.Companion.operationName,
+    SearchTracksQuery.Companion.dataDeserializer,
+    SearchTracksQuery.Companion.variablesSerializer,
   )
 
 

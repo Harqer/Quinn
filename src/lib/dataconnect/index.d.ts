@@ -139,6 +139,31 @@ export interface Episode_Key {
   __typename?: 'Episode_Key';
 }
 
+export interface GetAlbumTracksData {
+  tracks: ({
+    id: string;
+    title: string;
+    album: {
+      id: string;
+      title: string;
+      primaryArtist: {
+        id: string;
+        name: string;
+      } & Artist_Key;
+    } & Album_Key;
+    coverUrl?: string | null;
+    audioUrl: string;
+    prompt?: string | null;
+    visibility: string;
+    isCommunity: boolean;
+    createdAt: TimestampString;
+  } & Track_Key)[];
+}
+
+export interface GetAlbumTracksVariables {
+  albumId: string;
+}
+
 export interface GetAlbumsData {
   albums: ({
     id: string;
@@ -198,6 +223,33 @@ export interface GetCategoriesData {
   } & Category_Key)[];
 }
 
+export interface GetCategoryTracksData {
+  musicCategories: ({
+    track: {
+      id: string;
+      title: string;
+      album: {
+        id: string;
+        title: string;
+        primaryArtist: {
+          id: string;
+          name: string;
+        } & Artist_Key;
+      } & Album_Key;
+      coverUrl?: string | null;
+      audioUrl: string;
+      prompt?: string | null;
+      visibility: string;
+      isCommunity: boolean;
+      createdAt: TimestampString;
+    } & Track_Key;
+  })[];
+}
+
+export interface GetCategoryTracksVariables {
+  categoryId: string;
+}
+
 export interface GetCommunityTracksData {
   tracks: ({
     id: string;
@@ -252,6 +304,33 @@ export interface GetPaymentHistoryData {
     stripeInvoiceId?: string | null;
     createdAt: TimestampString;
   } & PaymentHistory_Key)[];
+}
+
+export interface GetPlaylistTracksData {
+  playlistEntries: ({
+    track: {
+      id: string;
+      title: string;
+      album: {
+        id: string;
+        title: string;
+        primaryArtist: {
+          id: string;
+          name: string;
+        } & Artist_Key;
+      } & Album_Key;
+      coverUrl?: string | null;
+      audioUrl: string;
+      prompt?: string | null;
+      visibility: string;
+      isCommunity: boolean;
+      createdAt: TimestampString;
+    } & Track_Key;
+  })[];
+}
+
+export interface GetPlaylistTracksVariables {
+  playlistId: string;
 }
 
 export interface GetPlaylistsData {
@@ -409,6 +488,31 @@ export interface RemoveLikedTrackData {
 
 export interface RemoveLikedTrackVariables {
   trackId: string;
+}
+
+export interface SearchTracksData {
+  tracks: ({
+    id: string;
+    title: string;
+    album: {
+      id: string;
+      title: string;
+      primaryArtist: {
+        id: string;
+        name: string;
+      } & Artist_Key;
+    } & Album_Key;
+    coverUrl?: string | null;
+    audioUrl: string;
+    prompt?: string | null;
+    visibility: string;
+    isCommunity: boolean;
+    createdAt: TimestampString;
+  } & Track_Key)[];
+}
+
+export interface SearchTracksVariables {
+  query: string;
 }
 
 export interface Show_Key {
@@ -800,4 +904,52 @@ export const getUserVideoDigestionsRef: GetUserVideoDigestionsRef;
 
 export function getUserVideoDigestions(options?: ExecuteQueryOptions): QueryPromise<GetUserVideoDigestionsData, undefined>;
 export function getUserVideoDigestions(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetUserVideoDigestionsData, undefined>;
+
+interface GetPlaylistTracksRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetPlaylistTracksVariables): QueryRef<GetPlaylistTracksData, GetPlaylistTracksVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetPlaylistTracksVariables): QueryRef<GetPlaylistTracksData, GetPlaylistTracksVariables>;
+  operationName: string;
+}
+export const getPlaylistTracksRef: GetPlaylistTracksRef;
+
+export function getPlaylistTracks(vars: GetPlaylistTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetPlaylistTracksData, GetPlaylistTracksVariables>;
+export function getPlaylistTracks(dc: DataConnect, vars: GetPlaylistTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetPlaylistTracksData, GetPlaylistTracksVariables>;
+
+interface GetCategoryTracksRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetCategoryTracksVariables): QueryRef<GetCategoryTracksData, GetCategoryTracksVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetCategoryTracksVariables): QueryRef<GetCategoryTracksData, GetCategoryTracksVariables>;
+  operationName: string;
+}
+export const getCategoryTracksRef: GetCategoryTracksRef;
+
+export function getCategoryTracks(vars: GetCategoryTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetCategoryTracksData, GetCategoryTracksVariables>;
+export function getCategoryTracks(dc: DataConnect, vars: GetCategoryTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetCategoryTracksData, GetCategoryTracksVariables>;
+
+interface GetAlbumTracksRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetAlbumTracksVariables): QueryRef<GetAlbumTracksData, GetAlbumTracksVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetAlbumTracksVariables): QueryRef<GetAlbumTracksData, GetAlbumTracksVariables>;
+  operationName: string;
+}
+export const getAlbumTracksRef: GetAlbumTracksRef;
+
+export function getAlbumTracks(vars: GetAlbumTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetAlbumTracksData, GetAlbumTracksVariables>;
+export function getAlbumTracks(dc: DataConnect, vars: GetAlbumTracksVariables, options?: ExecuteQueryOptions): QueryPromise<GetAlbumTracksData, GetAlbumTracksVariables>;
+
+interface SearchTracksRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SearchTracksVariables): QueryRef<SearchTracksData, SearchTracksVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SearchTracksVariables): QueryRef<SearchTracksData, SearchTracksVariables>;
+  operationName: string;
+}
+export const searchTracksRef: SearchTracksRef;
+
+export function searchTracks(vars: SearchTracksVariables, options?: ExecuteQueryOptions): QueryPromise<SearchTracksData, SearchTracksVariables>;
+export function searchTracks(dc: DataConnect, vars: SearchTracksVariables, options?: ExecuteQueryOptions): QueryPromise<SearchTracksData, SearchTracksVariables>;
 

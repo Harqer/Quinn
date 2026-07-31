@@ -86,11 +86,11 @@ fun GenerateCoverScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .imePadding()
-                .padding(top = paddingValues.calculateTopPadding())
+                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = paddingValues.calculateBottomPadding() + 24.dp),
+                .padding(bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {

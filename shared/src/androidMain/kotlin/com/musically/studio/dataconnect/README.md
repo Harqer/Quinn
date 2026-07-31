@@ -80,16 +80,16 @@ val connector: DefaultConnector = DefaultConnector.getInstance(
 ### DefaultConnector - Query and Mutation Properties
 
 The `default` Data Connect connector defines
-13 queries and
+17 queries and
 14 mutations,
-a total of 27 operations.
+a total of 31 operations.
 Each of these operations is exposed
 as a property of [DefaultConnector].
 
 
 An example of the property for a query
-is the query named "GetAlbums",
-which can be accessed via the [DefaultConnector.getAlbums] property.
+is the query named "GetAlbumTracks",
+which can be accessed via the [DefaultConnector.getAlbumTracks] property.
 
 
 An example of the property for a mutation
@@ -184,6 +184,20 @@ println("GetAlbums query returned: ${queryResult.data}")
 ```
 
 
+### Executing Queries with Required Variables
+
+If a query has _required_ variables then they must be specified as
+arguments to the `execute()` method.
+
+For example, the "GetAlbumTracks" query has 1 required variable ("albumId")
+and can be executed via the [DefaultConnector.getAlbumTracks]
+property as follows:
+
+```kotlin
+val connector = DefaultConnector.instance
+val queryResult = connector.getAlbumTracks.execute(albumId="quux")
+println("GetAlbumTracks query returned: ${queryResult.data}")
+```
 
 
 

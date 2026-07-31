@@ -1,4 +1,4 @@
-import { gemini15Flash, googleAI } from "@genkit-ai/googleai";
+import { gemini15Flash, googleAI } from "@genkit-ai/google-genai";
 import { genkit, z } from "genkit";
 import { cacheVisionResult, getCachedVisionResult } from "../config/redis.js";
 import crypto from "crypto";

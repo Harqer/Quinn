@@ -16,18 +16,19 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentRoute, onNavigate }
     <>
       <div className="md:hidden flex flex-row justify-around items-center h-[72px] w-full bg-background/90 backdrop-blur-[20px] relative z-50">
         <BottomNavItem icon="home" label="Home" isActive={currentRoute === 'home'} onClick={() => onNavigate('home')} />
+        <BottomNavItem icon="explore" label="Discover" isActive={currentRoute === 'discover'} onClick={() => onNavigate('discover')} />
         <BottomNavItem icon="search" label="Search" isActive={currentRoute === 'search'} onClick={() => onNavigate('search')} />
-        <BottomNavItem icon="auto_awesome" label="Mave" isActive={currentRoute === 'chat'} onClick={() => onNavigate('chat')} />
-        <BottomNavItem icon="podcasts" label="Podcast" isActive={currentRoute === 'podcast'} onClick={() => onNavigate('podcast')} />
-        <BottomNavItem icon="glasses" label="Devices" isActive={currentRoute === 'devices'} onClick={() => onNavigate('devices')} />
+        <BottomNavItem icon="graphic_eq" label="Live" isActive={currentRoute === 'live'} onClick={() => onNavigate('live')} />
         <BottomNavItem icon="library_music" label="Library" isActive={currentRoute === 'library'} onClick={() => onNavigate('library')} />
       </div>
 
       <div className="hidden md:flex flex-col gap-2 w-full h-full text-text-secondary">
         <div className="bg-[#121212] rounded-xl p-4 flex flex-col gap-2">
           <BottomNavItem icon="home" label="Home" isActive={currentRoute === 'home'} onClick={() => onNavigate('home')} />
+          <BottomNavItem icon="explore" label="Discover" isActive={currentRoute === 'discover'} onClick={() => onNavigate('discover')} />
           <BottomNavItem icon="search" label="Search" isActive={currentRoute === 'search'} onClick={() => onNavigate('search')} />
-          <BottomNavItem icon="auto_awesome" label="Mave" isActive={currentRoute === 'chat'} onClick={() => onNavigate('chat')} />
+          <BottomNavItem icon="graphic_eq" label="Live" isActive={currentRoute === 'live'} onClick={() => onNavigate('live')} />
+          <BottomNavItem icon="auto_awesome" label="Mave Chat" isActive={currentRoute === 'chat'} onClick={() => onNavigate('chat')} />
           <BottomNavItem icon="podcasts" label="Podcast" isActive={currentRoute === 'podcast'} onClick={() => onNavigate('podcast')} />
           <BottomNavItem icon="glasses" label="Devices" isActive={currentRoute === 'devices'} onClick={() => onNavigate('devices')} />
         </div>

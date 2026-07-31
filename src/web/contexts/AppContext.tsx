@@ -4,6 +4,10 @@ import { Track } from '../hooks/useTracks';
 interface AppContextType {
   activeAlbumId: string | null;
   setActiveAlbumId: (id: string | null) => void;
+  activePlaylistId: string | null;
+  setActivePlaylistId: (id: string | null) => void;
+  activeCategoryId: string | null;
+  setActiveCategoryId: (id: string | null) => void;
   currentTrack: Track | null;
   setCurrentTrack: (track: Track | null) => void;
   isPlaying: boolean;
@@ -22,6 +26,8 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [activeAlbumId, setActiveAlbumId] = useState<string | null>(null);
+  const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSender, setPlaybackSender] = useState<(cmd: string) => void>(() => () => {});
@@ -36,6 +42,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   return (
     <AppContext.Provider value={{ 
       activeAlbumId, setActiveAlbumId, 
+      activePlaylistId, setActivePlaylistId,
+      activeCategoryId, setActiveCategoryId,
       currentTrack, setCurrentTrack, 
       isPlaying, setIsPlaying,
       sendPlaybackCommand, setPlaybackCommandSender: setPlaybackSender,

@@ -21,6 +21,7 @@ interface ApiClient {
     suspend fun getVibesByUserId(userId: String): List<MaveTrack>?
     suspend fun reportTarget(targetId: String, targetType: String, reason: String): Boolean
     suspend fun getCommunityTracks(): List<MaveTrack>?
+    suspend fun getLikedTracks(): List<MaveTrack>?
 
     suspend fun generateMusicPrompts(imageB64: String): List<String>?
     suspend fun generateMusicFromMedia(base64: String, mimeType: String): MaveTrack?
@@ -296,6 +297,30 @@ class RealApiClient(private val client: OkHttpClient) : ApiClient {
                 } else null
             }
         } catch (e: Exception) { null }
+    }
+
+    override suspend fun getLikedTracks(): List<MaveTrack>? {
+        val token = TokenManager.getValidToken() ?: return null
+        val request = Request.Builder()
+            .url("$BASE_URL/api/interactions/liked")
+            .header("Authorization", "Bearer $token")
+            .get()
+            .build()
+        
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        val gson = com.google.gson.Gson()
+                        val type = object : com.google.gson.reflect.TypeToken<List<MaveTrack>>() {}.type
+                        gson.fromJson<List<MaveTrack>>(body, type)
+                    } else emptyList()
+                } else null
+            }
+        } catch (e: IOException) {
+            null
+        }
     }
 
 

@@ -6,27 +6,27 @@ import { EmptyState } from '../../components/molecules/EmptyState';
 import { ErrorAlert } from '../../components/molecules/ErrorAlert';
 import { TrackListSkeleton } from '../../components/molecules/TrackListSkeleton';
 import { useAppContext } from '../../contexts/AppContext';
+import { getAuth } from 'firebase/auth';
 import { logger } from "../../lib/logger";
 import { musicService, Track } from '../../services/MusicService';
 import { usePlayerContext } from '../../contexts/PlayerContext';
 
-export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  const { activeAlbumId: id } = useAppContext();
+export const PlaylistViewScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+  const { activePlaylistId: id } = useAppContext();
   const [tracks, setTracks] = useState<Track[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showOptions, setShowOptions] = useState(false);
   const { playQueue } = usePlayerContext();
 
-  const fetchAlbum = () => {
+  const fetchPlaylist = () => {
     if (id) {
       setLoading(true);
       setError(null);
-      musicService.getAlbumTracks(id, "Album") // Assuming getAlbumTracks takes id and name now
+      musicService.getPlaylistTracks(id)
         .then(setTracks)
         .catch(err => {
-          logger.error("Failed to fetch album tracks", err);
-          setError("Unable to load album tracks. Please check your connection.");
+          logger.error("Failed to fetch playlist tracks", err);
+          setError("Unable to load playlist tracks. Please check your connection.");
         })
         .finally(() => setLoading(false));
     } else {
@@ -35,21 +35,18 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   };
 
   useEffect(() => {
-    fetchAlbum();
+    fetchPlaylist();
   }, [id]);
 
-  const handleAction = async (action: 'like' | 'share' | 'options', targetId: string) => {
+  const handleAction = async (action: 'like' | 'share', targetId: string) => {
     if ('vibrate' in navigator) navigator.vibrate([50, 50, 50]);
     try {
-      if (action === 'like') {
-        await musicService.likeItem(targetId, 'album');
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: 'Album saved to library!' }));
-      } else if (action === 'share') {
-        const url = `${window.location.origin}/album/${targetId}`;
+      if (action === 'share') {
+        const url = `${window.location.origin}/playlist/${targetId}`;
         if (navigator.share) {
           navigator.share({
-            title: 'Mave Album',
-            text: 'Check out this album on Mave!',
+            title: 'Mave Playlist',
+            text: 'Check out this playlist on Mave!',
             url: url
           }).catch(console.error);
         } else {
@@ -71,9 +68,9 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           </button>
         </div>
         <EmptyState 
-          icon="album" 
-          title="Album not found" 
-          description="We couldn't find the album you were looking for." 
+          icon="queue_music" 
+          title="Playlist not found" 
+          description="We couldn't find the playlist you were looking for." 
           action={{ label: "Go Back", onClick: onBack }}
         />
       </div>
@@ -83,12 +80,12 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   return (
     <div className="flex flex-col h-full w-full bg-background overflow-y-auto pb-32">
        <div className="relative w-full h-64 bg-surface-container shrink-0">
-          {/* Dynamic Album Cover */}
+          {/* Dynamic Playlist Cover */}
           {tracks.length > 0 && tracks[0].albumArtUrl ? (
-            <img src={tracks[0].albumArtUrl} alt="Album Cover" className="w-full h-full object-cover" />
+            <img src={tracks[0].albumArtUrl} alt="Playlist Cover" className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-surface">
-              <Icon name="album" size="3xl" />
+              <Icon name="queue_music" size="3xl" />
             </div>
           )}
           
@@ -101,22 +98,18 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           
           {/* Overlay Actions at Bottom */}
           <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex justify-end gap-3 items-center z-10">
-             <button onClick={() => handleAction('like', id)} className="p-2.5 bg-black/40 backdrop-blur-md rounded-full hover:bg-black/60 transition-colors text-white shadow-lg" title="Like">
-                <Icon name="favorite_border" size="md" />
-             </button>
              <button onClick={() => handleAction('share', id)} className="p-2.5 bg-black/40 backdrop-blur-md rounded-full hover:bg-black/60 transition-colors text-white shadow-lg" title="Share">
                 <Icon name="share" size="md" />
              </button>
-
           </div>
        </div>
-       <div className="flex-1 flex flex-col px-4 pt-4" onClick={() => setShowOptions(false)}>
+       <div className="flex-1 flex flex-col px-4 pt-4">
          {loading ? (
             <div className="w-full">
                <TrackListSkeleton count={6} />
             </div>
          ) : error ? (
-            <ErrorAlert message={error} onRetry={fetchAlbum} />
+            <ErrorAlert message={error} onRetry={fetchPlaylist} />
          ) : tracks.length > 0 ? (
             tracks.map((track, index) => (
               <div key={track.id} onClick={() => playQueue(tracks, index)}>
@@ -128,9 +121,9 @@ export const AlbumView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             ))
          ) : (
             <EmptyState 
-              icon="album" 
-              title="Album empty" 
-              description="There are no tracks in this album." 
+              icon="queue_music" 
+              title="Playlist empty" 
+              description="There are no tracks in this playlist." 
             />
          )}
        </div>

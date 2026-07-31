@@ -3,11 +3,13 @@ import { Typography } from '../atoms/Typography';
 
 export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
+  seeAllAction?: () => void;
   children: React.ReactNode;
 }
 
 export const Carousel: React.FC<CarouselProps> = ({
   title,
+  seeAllAction,
   children,
   className = '',
   ...props
@@ -15,10 +17,18 @@ export const Carousel: React.FC<CarouselProps> = ({
   return (
     <section className={`flex flex-col gap-4 py-4 ${className}`} {...props}>
       {title && (
-        <div className="px-4 md:px-6">
+        <div className="px-4 md:px-6 flex items-center justify-between">
           <Typography variant="headline" className="tracking-tight">
             {title}
           </Typography>
+          {seeAllAction && (
+            <button
+              onClick={seeAllAction}
+              className="text-sm font-bold text-secondary hover:text-on-surface transition-colors"
+            >
+              See all
+            </button>
+          )}
         </div>
       )}
       

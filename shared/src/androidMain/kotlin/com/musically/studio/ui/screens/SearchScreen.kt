@@ -35,7 +35,8 @@ fun SearchScreen(
     viewModel: MainViewModel,
     onNavigateToCamera: () -> Unit,
     onNavigateToCategory: (String) -> Unit,
-    onNavigateToAlbum: (String) -> Unit
+    onNavigateToAlbum: (String) -> Unit,
+    onNavigateToSettings: () -> Unit = {}
 ) {
     var query by remember { mutableStateOf("") }
     val categories by viewModel.categories.collectAsStateWithLifecycle()
@@ -60,7 +61,7 @@ fun SearchScreen(
                                 .size(32.dp)
                                 .clip(androidx.compose.foundation.shape.CircleShape)
                                 .background(com.musically.studio.ui.theme.MaveBrand)
-                                .clickable { onNavigateToCamera() /* Settings in real app */ },
+                                .clickable { onNavigateToSettings() },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(

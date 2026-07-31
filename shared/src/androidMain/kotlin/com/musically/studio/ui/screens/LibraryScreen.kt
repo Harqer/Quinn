@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+
 import com.musically.studio.shared.R
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.TrackItem
@@ -37,7 +37,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.draw.clip
-import androidx.window.core.layout.WindowWidthSizeClass
+
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import timber.log.Timber
@@ -66,11 +66,13 @@ fun LibraryScreen(
     onNavigateToAdd: () -> Unit
 ) {
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
+    val likedTracks by viewModel.likedTracks.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val errorMessage by viewModel.catalogErrorMessage.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.fetchUserTracks()
+        viewModel.fetchLikedTracks()
     }
 
     val playlists by viewModel.playlists.collectAsStateWithLifecycle()
@@ -148,6 +150,14 @@ fun LibraryScreen(
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold
                     )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    FilterPill(
+                        text = "Liked",
+                        isSelected = selectedFilterState.value == "Liked",
+                        onClick = {
+                            selectedFilterState.value = if (selectedFilterState.value == "Liked") null else "Liked"
+                        }
+                    )
                 }
                 Icon(
                     imageVector = Icons.Default.Menu, // FormatListBulleted equivalent
@@ -185,6 +195,12 @@ fun LibraryScreen(
             } else if (tracks.isEmpty()) {
                 EmptyLibraryState(onNavigateToHome = onNavigateToHome)
             } else {
+                val filteredTracks = if (selectedFilterState.value == "Liked") {
+                    likedTracks
+                } else {
+                    tracks
+                }
+
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(bottom = 120.dp)
@@ -196,7 +212,7 @@ fun LibraryScreen(
                             youtubeConnected = youtubeConnected
                         )
                     }
-                    items(tracks) { track ->
+                    items(filteredTracks) { track ->
                         TrackItem(
                             track = track,
                             onClick = { onNavigateToNowPlaying(track.id) },
@@ -380,7 +396,7 @@ fun ConnectionsSection(
     spotifyConnected: Boolean,
     youtubeConnected: Boolean
 ) {
-    val isCompact = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
+    val isCompact = !androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(600)
     
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
         Text("Connections", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.Bold)

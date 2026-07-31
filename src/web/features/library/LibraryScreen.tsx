@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Typography } from '../../components/atoms/Typography';
 import { useNavigate } from '../../App';
 import { useAppContext } from '../../contexts/AppContext';
@@ -10,15 +10,19 @@ import { getAuth } from 'firebase/auth';
 import { EmptyState } from '../../components/molecules/EmptyState';
 import { ErrorAlert } from '../../components/molecules/ErrorAlert';
 import { Shimmer } from '../../components/atoms/Shimmer';
+import { usePlayerContext } from '../../contexts/PlayerContext';
 
 export const LibraryScreen: React.FC = () => {
-  const { userTracks, communityTracks, spotifyTracks, loading, error, retry } = useTracks();
+  const { userTracks, communityTracks, spotifyTracks, likedTracks, loading, error, retry } = useTracks();
   const auth = getAuth();
   const user = auth.currentUser;
   const navigate = useNavigate();
   const { setActiveAlbumId } = useAppContext();
+  const { playQueue } = usePlayerContext();
+  
+  const [activeFilter, setActiveFilter] = useState<'Recent' | 'Liked'>('Recent');
 
-  const displayTracks = userTracks;
+  const displayTracks = activeFilter === 'Liked' ? likedTracks : userTracks;
 
   const handleTrackClick = (id: string) => {
     logger.info('User navigating to track/album from library', { id });
@@ -43,8 +47,18 @@ export const LibraryScreen: React.FC = () => {
       </div>
       <div className="px-4 py-2 flex items-center justify-between text-white mb-2">
         <div className="flex items-center gap-2">
-           <Icon name="swap_vert" size="md" />
-           <Typography variant="label-md" className="font-bold">Recently played</Typography>
+          <FilterPill 
+            icon="schedule" 
+            title="Recent" 
+            isActive={activeFilter === 'Recent'}
+            onClick={() => setActiveFilter('Recent')} 
+          />
+          <FilterPill 
+            icon="favorite" 
+            title="Liked" 
+            isActive={activeFilter === 'Liked'}
+            onClick={() => setActiveFilter('Liked')} 
+          />
         </div>
         <Icon name="format_list_bulleted" size="lg" color="secondary" />
       </div>
@@ -69,8 +83,14 @@ export const LibraryScreen: React.FC = () => {
       ) : displayTracks.length > 0 ? (
         <div className="flex flex-col px-0 gap-0">
           <Typography variant="label-md" className="px-4 py-2 text-primary font-bold">Mave Studio Tracks</Typography>
-          {displayTracks.map(track => (
-            <div key={track.id} onClick={() => handleTrackClick(track.id)}>
+          {displayTracks.map((track, index) => (
+            <div key={track.id} onClick={() => {
+              if (track.id.startsWith('lyria-') || track.id.startsWith('steered-')) {
+                playQueue(displayTracks, index);
+              } else {
+                handleTrackClick(track.id);
+              }
+            }}>
               <TrackListItem 
                 title={track.title} 
                 artist={track.artist || 'Unknown Artist'} 
@@ -83,7 +103,11 @@ export const LibraryScreen: React.FC = () => {
             <>
               <Typography variant="label-md" className="px-4 py-2 mt-4 text-[#1DB954] font-bold">Spotify Top Tracks</Typography>
               {spotifyTracks.map((item: any) => (
-                <div key={item.id}>
+                <div 
+                  key={item.id}
+                  onClick={() => item.external_urls?.spotify ? window.open(item.external_urls.spotify, '_blank', 'noopener,noreferrer') : undefined}
+                  className={item.external_urls?.spotify ? 'cursor-pointer' : ''}
+                >
                   <TrackListItem 
                     title={item.name} 
                     artist={item.artists?.[0]?.name || 'Unknown Artist'} 
@@ -98,7 +122,11 @@ export const LibraryScreen: React.FC = () => {
         <div className="flex flex-col px-0 gap-0">
           <Typography variant="label-md" className="px-4 py-2 mt-4 text-[#1DB954] font-bold">Spotify Top Tracks</Typography>
           {spotifyTracks.map((item: any) => (
-            <div key={item.id}>
+            <div 
+              key={item.id}
+              onClick={() => item.external_urls?.spotify ? window.open(item.external_urls.spotify, '_blank', 'noopener,noreferrer') : undefined}
+              className={item.external_urls?.spotify ? 'cursor-pointer' : ''}
+            >
               <TrackListItem 
                 title={item.name} 
                 artist={item.artists?.[0]?.name || 'Unknown Artist'} 
@@ -120,8 +148,13 @@ export const LibraryScreen: React.FC = () => {
   );
 };
 
-const FilterPill = ({ icon, title, onClick }: { icon: string, title: string, onClick?: () => void }) => (
-  <button onClick={onClick} className="bg-surface-container rounded-full px-4 py-1.5 text-text-primary text-[11px] tracking-wide font-medium flex items-center justify-center hover:bg-surface transition-colors" title={title}>
+const FilterPill = ({ icon, title, isActive, onClick }: { icon: string, title: string, isActive: boolean, onClick?: () => void }) => (
+  <button 
+    onClick={onClick} 
+    className={`rounded-full px-4 py-1.5 text-[11px] tracking-wide font-medium flex items-center gap-1.5 justify-center transition-colors ${isActive ? 'bg-primary text-black' : 'bg-surface-container text-text-primary hover:bg-surface'}`} 
+    title={title}
+  >
     <Icon name={icon} size="sm" />
+    <span>{title}</span>
   </button>
 );

@@ -9,10 +9,16 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Home
@@ -30,10 +36,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -69,8 +74,8 @@ fun MaveApp(
     onAcknowledgePermissions: () -> Unit,
     hasPermissions: Boolean
 ) {
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
+    val adaptiveInfo = androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2()
+    val isExpanded = adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(840)
 
     val topLevelRoutes = setOf<Route>(Route.Welcome, Route.Home, Route.Discover, Route.Search, Route.Chat, Route.Podcast, Route.Devices, Route.Library)
     val startRoute: Route = Route.Welcome
@@ -157,7 +162,13 @@ fun MaveApp(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet(
+                modifier = Modifier.windowInsetsPadding(
+                    androidx.compose.foundation.layout.WindowInsets.safeDrawing.only(
+                        androidx.compose.foundation.layout.WindowInsetsSides.Top
+                    )
+                )
+            ) {
                 androidx.compose.foundation.layout.Spacer(Modifier.height(12.dp))
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.Home, contentDescription = null) },
@@ -296,7 +307,10 @@ fun MaveApp(
                                 navigator.navigate(Route.Queue)
                             },
                             onLyricsClick = { 
-                                navigator.navigate(Route.Lyrics(currentPlayingTrack!!.id))
+                                currentPlayingTrack?.let { navigator.navigate(Route.Lyrics(it.id)) }
+                            },
+                            onDeviceClick = {
+                                navigator.navigate(Route.Devices)
                             }
                         )
                         if (scaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
@@ -324,6 +338,7 @@ fun MaveApp(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
+                    .consumeWindowInsets(paddingValues)
                     .styleable(styleState, MaveStyles.scaffoldStyle),
                 contentAlignment = Alignment.Center
             ) {

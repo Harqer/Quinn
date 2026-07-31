@@ -47,11 +47,11 @@ fun PodcastGeneratorScreen(
     var promptText by remember { mutableStateOf("") }
     
     // Lumina Synth Design System Colors
-    val surfaceColor = com.musically.studio.ui.theme.MaveBackground
-    val backgroundColor = com.musically.studio.ui.theme.MaveGray900
+    val surfaceColor = com.musically.studio.ui.theme.LocalMaveColorScheme.current.surfaceContainerHigh
+    val backgroundColor = com.musically.studio.ui.theme.LocalMaveColorScheme.current.background
     val primaryElectricViolet = com.musically.studio.ui.theme.MavePurple500
     val secondaryNeonCyan = com.musically.studio.ui.theme.MaveCyan500
-    val onSurfaceColor = com.musically.studio.ui.theme.MaveGray200
+    val onSurfaceColor = com.musically.studio.ui.theme.LocalMaveColorScheme.current.onSurface
     
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     

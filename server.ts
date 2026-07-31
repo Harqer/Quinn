@@ -9,6 +9,7 @@ import { initializeApp, getApps } from "firebase-admin/app";
 import { getAppCheck } from "firebase-admin/app-check";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
+import { getStorage } from "firebase-admin/storage";
 import helmet from "helmet";
 import compression from "compression";
 import { rateLimit } from "express-rate-limit";
@@ -643,6 +644,180 @@ You MUST output your response as a valid JSON object matching this schema exactl
     });
   } catch (err) {
     next(err);
+  }
+});
+
+// Implementation of /api/music/lyria/full
+app.post("/api/music/lyria/full", verifyFirebaseToken, verifyAppCheck, checkDailyQuota, async (req: AuthenticatedRequest, res, next) => {
+  const { prompt } = req.body;
+  if (!prompt) {
+    res.status(400).json({ error: "Missing prompt" });
+    return;
+  }
+  
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive'
+  });
+
+  const writeSSE = (data: any) => {
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+
+  try {
+    writeSSE({ type: 'status', message: 'Analyzing prompt...' });
+    
+    // Simulate reasoning
+    writeSSE({ type: 'reasoning', text: `Thinking about how to compose: ${prompt}\n` });
+    
+    writeSSE({ type: 'status', message: 'Generating audio...' });
+    
+    // Generate audio using TTS as a placeholder for Lyria
+    const ttsInteraction = await ai.interactions.create({
+      model: "gemini-3.1-flash-tts-preview",
+      input: `Generating track for: ${prompt}. Beep boop, this is a simulated song!`,
+      response_modalities: ["AUDIO"],
+      generation_config: { speech_config: { language: "en-us", voice: "zephyr" } }
+    });
+
+    let audioBase64 = "";
+    for (const step of ttsInteraction.steps) {
+      if (step.type === "model_output") {
+        const audioContent = step.content?.find((c: any) => c.type === "audio");
+        if (audioContent && audioContent.data) {
+          audioBase64 += audioContent.data;
+        }
+      }
+    }
+
+    if (!audioBase64) {
+      throw new Error("Failed to generate audio content.");
+    }
+
+    // Convert base64 to buffer
+    const audioBuffer = Buffer.from(audioBase64, "base64");
+
+    // Upload to Firebase Storage
+    const bucketName = firebaseConfig.storageBucket || "gen-lang-client-0845285230.firebasestorage.app";
+    const bucket = getStorage().bucket(bucketName);
+    const userId = req.user?.uid || "local-dev-user";
+    const trackId = `lyria-${Date.now()}`;
+    const filename = `tracks/${userId}/${trackId}.wav`;
+    const file = bucket.file(filename);
+    
+    writeSSE({ type: 'status', message: 'Saving track to your library...' });
+
+    await file.save(audioBuffer, {
+      contentType: 'audio/wav',
+      metadata: {
+        metadata: { prompt: prompt }
+      }
+    });
+
+    await file.makePublic();
+    const publicUrl = `https://storage.googleapis.com/${bucketName}/${filename}`;
+
+    const trackData = {
+      id: trackId,
+      title: prompt.split(" ").slice(0, 4).join(" ") + "...",
+      artist: "Mave AI",
+      audioUrl: publicUrl,
+      albumArtUrl: null, // To be generated later or passed
+      timestamp: FieldValue.serverTimestamp(),
+      userId: userId
+    };
+
+    await db.collection("tracks").doc(trackId).set(trackData);
+
+    writeSSE({ 
+      type: 'done', 
+      audioUrl: publicUrl, 
+      trackName: trackData.title, 
+      artistName: trackData.artist 
+    });
+    res.end();
+  } catch (err: any) {
+    console.error("[LYRIA_FULL] Error:", err);
+    writeSSE({ type: 'error', message: err.message || "Unknown error" });
+    res.end();
+  }
+});
+
+// Implementation of /api/music/lyria/steer
+app.post("/api/music/lyria/steer", verifyFirebaseToken, verifyAppCheck, checkDailyQuota, async (req: AuthenticatedRequest, res, next) => {
+  const { prompt, bpm, density, brightness } = req.body;
+  if (!prompt) {
+    res.status(400).json({ error: "Missing prompt" });
+    return;
+  }
+  
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive'
+  });
+
+  const writeSSE = (data: any) => {
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+
+  try {
+    writeSSE({ type: 'status', message: 'Tweaking instrumentation...' });
+    writeSSE({ type: 'reasoning', text: `Applying steering parameters: ${prompt}, BPM: ${bpm}\n` });
+    
+    const ttsInteraction = await ai.interactions.create({
+      model: "gemini-3.1-flash-tts-preview",
+      input: `Steering track: ${prompt}. Done.`,
+      response_modalities: ["AUDIO"],
+      generation_config: { speech_config: { language: "en-us", voice: "zephyr" } }
+    });
+
+    let audioBase64 = "";
+    for (const step of ttsInteraction.steps) {
+      if (step.type === "model_output") {
+        const audioContent = step.content?.find((c: any) => c.type === "audio");
+        if (audioContent && audioContent.data) {
+          audioBase64 += audioContent.data;
+        }
+      }
+    }
+
+    if (!audioBase64) throw new Error("Failed to generate audio content.");
+
+    const audioBuffer = Buffer.from(audioBase64, "base64");
+    const bucketName = firebaseConfig.storageBucket || "gen-lang-client-0845285230.firebasestorage.app";
+    const bucket = getStorage().bucket(bucketName);
+    const userId = req.user?.uid || "local-dev-user";
+    const trackId = `steered-${Date.now()}`;
+    const filename = `tracks/${userId}/${trackId}.wav`;
+    const file = bucket.file(filename);
+
+    await file.save(audioBuffer, {
+      contentType: 'audio/wav',
+      metadata: { metadata: { prompt: prompt } }
+    });
+    
+    await file.makePublic();
+    const publicUrl = `https://storage.googleapis.com/${bucketName}/${filename}`;
+
+    const trackData = {
+      id: trackId,
+      title: prompt.split(" ").slice(0, 4).join(" ") + "...",
+      artist: "Mave AI (Tweaked)",
+      audioUrl: publicUrl,
+      albumArtUrl: null,
+      timestamp: FieldValue.serverTimestamp(),
+      userId: userId
+    };
+    await db.collection("tracks").doc(trackId).set(trackData);
+
+    writeSSE({ type: 'done', audioUrl: publicUrl });
+    res.end();
+  } catch (err: any) {
+    console.error("[LYRIA_STEER] Error:", err);
+    writeSSE({ type: 'error', message: err.message || "Unknown error" });
+    res.end();
   }
 });
 
@@ -1298,6 +1473,34 @@ app.get("/api/spotify/auth-url", verifyFirebaseToken, async (req: AuthenticatedR
   }
 });
 
+// GET user generated tracks
+app.get("/api/interactions/liked", verifyFirebaseToken, async (req: AuthenticatedRequest, res, next) => {
+  const userId = req.user?.uid || "local-dev-user";
+  try {
+    const snap = await db.collection("tracks").get();
+    
+    // In memory/mock or firestore, filter by userId
+    const tracks = snap.docs
+      .map((doc: any) => {
+        const data = doc.data ? doc.data() : doc;
+        return data;
+      })
+      .filter((t: any) => t.userId === userId)
+      .map((t: any) => ({
+        id: t.id,
+        title: t.title,
+        artist: t.artist,
+        audioUrl: t.audioUrl,
+        albumArtUrl: t.albumArtUrl,
+        createdAt: t.timestamp?.toDate ? t.timestamp.toDate().toISOString() : new Date().toISOString()
+      }));
+
+    res.json(tracks);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // GET Spotify OAuth callback
 app.get("/api/spotify/callback", async (req, res, next) => {
   try {
@@ -1394,7 +1597,7 @@ app.get("/api/spotify/callback", async (req, res, next) => {
               </svg>
             </div>
             <h2 style="margin: 0 0 0.5rem; font-weight: 700;">Connected to Spotify!</h2>
-            <p style="color: #a1a1aa; font-size: 14px; margin: 0 0 1.5rem; line-height: 1.5;">This window will close automatically, syncing your session with the Quinn Wearables Studio.</p>
+            <p style="color: #a1a1aa; font-size: 14px; margin: 0 0 1.5rem; line-height: 1.5;">This window will close automatically, syncing your session with the Mave Wearables Studio.</p>
             <div style="font-size: 12px; color: #71717a; border-top: 1px solid #27272a; padding-top: 1rem;">
               Authorization Complete
             </div>
@@ -1563,9 +1766,9 @@ app.post("/api/spotify/playlists/add-track", verifyFirebaseToken, async (req: Au
 
     let targetPlaylistId = playlistId;
 
-    // If no target playlist is specified, look for or create "Quinn Wearables Vibes" playlist
+    // If no target playlist is specified, look for or create "Mave Wearables Vibes" playlist
     if (!targetPlaylistId) {
-      console.log("[SPOTIFY] Resolving default 'Quinn Wearables Vibes' playlist...");
+      console.log("[SPOTIFY] Resolving default 'Mave Wearables Vibes' playlist...");
       const listResponse = await fetch("https://api.spotify.com/v1/me/playlists?limit=50", {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -1574,14 +1777,14 @@ app.post("/api/spotify/playlists/add-track", verifyFirebaseToken, async (req: Au
 
       if (listResponse.ok) {
         const listData = await listResponse.json();
-        const existingList = listData.items?.find((p: any) => p.name === "Quinn Wearables Vibes");
+        const existingList = listData.items?.find((p: any) => p.name === "Mave Wearables Vibes");
         if (existingList) {
           targetPlaylistId = existingList.id;
         }
       }
 
       if (!targetPlaylistId) {
-        console.log("[SPOTIFY] Playlist 'Quinn Wearables Vibes' not found. Creating it...");
+        console.log("[SPOTIFY] Playlist 'Mave Wearables Vibes' not found. Creating it...");
         const meRes = await fetch("https://api.spotify.com/v1/me", {
           headers: { "Authorization": `Bearer ${token}` }
         });
@@ -1594,8 +1797,8 @@ app.post("/api/spotify/playlists/add-track", verifyFirebaseToken, async (req: Au
               "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({
-              name: "Quinn Wearables Vibes",
-              description: "AI-Synthesized music vibes crafted live with Quinn and Ray-Ban Meta Wearables.",
+              name: "Mave Wearables Vibes",
+              description: "AI-Synthesized music vibes crafted live with Mave and Ray-Ban Meta Wearables.",
               public: true
             })
           });

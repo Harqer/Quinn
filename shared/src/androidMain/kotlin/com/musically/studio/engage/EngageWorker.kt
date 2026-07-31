@@ -8,12 +8,14 @@ import com.google.android.engage.audio.datamodel.MusicTrackEntity
 import com.google.android.engage.audio.datamodel.PlaylistEntity
 import com.google.android.engage.audio.datamodel.PodcastSeriesEntity
 import com.google.android.engage.books.datamodel.AudiobookEntity
+import com.google.android.engage.common.datamodel.ClusterType
 import com.google.android.engage.common.datamodel.ContinuationCluster
 import com.google.android.engage.common.datamodel.Image
 import com.google.android.engage.common.datamodel.RecommendationCluster
 import com.google.android.engage.service.AppEngagePublishClient
 import com.google.android.engage.service.PublishContinuationClusterRequest
 import com.google.android.engage.service.PublishRecommendationClustersRequest
+import com.google.android.engage.service.ServiceAvailabilityRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.tasks.await
@@ -33,7 +35,17 @@ class EngageWorker(
             val recommendedPodcasts = apiClient.getPodcasts() ?: emptyList()
             val recommendedAudiobooks = apiClient.getAudiobooks() ?: emptyList()
 
-            if (publishClient.isServiceAvailable().await()) {
+            val request = ServiceAvailabilityRequest.Builder()
+                .addIntendedClusterType(ClusterType.TYPE_CONTINUATION)
+                .addIntendedClusterType(ClusterType.TYPE_RECOMMENDATION)
+                .build()
+
+            val availabilityMap = publishClient.isServiceAvailable(request).await()
+            val isContinuationAvailable = availabilityMap[ClusterType.TYPE_CONTINUATION] == true
+            val isRecommendationAvailable = availabilityMap[ClusterType.TYPE_RECOMMENDATION] == true
+
+            if (isContinuationAvailable || isRecommendationAvailable) {
+                if (isContinuationAvailable) {
                 // Continuation Cluster
                 val continuationBuilder = ContinuationCluster.Builder()
                 recentTracks.forEach { track ->
@@ -55,7 +67,9 @@ class EngageWorker(
                         .setContinuationCluster(continuationBuilder.build())
                         .build()
                 )
+                }
 
+                if (isRecommendationAvailable) {
                 // Recommendation Clusters
                 val recommendationRequest = PublishRecommendationClustersRequest.Builder()
                 
@@ -115,6 +129,7 @@ class EngageWorker(
                 }
 
                 publishClient.publishRecommendationClusters(recommendationRequest.build())
+                }
                 Result.success()
             } else {
                 Result.retry()

@@ -11,7 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.VolumeDown
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +29,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.window.core.layout.WindowWidthSizeClass
+
 import coil.compose.AsyncImage
 import com.musically.studio.shared.R
 import com.musically.studio.network.MaveTrack
@@ -59,8 +59,8 @@ fun NowPlayingScreen(
     val volume by viewModel.volume.collectAsStateWithLifecycle()
     val localCtx = androidx.compose.ui.platform.LocalContext.current
 
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isExpanded = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
+    val adaptiveInfo = androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2()
+    val isExpanded = adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(840)
 
     LaunchedEffect(Unit) {
         viewModel.loadAudioDevices()

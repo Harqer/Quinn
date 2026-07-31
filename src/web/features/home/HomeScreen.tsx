@@ -10,6 +10,7 @@ import { getAuth } from 'firebase/auth';
 import { Shimmer } from '../../components/atoms/Shimmer';
 import maveLogoDark from '../../assets/mave_brand_dark.png';
 import { ErrorAlert } from '../../components/molecules/ErrorAlert';
+import { usePlayerContext } from '../../contexts/PlayerContext';
 
 export const HomeScreen: React.FC = () => {
   const { communityTracks, userTracks, loading, error, retry } = useTracks();
@@ -17,11 +18,17 @@ export const HomeScreen: React.FC = () => {
   const user = auth.currentUser;
   const navigate = useNavigate();
   const { setActiveAlbumId } = useAppContext();
+  const { playQueue } = usePlayerContext();
 
-  const handleTrackClick = (id: string) => {
-    logger.info('User navigating to track/album', { id });
-    setActiveAlbumId(id);
-    navigate('album');
+  const handleTrackClick = (trackList: typeof communityTracks, index: number, id: string) => {
+    logger.info('User playing track from home', { id });
+    if (trackList[index]?.audioUrl) {
+      playQueue(trackList, index);
+    } else {
+      // Fall back to album view for tracks without a direct audio URL
+      setActiveAlbumId(id);
+      navigate('album');
+    }
   };
 
   return (
@@ -78,27 +85,32 @@ export const HomeScreen: React.FC = () => {
         <>
           <div className="px-4 md:px-6 py-2">
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-6">
-              {(userTracks.length > 0 ? userTracks : communityTracks).slice(0, 6).map(track => (
-                <div key={`recent-${track.id}`} className="bg-surface-container hover:bg-surface rounded-[4px] flex items-center gap-2 overflow-hidden cursor-pointer transition-colors" onClick={() => handleTrackClick(track.id)}>
-                  {track.albumArtUrl ? (
-                    <img src={track.albumArtUrl} alt={track.title} className="w-14 h-14 object-cover" />
-                  ) : (
-                    <Shimmer className="w-14 h-14" />
-                  )}
-                  <Typography variant="label-md" className="font-bold line-clamp-2 pr-2 leading-tight">
-                    {track.title}
-                  </Typography>
-                </div>
-              ))}
+              {(userTracks.length > 0 ? userTracks : communityTracks).slice(0, 6).map((track, index) => {
+                const list = userTracks.length > 0 ? userTracks : communityTracks;
+                return (
+                  <div key={`recent-${track.id}`} className="bg-surface-container hover:bg-surface rounded-[4px] flex items-center gap-2 overflow-hidden cursor-pointer transition-colors" onClick={() => handleTrackClick(list, index, track.id)}>
+                    {track.albumArtUrl ? (
+                      <img src={track.albumArtUrl} alt={track.title} className="w-14 h-14 object-cover" />
+                    ) : (
+                      <Shimmer className="w-14 h-14" />
+                    )}
+                    <Typography variant="label-md" className="font-bold line-clamp-2 pr-2 leading-tight">
+                      {track.title}
+                    </Typography>
+                  </div>
+                );
+              })}
             </div>
           </div>
           
-          <Carousel title="Made for you">
-            {(userTracks.length > 0 ? userTracks : communityTracks).slice(0, 5).map(track => (
-              <div 
-                key={track.id}
-                className="flex flex-col gap-2 w-[120px] flex-shrink-0 cursor-pointer group" 
-                onClick={() => handleTrackClick(track.id)}
+          <Carousel title="Made for you" seeAllAction={() => navigate('library')}>
+            {(userTracks.length > 0 ? userTracks : communityTracks).slice(0, 5).map((track, index) => {
+              const list = userTracks.length > 0 ? userTracks : communityTracks;
+              return (
+                <div 
+                  key={track.id}
+                  className="flex flex-col gap-2 w-[120px] flex-shrink-0 cursor-pointer group" 
+                  onClick={() => handleTrackClick(list, index, track.id)}
               >
                 <div className="w-full aspect-square bg-surface-container flex items-center justify-center shadow-lg overflow-hidden relative rounded-[4px]">
                   {track.albumArtUrl ? (
@@ -119,15 +131,16 @@ export const HomeScreen: React.FC = () => {
                   )}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </Carousel>
           
-          <Carousel title="Community Vibes">
-            {communityTracks.map(track => (
+          <Carousel title="Community Vibes" seeAllAction={() => navigate('library')}>
+            {communityTracks.map((track, index) => (
               <div 
                 key={track.id}
                 className="flex flex-col gap-2 w-[120px] flex-shrink-0 cursor-pointer group" 
-                onClick={() => handleTrackClick(track.id)}
+                onClick={() => handleTrackClick(communityTracks, index, track.id)}
               >
                 <div className="w-full aspect-square bg-surface-container flex items-center justify-center shadow-lg overflow-hidden relative rounded-[4px]">
                   {track.albumArtUrl ? (
@@ -152,12 +165,12 @@ export const HomeScreen: React.FC = () => {
           </Carousel>
 
           {userTracks.length > 0 && (
-            <Carousel title="Recently played">
-              {userTracks.map(track => (
+            <Carousel title="Recently played" seeAllAction={() => navigate('library')}>
+              {userTracks.map((track, index) => (
                 <div 
                   key={track.id}
                   className="flex flex-col gap-2 w-[120px] flex-shrink-0 cursor-pointer group" 
-                  onClick={() => handleTrackClick(track.id)}
+                  onClick={() => handleTrackClick(userTracks, index, track.id)}
                 >
                   <div className="w-full aspect-square bg-surface-container flex items-center justify-center shadow-lg overflow-hidden relative rounded-[4px]">
                     {track.albumArtUrl ? (

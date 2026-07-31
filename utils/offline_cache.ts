@@ -11,7 +11,7 @@ export interface OfflineLog {
 
 export class OfflineCache {
   private db: IDBDatabase | null = null;
-  private dbName = "QuinnOfflineCache";
+  private dbName = "MaveOfflineCache";
   private dbVersion = 1;
 
   constructor() {

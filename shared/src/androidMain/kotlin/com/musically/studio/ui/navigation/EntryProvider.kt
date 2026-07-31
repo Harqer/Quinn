@@ -144,7 +144,8 @@ fun maveEntryProvider(
             viewModel = viewModel,
             onNavigateToCamera = { navigator.navigate(Route.Camera) },
             onNavigateToCategory = { navigator.navigate(Route.CategoryView(it)) },
-            onNavigateToAlbum = { navigator.navigate(Route.AlbumView(it)) }
+            onNavigateToAlbum = { navigator.navigate(Route.AlbumView(it)) },
+            onNavigateToSettings = onMenuClick
         )
     }
 

@@ -4,6 +4,8 @@ import { Icon } from '../../components/atoms/Icon';
 import { copyToClipboard } from '../../utils/clipboard';
 import { ReasoningStream } from './ReasoningStream';
 import maveBrandDark from '../../assets/mave_brand_dark.png';
+import { usePlayerContext } from '../../contexts/PlayerContext';
+import { Track } from '../../services/MusicService';
 
 interface Message {
   id: string;
@@ -27,6 +29,7 @@ export const ChatScreen: React.FC = () => {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const addMenuRef = useRef<HTMLDivElement>(null);
   const { toggleSidebar } = useSidebar();
+  const { playTrack } = usePlayerContext();
 
 
 
@@ -91,11 +94,14 @@ export const ChatScreen: React.FC = () => {
         <button onClick={toggleSidebar} className="text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-colors hidden md:block">
           <Icon name="menu" />
         </button>
-        <button className="text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-colors md:hidden">
+        <button onClick={toggleSidebar} className="text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-colors md:hidden">
           <Icon name="menu" />
         </button>
         <Typography variant="title-md" className="font-bold text-on-surface">Mave</Typography>
-        <button className="text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-colors">
+        <button 
+          onClick={() => window.dispatchEvent(new CustomEvent('show-options-menu', { detail: 'chat' }))}
+          className="text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-colors"
+        >
           <Icon name="more_vert" />
         </button>
       </header>
@@ -143,8 +149,14 @@ export const ChatScreen: React.FC = () => {
                     <button 
                       onClick={() => {
                         if (msg.audioUrl) {
-                          const audio = new Audio(msg.audioUrl);
-                          audio.play().catch(e => console.error("Playback failed", e));
+                          const track: Track = {
+                            id: msg.trackId || msg.id,
+                            title: msg.title || 'Generated Track',
+                            artist: msg.voice || 'Mave',
+                            audioUrl: msg.audioUrl,
+                            albumArtUrl: msg.coverUrl,
+                          };
+                          playTrack(track);
                         }
                       }}
                       className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-lg shadow-primary/20">
