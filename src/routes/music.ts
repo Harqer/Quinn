@@ -206,7 +206,7 @@ router.post("/lyria/full", optionalFirebaseToken, verifyAppCheck, checkMonthlyQu
 
     if (ytMatch) {
       sendEvent('status', { message: 'Extracting audio from YouTube...' });
-      const { default: ytdl } = await import('ytdl-core');
+      const { default: ytdl } = await import('@distube/ytdl-core');
       const { createWriteStream } = await import('fs');
       const { join } = await import('path');
       const { tmpdir } = await import('os');
