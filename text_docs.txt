@@ -1,0 +1,241 @@
+Title: Live Content
+
+Description: Fetched live
+
+Source: https://wearables.developer.meta.com/docs/develop/dat/display-overview/
+
+---
+Display access overview
+Build for Wearables
+API reference
+Support
+Login
+Register
+Device Access Toolkit Integration
+Setup
+Build an integration
+Integration overview
+iOS integrations
+Android integrations
+Build for display
+Display overview
+iOS display integrations
+Android display integrations
+Icons
+Session and device management
+Session lifecycle
+Permissions and registration
+Microphones and speakers
+Testing without hardware
+Mock Device Kit basics
+iOS testing
+Android testing
+AI-Assisted Development
+Overview
+Claude Code
+Codex
+GitHub Copilot
+Cursor
+DAT MCP
+AGENTS.md
+Manage distribution
+Onboarding and organization management
+Manage projects
+Manage versions and release channels
+Download your information
+Troubleshooting
+Telemetry
+Known issues
+Version Dependencies
+Display access overview
+Updated
+:
+Jul 28, 2026
+Overview
+The Meta Wearables Device Access Toolkit gives you access to the display on Meta Ray-Ban Display glasses. By using a component-based layout API inspired by popular UI frameworks in the mobile development community, you can build layouts with familiar mobile UI patterns in Swift or Kotlin. The SDK then handles rendering on the glasses automatically.
+In addition to access to on-device sensors like camera, microphone, and speakers, the Meta Wearables Device Access Toolkit provides display functionality that enables you to build a variety of immersive experiences leveraging the glasses display. Users can control display integrations using captouch gestures and EMG gestures on the Meta Neural Band.
+Use this page with AI
+Copy this prompt into your AI coding tool to scope a display feature from this guide:
+Use https://wearables.developer.meta.com/docs/develop/dat/display-overview/, then use the Wearables MCP endpoint https://mcp.developer.meta.com/wearables to call search_dat_docs for current DAT display guidance. Inspect my app first, then propose the smallest display feature that fits the existing session lifecycle, supported components, and input model. Keep the first code change scoped to display setup and one renderable screen, and call out device, firmware, and local verification requirements.
+Requirements
+Hardware
+Meta Ray-Ban Display glasses paired with a mobile device
+A mobile device with Meta AI app installed and configured.
+Note
+: Refer to the
+Version Dependencies
+page for the latest Meta AI app and firmware versions supported.
+Software
+Download the Meta AI app from the
+App Store (iOS)
+⁠
+or
+Play Store (Android)
+⁠
+if you haven’t done so already.
+The Device Access Toolkit needs to be installed on your Meta Ray-Ban Display glasses for the display functionality to work.
+To install DAT:
+Update Meta AI app to v272 or later.
+Update your glasses firmware to v125 or later via the Meta AI app.
+Put on your glasses. This is required before proceeding.
+Enable Dev Mode in the Meta AI app:
+Go to Settings → App Info, then tap App Version 5 times.
+If Dev Mode is already enabled, Press the install button to install DAT on your glasses.
+On iOS, a Wi-Fi prompt should appear after a few seconds.
+App installation takes ~5–10 seconds. Please keep Meta AI app open during this time.
+Sessions
+Display access operates on a session-based model, where your mobile app creates a Meta Wearables Device Access Toolkit session, attaches a display capability to it, and sends UI content to the glasses over Bluetooth. Essentially, the SDK serializes your layouts, transmits them to these glasses, and routes user interactions back to your app as events.
+In this model:
+Users must explicitly initiate a display session.
+Your app has exclusive display control during active sessions.
+Sessions must be explicitly terminated by user action or app logic.
+The system may interrupt sessions for calls, notifications, or other priority events.
+Supported components
+Component
+Description
+FlexBox
+Flexible layout container with row/column direction, spacing, alignment, and wrapping
+Text
+Styled text with heading, body, and meta presets
+Image
+Images loaded from a URL, with size and corner radius options
+Button
+Tappable buttons with label, icon, and style variants
+Icon
+System icons. See
+Icons
+for the full list.
+Video
+Video playback from a URL (MP4 format)
+Examples of what you can build
+Informational overlays (weather, navigation, notifications)
+Step-by-step guides and tutorials
+Media viewers with images and short video clips
+Interactive menus with buttons and tap handlers
+Status dashboards with icons and styled text
+Display lifecycle
+The display capability follows a defined lifecycle that your app must manage. Understanding these states is essential for building a reliable integration.
+States
+State
+Description
+stopped
+Display capability is not active. This is the initial state.
+starting
+The SDK is connecting to the glasses display service.
+started
+The display is ready. You can now send content with
+send()
+(iOS) or
+sendContent()
+(Android).
+stopping
+The display is shutting down.
+stopped ──▶ starting ──▶ started ──▶ stopping ──▶ stopped
+The display transitions to
+started
+once the glasses accept the display capability request. If the glasses disconnect, the display transitions through
+stopping
+back to
+stopped
+. You can restart the display by calling
+start()
+again.
+Best practices
+Performance
+Keep layouts simple.
+Simple views (text, small images) transition quickly. Complex views with large images may introduce lag due to Bluetooth bandwidth constraints.
+Optimize images.
+Use appropriately sized images for the glasses display. The display resolution is 600x600, and there is no benefit to sending larger images.
+Limit video size.
+Keep videos under 400px per side and 70,000 total pixels. Use short clips.
+User experience
+Always have a root view.
+Designate one view as your L0 (root) view. The back gesture from L0 ends the session, so make sure users can always navigate back to it.
+Handle disconnects gracefully.
+Bluetooth connections can drop. Observe the display state and show appropriate UI in your mobile app when the connection is lost.
+Respect display sleep.
+The display dims and then enters sleep mode after a period of inactivity. Design your content updates around this behavior, like sending fresh content when the display wakes.
+Use clear, readable text.
+The glasses display is small. Use the
+heading
+style for key information, and keep text concise.
+Provide visual feedback.
+Use button style changes and icons to indicate interactive elements. Users interact through gestures, so make tappable areas obvious.
+Architecture
+One display per session.
+Only one display capability can be attached to a session at a time. Remove the existing display before adding a new one.
+Send complete views.
+Each
+send()
+(iOS) /
+sendContent()
+(Android) call replaces the entire display. There is no partial update mechanism, so always send the full layout.
+Manage state on the phone.
+The glasses do not retain application state. Your app is the source of truth for navigation state, data, and user preferences.
+Sample app
+The SDK includes a
+Display Access
+sample app that demonstrates a complete display access integration. The sample shows:
+Session setup and display lifecycle management
+A scrollable list of tutorials with images and tap handlers
+Detail views with styled text, images, and navigation buttons
+Step-by-step navigation with back/next controls
+Video playback of tutorial clips
+Find the sample apps in GitHub:
+DisplayAccess for iOS
+⁠
+DisplayAccess for Android
+⁠
+Build with Meta
+Social Technologies
+Meta Horizon
+AI
+Worlds
+Wearables
+About us
+Careers
+Research
+Products
+Support and legal
+Wearables Developer Terms
+Acceptable Use Policy
+Legal
+Privacy
+GitHub Discussions (iOS)
+GitHub Discussions (Android)
+Build with Meta
+Social Technologies
+Meta Horizon
+AI
+Worlds
+Wearables
+About us
+Careers
+Research
+Products
+Support and legal
+Wearables Developer Terms
+Acceptable Use Policy
+Legal
+Privacy
+GitHub Discussions (iOS)
+GitHub Discussions (Android)
+Build with Meta
+Social Technologies
+Meta Horizon
+AI
+Worlds
+Wearables
+About us
+Careers
+Research
+Products
+Support and legal
+Wearables Developer Terms
+Acceptable Use Policy
+Legal
+Privacy
+GitHub Discussions (iOS)
+GitHub Discussions (Android)
+English (US)
+© 2026 Meta
