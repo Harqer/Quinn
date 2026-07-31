@@ -73,4 +73,8 @@ dependencies {
     implementation("com.meta.wearable:mwdat-core:0.8.0")
     implementation("com.meta.wearable:mwdat-camera:0.8.0")
     implementation("com.meta.wearable:mwdat-display:0.8.0")
+    
+    // Required for Coroutines and Flows used by the DAT SDK
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 }

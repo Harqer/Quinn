@@ -1,0 +1,60 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.myapp-mergeDebugResources-22:/values-en-rGB/values-en-rGB.xml",
+            "map": [
+                {
+                    "source": "/home/shaolin/.gradle/caches/transforms-4/5408b0f1fb9e3bedea01aae41f4f9543/transformed/mwdat-core-0.8.0/res/values-en-rGB/values-en-rGB.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6",
+                        "startColumns": "4,4,4,4,4",
+                        "startOffsets": "55,220,351,469,578",
+                        "endColumns": "164,130,117,108,104",
+                        "endOffsets": "215,346,464,573,678"
+                    },
+                    "to": {
+                        "startLines": "9,10,14,15,16",
+                        "startColumns": "4,4,4,4,4",
+                        "startOffsets": "774,939,1452,1570,1679",
+                        "endColumns": "164,130,117,108,104",
+                        "endOffsets": "934,1065,1565,1674,1779"
+                    }
+                },
+                {
+                    "source": "/home/shaolin/.gradle/caches/transforms-4/d9f17660c7ff7af986099180c93706d9/transformed/core-1.16.0/res/values-en-rGB/values-en-rGB.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,151,253,352,451,555,658,774",
+                        "endColumns": "95,101,98,98,103,102,115,100",
+                        "endOffsets": "146,248,347,446,550,653,769,870"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,17",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,151,253,352,451,555,658,1784",
+                        "endColumns": "95,101,98,98,103,102,115,100",
+                        "endOffsets": "146,248,347,446,550,653,769,1880"
+                    }
+                },
+                {
+                    "source": "/home/shaolin/.gradle/caches/transforms-4/285de68371b3f0b68cd1a8f1e9597a56/transformed/mwdat-camera-0.8.0/res/values-en-rGB/values-en-rGB.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,171,294",
+                        "endColumns": "115,122,142",
+                        "endOffsets": "166,289,432"
+                    },
+                    "to": {
+                        "startLines": "11,12,13",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "1070,1186,1309",
+                        "endColumns": "115,122,142",
+                        "endOffsets": "1181,1304,1447"
+                    }
+                }
+            ]
+        }
+    ]
+}

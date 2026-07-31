@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string msgid="881409763997275156" name="call_notification_answer_action">"Fogadás"</string>
+    <string msgid="8793775615905189152" name="call_notification_answer_video_action">"Videó"</string>
+    <string msgid="3229508546291798546" name="call_notification_decline_action">"Elutasítás"</string>
+    <string msgid="2659457946726154263" name="call_notification_hang_up_action">"Befejezés"</string>
+    <string msgid="6107532579223922871" name="call_notification_incoming_text">"Bejövő hívás"</string>
+    <string msgid="8623827134497363134" name="call_notification_ongoing_text">"Hívás folyamatban"</string>
+    <string msgid="59049573811482460" name="call_notification_screening_text">"Bejövő hívás szűrése"</string>
+    <string gender="unknown" name="dat_error_permission_connection_error">Kapcsolódási hiba történt a készülékkel folytatott kommunikáció során.</string>
+    <string gender="unknown" name="dat_error_permission_internal_error">Váratlan belső hiba lépett fel.</string>
+    <string gender="unknown" name="dat_error_permission_meta_ai_not_installed">A készüléken nincs telepítve a Meta AI társalkalmazás.</string>
+    <string gender="unknown" name="dat_error_permission_no_device">Nem található vagy nincs regisztrált viselhető készülék.</string>
+    <string gender="unknown" name="dat_error_permission_no_device_with_connection">Az összes felfedezett készülék ki van kapcsolva, vagy nem kapcsolódik a hálózathoz.</string>
+    <string gender="unknown" name="dat_error_permission_request_in_progress">Már folyamatban van egy jogosultságkérés.</string>
+    <string gender="unknown" name="dat_error_permission_request_timeout">Az engedélykérés túllépte a megengedett időkorlátot.</string>
+    <string gender="unknown" name="dat_error_registration_already_registered">A felhasználó már regisztrálva van, amikor ismét megpróbál regisztrálni.</string>
+    <string gender="unknown" name="dat_error_registration_configuration_invalid">A Wearables Device Access Toolkit konfigurációja érvénytelen vagy hiányos.</string>
+    <string gender="unknown" name="dat_error_registration_meta_ai_not_installed">Nincs telepítve a Meta AI alkalmazás erre a készülékre, de a regisztrációhoz szükség van rá.</string>
+    <string gender="unknown" name="dat_error_registration_network_unavailable">Nincs internetkapcsolat. Kérjük, ellenőrizd a kapcsolatot, majd próbálkozz újból.</string>
+    <string gender="unknown" name="dat_error_registration_unknown">Ismeretlen hiba történt a regisztrációs folyamat során.</string>
+    <string gender="unknown" name="dat_error_session_already_exists">Ehhez a készülékhez már van meglévő munkamenet.</string>
+    <string gender="unknown" name="dat_error_session_already_stopped">A munkamenet már leállt.</string>
+    <string gender="unknown" name="dat_error_session_battery_critical">Kritikusan alacsony a készülék akkumulátortöltöttsége.</string>
+    <string gender="unknown" name="dat_error_session_capability_already_active">A munkamenetnél már aktív egy ilyen típusú képesség.</string>
+    <string gender="unknown" name="dat_error_session_capability_not_found">Ennél a típusnál nem kapcsolódik képesség a munkamenethez.</string>
+    <string gender="unknown" name="dat_error_session_idle">A munkamenet inaktív. Indítsd el a munkamenetet a képességek hozzáadása előtt.</string>
+    <string gender="unknown" name="dat_error_session_no_eligible_device">Nincs elérhető, a feltételeknek megfelelő készülék.</string>
+    <string gender="unknown" name="dat_error_session_peak_power_shutdown">Készülék leállítása csúcsáramfelvétel miatt</string>
+    <string gender="unknown" name="dat_error_session_thermal_critical">Kritikus a készülék hőállapota.</string>
+    <string gender="unknown" name="dat_error_session_thermal_emergency">A készülék hőállapota vészhelyzeti szintet ért el – leállítás</string>
+    <string gender="unknown" name="dat_error_unregistration_already_unregistered">A felhasználó már nincs regisztrálva, amikor ismét megpróbálja megszüntetni a regisztrációt.</string>
+    <string gender="unknown" name="dat_error_unregistration_configuration_invalid">A Wearables Device Access Toolkit konfigurációja érvénytelen vagy hiányos.</string>
+    <string gender="unknown" name="dat_error_unregistration_meta_ai_not_installed">Nincs telepítve a Meta AI alkalmazás erre a készülékre, de a regisztráció megszüntetéséhez szükség van rá.</string>
+    <string gender="unknown" name="dat_error_unregistration_unknown">Ismeretlen hiba történt a regisztrációmegszüntetési folyamat során.</string>
+    <string gender="unknown" name="dat_error_voice_action_failed">Sikertelen művelet</string>
+    <string gender="unknown" name="dat_error_voice_channel_setup_failed">Nem sikerült beállítani az MI-műveletek csatornáját.</string>
+    <string gender="unknown" name="dat_error_voice_connection_not_available">A készülékkapcsolat nem érhető el.</string>
+    <string gender="unknown" name="dat_error_voice_device_not_found">A készülék nem található.</string>
+    <string gender="unknown" name="dat_error_voice_init_request_error">Nem sikerült inicializálni a kérést.</string>
+    <string gender="unknown" name="dat_error_voice_invalid_message_proto">Érvénytelen üzenetprototípus</string>
+    <string gender="unknown" name="dat_error_voice_invalid_wearables_interface">Érvénytelen WearablesInterface megadása</string>
+    <string gender="unknown" name="dat_error_voice_send_message_error">Az üzenetet nem sikerült elküldeni.</string>
+    <string gender="unknown" name="dat_error_wearables_already_configured">Már konfigurálva</string>
+    <string gender="unknown" name="dat_error_wearables_configuration_error">Konfigurációs hiba</string>
+    <string gender="unknown" name="dat_error_wearables_internal_error">Belső hiba</string>
+    <string gender="unknown" name="dat_error_wearables_url_registration_error">Regisztrációs hiba</string>
+    <string gender="unknown" name="dat_error_wearables_url_unregistration_error">Regisztrációmegszüntetési hiba</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+</resources>

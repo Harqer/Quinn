@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.myapp.WearablesTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-07-31T04:59:47" hostname="kofi" time="0.037">
+  <properties/>
+  <testcase name="dumpMethods" classname="com.example.myapp.WearablesTest" time="0.037"/>
+  <system-out><![CDATA[=== WEARABLES METHODS ===
+Method: initialize(Context) -> DatResult
+=========================
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -101,7 +101,7 @@ class WearableStreamingService : Service() {
                 }
             
             val session = Wearables.createSession(AutoDeviceSelector()).getOrElse { error ->
-                Log.e(TAG, "Failed to create session: ${error.description}")
+                Log.e(TAG, "Failed to create session: \${error.description}")
                 return
             }
             
@@ -120,7 +120,7 @@ class WearableStreamingService : Service() {
                                 stream.start()
                             } else {
                                 streamResult.onFailure { error, _ ->
-                                    Log.e(TAG, "Failed to add stream: ${error.description}")
+                                    Log.e(TAG, "Failed to add stream: \${error.description}")
                                 }
                             }
                         }
@@ -134,7 +134,7 @@ class WearableStreamingService : Service() {
                                 renderMusicUI(display)
                             } else {
                                 displayResult.onFailure { error, _ ->
-                                    Log.e(TAG, "Failed to add display: ${error.description}")
+                                    Log.e(TAG, "Failed to add display: \${error.description}")
                                 }
                             }
                         }
