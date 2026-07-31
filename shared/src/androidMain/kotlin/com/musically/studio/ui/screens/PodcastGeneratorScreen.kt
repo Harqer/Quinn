@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.PlayArrow
@@ -139,7 +140,7 @@ fun PodcastGeneratorScreen(
                             modifier = Modifier
                                 .background(surfaceColor, RoundedCornerShape(50))
                         ) {
-                            Icon(Icons.Default.Send, contentDescription = "Send", tint = secondaryNeonCyan)
+                            Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send", tint = secondaryNeonCyan)
                         }
                     }
                 }

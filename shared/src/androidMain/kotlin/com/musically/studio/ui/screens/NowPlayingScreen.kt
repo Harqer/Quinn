@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeDown
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -705,7 +707,7 @@ private fun VolumeSlider(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Icon(Icons.Default.VolumeDown, contentDescription = "Volume Down", tint = Color.White.copy(alpha = 0.7f), modifier = Modifier.size(20.dp))
+        Icon(Icons.AutoMirrored.Filled.VolumeDown, contentDescription = "Volume Down", tint = Color.White.copy(alpha = 0.7f), modifier = Modifier.size(20.dp))
         Slider(
             value = volume,
             onValueChange = onVolumeChange,
@@ -716,6 +718,6 @@ private fun VolumeSlider(
             ),
             modifier = Modifier.weight(1f).height(24.dp)
         )
-        Icon(Icons.Default.VolumeUp, contentDescription = "Volume Up", tint = Color.White.copy(alpha = 0.7f), modifier = Modifier.size(20.dp))
+        Icon(Icons.AutoMirrored.Filled.VolumeUp, contentDescription = "Volume Up", tint = Color.White.copy(alpha = 0.7f), modifier = Modifier.size(20.dp))
     }
 }
