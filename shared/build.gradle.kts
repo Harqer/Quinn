@@ -59,7 +59,6 @@ kotlin {
             implementation(libs.mwdat.core)
             implementation(libs.mwdat.camera)
             implementation(libs.mwdat.display)
-            implementation(libs.mwdat.mockdevice)
             implementation(libs.androidx.xr.glimmer)
             implementation(libs.androidx.xr.projected)
             implementation(kotlin("reflect"))

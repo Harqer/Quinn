@@ -68,10 +68,10 @@ jobs:
           EOF
 
       - name: Run Android Unit & Roborazzi Screenshot Tests
-        run: ./gradlew testDebugUnitTest --no-daemon
+        run: ./gradlew testDebugUnitTest --stacktrace --info --no-daemon
 
       - name: Generate Jacoco Coverage Report
-        run: ./gradlew jacocoTestReport --no-daemon
+        run: ./gradlew jacocoTestReport --stacktrace --info --no-daemon
 
       - name: Upload Test Coverage Artifacts
         uses: actions/upload-artifact@v7
@@ -137,7 +137,7 @@ jobs:
           EOF
 
       - name: Build Release APK & Generate R8 Mapping
-        run: ./gradlew assembleRelease --no-daemon
+        run: ./gradlew assembleRelease --stacktrace --info --no-daemon
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v7
