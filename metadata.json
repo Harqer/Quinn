@@ -1,6 +1,6 @@
 {
-  "name": "Quinn",
-  "description": "Use Quinn RealTime to turn your camera into an instrument. Generate a continuous and evolving stream of music based on your surroundings.",
+  "name": "Mave",
+  "description": "Use Mave RealTime to turn your camera into an instrument. Generate a continuous and evolving stream of music based on your surroundings.",
   "requestFramePermissions": [
     "camera"
   ],

@@ -1,5 +1,7 @@
 package com.musically.studio.ui.screens
 
+import com.musically.studio.ui.*
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale

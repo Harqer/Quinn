@@ -220,3 +220,91 @@ query GetUserVideoDigestions @auth(level: USER) {
     }
   }
 }
+
+query GetPlaylistTracks($playlistId: String!) @auth(level: PUBLIC) {
+  playlistEntries(where: { playlist: { id: { eq: $playlistId } } }, orderBy: [{ orderIndex: ASC }]) {
+    track {
+      id
+      title
+      album {
+        id
+        title
+        primaryArtist {
+          id
+          name
+        }
+      }
+      coverUrl
+      audioUrl
+      prompt
+      visibility
+      isCommunity
+      createdAt
+    }
+  }
+}
+
+query GetCategoryTracks($categoryId: String!) @auth(level: PUBLIC) {
+  musicCategories(where: { category: { id: { eq: $categoryId } } }) {
+    track {
+      id
+      title
+      album {
+        id
+        title
+        primaryArtist {
+          id
+          name
+        }
+      }
+      coverUrl
+      audioUrl
+      prompt
+      visibility
+      isCommunity
+      createdAt
+    }
+  }
+}
+
+query GetAlbumTracks($albumId: String!) @auth(level: PUBLIC) {
+  tracks(where: { album: { id: { eq: $albumId } } }, orderBy: [{ createdAt: DESC }]) {
+    id
+    title
+    album {
+      id
+      title
+      primaryArtist {
+        id
+        name
+      }
+    }
+    coverUrl
+    audioUrl
+    prompt
+    visibility
+    isCommunity
+    createdAt
+  }
+}
+
+query SearchTracks($query: String!) @auth(level: PUBLIC) {
+  tracks(where: { title: { contains: $query }, isCommunity: { eq: true } }, orderBy: [{ createdAt: DESC }]) {
+    id
+    title
+    album {
+      id
+      title
+      primaryArtist {
+        id
+        name
+      }
+    }
+    coverUrl
+    audioUrl
+    prompt
+    visibility
+    isCommunity
+    createdAt
+  }
+}

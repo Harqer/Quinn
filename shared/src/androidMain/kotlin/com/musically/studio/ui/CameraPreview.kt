@@ -1,5 +1,7 @@
 package com.musically.studio.ui.components
 
+import com.musically.studio.ui.*
+
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.*

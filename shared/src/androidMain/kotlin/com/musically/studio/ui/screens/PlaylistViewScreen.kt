@@ -30,6 +30,9 @@ import timber.log.Timber
 import com.musically.studio.shared.R
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.MainViewModel
+import com.musically.studio.ui.*
+import com.musically.studio.ui.components.organisms.PlaylistHeader
+import com.musically.studio.ui.components.molecules.PlaylistTrackItem
 import com.musically.studio.ui.theme.FormFactorPreviews
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,32 +106,16 @@ fun PlaylistViewScreen(
                 contentPadding = paddingValues
             ) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        com.musically.studio.ui.components.MediaCoverCard(
-                            title = playlistInfo?.name ?: "Playlist",
-                            subtitle = playlistInfo?.description ?: "Mave Community",
-                            imageUrl = playlistInfo?.coverUrl ?: playlistTracks.firstOrNull()?.album?.images?.firstOrNull()?.url,
-                            isLiked = false,
-                            onLikeClick = onLikeClick,
-                            onShareClick = { 
-                                val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(android.content.Intent.EXTRA_TEXT, "Check out this playlist on Mave: https://mave.studio/playlist/$playlistId")
-                                }
-                                context.startActivity(android.content.Intent.createChooser(shareIntent, "Share Playlist"))
-                            },
-                            onMoreClick = { playlistTracks.firstOrNull()?.let { onMoreClick(it.id) } },
-                            onPlayClick = { playlistTracks.firstOrNull()?.let { onTrackClick(it.id) } },
-                            modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 16.dp)
-                        )
-                        
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
+                    PlaylistHeader(
+                        title = playlistInfo?.name ?: "Playlist",
+                        subtitle = playlistInfo?.description ?: "Mave Community",
+                        imageUrl = playlistInfo?.coverUrl ?: playlistTracks.firstOrNull()?.album?.images?.firstOrNull()?.url,
+                        playlistId = playlistId,
+                        context = context,
+                        onLikeClick = onLikeClick,
+                        onMoreClick = { playlistTracks.firstOrNull()?.let { onMoreClick(it.id) } },
+                        onPlayClick = { playlistTracks.firstOrNull()?.let { onTrackClick(it.id) } }
+                    )
                 }
 
                 itemsIndexed(playlistTracks) { index, track ->
@@ -146,48 +133,7 @@ fun PlaylistViewScreen(
     }
 }
 
-@Composable
-fun PlaylistTrackItem(
-    track: MaveTrack,
-    trackNumber: Int,
-    onClick: () -> Unit,
-    onMoreClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        AsyncImage(
-            model = track.album.images.firstOrNull()?.url,
-            contentDescription = "Album Art",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(48.dp)
-                .background(Color.DarkGray)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = track.name,
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.White,
-                maxLines = 1
-            )
-            Text(
-                text = track.artists.joinToString { it.name },
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.7f),
-                maxLines = 1
-            )
-        }
-        IconButton(onClick = onMoreClick) {
-            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_content_desc), tint = Color.White.copy(alpha = 0.7f))
-        }
-    }
-}
+
 
 @FormFactorPreviews
 @Composable

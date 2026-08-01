@@ -61,6 +61,7 @@ import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
 import com.musically.studio.ui.MainViewModel
+import com.musically.studio.ui.*
 import com.musically.studio.ui.components.MiniPlayer
 import com.musically.studio.ui.screens.NowPlayingScreen
 import kotlinx.coroutines.flow.collectLatest

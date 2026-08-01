@@ -67,19 +67,19 @@ import javax.inject.Inject
 @android.annotation.SuppressLint("MissingPermission")
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    @param:ApplicationContext private val context: Context,
-    private val apiClient: ApiClient,
-    private val maveSessionManager: MaveSessionManager,
-    private val geminiLiveManager: GeminiLiveManager,
-    private val streamingApiClient: StreamingApiClient,
-    private val auth: FirebaseAuth,
-    private val rtdb: FirebaseDatabase,
-    private val dataConnectRepository: com.musically.studio.data.repository.DataConnectRepository,
-    private val authRepository: com.musically.studio.data.repository.AuthRepository,
-    private val rtdbSessionManager: com.musically.studio.network.RtdbSessionManager
+    @param:ApplicationContext internal val context: Context,
+    internal val apiClient: ApiClient,
+    internal val maveSessionManager: MaveSessionManager,
+    internal val geminiLiveManager: GeminiLiveManager,
+    internal val streamingApiClient: StreamingApiClient,
+    internal val auth: FirebaseAuth,
+    internal val rtdb: FirebaseDatabase,
+    internal val dataConnectRepository: com.musically.studio.data.repository.DataConnectRepository,
+    internal val authRepository: com.musically.studio.data.repository.AuthRepository,
+    internal val rtdbSessionManager: com.musically.studio.network.RtdbSessionManager
 ) : ViewModel() {
 
-    private val playBillingManager = PlayBillingManager(
+    internal val playBillingManager = PlayBillingManager(
         context = context,
         onPurchaseAcknowledged = { productId ->
             // Optimistic update: re-sync settings so isPremium reflects the new state.
@@ -105,12 +105,12 @@ class MainViewModel @Inject constructor(
         playBillingManager.restorePurchases()
     }
 
-    private val prefs = context.getSharedPreferences("mave_prefs", Context.MODE_PRIVATE)
+    internal val prefs = context.getSharedPreferences("mave_prefs", Context.MODE_PRIVATE)
 
-    private val _hasAcceptedPrivacyPolicy = MutableStateFlow(prefs.getBoolean("has_accepted_privacy_policy", false))
+    internal val _hasAcceptedPrivacyPolicy = MutableStateFlow(prefs.getBoolean("has_accepted_privacy_policy", false))
     val hasAcceptedPrivacyPolicy: StateFlow<Boolean> = _hasAcceptedPrivacyPolicy.asStateFlow()
 
-    private val _hasDeclinedPrivacyPolicy = MutableStateFlow(prefs.getBoolean("has_declined_privacy_policy", false))
+    internal val _hasDeclinedPrivacyPolicy = MutableStateFlow(prefs.getBoolean("has_declined_privacy_policy", false))
     val hasDeclinedPrivacyPolicy: StateFlow<Boolean> = _hasDeclinedPrivacyPolicy.asStateFlow()
 
     fun acceptPrivacyPolicy() {
@@ -131,99 +131,96 @@ class MainViewModel @Inject constructor(
         _hasDeclinedPrivacyPolicy.value = false
     }
 
-    private val _isMusicAccountConnected = MutableStateFlow(false)
+    internal val _isMusicAccountConnected = MutableStateFlow(false)
     val isMusicAccountConnected: StateFlow<Boolean> = _isMusicAccountConnected.asStateFlow()
 
-    private val _tracks = MutableStateFlow<List<MaveTrack>>(emptyList())
+    internal val _tracks = MutableStateFlow<List<MaveTrack>>(emptyList())
     val tracks: StateFlow<List<MaveTrack>> = _tracks.asStateFlow()
 
-    private val _likedTracks = MutableStateFlow<List<MaveTrack>>(emptyList())
+    internal val _likedTracks = MutableStateFlow<List<MaveTrack>>(emptyList())
     val likedTracks: StateFlow<List<MaveTrack>> = _likedTracks.asStateFlow()
 
-    private val _playlists = MutableStateFlow<List<com.musically.studio.network.MavePlaylist>>(emptyList())
+    internal val _playlists = MutableStateFlow<List<com.musically.studio.network.MavePlaylist>>(emptyList())
     val playlists: StateFlow<List<com.musically.studio.network.MavePlaylist>> = _playlists.asStateFlow()
 
-    private val _categories = MutableStateFlow<List<com.musically.studio.network.MaveCategory>>(emptyList())
+    internal val _categories = MutableStateFlow<List<com.musically.studio.network.MaveCategory>>(emptyList())
     val categories: StateFlow<List<com.musically.studio.network.MaveCategory>> = _categories.asStateFlow()
 
-    private val _albums = MutableStateFlow<List<com.musically.studio.network.MaveAlbum>>(emptyList())
+    internal val _albums = MutableStateFlow<List<com.musically.studio.network.MaveAlbum>>(emptyList())
     val albums: StateFlow<List<com.musically.studio.network.MaveAlbum>> = _albums.asStateFlow()
 
-    private val _podcasts = MutableStateFlow<List<com.musically.studio.network.MavePodcast>>(emptyList())
+    internal val _podcasts = MutableStateFlow<List<com.musically.studio.network.MavePodcast>>(emptyList())
     val podcasts: StateFlow<List<com.musically.studio.network.MavePodcast>> = _podcasts.asStateFlow()
 
-    private val _audiobooks = MutableStateFlow<List<com.musically.studio.network.MaveAudiobook>>(emptyList())
+    internal val _audiobooks = MutableStateFlow<List<com.musically.studio.network.MaveAudiobook>>(emptyList())
     val audiobooks: StateFlow<List<com.musically.studio.network.MaveAudiobook>> = _audiobooks.asStateFlow()
 
-    private val _communityTracks = MutableStateFlow<List<MaveTrack>>(emptyList())
+    internal val _communityTracks = MutableStateFlow<List<MaveTrack>>(emptyList())
     val communityTracks: StateFlow<List<MaveTrack>> = _communityTracks.asStateFlow()
     
-    private val _isWearableConnected = MutableStateFlow(false)
+    internal val _isWearableConnected = MutableStateFlow(false)
     val isWearableConnected: StateFlow<Boolean> = _isWearableConnected.asStateFlow()
 
-    private val _catalogErrorMessage = MutableStateFlow<String?>(null)
+    internal val _catalogErrorMessage = MutableStateFlow<String?>(null)
     val catalogErrorMessage: StateFlow<String?> = _catalogErrorMessage.asStateFlow()
 
-    fun clearCatalogError() {
-        _catalogErrorMessage.value = null
-    }
 
-    private val _isLoading = MutableStateFlow(false)
+    internal val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _currentPlayingTrack = MutableStateFlow<MaveTrack?>(null)
+    internal val _currentPlayingTrack = MutableStateFlow<MaveTrack?>(null)
     val currentPlayingTrack: StateFlow<MaveTrack?> = _currentPlayingTrack.asStateFlow()
 
-    private val _isPlaying = MutableStateFlow(false)
+    internal val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
 
-    private val _currentCoverUrl = MutableStateFlow<String?>(null)
+    internal val _currentCoverUrl = MutableStateFlow<String?>(null)
     val currentCoverUrl: StateFlow<String?> = _currentCoverUrl.asStateFlow()
 
-    private val _currentVideoUrl = MutableStateFlow<String?>(null)
+    internal val _currentVideoUrl = MutableStateFlow<String?>(null)
     val currentVideoUrl: StateFlow<String?> = _currentVideoUrl.asStateFlow()
 
-    private val _trackProgress = MutableStateFlow(0f)
+    internal val _trackProgress = MutableStateFlow(0f)
     val trackProgress: StateFlow<Float> = _trackProgress.asStateFlow()
 
-    private val _isShuffleEnabled = MutableStateFlow(false)
+    internal val _isShuffleEnabled = MutableStateFlow(false)
     val isShuffleEnabled: StateFlow<Boolean> = _isShuffleEnabled.asStateFlow()
 
-    private val _isRepeatEnabled = MutableStateFlow("none") // "none", "all", "one"
+    internal val _isRepeatEnabled = MutableStateFlow("none") // "none", "all", "one"
     val isRepeatEnabled: StateFlow<String> = _isRepeatEnabled.asStateFlow()
 
-    private val _queue = MutableStateFlow<List<MaveTrack>>(emptyList())
+    internal val _queue = MutableStateFlow<List<MaveTrack>>(emptyList())
     val queue: StateFlow<List<MaveTrack>> = _queue.asStateFlow()
 
-    private val _originalQueue = MutableStateFlow<List<MaveTrack>>(emptyList())
+    internal val _originalQueue = MutableStateFlow<List<MaveTrack>>(emptyList())
     
-    private val _queueIndex = MutableStateFlow(-1)
+    internal val _queueIndex = MutableStateFlow(-1)
     val queueIndex: StateFlow<Int> = _queueIndex.asStateFlow()
 
-    private val _isHapticFeedbackEnabled = MutableStateFlow(true)
+    internal val _isHapticFeedbackEnabled = MutableStateFlow(true)
     val isHapticFeedbackEnabled: StateFlow<Boolean> = _isHapticFeedbackEnabled.asStateFlow()
 
     // Settings State
-    private val _userSettings = MutableStateFlow<UserSettings?>(null)
+    internal val _userSettings = MutableStateFlow<UserSettings?>(null)
     val userSettings: StateFlow<UserSettings?> = _userSettings.asStateFlow()
 
-    private val _paymentHistory = MutableStateFlow<List<PaymentHistoriesItem>>(emptyList())
+    internal val _paymentHistory = MutableStateFlow<List<PaymentHistoriesItem>>(emptyList())
     val paymentHistory: StateFlow<List<PaymentHistoriesItem>> = _paymentHistory.asStateFlow()
 
-    private val _isPremium = MutableStateFlow(false)
+    internal val _isPremium = MutableStateFlow(false)
     val isPremium: StateFlow<Boolean> = _isPremium.asStateFlow()
 
     // ---------------------------------------------------------------------------
     // Usage Counters (RTDB — path: users/{uid}/usage/{YYYY-MM}/)
     // Reset is handled by a Cloud Scheduler job (server-side, separate from this PR).
     // ---------------------------------------------------------------------------
-    private val _songsThisMonth = MutableStateFlow(0)
+    internal val _songsThisMonth = MutableStateFlow(0)
     val songsThisMonth: StateFlow<Int> = _songsThisMonth.asStateFlow()
 
-    private val _podcastEpsThisMonth = MutableStateFlow(0)
+    internal val _podcastEpsThisMonth = MutableStateFlow(0)
     val podcastEpsThisMonth: StateFlow<Int> = _podcastEpsThisMonth.asStateFlow()
 
-    private val _realtimeMinutesThisMonth = MutableStateFlow(0)
+    internal val _realtimeMinutesThisMonth = MutableStateFlow(0)
     val realtimeMinutesThisMonth: StateFlow<Int> = _realtimeMinutesThisMonth.asStateFlow()
 
     /**
@@ -232,26 +229,26 @@ class MainViewModel @Inject constructor(
      * Prefer a SharedFlow over a StateFlow here so the event fires once and doesn't
      * re-trigger on re-composition.
      */
-    private val _generationBlockedEvent = MutableSharedFlow<GenerationBlockReason>(extraBufferCapacity = 1)
+    internal val _generationBlockedEvent = MutableSharedFlow<GenerationBlockReason>(extraBufferCapacity = 1)
     val generationBlockedEvent = _generationBlockedEvent.asSharedFlow()
 
-    private val _stripeUrl = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    internal val _stripeUrl = MutableSharedFlow<String>(extraBufferCapacity = 1)
     val stripeUrl = _stripeUrl.asSharedFlow()
 
-    private val _oauthUrl = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    internal val _oauthUrl = MutableSharedFlow<String>(extraBufferCapacity = 1)
     val oauthUrl = _oauthUrl.asSharedFlow()
 
-    private val _spotifyConnected = MutableStateFlow(false)
+    internal val _spotifyConnected = MutableStateFlow(false)
     val spotifyConnected = _spotifyConnected.asStateFlow()
 
-    private val _youtubeConnected = MutableStateFlow(false)
+    internal val _youtubeConnected = MutableStateFlow(false)
     val youtubeConnected = _youtubeConnected.asStateFlow()
 
     // Navigation and UI State
-    private val _shouldExpandBottomSheet = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
+    internal val _shouldExpandBottomSheet = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
     val shouldExpandBottomSheet = _shouldExpandBottomSheet.asSharedFlow()
 
-    private val _navigationEvent = MutableSharedFlow<Route>(extraBufferCapacity = 1)
+    internal val _navigationEvent = MutableSharedFlow<Route>(extraBufferCapacity = 1)
     val navigationEvent = _navigationEvent.asSharedFlow()
 
     fun navigateTo(route: Route) {
@@ -261,25 +258,25 @@ class MainViewModel @Inject constructor(
     }
 
     // Auth Side Effects
-    private val _authSideEffect = MutableSharedFlow<AuthSideEffect>(extraBufferCapacity = 1)
+    internal val _authSideEffect = MutableSharedFlow<AuthSideEffect>(extraBufferCapacity = 1)
     val authSideEffect = _authSideEffect.asSharedFlow()
 
     val messages = mutableStateListOf<ChatMessage>()
     
-    private val _thinkingText = MutableStateFlow("")
+    internal val _thinkingText = MutableStateFlow("")
     val thinkingText: StateFlow<String> = _thinkingText.asStateFlow()
 
-    private val _currentModality = MutableStateFlow("music")
+    internal val _currentModality = MutableStateFlow("music")
     val currentModality: StateFlow<String> = _currentModality.asStateFlow()
 
-    private val _generatedPrompts = MutableStateFlow<List<String>>(emptyList())
+    internal val _generatedPrompts = MutableStateFlow<List<String>>(emptyList())
     val generatedPrompts: StateFlow<List<String>> = _generatedPrompts.asStateFlow()
 
-    private val _lyrics = MutableStateFlow<String?>(null)
+    internal val _lyrics = MutableStateFlow<String?>(null)
     val lyrics: StateFlow<String?> = _lyrics.asStateFlow()
 
-    private var rtdbSyncJob: Job? = null
-    private var currentRtdbUid: String? = null
+    internal var rtdbSyncJob: Job? = null
+    internal var currentRtdbUid: String? = null
 
     // Registration State Accumulator
     var regEmail = ""
@@ -288,10 +285,10 @@ class MainViewModel @Inject constructor(
     var regGender = ""
     var regName = ""
 
-    private val _isRecording = MutableStateFlow(false)
+    internal val _isRecording = MutableStateFlow(false)
     val isRecording: StateFlow<Boolean> = _isRecording.asStateFlow()
 
-    private val _hasSeenTooltipTour = MutableStateFlow(false)
+    internal val _hasSeenTooltipTour = MutableStateFlow(false)
     val hasSeenTooltipTour: StateFlow<Boolean> = _hasSeenTooltipTour.asStateFlow()
 
     fun markTooltipTourSeen() {
@@ -299,26 +296,26 @@ class MainViewModel @Inject constructor(
     }
 
     // Live Session State
-    private val _isLiveSessionActive = MutableStateFlow(false)
+    internal val _isLiveSessionActive = MutableStateFlow(false)
     val isLiveSessionActive: StateFlow<Boolean> = _isLiveSessionActive.asStateFlow()
 
-    private val _volume = MutableStateFlow(1f)
+    internal val _volume = MutableStateFlow(1f)
     val volume: StateFlow<Float> = _volume.asStateFlow()
 
     // Gallery/Video image-to-music state
-    private val _pendingGalleryImageBase64 = MutableStateFlow<String?>(null)
+    internal val _pendingGalleryImageBase64 = MutableStateFlow<String?>(null)
     val pendingGalleryImageBase64: StateFlow<String?> = _pendingGalleryImageBase64.asStateFlow()
 
     // Wearable frame streaming toggle (default off to preserve battery)
-    private val _isWearableFrameStreamingEnabled = MutableStateFlow(false)
+    internal val _isWearableFrameStreamingEnabled = MutableStateFlow(false)
     val isWearableFrameStreamingEnabled: StateFlow<Boolean> = _isWearableFrameStreamingEnabled.asStateFlow()
 
-    private var wearableFrameJob: Job? = null
+    internal var wearableFrameJob: Job? = null
 
     // Throttle wearable frame streaming to 1 frame per 2 seconds to avoid overloading backend
-    private val WEARABLE_FRAME_INTERVAL_MS = 2000L
+    internal val WEARABLE_FRAME_INTERVAL_MS = 2000L
 
-    private val bluetoothReceiver = object : BroadcastReceiver() {
+    internal val bluetoothReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 BluetoothAdapter.ACTION_STATE_CHANGED -> {
@@ -390,7 +387,7 @@ class MainViewModel @Inject constructor(
         fetchCatalog()
     }
 
-    private fun setupMediaAssetCollector() {
+    internal fun setupMediaAssetCollector() {
         viewModelScope.launch {
             maveSessionManager.coverArtUrl.collect { url ->
                 _currentCoverUrl.value = url
@@ -403,14 +400,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun fetchCatalog() {
-        fetchCategories()
-        fetchPlaylists()
-        fetchAlbums()
-        fetchPodcasts()
-        fetchAudiobooks()
-        fetchUserSettings()
-    }
 
     fun fetchUserSettings() {
         if (!isUserLoggedIn()) return
@@ -444,7 +433,7 @@ class MainViewModel @Inject constructor(
      * generation event and monthly resets via Cloud Scheduler — RTDB handles both
      * without index or query complexity.
      */
-    private fun loadUsageCounters() {
+    internal fun loadUsageCounters() {
         val uid = auth.currentUser?.uid ?: return
         val monthKey = YearMonth.now().toString() // e.g. "2026-07"
         val usageRef = rtdb.getReference("users/$uid/usage/$monthKey")
@@ -461,7 +450,7 @@ class MainViewModel @Inject constructor(
     }
 
     /** Increments a generation counter in RTDB for the current month. */
-    private fun incrementUsageCounter(counter: String, by: Int = 1) {
+    internal fun incrementUsageCounter(counter: String, by: Int = 1) {
         val uid = auth.currentUser?.uid ?: return
         val monthKey = YearMonth.now().toString()
         rtdb.getReference("users/$uid/usage/$monthKey/$counter")
@@ -573,245 +562,32 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private var categoryJob: kotlinx.coroutines.Job? = null
-    fun fetchCategories() {
-        categoryJob?.cancel()
-        categoryJob = viewModelScope.launch {
-            dataConnectRepository.getCategories().collectLatest { items ->
-                _categories.value = items.map {
-                    com.musically.studio.network.MaveCategory(
-                        id = it.id,
-                        name = it.name,
-                        colorHex = "#808080",
-                        imageUrl = ""
-                    )
-                }
-                _catalogErrorMessage.value = null
-            }
-        }
-    }
+    internal var categoryJob: kotlinx.coroutines.Job? = null
 
-    private var playlistJob: kotlinx.coroutines.Job? = null
-    fun fetchPlaylists() {
-        playlistJob?.cancel()
-        playlistJob = viewModelScope.launch {
-            dataConnectRepository.getPlaylists().collectLatest { items ->
-                _playlists.value = items.map {
-                    com.musically.studio.network.MavePlaylist(
-                        id = it.id,
-                        name = it.name,
-                        coverUrl = it.coverUrl,
-                        description = it.description
-                    )
-                }
-                _catalogErrorMessage.value = null
-            }
-        }
-    }
+    internal var playlistJob: kotlinx.coroutines.Job? = null
 
-    private var albumJob: kotlinx.coroutines.Job? = null
-    fun fetchAlbums() {
-        albumJob?.cancel()
-        albumJob = viewModelScope.launch {
-            dataConnectRepository.getAlbums().collectLatest { items ->
-                _albums.value = items.map {
-                    com.musically.studio.network.MaveAlbum(
-                        id = it.id,
-                        name = it.title,
-                        images = listOfNotNull(it.coverUrl?.let { url -> com.musically.studio.network.MaveImage(url = url) }),
-                        description = null
-                    )
-                }
-                _catalogErrorMessage.value = null
-            }
-        }
-    }
+    internal var albumJob: kotlinx.coroutines.Job? = null
 
-    private var podcastJob: kotlinx.coroutines.Job? = null
-    fun fetchPodcasts() {
-        podcastJob?.cancel()
-        podcastJob = viewModelScope.launch {
-            dataConnectRepository.getPodcasts().collectLatest { items ->
-                _podcasts.value = items.map {
-                    com.musically.studio.network.MavePodcast(
-                        id = it.id,
-                        name = it.title,
-                        publisher = it.publisher,
-                        imageUrl = it.coverUrl,
-                        description = it.description
-                    )
-                }
-                _catalogErrorMessage.value = null
-            }
-        }
-    }
+    internal var podcastJob: kotlinx.coroutines.Job? = null
 
-    private var audiobookJob: kotlinx.coroutines.Job? = null
-    fun fetchAudiobooks() {
-        audiobookJob?.cancel()
-        audiobookJob = viewModelScope.launch {
-            dataConnectRepository.getAudiobooks().collectLatest { items ->
-                _audiobooks.value = items.map {
-                    com.musically.studio.network.MaveAudiobook(
-                        id = it.id,
-                        title = it.title,
-                        author = it.author.name,
-                        narrator = null,
-                        imageUrl = it.coverUrl,
-                        duration = null,
-                        audioUrl = null
-                    )
-                }
-                _catalogErrorMessage.value = null
-            }
-        }
-    }
-
-    fun isUserLoggedIn(): Boolean = auth.currentUser != null
-
-    fun getUserId(): String = auth.currentUser?.uid ?: ""
-
-    fun getUserPhotoUrl(): String? = auth.currentUser?.photoUrl?.toString()
-
-    fun getUserDisplayName(): String? = auth.currentUser?.displayName
-
-    fun loginWithEmail(email: String, pass: String, callback: (Boolean, String?) -> Unit) {
-        _isLoading.value = true
-        auth.signInWithEmailAndPassword(email, pass)
-            .addOnCompleteListener { task ->
-                _isLoading.value = false
-                if (task.isSuccessful) {
-                    startRtdbSync()
-                    callback(true, null)
-                } else {
-                    callback(false, "Check your email and password, or sign up for a new account.")
-                }
-            }
-    }
-
-    fun guestLogin(callback: (Boolean, String?) -> Unit) {
-        _isLoading.value = true
-        auth.signInAnonymously()
-            .addOnCompleteListener { task ->
-                _isLoading.value = false
-                if (task.isSuccessful) {
-                    startRtdbSync()
-                    callback(true, null)
-                } else {
-                    callback(false, "Could not start guest session. Please check your connection.")
-                }
-            }
-    }
-
-    fun triggerGoogleSignIn() {
-        viewModelScope.launch {
-            _authSideEffect.emit(AuthSideEffect.LaunchGoogleSignIn)
-        }
-    }
-
-    fun triggerAppleSignIn() {
-        viewModelScope.launch {
-            _authSideEffect.emit(AuthSideEffect.LaunchAppleSignIn)
-        }
-    }
-
-    fun triggerVerifiedEmailSignIn() {
-        viewModelScope.launch {
-            _authSideEffect.emit(AuthSideEffect.LaunchVerifiedEmail)
-        }
-    }
+    internal var audiobookJob: kotlinx.coroutines.Job? = null
 
 
 
-    fun loginWithVerifiedEmail(credentialJson: String, nonce: String, callback: (Boolean, String?) -> Unit) {
-        _isLoading.value = true
-        viewModelScope.launch {
-            try {
-                val customToken = apiClient.verifyDigitalCredential(credentialJson, nonce)
-                if (customToken != null) {
-                    auth.signInWithCustomToken(customToken)
-                        .addOnCompleteListener { task ->
-                            _isLoading.value = false
-                            if (task.isSuccessful) {
-                                startRtdbSync()
-                                callback(true, null)
-                            } else {
-                                callback(false, "Authentication failed with verified credential.")
-                            }
-                        }
-                } else {
-                    _isLoading.value = false
-                    callback(false, "Digital credential verification failed on server.")
-                }
-            } catch (e: Exception) {
-                _isLoading.value = false
-                callback(false, "An error occurred during verification: ${e.message}")
-            }
-        }
-    }
 
-    fun loginWithGoogle(idToken: String, callback: (Boolean, String?) -> Unit) {
-        _isLoading.value = true
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener { task ->
-                _isLoading.value = false
-                if (task.isSuccessful) {
-                    startRtdbSync()
-                    callback(true, null)
-                } else {
-                    callback(false, "Google account connection encountered an issue.")
-                }
-            }
-    }
 
-    fun completeRegistration(callback: (Boolean, String?) -> Unit) {
-        _isLoading.value = true
-        auth.createUserWithEmailAndPassword(regEmail, regPassword)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val user = task.result?.user
-                    if (user != null) {
-                        viewModelScope.launch {
-                            try {
-                                com.musically.studio.dataconnect.DefaultConnector.instance.upsertUser.execute(
-                                    username = regEmail.substringBefore("@"),
-                                    email = regEmail
-                                ) {
-                                    this.displayName = regName
-                                }
-                                _isLoading.value = false
-                                startRtdbSync()
-                                callback(true, null)
-                            } catch (e: Exception) {
-                                Timber.e(e, "Failed to save profile via Data Connect")
-                                _isLoading.value = false
-                                callback(false, "Could not complete your profile. Please try again.")
-                            }
-                        }
-                    }
-                } else {
-                    _isLoading.value = false
-                    callback(false, task.exception?.message ?: "Registration encountered an issue.")
-                }
-            }
-    }
 
-    fun saveArtistPreferences(artists: List<String>, callback: (Boolean) -> Unit) {
-        viewModelScope.launch {
-            try {
-                com.musically.studio.dataconnect.DefaultConnector.instance.updateUserPreferences.execute {
-                    this.favoriteArtists = artists
-                }
-                callback(true)
-            } catch (e: Exception) {
-                Timber.e(e, "Failed to save preferences via Data Connect")
-                callback(false)
-            }
-        }
-    }
 
-    private fun setupWebSocketCollector() {
+
+
+
+
+
+
+
+
+
+    internal fun setupWebSocketCollector() {
         viewModelScope.launch {
             maveSessionManager.events.collect { event ->
                 try {
@@ -899,640 +675,86 @@ class MainViewModel @Inject constructor(
     }
 
     // Collect wearable POV camera frames and forward to backend when streaming is enabled
-    private fun setupWearableFrameStreaming() {
-        wearableFrameJob = viewModelScope.launch {
-            WearableStreamingService.cameraFrames.collect { frameBytes ->
-                if (_isWearableFrameStreamingEnabled.value && _isLiveSessionActive.value) {
-                    maveSessionManager.sendVideoFrame(frameBytes)
-                    delay(WEARABLE_FRAME_INTERVAL_MS)
-                }
-            }
-        }
-    }
 
-    fun toggleWearableFrameStreaming() {
-        _isWearableFrameStreamingEnabled.value = !_isWearableFrameStreamingEnabled.value
-    }
 
-    private fun setupWearableCollector() {
-        viewModelScope.launch {
-            try {
-                com.meta.wearable.dat.core.Wearables.devices.collect { datDevices ->
-                    val wearableAudioDevices = datDevices.map { device ->
-                        AudioDevice(
-                            id = device.identifier,
-                            name = "Meta Glasses",
-                            subtitle = "Meta Wearable",
-                            type = DeviceType.BLUETOOTH,
-                            isCurrent = false
-                        )
-                    }
-                    val current = _devices.value.filter { it.subtitle != "Meta Wearable" }
-                    _devices.value = current + wearableAudioDevices
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "Wearables SDK not initialized or failed (expected in tests)")
-            }
-        }
 
-        viewModelScope.launch {
-            WearableStreamingService.isServiceActive.collectLatest { active ->
-                _isWearableConnected.value = active
-            }
-        }
-
-        viewModelScope.launch {
-            WearableStreamingService.interactionEvents.collect { event ->
-                Timber.d("Wearable Interaction: $event")
-                when (event) {
-                    "play_pause" -> togglePlayPause()
-                    "next" -> skipNext()
-                    "previous" -> skipPrevious()
-                    "stop" -> stopPlayback()
-                    "generate" -> sendTextCommand("Generate a new atmosphere")
-                    "speak" -> recordVoice(null)
-                }
-            }
-        }
-        
-        viewModelScope.launch {
-            WearableStreamingService.audioFrames.collect { base64 ->
-                // Also send to Gemini Live for bidirectional dialogue if connected
-                val pcmData = Base64.decode(base64, Base64.NO_WRAP)
-                geminiLiveManager.sendAudio(pcmData)
-                maveSessionManager.sendAudio(base64)
-            }
-        }
-        
-        viewModelScope.launch {
-            WearableStreamingService.cameraFrames.collect { bytes ->
-                // Send POV to Gemini Live for visual reasoning
-                geminiLiveManager.sendVideoFrame(bytes)
-            }
-        }
-
-        viewModelScope.launch {
-            geminiLiveManager.functionCalls.collect { call ->
-                val name = call.getString("name")
-                val args = call.optJSONObject("args")
-                val callId = call.getString("id")
-                
-                if (name == "generate_visual_media") {
-                    val intent = args?.optString("intent") ?: "cover_art"
-                    val pitch = args?.optString("creative_pitch") ?: ""
-                    
-                    // Notify our backend LangGraph to trigger visual production
-                    sendTextCommand("Production Request: Generate $intent. Creative vision: $pitch")
-                    
-                    // Return success to Gemini Live so it can acknowledge in dialogue
-                    val result = JSONObject().apply { put("status", "Initiated production sequence.") }
-                    geminiLiveManager.sendResponse(callId, name, result)
-                }
-            }
-        }
-
-        viewModelScope.launch {
-            geminiLiveManager.transcripts.collect { text ->
-                messages.add(0, ChatMessage(text, false))
-            }
-        }
-
-        viewModelScope.launch {
-            geminiLiveManager.thoughts.collect { thought ->
-                Timber.d("Art Director Reasoning: $thought")
-                // Update Wearable HUD
-                WearableStreamingService.updateUi(
-                    songTitle = currentPlayingTrack.value?.name ?: "",
-                    geminiResponse = "",
-                    coverArtUrl = currentCoverUrl.value,
-                    isThinking = true
-                )
-            }
-        }
-
-        viewModelScope.launch {
-            geminiLiveManager.connectionState.collect { connected ->
-                if (!connected) {
-                    Timber.w("Gemini Live Disconnected")
-                }
-            }
-        }
-    }
-
-    fun setWearableConnected(context: Context, connected: Boolean) {
-        val intent = Intent(context, WearableStreamingService::class.java)
-        if (connected) {
-            context.startForegroundService(intent)
-        } else {
-            context.stopService(intent)
-        }
-    }
 
     /** Starts the live real-time Mave session (WebSocket + RTDB sync). */
-    fun startLiveSession() {
-        if (!_hasAcceptedPrivacyPolicy.value) return
-        if (_isLiveSessionActive.value) return
-        _isLiveSessionActive.value = true
-        maveSessionManager.connect()
-        startRtdbSync()
-    }
 
     /** Clears the live chat session history and resets the session */
-    fun clearLiveSessionHistory() {
-        messages.clear()
-        stopLiveSession()
-        startLiveSession()
-    }
 
     /** Stops the live session including any ongoing recording. */
-    fun stopLiveSession() {
-        if (_isRecording.value) {
-            stopRecording()
-        }
-        _isLiveSessionActive.value = false
-        maveSessionManager.disconnect()
-        geminiLiveManager.disconnect()
-    }
 
     /** Legacy alias kept for compatibility. */
-    fun connectToMave() {
-        startLiveSession()
-    }
 
-    fun generateCoverMedia(trackId: String?, prompt: String, type: String, onResult: (String?) -> Unit) {
-        viewModelScope.launch {
-            val result = apiClient.generateCoverMedia(prompt, type)
-            if (result != null && trackId != null) {
-                _tracks.value = _tracks.value.map { track ->
-                    if (track.id == trackId) {
-                        track.copy(album = track.album.copy(images = listOf(com.musically.studio.network.MaveImage(result, 640, 640))))
-                    } else track
-                }
-            }
-            onResult(result)
-        }
-    }
 
-    fun sendTextCommand(text: String) {
-        messages.add(0, ChatMessage(text, true))
-        _thinkingText.value = ""
-        maveSessionManager.sendEvent("feedback", mapOf("text" to text))
-    }
 
-    private var currentAudioPlayer: com.musically.studio.audio.StreamAudioPlayer? = null
+    internal var currentAudioPlayer: com.musically.studio.audio.StreamAudioPlayer? = null
 
-    fun generatePodcast(text: String) {
-        // --- Quota guardrail ---
-        val limits = tierLimits
-        if (!limits.podcastsUnlimited && _podcastEpsThisMonth.value >= limits.podcastEpsPerMonth) {
-            viewModelScope.launch { _generationBlockedEvent.emit(GenerationBlockReason.PODCASTS_LIMIT_REACHED) }
-            return
-        }
-        messages.add(0, ChatMessage(text, true))
-        _thinkingText.value = ""
-        currentAudioPlayer?.stop()
-        currentAudioPlayer = com.musically.studio.audio.StreamAudioPlayer()
-        
-        viewModelScope.launch {
-            try {
-                streamingApiClient.generatePodcastStream(text).collect { event ->
-                    if (event.text != null) {
-                        _thinkingText.value += event.text
-                    }
-                    if (event.audioBase64 != null) {
-                        currentAudioPlayer?.queueAudioChunk(event.audioBase64)
-                    }
-                    if (event.isComplete) {
-                        _thinkingText.value = ""
-                        val script = event.trackInfo?.audioUrl ?: "Generated Podcast"
-                        messages.add(0, ChatMessage(script, false, event.trackInfo?.id))
-                        event.trackInfo?.let { track ->
-                            _currentPlayingTrack.value = track
-                            _isPlaying.value = true
-                        }
-                        currentAudioPlayer?.stop()
-                        currentAudioPlayer = null
-                    }
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "Error generating podcast")
-                messages.add(0, ChatMessage("Error generating podcast", false))
-                _thinkingText.value = ""
-                currentAudioPlayer?.stop()
-                currentAudioPlayer = null
-            }
-        }
-    }
 
-    @SuppressLint("MissingPermission")
-    fun recordVoice(context: Context?) {
-        if (!_hasAcceptedPrivacyPolicy.value) return
-        if (_isRecording.value) {
-            stopRecording()
-        } else {
-            startRecording(context)
-        }
-    }
+    
 
-    @SuppressLint("MissingPermission")
-    private fun startRecording(context: Context?) {
-        context?.let {
-            val intent = Intent(it, WearableStreamingService::class.java)
-            it.startForegroundService(intent)
-        }
-        _isRecording.value = true
-        maveSessionManager.sendEvent("start_voice", emptyMap())
-        WearableStreamingService.startVoiceRecording()
-    }
-
-    private fun stopRecording() {
-        _isRecording.value = false
-        WearableStreamingService.stopVoiceRecording()
-        maveSessionManager.sendEvent("stop_voice", emptyMap())
-    }
 
     // --- Playback Controls ---
 
-    fun togglePlayPause() {
-        _isPlaying.value = !_isPlaying.value
-        if (_isPlaying.value) {
-            maveSessionManager.play()
-        } else {
-            maveSessionManager.pause()
-        }
-    }
 
-    fun setVolume(volumeLevel: Float) {
-        _volume.value = volumeLevel
-        try {
-            val audioManager = context.getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
-            val maxVolume = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
-            val mappedVolume = (volumeLevel * maxVolume).toInt()
-            audioManager.setStreamVolume(android.media.AudioManager.STREAM_MUSIC, mappedVolume, 0)
-        } catch (e: Exception) {
-            Timber.e(e, "Failed to set volume")
-        }
-    }
 
-    fun setPlayingState(playing: Boolean) {
-        if (_isPlaying.value != playing) {
-            _isPlaying.value = playing
-            // We don't call maveSessionManager.play() here because this is likely driven BY ExoPlayer changing state
-        }
-    }
 
-    fun stopPlayback() {
-        _isPlaying.value = false
-        maveSessionManager.stop()
-    }
 
-    fun playQueue(tracks: List<MaveTrack>, startIndex: Int = 0) {
-        if (tracks.isEmpty()) return
-        
-        _originalQueue.value = tracks
-        
-        if (_isShuffleEnabled.value) {
-            val currentTrack = tracks[startIndex]
-            val remaining = tracks.filterIndexed { i, _ -> i != startIndex }.shuffled()
-            _queue.value = listOf(currentTrack) + remaining
-            _queueIndex.value = 0
-        } else {
-            _queue.value = tracks
-            _queueIndex.value = startIndex
-        }
-        
-        playTrack(_queue.value[_queueIndex.value])
-    }
 
-    fun skipNext(autoAdvance: Boolean = false) {
-        val currentQueue = _queue.value
-        val currentIndex = _queueIndex.value
-        
-        if (currentQueue.isEmpty()) {
-            maveSessionManager.sendEvent("skip_next", emptyMap())
-            return
-        }
-        
-        if (currentIndex < currentQueue.size - 1) {
-            _queueIndex.value = currentIndex + 1
-            playTrack(currentQueue[_queueIndex.value])
-        } else if (_isRepeatEnabled.value == "all" || (!autoAdvance && currentQueue.isNotEmpty())) {
-            _queueIndex.value = 0
-            playTrack(currentQueue[0])
-        } else {
-            _isPlaying.value = false
-            maveSessionManager.stop()
-        }
-    }
 
-    fun skipPrevious() {
-        val currentQueue = _queue.value
-        val currentIndex = _queueIndex.value
-        
-        if (currentQueue.isEmpty()) {
-            maveSessionManager.sendEvent("skip_previous", emptyMap())
-            return
-        }
-        
-        // If we are past 3 seconds, just restart current track (simulated by seeking to 0)
-        if (_trackProgress.value > 3f) {
-            seekTo(0f)
-            return
-        }
-        
-        if (currentIndex > 0) {
-            _queueIndex.value = currentIndex - 1
-            playTrack(currentQueue[_queueIndex.value])
-        } else if (_isRepeatEnabled.value == "all") {
-            _queueIndex.value = currentQueue.size - 1
-            playTrack(currentQueue[_queueIndex.value])
-        } else {
-            seekTo(0f)
-        }
-    }
 
-    fun seekTo(position: Float) {
-        _trackProgress.value = position
-        maveSessionManager.sendEvent("seek_to", mapOf("position" to position))
-    }
 
-    fun toggleShuffle() {
-        _isShuffleEnabled.value = !_isShuffleEnabled.value
-        val currentTrack = _currentPlayingTrack.value
-        val currentQueue = _queue.value
-        
-        if (currentQueue.isNotEmpty() && currentTrack != null) {
-            if (_isShuffleEnabled.value) {
-                val remaining = _originalQueue.value.filter { it.id != currentTrack.id }.shuffled()
-                _queue.value = listOf(currentTrack) + remaining
-                _queueIndex.value = 0
-            } else {
-                _queue.value = _originalQueue.value
-                _queueIndex.value = _queue.value.indexOfFirst { it.id == currentTrack.id }.coerceAtLeast(0)
-            }
-        }
-        
-        maveSessionManager.sendEvent("toggle_shuffle", mapOf("enabled" to _isShuffleEnabled.value))
-    }
 
-    fun toggleRepeat() {
-        _isRepeatEnabled.value = when (_isRepeatEnabled.value) {
-            "none" -> "all"
-            "all" -> "one"
-            else -> "none"
-        }
-        maveSessionManager.sendEvent("toggle_repeat", mapOf("mode" to _isRepeatEnabled.value))
-    }
 
-    fun toggleHapticFeedback() {
-        _isHapticFeedbackEnabled.value = !_isHapticFeedbackEnabled.value
-    }
 
-    fun requestCoverArt() {
-        sendTextCommand("Generate a high-fidelity album cover for this vibe.")
-    }
 
-    fun requestMusicVideo() {
-        sendTextCommand("Generate a 35mm cinematic music video loop for this track.")
-    }
 
-    fun playTrack(track: MaveTrack) {
-        _currentPlayingTrack.value = track
-        _isPlaying.value = true
-        maveSessionManager.sendEvent("play_track", mapOf("trackId" to track.id))
-        viewModelScope.launch { _shouldExpandBottomSheet.emit(true) }
-    }
 
-    fun bookmarkTrack(trackId: String) {
-        viewModelScope.launch {
-            apiClient.bookmarkTrack(trackId)
-        }
-    }
 
-    fun likeTrack(trackId: String) {
-        viewModelScope.launch {
-            apiClient.likeTrack(trackId)
-        }
-    }
 
-    fun generateLyrics(trackId: String, audioUrl: String) {
-        viewModelScope.launch {
-            _lyrics.value = "Generating lyrics..."
-            try {
-                // Call backend endpoint which uses Gemini Flash to process the audio and generate lyrics
-                val result = apiClient.generateLyrics(trackId, audioUrl)
-                if (result != null) {
-                    _lyrics.value = result
-                } else {
-                    _lyrics.value = "Could not generate lyrics."
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "Failed to generate lyrics")
-                _lyrics.value = "Error generating lyrics."
-            }
-        }
-    }
 
-    fun shareTrack(trackId: String, callback: (String?) -> Unit) {
-        viewModelScope.launch {
-            try {
-                val url = apiClient.shareVibe(trackId)
-                callback(url ?: "${com.musically.studio.shared.BuildConfig.API_BASE_URL}/track/$trackId")
-            } catch (e: Exception) {
-                Timber.e(e, "Failed to share track")
-                callback(null)
-            }
-        }
-    }
 
-    fun sendFrame(base64: String) {
-        maveSessionManager.sendEvent("vision", mapOf("image" to base64))
-    }
 
-    suspend fun getTrack(trackId: String): MaveTrack? {
-        return apiClient.getTrack(trackId)
-    }
 
     /**
      * Processes a gallery-picked or camera-captured image for music generation.
      * Sends the image to the backend orchestration layer which calls Gemini to generate
      * music prompts from visual context.
      */
-    fun generateMusicPrompts(base64: String) {
-        // --- Quota guardrail (client-side UX; server-side enforcement is a separate requirement) ---
-        val limits = tierLimits
-        if (!limits.songsUnlimited && _songsThisMonth.value >= limits.songsPerMonth) {
-            viewModelScope.launch { _generationBlockedEvent.emit(GenerationBlockReason.SONGS_LIMIT_REACHED) }
-            return
-        }
-        viewModelScope.launch {
-            _isLoading.value = true
-            _pendingGalleryImageBase64.value = base64
-            // Also send as a vision frame to the live session if active
-            if (_isLiveSessionActive.value) {
-                maveSessionManager.sendVideoFrame(
-                    Base64.decode(base64, Base64.NO_WRAP)
-                )
-            }
-            val result = apiClient.generateMusicPrompts(base64)
-            if (result != null) {
-                _generatedPrompts.value = result
-                // Increment the song counter on successful generation
-                incrementUsageCounter("songs_generated")
-                // Auto-send generated prompts to session if active
-                if (_isLiveSessionActive.value && result.isNotEmpty()) {
-                    val promptMaps = result.map { mapOf("text" to it, "weight" to 1.0) }
-                    maveSessionManager.sendPrompts(promptMaps)
-                }
-            }
-            _isLoading.value = false
-        }
-    }
 
     /** Called when the user has selected a gallery image (base64 encoded). */
-    fun onGalleryImageSelected(base64: String) {
-        generateMusicPrompts(base64)
-    }
 
     /** Clear any pending gallery image state. */
-    fun clearPendingGalleryImage() {
-        _pendingGalleryImageBase64.value = null
-    }
-
-    fun applySteering(params: Map<String, Any>) {
-        maveSessionManager.sendEvent("steering_action", mapOf("params" to params))
-    }
-
-    fun viewArtist(context: Context, track: MaveTrack) {
-        if (track.userId != null) {
-            // Case 2: Mave Community track -> route to user profile
-            viewModelScope.launch {
-                _navigationEvent.emit(Route.UserProfile(track.userId))
-            }
-        } else {
-            // Case 1: Spotify track -> query from Spotify
-            val artistId = track.artists.firstOrNull()?.id
-            if (artistId != null) {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = "spotify:artist:$artistId".toUri()
-                    putExtra(Intent.EXTRA_REFERRER, "android-app://${context.packageName}".toUri())
-                }
-                try {
-                    context.startActivity(intent)
-                } catch (e: Exception) {
-                    // Fallback to web
-                    val webIntent = Intent(Intent.ACTION_VIEW, "https://open.spotify.com/artist/$artistId".toUri())
-                    context.startActivity(webIntent)
-                }
-            }
-        }
-    }
-
-
-    fun addToPlaylist(trackId: String, playlistId: String? = null) {
-        viewModelScope.launch {
-            apiClient.addToPlaylist(trackId, playlistId)
-        }
-    }
 
 
 
-    fun saveTrackToLibrary(trackId: String) {
-        viewModelScope.launch {
-            apiClient.bookmarkTrack(trackId)
-        }
-    }
 
-    fun connectMusicAccount() {
-        viewModelScope.launch {
-            _isMusicAccountConnected.value = true
-        }
-    }
 
-    private var userTracksJob: kotlinx.coroutines.Job? = null
-    fun fetchLikedTracks() {
-        viewModelScope.launch {
-            val tracks = apiClient.getLikedTracks()
-            if (tracks != null) {
-                _likedTracks.value = tracks
-            }
-        }
-    }
 
-    fun fetchUserTracks() {
-        userTracksJob?.cancel()
-        userTracksJob = viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                dataConnectRepository.getUserTracks().collectLatest { items ->
-                    val dcTracks = items.map {
-                        com.musically.studio.network.MaveTrack(
-                            id = it.id,
-                            name = it.title,
-                            artists = listOf(com.musically.studio.network.MaveArtist(id = it.album.primaryArtist.id, name = it.album.primaryArtist.name)),
-                            album = com.musically.studio.network.MaveAlbum(
-                                id = it.album.id,
-                                name = it.album.title,
-                                images = listOfNotNull(it.coverUrl?.let { url -> com.musically.studio.network.MaveImage(url) })
-                            ),
-                            userId = auth.currentUser?.uid ?: "",
-                            audioUrl = it.audioUrl,
-                            videoUrl = null
-                        )
-                    }
-                    val spotifyTracks = apiClient.getSpotifyLibraryTracks()
-                    _tracks.value = dcTracks + (spotifyTracks ?: emptyList())
-                    _catalogErrorMessage.value = null
-                    _isLoading.value = false
-                }
-            } catch (e: Exception) {
-                _catalogErrorMessage.value = e.message ?: "Failed to load library tracks."
-                _isLoading.value = false
-            }
-        }
-    }
 
-    private var communityTrackJob: kotlinx.coroutines.Job? = null
-    fun fetchCommunityTracks() {
-        communityTrackJob?.cancel()
-        communityTrackJob = viewModelScope.launch {
-            _isLoading.value = true
-            dataConnectRepository.getCommunityTracks().collectLatest { items ->
-                _communityTracks.value = items.map {
-                    com.musically.studio.network.MaveTrack(
-                        id = it.id,
-                        name = it.title,
-                        artists = listOf(com.musically.studio.network.MaveArtist(id = it.album.primaryArtist.id, name = it.album.primaryArtist.name)),
-                        album = com.musically.studio.network.MaveAlbum(
-                            id = it.album.id,
-                            name = it.album.title,
-                            images = emptyList()
-                        ),
-                        userId = it.owner.uid,
-                        audioUrl = null,
-                        videoUrl = null
-                    )
-                }
-                _catalogErrorMessage.value = null
-                _isLoading.value = false
-            }
-        }
-    }
 
-    private val _userVibes = MutableStateFlow<List<MaveTrack>>(emptyList())
+
+    internal var userTracksJob: kotlinx.coroutines.Job? = null
+    internal var likedTracksJob: kotlinx.coroutines.Job? = null
+
+
+    internal var communityTrackJob: kotlinx.coroutines.Job? = null
+
+    internal val _userVibes = MutableStateFlow<List<MaveTrack>>(emptyList())
     val userVibes: StateFlow<List<MaveTrack>> = _userVibes.asStateFlow()
 
-    private val _devices = MutableStateFlow<List<AudioDevice>>(emptyList())
+    internal val _devices = MutableStateFlow<List<AudioDevice>>(emptyList())
     val devices: StateFlow<List<AudioDevice>> = _devices.asStateFlow()
 
-    private val _isBluetoothEnabled = MutableStateFlow(false)
+    internal val _isBluetoothEnabled = MutableStateFlow(false)
     val isBluetoothEnabled: StateFlow<Boolean> = _isBluetoothEnabled.asStateFlow()
 
-    private val _isScanning = MutableStateFlow(false)
+    internal val _isScanning = MutableStateFlow(false)
     val isScanning: StateFlow<Boolean> = _isScanning.asStateFlow()
 
     // Account deletion state
-    private val _accountDeletionState = MutableStateFlow<AccountDeletionState>(AccountDeletionState.Idle)
+    internal val _accountDeletionState = MutableStateFlow<AccountDeletionState>(AccountDeletionState.Idle)
     val accountDeletionState: StateFlow<AccountDeletionState> = _accountDeletionState.asStateFlow()
 
     fun loadAudioDevices() {
@@ -1628,32 +850,11 @@ class MainViewModel @Inject constructor(
         adapter.startDiscovery()
     }
 
-    fun fetchVibesByUserId(userId: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            val result = apiClient.getVibesByUserId(userId)
-            if (result != null) {
-                _userVibes.value = result
-            }
-            _isLoading.value = false
-        }
-    }
 
     /**
      * Signs the current user out of Firebase Auth and disconnects all active sessions.
      * Callers should navigate to the Login screen upon completion.
      */
-    fun signOut() {
-        stopLiveSession()
-        rtdbSyncJob?.cancel()
-        rtdbSyncJob = null
-        currentRtdbUid = null
-        auth.signOut()
-        Timber.i("User signed out")
-        viewModelScope.launch {
-            _authSideEffect.emit(AuthSideEffect.SignedOut)
-        }
-    }
 
     /**
      * Permanently deletes the Firebase Auth account and all associated RTDB session data.
@@ -1664,55 +865,8 @@ class MainViewModel @Inject constructor(
      *
      * Per Play Store policy this must be discoverable from the account/profile screen.
      */
-    fun deleteAccount() {
-        val user = auth.currentUser
-        if (user == null) {
-            _accountDeletionState.value = AccountDeletionState.Error("No authenticated user found.")
-            return
-        }
-        _accountDeletionState.value = AccountDeletionState.Loading
-        viewModelScope.launch {
-            try {
-                // 1. Remove RTDB session data before deleting the auth account.
-                val uid = user.uid
-                rtdb.getReference("sessions/$uid").removeValue().await()
-                Timber.i("RTDB session data cleared for uid=$uid")
-                
-                // 1.5. Delete remote Firestore backend account profile.
-                val backendDeleted = apiClient.deleteAccount()
-                if (!backendDeleted) {
-                    Timber.w("Could not delete backend profile for uid=$uid, proceeding with auth deletion anyway")
-                }
-
-                // 2. Disconnect live session and stop all ongoing services.
-                stopLiveSession()
-                rtdbSyncJob?.cancel()
-                rtdbSyncJob = null
-
-                // 3. Delete the Firebase Auth account.
-                user.delete().await()
-                Timber.i("Firebase Auth account deleted for uid=$uid")
-
-                _accountDeletionState.value = AccountDeletionState.Deleted
-                _authSideEffect.emit(AuthSideEffect.AccountDeleted)
-            } catch (e: com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException) {
-                Timber.w(e, "Re-authentication required before account deletion")
-                _accountDeletionState.value = AccountDeletionState.Error(
-                    "For your security, please sign in again before deleting your account."
-                )
-            } catch (e: Exception) {
-                Timber.e(e, "Account deletion failed")
-                _accountDeletionState.value = AccountDeletionState.Error(
-                    "Could not delete account: ${e.message}"
-                )
-            }
-        }
-    }
 
     /** Resets the deletion state after the UI has handled it. */
-    fun resetAccountDeletionState() {
-        _accountDeletionState.value = AccountDeletionState.Idle
-    }
 
     override fun onCleared() {
         if (_isRecording.value) {
@@ -1728,123 +882,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    @kotlin.OptIn(androidx.credentials.ExperimentalDigitalCredentialApi::class)
-    fun verifyEmail(activity: android.app.Activity) {
-        viewModelScope.launch {
-            try {
-                val nonce = generateSecureRandomNonce()
-                
-                val openId4vpRequest = """
-    {
-      "requests": [
-        {
-          "protocol": "openid4vp-v1-unsigned",
-          "data": {
-            "response_type": "vp_token",
-            "response_mode": "dc_api",
-            "nonce": "$nonce",
-            "dcql_query": {
-              "credentials": [
-                {
-                  "id": "user_info_query",
-                  "format": "dc+sd-jwt",
-                   "meta": { 
-                      "vct_values": ["UserInfoCredential"] 
-                   },
-                  "claims": [ 
-                    {"path": ["email"]}, 
-                    {"path": ["name"]},  
-                    {"path": ["given_name"]},
-                    {"path": ["family_name"]},
-                    {"path": ["picture"]},
-                    {"path": ["hd"]},
-                    {"path": ["email_verified"]}
-                  ]
-                }
-              ]
-            }
-          }
-        }
-      ]
     }
-    """
-                val getDigitalCredentialOption = androidx.credentials.GetDigitalCredentialOption(requestJson = openId4vpRequest)
-                val request = androidx.credentials.GetCredentialRequest(listOf(getDigitalCredentialOption))
-                
-                val credentialManager = androidx.credentials.CredentialManager.create(context)
-                val result = credentialManager.getCredential(activity, request)
-                when (val credential = result.credential) {
-                    is androidx.credentials.DigitalCredential -> {
-                        val responseJsonString = credential.credentialJson
-                        val (email, name) = parseSdJwtEmailAndName(responseJsonString)
-                        
-                        if (email != null) {
-                            // 1. Sign in anonymously to get a Firebase Session
-                            auth.signInAnonymously().await()
-                            
-                            // 2. Upsert the user into Cloud SQL via Firebase Data Connect
-                            DefaultConnector.instance.upsertUser.execute(
-                                username = email.substringBefore("@"),
-                                email = email
-                            ) {
-                                this.displayName = name ?: "Verified User"
-                            }
-                            
-                            navigateTo(Route.Home)
-                        } else {
-                            Timber.e("Could not parse email from digital credential.")
-                        }
-                    }
-                    else -> {
-                        Timber.e("Unexpected credential type: ${credential::class.java}")
-                    }
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "Error getting verified email credential")
-            }
-        }
-    }
-
-    private fun parseSdJwtEmailAndName(responseJsonString: String): Pair<String?, String?> {
-        try {
-            val responseData = org.json.JSONObject(responseJsonString)
-            val vpToken = responseData.optJSONObject("vp_token") ?: return Pair(null, null)
-            val credentialId = vpToken.keys().next()
-            val rawSdJwt = vpToken.getJSONArray(credentialId).getString(0)
-            
-            val parts = rawSdJwt.split("~")
-            var email: String? = null
-            var name: String? = null
-            
-            for (i in 1 until parts.size - 1) {
-                val disclosureBase64 = parts[i]
-                if (disclosureBase64.isBlank()) continue
-                try {
-                    val decoded = String(android.util.Base64.decode(disclosureBase64, android.util.Base64.URL_SAFE))
-                    val jsonArray = org.json.JSONArray(decoded)
-                    if (jsonArray.length() == 3) {
-                        val claimName = jsonArray.getString(1)
-                        val claimValue = jsonArray.getString(2)
-                        if (claimName == "email") email = claimValue
-                        if (claimName == "name" || claimName == "given_name") name = claimValue
-                    }
-                } catch (e: Exception) {
-                    // Ignore malformed disclosures
-                }
-            }
-            return Pair(email, name)
-        } catch (e: Exception) {
-            Timber.e(e, "Failed to parse SD-JWT")
-            return Pair(null, null)
-        }
-    }
-
-    private fun generateSecureRandomNonce(): String {
-        val bytes = ByteArray(32)
-        java.security.SecureRandom().nextBytes(bytes)
-        return android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP or android.util.Base64.URL_SAFE)
-    }
-}
 
 sealed interface AuthSideEffect {
     data object LaunchGoogleSignIn : AuthSideEffect

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.MainViewModel
+import com.musically.studio.ui.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

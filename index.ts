@@ -156,7 +156,7 @@ try {
 }
 
 const init = async () => {
-  console.log("[LIFECYCLE] Quinn app bootstrap sequence initiated.");
+  console.log("[LIFECYCLE] Mave app bootstrap sequence initiated.");
   try {
     console.log("[LIFECYCLE] Checking custom elements registry status...");
     const isDefinedInitially = !!customElements.get("lyria-camera");
@@ -169,27 +169,9 @@ const init = async () => {
     // Await standard custom elements definition to ensure class registration complete before instantiation
     await customElements.whenDefined("lyria-camera");
     console.log("[LIFECYCLE] SUCCESS: 'lyria-camera' custom element class definition resolved in browser registry.");
-
-    const instantiateAndMount = () => {
-      console.log("[LIFECYCLE] Step 1: Instantiating '<lyria-camera>' DOM element via document.createElement...");
-      const cameraEl = document.createElement("lyria-camera");
-      console.log("[LIFECYCLE] Step 2: Instantiation successful. Ready to link custom element to active viewport DOM.");
-
-      console.log("[LIFECYCLE] Step 3: Appending '<lyria-camera>' to document.body...");
-      document.body.appendChild(cameraEl);
-      console.log("[LIFECYCLE] Step 4: Custom element successfully appended. Element connected state:", cameraEl.isConnected);
-    };
-
-    if (document.body) {
-      console.log("[LIFECYCLE] Active viewport body element detected immediately.");
-      instantiateAndMount();
-    } else {
-      console.warn("[LIFECYCLE] document.body not active. Scheduling mount after DOMContentLoaded trigger.");
-      document.addEventListener("DOMContentLoaded", () => {
-        console.log("[LIFECYCLE] DOMContentLoaded event fired. Initiating deferred mounting sequence.");
-        instantiateAndMount();
-      });
-    }
+    
+    // Note: The React App mounts itself to #root in main.tsx.
+    // We no longer append lyria-camera directly to the body here.
   } catch (e) {
     console.error("[LIFECYCLE] CRITICAL ERROR during custom element definition and mounting sequence:", e);
   }

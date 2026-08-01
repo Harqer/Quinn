@@ -37,5 +37,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MyExampleApp"
+rootProject.name = "Mave"
 include(":app")
+include(":shared")

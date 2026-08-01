@@ -20,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.MainViewModel
+import com.musically.studio.ui.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

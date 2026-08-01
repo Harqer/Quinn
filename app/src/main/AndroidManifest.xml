@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.myapp">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
@@ -18,7 +17,9 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:label="Quinn Camera"
+        android:label="Mave"
+        android:icon="@drawable/mave_brand_dark"
+        android:roundIcon="@drawable/mave_brand_dark"
         android:supportsRtl="true">
         
         <meta-data
@@ -37,9 +38,19 @@
             android:exported="false"
             android:foregroundServiceType="camera|microphone|mediaPlayback" />
 
+        <service
+            android:name="com.musically.studio.audio.PlaybackService"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

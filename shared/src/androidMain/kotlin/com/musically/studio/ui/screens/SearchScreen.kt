@@ -6,28 +6,22 @@ import com.musically.studio.ui.theme.FormFactorPreviews
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.core.graphics.toColorInt
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.MainViewModel
-import com.musically.studio.ui.components.atoms.MaveTextField
+import com.musically.studio.ui.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import com.google.firebase.Firebase
+import com.musically.studio.ui.components.organisms.SearchCategoryGrid
+import com.musically.studio.ui.components.organisms.SearchResultsGrid
+import com.musically.studio.ui.components.organisms.SearchTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,35 +47,9 @@ fun SearchScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = com.musically.studio.ui.theme.MaveBackground,
         topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(androidx.compose.foundation.shape.CircleShape)
-                                .background(com.musically.studio.ui.theme.MaveBrand)
-                                .clickable { onNavigateToSettings() },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "M",
-                                color = Color.Black,
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = "Search",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = com.musically.studio.ui.theme.MaveBackground),
-                scrollBehavior = scrollBehavior
+            SearchTopBar(
+                scrollBehavior = scrollBehavior,
+                onNavigateToSettings = onNavigateToSettings
             )
         }
     ) { paddingValues ->
@@ -125,42 +93,12 @@ fun SearchScreen(
                         modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
                     )
                     
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(150.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding() + 100.dp)
-                    ) {
-                        items(categories.size) { index ->
-                            val category = categories[index]
-                            val color = try { category.colorHex?.let { Color(it.toColorInt()) } } catch(e: Exception) { null } ?: colors[index % colors.size]
-                            Box(
-                                modifier = Modifier
-                                    .aspectRatio(1.5f)
-                                    .clip(MaterialTheme.shapes.small)
-                                    .background(color)
-                                    .clickable { onNavigateToCategory(category.id) }
-                            ) {
-                                Text(
-                                    text = category.name,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    modifier = Modifier.padding(12.dp)
-                                )
-                                // Decorative angled box
-                                Box(
-                                    modifier = Modifier
-                                        .align(Alignment.BottomEnd)
-                                        .offset(x = 16.dp, y = 8.dp)
-                                        .size(64.dp)
-                                        .rotate(25f)
-                                        .background(Color.Black.copy(alpha = 0.2f), MaterialTheme.shapes.small)
-                                )
-                            }
-                        }
-                    }
+                    SearchCategoryGrid(
+                        categories = categories,
+                        colors = colors,
+                        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding() + 100.dp),
+                        onNavigateToCategory = onNavigateToCategory
+                    )
                 } else {
                     val searchResults by viewModel.communityTracks.collectAsStateWithLifecycle()
                     val filteredResults = searchResults.filter {
@@ -181,20 +119,12 @@ fun SearchScreen(
                             Text("No tracks found", color = Color.White.copy(alpha = 0.7f))
                         }
                     } else {
-                        LazyVerticalGrid(
-                            columns = GridCells.Adaptive(300.dp),
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding() + 100.dp)
-                        ) {
-                            items(filteredResults.size) { index ->
-                                val track = filteredResults[index]
-                                com.musically.studio.ui.components.TrackItem(
-                                    track = track,
-                                    onClick = { viewModel.playTrack(track) },
-                                    onAlbumClick = { onNavigateToAlbum(track.album.id) }
-                                )
-                            }
-                        }
+                        SearchResultsGrid(
+                            filteredResults = filteredResults,
+                            contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding() + 100.dp),
+                            onPlayTrack = { viewModel.playTrack(it) },
+                            onNavigateToAlbum = onNavigateToAlbum
+                        )
                     }
                 }
             }

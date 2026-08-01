@@ -14,6 +14,7 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.musically.studio.ui.MainViewModel
+import com.musically.studio.ui.*
 import com.musically.studio.ui.screens.*
 import com.musically.studio.ui.screens.onboarding.*
 import androidx.navigation3.runtime.metadata

@@ -30,6 +30,9 @@ import timber.log.Timber
 import com.musically.studio.shared.R
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.MainViewModel
+import com.musically.studio.ui.*
+import com.musically.studio.ui.components.organisms.AlbumHeader
+import com.musically.studio.ui.components.molecules.AlbumTrackItem
 import com.musically.studio.ui.theme.FormFactorPreviews
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,31 +102,17 @@ fun AlbumViewScreen(
                 contentPadding = paddingValues
             ) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        com.musically.studio.ui.components.MediaCoverCard(
-                            title = albumInfo?.name ?: "Unknown Album",
-                            subtitle = albumInfo?.description ?: albumInfo?.artists?.joinToString { it.name } ?: "Unknown Artist",
-                            imageUrl = albumInfo?.images?.firstOrNull()?.url,
-                            isLiked = false,
-                            onLikeClick = onLikeClick,
-                            onShareClick = { 
-                                val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(android.content.Intent.EXTRA_TEXT, "Check out this album on Mave: https://mave.studio/album/$albumId")
-                                }
-                                context.startActivity(android.content.Intent.createChooser(shareIntent, "Share Album"))
-                            },
-                            onDownloadClick = onDownloadClick,
-                            onMoreClick = { albumTracks.firstOrNull()?.let { onMoreClick(it.id) } },
-                            onPlayClick = { albumTracks.firstOrNull()?.let { onTrackClick(it.id) } },
-                            modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 16.dp)
-                        )
-                    }
+                    AlbumHeader(
+                        title = albumInfo?.name ?: "Unknown Album",
+                        subtitle = albumInfo?.description ?: albumInfo?.artists?.joinToString { it.name } ?: "Unknown Artist",
+                        imageUrl = albumInfo?.images?.firstOrNull()?.url,
+                        albumId = albumId,
+                        context = context,
+                        onLikeClick = onLikeClick,
+                        onDownloadClick = onDownloadClick,
+                        onMoreClick = { albumTracks.firstOrNull()?.let { onMoreClick(it.id) } },
+                        onPlayClick = { albumTracks.firstOrNull()?.let { onTrackClick(it.id) } }
+                    )
                 }
 
             itemsIndexed(albumTracks) { index, track ->
@@ -141,45 +130,7 @@ fun AlbumViewScreen(
 }
 }
 
-@Composable
-fun AlbumTrackItem(
-    track: MaveTrack,
-    trackNumber: Int,
-    onClick: () -> Unit,
-    onMoreClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = trackNumber.toString(),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(32.dp)
-        )
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = track.name,
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.White,
-                maxLines = 1
-            )
-            Text(
-                text = track.artists.joinToString { it.name },
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.7f),
-                maxLines = 1
-            )
-        }
-        IconButton(onClick = onMoreClick) {
-            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_content_desc), tint = Color.White.copy(alpha = 0.7f))
-        }
-    }
-}
+
 
 @FormFactorPreviews
 @Composable

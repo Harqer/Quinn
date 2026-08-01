@@ -485,7 +485,7 @@ export class LyriaCamera extends LitElement {
         },
         body: JSON.stringify({
           title,
-          artist: this.currentUser?.displayName || "Quinn Creator",
+          artist: this.currentUser?.displayName || "Mave Creator",
           vibe,
           imageUrl: imageUrl || "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100&auto=format&fit=crop&q=60"
         })
@@ -1207,7 +1207,7 @@ export class LyriaCamera extends LitElement {
     return html`
       <div id="splash">
         <span class="material-icons-round splash-icon">video_camera_front</span>
-        <h1 class="splash-title">Quinn Camera Director</h1>
+        <h1 class="splash-title">Mave Camera Director</h1>
         <p class="splash-desc">
           Turn your camera feed into live generative music. Experience beautiful soundscapes evolving synchronously with your visual surroundings.
         </p>
@@ -1258,7 +1258,7 @@ export class LyriaCamera extends LitElement {
         <div id="top-nav-bar">
           <div class="brand">
             <span class="material-icons-round brand-icon text-indigo-400 animate-pulse">auto_awesome</span>
-            <span class="brand-name">Quinn Director</span>
+            <span class="brand-name">Mave Director</span>
             <div class="status-pill ${this.wearableActive ? "wearable" : "standard"}">
               <span class="status-dot"></span>
               <span class="status-text">
@@ -1477,10 +1477,10 @@ export class LyriaCamera extends LitElement {
       <div class="android-flow-welcome">
         <div class="android-spotify-logo-container">
           <span class="material-icons-round logo-soundwave text-emerald-400 font-icon-large">room_service</span>
-          <span class="spotify-logo-text">Quinn</span>
+          <span class="spotify-logo-text">Mave</span>
         </div>
         
-        <h1 class="welcome-heading">Millions of Songs.<br/>Free on Quinn.</h1>
+        <h1 class="welcome-heading">Millions of Songs.<br/>Free on Mave.</h1>
         
         <div class="welcome-buttons-container">
           <button class="welcome-btn-primary" @click=${() => this.androidFlowStep = "email"}>
@@ -1597,14 +1597,14 @@ export class LyriaCamera extends LitElement {
               <span class="material-icons-round name-check-icon text-emerald-400">check_circle</span>
             ` : ""}
           </div>
-          <span class="form-subtext">This appears on your Quinn profile.</span>
+          <span class="form-subtext">This appears on your Mave profile.</span>
           
           <div class="terms-agreement-block">
             <p class="terms-paragraph">
-              By tapping on "Create account", you agree to the Quinn <span class="text-emerald-400 font-bold underline cursor-pointer">Terms of Use</span>.
+              By tapping on "Create account", you agree to the Mave <span class="text-emerald-400 font-bold underline cursor-pointer">Terms of Use</span>.
             </p>
             <p class="terms-paragraph mt-2">
-              To learn more about how Quinn collects, uses, shares and protects your personal data, please see the <span class="text-emerald-400 font-bold underline cursor-pointer">Privacy Policy</span>.
+              To learn more about how Mave collects, uses, shares and protects your personal data, please see the <span class="text-emerald-400 font-bold underline cursor-pointer">Privacy Policy</span>.
             </p>
           </div>
           
@@ -1615,7 +1615,7 @@ export class LyriaCamera extends LitElement {
               .checked=${this.androidOptInNews}
               @change=${(e: any) => this.androidOptInNews = e.target.checked}
             />
-            <label for="opt-news">Please send me news and offers from Quinn.</label>
+            <label for="opt-news">Please send me news and offers from Mave.</label>
           </div>
           
           <div class="checkbox-form-row">
@@ -1625,7 +1625,7 @@ export class LyriaCamera extends LitElement {
               .checked=${this.androidOptInShare}
               @change=${(e: any) => this.androidOptInShare = e.target.checked}
             />
-            <label for="opt-share">Share my registration data with Quinn's content providers for marketing purposes.</label>
+            <label for="opt-share">Share my registration data with Mave's content providers for marketing purposes.</label>
           </div>
           
           <button 
@@ -2067,7 +2067,7 @@ export class LyriaCamera extends LitElement {
                 <span style="font-weight: bold;">Add to Spotify Playlist</span>
               </button>
             ` : html`
-              <button class="options-menu-item" @click=${() => { this.isAndroidOptionsMenuOpen = false; this.dispatchError("Added to your local Quinn library! (Connect your Spotify under the 'Your Library' tab to sync playlists.)"); }}>
+              <button class="options-menu-item" @click=${() => { this.isAndroidOptionsMenuOpen = false; this.dispatchError("Added to your local Mave library! (Connect your Spotify under the 'Your Library' tab to sync playlists.)"); }}>
                 <span class="material-icons-round">playlist_add</span>
                 <span>Add to playlist</span>
               </button>
@@ -2297,7 +2297,7 @@ export class LyriaCamera extends LitElement {
         }
         
         this.voiceStatus = "idle";
-        this.dispatchError(`Quinn: Commenced orchestrating ${vibe}`);
+        this.dispatchError(`Mave: Commenced orchestrating ${vibe}`);
       } else {
         // Fallback simulation
         const mockPrompts = [
@@ -2311,7 +2311,7 @@ export class LyriaCamera extends LitElement {
           void this.togglePlayback();
         }
         this.voiceStatus = "idle";
-        this.dispatchError(`Quinn: Simulating orchestrating ${vibe}`);
+        this.dispatchError(`Mave: Simulating orchestrating ${vibe}`);
       }
     } catch (err: any) {
       console.warn("[ANDROID_FLOW] Failed to post text command, running simulation fallback:", err);
@@ -2326,7 +2326,7 @@ export class LyriaCamera extends LitElement {
         void this.togglePlayback();
       }
       this.voiceStatus = "idle";
-      this.dispatchError(`Quinn: Simulating orchestrating ${vibe}`);
+      this.dispatchError(`Mave: Simulating orchestrating ${vibe}`);
     }
   }
 
@@ -4178,7 +4178,7 @@ export class LyriaCamera extends LitElement {
     return html`
       <div class="community-viewport animate-fade-in">
         <div class="community-hero">
-          <h1 class="community-hero-title">Quinn Community Stage</h1>
+          <h1 class="community-hero-title">Mave Community Stage</h1>
           <p class="community-hero-desc">
             Vibe and co-create live with other artists! Play shared generative tracks or publish your own custom AI orchestrations directly to the public feed.
           </p>
@@ -4498,7 +4498,7 @@ export class LyriaCamera extends LitElement {
                       <span class="material-icons-round" style="font-size: 14px; color: white;">auto_awesome</span>
                     </div>
                     <div style="flex: 1; min-width: 0;">
-                      <div class="playlist-name-val" style="font-size: 10px; font-weight: bold; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Quinn Wearables Vibes (Auto)</div>
+                      <div class="playlist-name-val" style="font-size: 10px; font-weight: bold; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mave Wearables Vibes (Auto)</div>
                       <div class="playlist-tracks-count" style="font-size: 8px; color: #71717a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Smart dynamic auto-generated playlist</div>
                     </div>
                     <span class="material-icons-round check-icon" style="font-size: 16px; color: ${this.selectedSpotifyPlaylistId === '' ? '#1db954' : '#4b5563'};">${this.selectedSpotifyPlaylistId === '' ? 'check_circle' : 'radio_button_unchecked'}</span>

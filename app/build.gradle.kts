@@ -37,11 +37,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders["mwdat_application_id"] = mwdatApplicationId
+        manifestPlaceholders["mwdat_client_token"] = mwdatClientToken
         vectorDrawables {
             useSupportLibrary = true
         }
-        manifestPlaceholders["mwdat_application_id"] = mwdatApplicationId
-        manifestPlaceholders["mwdat_client_token"] = mwdatClientToken
     }
 
     testOptions {
@@ -67,16 +68,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs += listOf(
-            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi"
-        )
-    }
+
     packaging {
         jniLibs {
-            useLegacyPackaging = true
             keepDebugSymbols.add("**/*.so")
         }
     }
@@ -85,6 +79,10 @@ android {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        freeCompilerArgs.addAll(
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+        )
     }
 }
 

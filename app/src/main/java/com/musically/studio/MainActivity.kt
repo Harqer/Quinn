@@ -1,4 +1,6 @@
 package com.musically.studio
+
+import com.musically.studio.ui.*
 import android.Manifest
 import android.content.Intent
 import android.os.Build
@@ -55,6 +57,12 @@ class MainActivity : ComponentActivity() {
     private val permissionsGranted = mutableStateOf(false)
     private lateinit var mainViewModel: MainViewModel
     private var controllerFuture: ListenableFuture<MediaController>? = null
+    
+    // Telemetry and Gesture properties for Meta Wearables SDK
+    var currentBatteryLevel: Int = -1
+    var isWearDetected: Boolean = false
+    var lastLoggedGesture: String? = null
+    var isAppSwitcherOpen: Boolean = false
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -135,6 +143,18 @@ class MainActivity : ComponentActivity() {
         
         if (!prompt.isNullOrBlank()) {
             viewModel.sendTextCommand(prompt)
+        }
+    }
+
+    fun handleTelemetryUpdate(battery: Int, onHead: Boolean, usbConnected: Boolean) {
+        currentBatteryLevel = battery
+        isWearDetected = onHead
+    }
+
+    fun registerGesture(gesture: String) {
+        lastLoggedGesture = gesture
+        if (gesture == "middle_finger_to_thumb_hold") {
+            isAppSwitcherOpen = !isAppSwitcherOpen
         }
     }
 

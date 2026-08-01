@@ -15,7 +15,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class MaveFunctions @Inject constructor(
-    @ApplicationContext private val applicationContext: Context
+    @param:ApplicationContext private val applicationContext: Context
 ) {
 
     private fun launchMainActivity(destination: String? = null, prompt: String? = null) {

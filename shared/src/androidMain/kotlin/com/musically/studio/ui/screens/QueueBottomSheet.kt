@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.MainViewModel
+import com.musically.studio.ui.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

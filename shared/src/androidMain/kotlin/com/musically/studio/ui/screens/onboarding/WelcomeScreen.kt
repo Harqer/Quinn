@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.ui.MainViewModel
+import com.musically.studio.ui.*
 import com.musically.studio.ui.components.atoms.MaveButton
 import com.musically.studio.ui.theme.MaveStyles
 import androidx.compose.foundation.style.styleable

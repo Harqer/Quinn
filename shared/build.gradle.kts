@@ -14,7 +14,6 @@ kotlin {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
             freeCompilerArgs.addAll(
                 "-opt-in=androidx.compose.foundation.style.ExperimentalFoundationStyleApi",
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
                 "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
                 "-opt-in=androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi"
             )
@@ -125,7 +124,7 @@ kotlin {
             implementation(libs.android.billing)
         }
         
-        val androidUnitTest by getting {
+        val androidUnitTest = getByName("androidUnitTest") {
             dependencies {
                 implementation(libs.junit)
                 implementation(libs.kotlinx.coroutines.test)

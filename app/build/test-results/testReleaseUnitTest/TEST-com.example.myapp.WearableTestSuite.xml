@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.myapp.WearableTestSuite" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-07-31T05:49:03" hostname="kofi" time="21.467">
-  <properties/>
-  <testcase name="testGestureSubscribersAndAppSwitcher" classname="com.example.myapp.WearableTestSuite" time="20.655"/>
-  <testcase name="testMockDeviceConnectionAndTelemetry" classname="com.example.myapp.WearableTestSuite" time="0.767"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -81,6 +81,16 @@ class DataConnectRepository @Inject constructor(
         }
     }
 
+    fun getLikedTracks(): Flow<List<GetLikedTracksQuery.Data.LikedTracksItem>> = flow {
+        try {
+            val response = connector.getLikedTracks.execute()
+            emit(response.data.likedTracks)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to fetch liked tracks from DC")
+            emit(emptyList())
+        }
+    }
+
     suspend fun createTrack(title: String, albumId: String, audioUrl: String, isCommunity: Boolean) {
         try {
             connector.createTrack.execute(

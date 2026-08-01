@@ -1,5 +1,7 @@
 package com.musically.studio.ui.screens.onboarding
 
+import com.musically.studio.ui.*
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
