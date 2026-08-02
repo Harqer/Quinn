@@ -1,10 +1,11 @@
 {
-  "projectId": "gen-lang-client-0845285230",
-  "appId": "1:308686295148:web:465f7976c2e4c9a4dc8849",
-  "apiKey": "AIzaSyBJNXztwWJooBz6zbQCYdDw6nk9Mw2WLo4",
-  "authDomain": "gen-lang-client-0845285230.firebaseapp.com",
-  "storageBucket": "gen-lang-client-0845285230.firebasestorage.app",
-  "messagingSenderId": "308686295148",
+  "projectId": "musically-studio",
+  "appId": "1:759854762539:web:a6b5cc1ec6c267614cf86e",
+  "databaseURL": "https://musically-studio-default-rtdb.firebaseio.com",
+  "storageBucket": "musically-studio.firebasestorage.app",
+  "apiKey": "AIzaSyAUdh1aIXuLNBx3GucRz-DKFXYP6d-jB4Y",
+  "authDomain": "musically-studio.firebaseapp.com",
+  "messagingSenderId": "759854762539",
   "measurementId": "",
-  "oAuthClientId": "308686295148-548qb7a9duuclus67saeb5jp3akvo2cu.apps.googleusercontent.com"
+  "oAuthClientId": "759854762539-ralu2gin45k87gi3qm0t9spug55tsfqt.apps.googleusercontent.com"
 }

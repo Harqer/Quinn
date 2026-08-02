@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.appfunctions.service.AppFunctionConfiguration
 import com.meta.wearable.dat.core.Wearables
 import com.musically.studio.appfunctions.MaveFunctions
-import com.musically.studio.engage.EngageBroadcastReceiver
 import com.musically.studio.logging.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
 import com.google.firebase.FirebaseApp
@@ -15,6 +14,12 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import timber.log.Timber
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import com.google.android.recaptcha.Recaptcha
+import com.google.android.recaptcha.RecaptchaClient
+import com.google.android.recaptcha.RecaptchaException
 
 @HiltAndroidApp
 class MyApplication : Application(), AppFunctionConfiguration.Provider {
@@ -25,6 +30,9 @@ class MyApplication : Application(), AppFunctionConfiguration.Provider {
         AppFunctionConfiguration.Builder()
             .addEnclosingClassFactory(MaveFunctions::class.java) { maveFunctions }
             .build()
+
+    private val recaptchaScope = CoroutineScope(Dispatchers.IO)
+
 
     override fun onCreate() {
         super.onCreate()
@@ -59,7 +67,21 @@ class MyApplication : Application(), AppFunctionConfiguration.Provider {
             Timber.e("Failed to initialize DAT: $error")
         }
 
+        
+        initializeRecaptchaClient()
+    }
 
-        EngageBroadcastReceiver.register(this)
+    private fun initializeRecaptchaClient() {
+        recaptchaScope.launch {
+            try {
+                val key = getString(R.string.recaptcha_key_id)
+                if (key != "REPLACE_WITH_YOUR_KEY") {
+                    val client = Recaptcha.fetchClient(this@MyApplication, key)
+                    com.musically.studio.ui.RecaptchaProvider.client = client
+                }
+            } catch (e: RecaptchaException) {
+                Timber.e(e, "Failed to initialize RecaptchaClient")
+            }
+        }
     }
 }

@@ -1,8 +1,10 @@
 mutation CreateTrack(
   $title: String!,
-  $albumId: String!,
+  $albumId: String,
   $audioUrl: String!,
   $coverUrl: String,
+  $durationMs: Int,
+  $prompt: String,
   $isCommunity: Boolean!
 ) @auth(level: USER) {
   track_insert(data: {
@@ -10,8 +12,9 @@ mutation CreateTrack(
     albumId: $albumId,
     audioUrl: $audioUrl,
     coverUrl: $coverUrl,
+    durationMs: $durationMs,
+    prompt: $prompt,
     isCommunity: $isCommunity,
-    durationMs: 0,
     ownerUid_expr: "auth.uid"
   })
 }
@@ -109,7 +112,7 @@ mutation RecordPayment(
 }
 
 mutation LikeTrack($trackId: String!) @auth(level: USER) {
-  likedTrack_insert(data: {
+  likedTrack_upsert(data: {
     userUid_expr: "auth.uid",
     trackId: $trackId
   })

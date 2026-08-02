@@ -1,4 +1,4 @@
-import { gemini15Flash, googleAI } from "@genkit-ai/google-genai";
+import { googleAI } from "@genkit-ai/google-genai";
 import { genkit, z } from "genkit";
 import { cacheVisionResult, getCachedVisionResult } from "../config/redis.js";
 import crypto from "crypto";
@@ -7,7 +7,7 @@ import { getSecret } from "../config/secrets.js";
 
 const ai = genkit({
     plugins: [googleAI({ apiKey: getSecret("GEMINI_API_KEY") as string })],
-    model: gemini15Flash, // Setting a default model
+    model: 'googleai/gemini-1.5-flash',
 });
 
 // Zod schemas for structured output
@@ -46,7 +46,7 @@ export const maveVisionFlow = ai.defineFlow(
         const prompt = `Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics. Avoid any technical jargon like 'neon' or 'proxy'. You support 70+ languages and should respond in the language corresponding to this locale: ${input.locale || 'en'}.`;
 
         const { text } = await ai.generate({
-            model: gemini15Flash,
+            model: 'googleai/gemini-1.5-flash',
             prompt: [{ text: prompt }, { media: { url: `data:image/jpeg;base64,${input.image}` } }],
             onChunk: (chunk) => {
                 sendChunk(chunk.text);
@@ -81,7 +81,7 @@ Visual Atmosphere: ${input.visionDescription}
 User Feedback: ${input.userFeedback || "Compose real-time music for this atmosphere"}`;
 
         const { output } = await ai.generate({
-            model: gemini15Flash,
+            model: 'googleai/gemini-1.5-flash',
             prompt: prompt,
             output: { schema: DirectorOutputSchema },
             onChunk: (chunk) => {
@@ -115,7 +115,7 @@ export const podcastNarratorFlow = ai.defineFlow(
             : `You are Mave, the narrator. Based on the visual vibe and user instructions, generate a short, engaging narrative segment (2-4 sentences) for 'Mave POV'. If user gave feedback, acknowledge it naturally in your tone. No technical jargon. You MUST respond in the language corresponding to this locale: ${input.locale || 'en'}.`;
 
         const { text } = await ai.generate({
-            model: gemini15Flash,
+            model: 'googleai/gemini-1.5-flash',
             system: systemPrompt,
             prompt: `Visual Vibe: ${input.visionDescription}${feedbackContext}`,
             onChunk: (chunk) => {
@@ -147,7 +147,7 @@ export const generateMusicFlow = ai.defineFlow(
 
         try {
             const metaRes = await ai.generate({
-                model: gemini15Flash,
+                model: 'googleai/gemini-1.5-flash',
                 prompt: `Generate a JSON object with 'trackName' and 'artistName' for a song described as: ${input.promptText}. Do not use markdown tags, just return the JSON.`,
                 output: { format: "json" },
             });

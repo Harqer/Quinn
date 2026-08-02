@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.DigitalCredential
+import androidx.credentials.ExperimentalDigitalCredentialApi
 import androidx.credentials.GetDigitalCredentialOption
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.compose.runtime.*
@@ -30,8 +31,6 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.OAuthProvider
-import com.musically.studio.R
-import com.musically.studio.engage.EngageBroadcastReceiver
 import com.musically.studio.ui.AuthSideEffect
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.navigation.MaveApp
@@ -42,6 +41,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.UUID
+import java.security.MessageDigest
+import androidx.credentials.exceptions.NoCredentialException
 
 import android.content.ComponentName
 import androidx.media3.session.MediaController
@@ -69,7 +70,11 @@ class MainActivity : ComponentActivity() {
     ) { permissions: Map<String, Boolean> ->
         val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
         val audioGranted = permissions[Manifest.permission.RECORD_AUDIO] ?: false
-        if (cameraGranted && audioGranted) {
+        val bluetoothGranted = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            permissions[Manifest.permission.BLUETOOTH_CONNECT] ?: false
+        } else true
+
+        if (cameraGranted && audioGranted && bluetoothGranted) {
             permissionsGranted.value = true
         }
     }
@@ -81,7 +86,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         window.isNavigationBarContrastEnforced = false
         
-        EngageBroadcastReceiver.register(this)
         
         setContent {
             mainViewModel = viewModel<MainViewModel>()
@@ -105,7 +109,8 @@ class MainActivity : ComponentActivity() {
                     when (effect) {
                         AuthSideEffect.LaunchGoogleSignIn -> launchGoogleSignIn()
                         AuthSideEffect.LaunchAppleSignIn -> launchAppleSignIn(mainViewModel)
-                        AuthSideEffect.LaunchVerifiedEmail -> launchVerifiedEmail(mainViewModel)
+                        is AuthSideEffect.LaunchMfaVerification -> mainViewModel.navigateTo(Route.MfaVerification)
+                        AuthSideEffect.LaunchVerifiedEmail -> { /* no-op or handled elsewhere */ }
 
                         // Navigation on sign-out and deletion is handled by UserProfileScreen's
                         // onSignedOut callback which routes to Route.Login. No additional
@@ -132,6 +137,21 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleIntent(intent: Intent, viewModel: MainViewModel) {
+        if (intent.action == Intent.ACTION_VIEW) {
+            val link = intent.dataString
+            if (link != null) {
+                val auth = FirebaseAuth.getInstance()
+                if (auth.isSignInWithEmailLink(link)) {
+                    viewModel.handleEmailLink(link) { success, _ ->
+                        if (success) {
+                            viewModel.navigateTo(Route.Home)
+                        }
+                    }
+                    return
+                }
+            }
+        }
+
         val destination = intent.getStringExtra("DESTINATION")
         val prompt = intent.getStringExtra("PROMPT")
         
@@ -165,12 +185,16 @@ class MainActivity : ComponentActivity() {
         controllerFuture = future
         
         future.addListener({
-            val controller = future.get()
-            controller.addListener(object : androidx.media3.common.Player.Listener {
-                override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-                    mainViewModel.setPlayingState(playWhenReady)
-                }
-            })
+            try {
+                val controller = future.get()
+                controller.addListener(object : androidx.media3.common.Player.Listener {
+                    override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                        mainViewModel.setPlayingState(playWhenReady)
+                    }
+                })
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to connect to PlaybackService MediaController")
+            }
         }, androidx.core.content.ContextCompat.getMainExecutor(this))
     }
 
@@ -180,14 +204,23 @@ class MainActivity : ComponentActivity() {
         controllerFuture = null
     }
 
+    @OptIn(ExperimentalDigitalCredentialApi::class)
     private fun launchGoogleSignIn() {
         lifecycleScope.launch {
             try {
+                val rawNonce = UUID.randomUUID().toString()
+                val bytes = rawNonce.toByteArray(Charsets.UTF_8)
+                val md = MessageDigest.getInstance("SHA-256")
+                val digest = md.digest(bytes)
+                val hashedNonce = digest.fold("") { str, it -> str + "%02x".format(it) }
+
                 val credentialManager = CredentialManager.create(this@MainActivity)
+                
                 val googleIdOption = GetGoogleIdOption.Builder()
-                    .setFilterByAuthorizedAccounts(false)
                     .setServerClientId(getString(R.string.google_web_client_id))
-                    .setAutoSelectEnabled(true)
+                    .setFilterByAuthorizedAccounts(false)
+                    .setNonce(hashedNonce)
+                    .setAutoSelectEnabled(false)
                     .build()
 
                 val request = GetCredentialRequest.Builder()
@@ -203,16 +236,36 @@ class MainActivity : ComponentActivity() {
                 if (credential is androidx.credentials.CustomCredential &&
                     credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                     val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                    mainViewModel.loginWithGoogle(googleIdTokenCredential.idToken) { success, _ ->
+                    mainViewModel.loginWithGoogle(googleIdTokenCredential.idToken, rawNonce) { success, errorMsg ->
                         if (success) {
                             mainViewModel.navigateTo(Route.Home)
+                        } else {
+                            Timber.e("Firebase login with Google credential failed: $errorMsg")
+                            android.widget.Toast.makeText(
+                                this@MainActivity,
+                                errorMsg ?: "Google sign in failed. Please try again.",
+                                android.widget.Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 } else {
-                    Timber.e("Unexpected type of credential")
+                    Timber.e("Unexpected type of credential: ${credential::class.java.name}")
                 }
+            } catch (e: androidx.credentials.exceptions.GetCredentialCancellationException) {
+                Timber.d("User cancelled Google Sign-In picker")
             } catch (e: Exception) {
-                Timber.e(e, "Google Sign-In failed")
+                Timber.e(e, "Google Sign-In failed via CredentialManager, falling back to Web OAuth")
+                val provider = OAuthProvider.newBuilder("google.com")
+                FirebaseAuth.getInstance().startActivityForSignInWithProvider(this@MainActivity, provider.build())
+                    .addOnSuccessListener { authResult ->
+                        mainViewModel.startRtdbSync()
+                        mainViewModel.navigateTo(Route.Home)
+                    }
+                    .addOnFailureListener { webErr ->
+                        Timber.e(webErr, "Fallback Web OAuth Sign-In failed")
+                        val message = "Google Sign-In failed: ${webErr.localizedMessage ?: "Unknown error"}"
+                        android.widget.Toast.makeText(this@MainActivity, message, android.widget.Toast.LENGTH_LONG).show()
+                    }
             }
         }
     }
@@ -232,81 +285,18 @@ class MainActivity : ComponentActivity() {
     private fun checkPermissions() {
         val permissions = mutableListOf(
             Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.POST_NOTIFICATIONS
+            Manifest.permission.RECORD_AUDIO
         )
-        permissions.add(Manifest.permission.BLUETOOTH_SCAN)
-        permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            permissions.add(Manifest.permission.BLUETOOTH_SCAN)
+            permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
+        }
         permissionLauncher.launch(permissions.toTypedArray())
     }
 
-    @OptIn(androidx.credentials.ExperimentalDigitalCredentialApi::class)
-    private fun launchVerifiedEmail(viewModel: MainViewModel) {
-        val credentialManager = CredentialManager.create(this)
-        val nonce = UUID.randomUUID().toString()
 
-        val openId4vpRequest = """
-        {
-          "requests": [
-            {
-              "protocol": "openid4vp-v1-unsigned",
-              "data": {
-                "response_type": "vp_token",
-                "response_mode": "dc_api",
-                "nonce": "$nonce",
-                "dcql_query": {
-                  "credentials": [
-                    {
-                      "id": "user_info_query",
-                      "format": "dc+sd-jwt",
-                       "meta": { 
-                          "vct_values": ["UserInfoCredential"] 
-                       },
-                      "claims": [ 
-                        {"path": ["email"]}, 
-                        {"path": ["name"]},  
-                        {"path": ["given_name"]},
-                        {"path": ["family_name"]},
-                        {"path": ["picture"]},
-                        {"path": ["hd"]},
-                        {"path": ["email_verified"]}
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          ]
-        }
-        """
-
-        val getDigitalCredentialOption = GetDigitalCredentialOption(requestJson = openId4vpRequest)
-        val request = GetCredentialRequest(listOf(getDigitalCredentialOption))
-
-        lifecycleScope.launch {
-            try {
-                val result = credentialManager.getCredential(this@MainActivity, request)
-                val credential = result.credential
-                if (credential is DigitalCredential) {
-                    val responseJsonString = credential.credentialJson
-                    viewModel.loginWithVerifiedEmail(responseJsonString, nonce) { success, error ->
-                         if (success) {
-                             Timber.i("Verified Login Success")
-                         } else {
-                             Timber.e("Verification failed: $error")
-                         }
-                    }
-                } else {
-                    Timber.e("Unexpected credential type")
-                }
-            } catch (e: androidx.credentials.exceptions.NoCredentialException) {
-                Timber.e(e, "No verified credentials found on device.")
-            } catch (e: GetCredentialException) {
-                Timber.e(e, "Verification failed")
-            } catch (e: Exception) {
-                Timber.e(e, "Error during verified email login")
-            }
-        }
-    }
 }
 

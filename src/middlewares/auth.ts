@@ -37,9 +37,7 @@ export const optionalFirebaseToken = async (
 ) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    // Generate server-side guest identity for Audio First experience
-    const guestId = `guest_${Math.random().toString(36).substring(2, 10)}`;
-    req.user = { uid: guestId, isGuest: true };
+    req.user = null;
     next();
     return;
   }
@@ -47,11 +45,12 @@ export const optionalFirebaseToken = async (
   const idToken = authHeader.split("Bearer ")[1];
   try {
     const decodedToken = await auth.verifyIdToken(idToken);
-    req.user = { ...decodedToken, isGuest: false };
+    const isAnonymous = decodedToken.firebase?.sign_in_provider === "anonymous";
+    req.user = { ...decodedToken, isGuest: isAnonymous };
     next();
   } catch (err) {
-    const guestId = `guest_${Math.random().toString(36).substring(2, 10)}`;
-    req.user = { uid: guestId, isGuest: true };
+    logger.warn("Invalid Firebase token provided in optional auth:", { error: err });
+    req.user = null;
     next();
   }
 };

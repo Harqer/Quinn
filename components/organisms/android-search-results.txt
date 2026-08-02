@@ -1,0 +1,58 @@
+
+  private renderAndroidSearchResults() {
+    const artists = [
+      { name: "The Beatles", type: "Artist", vibe: "classic pop rock harmonies and vintage chord progressions", img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100&auto=format&fit=crop&q=60" },
+      { name: "FKA twigs", type: "Artist", vibe: "dark glitch electronic art pop synth", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60" },
+      { name: "Hozier", type: "Artist", vibe: "indie folk blues guitar chords", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=60" },
+      { name: "Grimes", type: "Artist", vibe: "futuristic cyberpunk techno synthwave", img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=60" },
+      { name: "Childish Gambino", type: "Artist", vibe: "cozy lofi instrumental strings beats", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=60" },
+      { name: "Hayes", type: "Artist", vibe: "deep ambient chill electronic", img: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=60" },
+      { name: "Led Zeppelin", type: "Artist", vibe: "heavy overdrive vintage rock soundscapes", img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=60" }
+    ];
+
+    const filtered = artists.filter(a => 
+      a.name.toLowerCase().includes(this.androidSearchQuery.toLowerCase()) ||
+      a.vibe.toLowerCase().includes(this.androidSearchQuery.toLowerCase())
+    );
+
+    return html`
+      <div class="android-flow-search-results">
+        <div class="results-header-row">
+          <div class="results-search-wrapper">
+            <span class="material-icons-round search-active-icon">search</span>
+            <input 
+              type="text" 
+              class="results-search-field" 
+              placeholder="Search" 
+              .value=${this.androidSearchQuery}
+              @input=${(e: any) => this.androidSearchQuery = e.target.value}
+              autofocus
+            />
+          </div>
+          <button class="results-cancel-btn" @click=${() => { this.androidSearchQuery = ""; this.androidFlowStep = "search_home"; }}>
+            Cancel
+          </button>
+        </div>
+        
+        <div class="results-list-container">
+          ${filtered.length === 0 ? html`
+            <div class="results-empty">No results found for "${this.androidSearchQuery}"</div>
+          ` : filtered.map(artist => html`
+            <div class="result-item" @click=${() => {
+              if (artist.name === "The Beatles") {
+                this.androidFlowStep = "album_details";
+              } else {
+                this.playAndroidSong(artist.name, artist.name, artist.img, artist.vibe);
+              }
+            }}>
+              <img src="${artist.img}" class="result-avatar" />
+              <div class="result-meta">
+                <span class="result-name">${artist.name}</span>
+                <span class="result-subtitle">${artist.type} • Vibe: ${artist.vibe}</span>
+              </div>
+            </div>
+          `)}
+        </div>
+      </div>
+    `;
+  }

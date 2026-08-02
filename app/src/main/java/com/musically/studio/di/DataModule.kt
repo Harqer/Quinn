@@ -4,7 +4,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.musically.studio.dataconnect.DefaultConnector
 import com.musically.studio.dataconnect.getInstance
 import com.musically.studio.data.repository.DataConnectRepository
-import com.musically.studio.data.repository.AuthRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,9 +26,4 @@ object DataModule {
         return DataConnectRepository(connector)
     }
 
-    @Provides
-    @Singleton
-    fun provideAuthRepository(auth: FirebaseAuth): AuthRepository {
-        return AuthRepository(auth)
-    }
 }

@@ -1,0 +1,2608 @@
+extend type Mutation {
+  """
+  ✨ Insert a single `Album` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  album_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Album_Data!
+  ): Album_KeyOutput! @fdc_generated(from: "Album", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Artist` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  artist_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Artist_Data!
+  ): Artist_KeyOutput! @fdc_generated(from: "Artist", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Audiobook` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  audiobook_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Audiobook_Data!
+  ): Audiobook_KeyOutput! @fdc_generated(from: "Audiobook", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `AuthIdentity` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  authIdentity_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: AuthIdentity_Data!
+  ): AuthIdentity_KeyOutput! @fdc_generated(from: "AuthIdentity", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Author` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  author_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Author_Data!
+  ): Author_KeyOutput! @fdc_generated(from: "Author", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `BookmarkedTrack` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  bookmarkedTrack_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: BookmarkedTrack_Data!
+  ): BookmarkedTrack_KeyOutput! @fdc_generated(from: "BookmarkedTrack", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `CameraCapture` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  cameraCapture_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: CameraCapture_Data!
+  ): CameraCapture_KeyOutput! @fdc_generated(from: "CameraCapture", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Category` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  category_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Category_Data!
+  ): Category_KeyOutput! @fdc_generated(from: "Category", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Chapter` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  chapter_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Chapter_Data!
+  ): Chapter_KeyOutput! @fdc_generated(from: "Chapter", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Episode` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  episode_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Episode_Data!
+  ): Episode_KeyOutput! @fdc_generated(from: "Episode", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `LikedTrack` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  likedTrack_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: LikedTrack_Data!
+  ): LikedTrack_KeyOutput! @fdc_generated(from: "LikedTrack", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `MusicCategory` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  musicCategory_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: MusicCategory_Data!
+  ): MusicCategory_KeyOutput! @fdc_generated(from: "MusicCategory", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `PaymentHistory` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  paymentHistory_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: PaymentHistory_Data!
+  ): PaymentHistory_KeyOutput! @fdc_generated(from: "PaymentHistory", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Playlist` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  playlist_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Playlist_Data!
+  ): Playlist_KeyOutput! @fdc_generated(from: "Playlist", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `PlaylistEntry` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  playlistEntry_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: PlaylistEntry_Data!
+  ): PlaylistEntry_KeyOutput! @fdc_generated(from: "PlaylistEntry", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `PodcastCategory` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  podcastCategory_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: PodcastCategory_Data!
+  ): PodcastCategory_KeyOutput! @fdc_generated(from: "PodcastCategory", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Show` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  show_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Show_Data!
+  ): Show_KeyOutput! @fdc_generated(from: "Show", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Track` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  track_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Track_Data!
+  ): Track_KeyOutput! @fdc_generated(from: "Track", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `TrackArtist` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  trackArtist_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: TrackArtist_Data!
+  ): TrackArtist_KeyOutput! @fdc_generated(from: "TrackArtist", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `User` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `UserEpisodeProgress` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userEpisodeProgress_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: UserEpisodeProgress_Data!
+  ): UserEpisodeProgress_KeyOutput! @fdc_generated(from: "UserEpisodeProgress", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `UserSettings` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userSettings_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: UserSettings_Data!
+  ): UserSettings_KeyOutput! @fdc_generated(from: "UserSettings", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `VideoDigestion` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  videoDigestion_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: VideoDigestion_Data!
+  ): VideoDigestion_KeyOutput! @fdc_generated(from: "VideoDigestion", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `Album` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  album_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Album_Data!]!
+  ): [Album_KeyOutput!]! @fdc_generated(from: "Album", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Artist` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  artist_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Artist_Data!]!
+  ): [Artist_KeyOutput!]! @fdc_generated(from: "Artist", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Audiobook` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  audiobook_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Audiobook_Data!]!
+  ): [Audiobook_KeyOutput!]! @fdc_generated(from: "Audiobook", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `AuthIdentity` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  authIdentity_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [AuthIdentity_Data!]!
+  ): [AuthIdentity_KeyOutput!]! @fdc_generated(from: "AuthIdentity", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Author` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  author_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Author_Data!]!
+  ): [Author_KeyOutput!]! @fdc_generated(from: "Author", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `BookmarkedTrack` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  bookmarkedTrack_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [BookmarkedTrack_Data!]!
+  ): [BookmarkedTrack_KeyOutput!]! @fdc_generated(from: "BookmarkedTrack", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `CameraCapture` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  cameraCapture_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [CameraCapture_Data!]!
+  ): [CameraCapture_KeyOutput!]! @fdc_generated(from: "CameraCapture", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Category` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  category_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Category_Data!]!
+  ): [Category_KeyOutput!]! @fdc_generated(from: "Category", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Chapter` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  chapter_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Chapter_Data!]!
+  ): [Chapter_KeyOutput!]! @fdc_generated(from: "Chapter", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Episode` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  episode_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Episode_Data!]!
+  ): [Episode_KeyOutput!]! @fdc_generated(from: "Episode", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `LikedTrack` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  likedTrack_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [LikedTrack_Data!]!
+  ): [LikedTrack_KeyOutput!]! @fdc_generated(from: "LikedTrack", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `MusicCategory` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  musicCategory_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [MusicCategory_Data!]!
+  ): [MusicCategory_KeyOutput!]! @fdc_generated(from: "MusicCategory", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `PaymentHistory` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  paymentHistory_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [PaymentHistory_Data!]!
+  ): [PaymentHistory_KeyOutput!]! @fdc_generated(from: "PaymentHistory", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Playlist` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  playlist_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Playlist_Data!]!
+  ): [Playlist_KeyOutput!]! @fdc_generated(from: "Playlist", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `PlaylistEntry` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  playlistEntry_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [PlaylistEntry_Data!]!
+  ): [PlaylistEntry_KeyOutput!]! @fdc_generated(from: "PlaylistEntry", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `PodcastCategory` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  podcastCategory_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [PodcastCategory_Data!]!
+  ): [PodcastCategory_KeyOutput!]! @fdc_generated(from: "PodcastCategory", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Show` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  show_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Show_Data!]!
+  ): [Show_KeyOutput!]! @fdc_generated(from: "Show", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Track` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  track_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Track_Data!]!
+  ): [Track_KeyOutput!]! @fdc_generated(from: "Track", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `TrackArtist` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  trackArtist_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [TrackArtist_Data!]!
+  ): [TrackArtist_KeyOutput!]! @fdc_generated(from: "TrackArtist", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `User` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `UserEpisodeProgress` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userEpisodeProgress_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [UserEpisodeProgress_Data!]!
+  ): [UserEpisodeProgress_KeyOutput!]! @fdc_generated(from: "UserEpisodeProgress", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `UserSettings` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userSettings_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [UserSettings_Data!]!
+  ): [UserSettings_KeyOutput!]! @fdc_generated(from: "UserSettings", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `VideoDigestion` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  videoDigestion_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [VideoDigestion_Data!]!
+  ): [VideoDigestion_KeyOutput!]! @fdc_generated(from: "VideoDigestion", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert or update a single `Album` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Album`.
+  """
+  album_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Album_Data!
+  ): Album_KeyOutput! @fdc_generated(from: "Album", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Artist` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Artist`.
+  """
+  artist_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Artist_Data!
+  ): Artist_KeyOutput! @fdc_generated(from: "Artist", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Audiobook` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Audiobook`.
+  """
+  audiobook_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Audiobook_Data!
+  ): Audiobook_KeyOutput! @fdc_generated(from: "Audiobook", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `AuthIdentity` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `AuthIdentity`.
+  """
+  authIdentity_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: AuthIdentity_Data!
+  ): AuthIdentity_KeyOutput! @fdc_generated(from: "AuthIdentity", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Author` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Author`.
+  """
+  author_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Author_Data!
+  ): Author_KeyOutput! @fdc_generated(from: "Author", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `BookmarkedTrack` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `BookmarkedTrack`.
+  """
+  bookmarkedTrack_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: BookmarkedTrack_Data!
+  ): BookmarkedTrack_KeyOutput! @fdc_generated(from: "BookmarkedTrack", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `CameraCapture` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `CameraCapture`.
+  """
+  cameraCapture_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: CameraCapture_Data!
+  ): CameraCapture_KeyOutput! @fdc_generated(from: "CameraCapture", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Category` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Category`.
+  """
+  category_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Category_Data!
+  ): Category_KeyOutput! @fdc_generated(from: "Category", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Chapter` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Chapter`.
+  """
+  chapter_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Chapter_Data!
+  ): Chapter_KeyOutput! @fdc_generated(from: "Chapter", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Episode` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Episode`.
+  """
+  episode_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Episode_Data!
+  ): Episode_KeyOutput! @fdc_generated(from: "Episode", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `LikedTrack` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `LikedTrack`.
+  """
+  likedTrack_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: LikedTrack_Data!
+  ): LikedTrack_KeyOutput! @fdc_generated(from: "LikedTrack", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `MusicCategory` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `MusicCategory`.
+  """
+  musicCategory_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: MusicCategory_Data!
+  ): MusicCategory_KeyOutput! @fdc_generated(from: "MusicCategory", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `PaymentHistory` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `PaymentHistory`.
+  """
+  paymentHistory_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: PaymentHistory_Data!
+  ): PaymentHistory_KeyOutput! @fdc_generated(from: "PaymentHistory", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Playlist` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Playlist`.
+  """
+  playlist_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Playlist_Data!
+  ): Playlist_KeyOutput! @fdc_generated(from: "Playlist", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `PlaylistEntry` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `PlaylistEntry`.
+  """
+  playlistEntry_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: PlaylistEntry_Data!
+  ): PlaylistEntry_KeyOutput! @fdc_generated(from: "PlaylistEntry", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `PodcastCategory` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `PodcastCategory`.
+  """
+  podcastCategory_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: PodcastCategory_Data!
+  ): PodcastCategory_KeyOutput! @fdc_generated(from: "PodcastCategory", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Show` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Show`.
+  """
+  show_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Show_Data!
+  ): Show_KeyOutput! @fdc_generated(from: "Show", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Track` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Track`.
+  """
+  track_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Track_Data!
+  ): Track_KeyOutput! @fdc_generated(from: "Track", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `TrackArtist` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `TrackArtist`.
+  """
+  trackArtist_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: TrackArtist_Data!
+  ): TrackArtist_KeyOutput! @fdc_generated(from: "TrackArtist", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `User` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `UserEpisodeProgress` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserEpisodeProgress`.
+  """
+  userEpisodeProgress_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: UserEpisodeProgress_Data!
+  ): UserEpisodeProgress_KeyOutput! @fdc_generated(from: "UserEpisodeProgress", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `UserSettings` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserSettings`.
+  """
+  userSettings_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: UserSettings_Data!
+  ): UserSettings_KeyOutput! @fdc_generated(from: "UserSettings", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `VideoDigestion` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `VideoDigestion`.
+  """
+  videoDigestion_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: VideoDigestion_Data!
+  ): VideoDigestion_KeyOutput! @fdc_generated(from: "VideoDigestion", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update `Album` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Album`.
+  """
+  album_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Album_Data!]!
+  ): [Album_KeyOutput!]! @fdc_generated(from: "Album", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Artist` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Artist`.
+  """
+  artist_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Artist_Data!]!
+  ): [Artist_KeyOutput!]! @fdc_generated(from: "Artist", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Audiobook` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Audiobook`.
+  """
+  audiobook_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Audiobook_Data!]!
+  ): [Audiobook_KeyOutput!]! @fdc_generated(from: "Audiobook", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `AuthIdentity` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `AuthIdentity`.
+  """
+  authIdentity_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [AuthIdentity_Data!]!
+  ): [AuthIdentity_KeyOutput!]! @fdc_generated(from: "AuthIdentity", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Author` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Author`.
+  """
+  author_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Author_Data!]!
+  ): [Author_KeyOutput!]! @fdc_generated(from: "Author", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `BookmarkedTrack` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `BookmarkedTrack`.
+  """
+  bookmarkedTrack_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [BookmarkedTrack_Data!]!
+  ): [BookmarkedTrack_KeyOutput!]! @fdc_generated(from: "BookmarkedTrack", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `CameraCapture` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `CameraCapture`.
+  """
+  cameraCapture_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [CameraCapture_Data!]!
+  ): [CameraCapture_KeyOutput!]! @fdc_generated(from: "CameraCapture", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Category` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Category`.
+  """
+  category_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Category_Data!]!
+  ): [Category_KeyOutput!]! @fdc_generated(from: "Category", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Chapter` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Chapter`.
+  """
+  chapter_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Chapter_Data!]!
+  ): [Chapter_KeyOutput!]! @fdc_generated(from: "Chapter", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Episode` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Episode`.
+  """
+  episode_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Episode_Data!]!
+  ): [Episode_KeyOutput!]! @fdc_generated(from: "Episode", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `LikedTrack` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `LikedTrack`.
+  """
+  likedTrack_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [LikedTrack_Data!]!
+  ): [LikedTrack_KeyOutput!]! @fdc_generated(from: "LikedTrack", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `MusicCategory` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `MusicCategory`.
+  """
+  musicCategory_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [MusicCategory_Data!]!
+  ): [MusicCategory_KeyOutput!]! @fdc_generated(from: "MusicCategory", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `PaymentHistory` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `PaymentHistory`.
+  """
+  paymentHistory_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [PaymentHistory_Data!]!
+  ): [PaymentHistory_KeyOutput!]! @fdc_generated(from: "PaymentHistory", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Playlist` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Playlist`.
+  """
+  playlist_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Playlist_Data!]!
+  ): [Playlist_KeyOutput!]! @fdc_generated(from: "Playlist", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `PlaylistEntry` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `PlaylistEntry`.
+  """
+  playlistEntry_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [PlaylistEntry_Data!]!
+  ): [PlaylistEntry_KeyOutput!]! @fdc_generated(from: "PlaylistEntry", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `PodcastCategory` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `PodcastCategory`.
+  """
+  podcastCategory_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [PodcastCategory_Data!]!
+  ): [PodcastCategory_KeyOutput!]! @fdc_generated(from: "PodcastCategory", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Show` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Show`.
+  """
+  show_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Show_Data!]!
+  ): [Show_KeyOutput!]! @fdc_generated(from: "Show", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Track` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Track`.
+  """
+  track_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Track_Data!]!
+  ): [Track_KeyOutput!]! @fdc_generated(from: "Track", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `TrackArtist` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `TrackArtist`.
+  """
+  trackArtist_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [TrackArtist_Data!]!
+  ): [TrackArtist_KeyOutput!]! @fdc_generated(from: "TrackArtist", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `User` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `UserEpisodeProgress` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserEpisodeProgress`.
+  """
+  userEpisodeProgress_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [UserEpisodeProgress_Data!]!
+  ): [UserEpisodeProgress_KeyOutput!]! @fdc_generated(from: "UserEpisodeProgress", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `UserSettings` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserSettings`.
+  """
+  userSettings_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [UserSettings_Data!]!
+  ): [UserSettings_KeyOutput!]! @fdc_generated(from: "UserSettings", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `VideoDigestion` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `VideoDigestion`.
+  """
+  videoDigestion_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [VideoDigestion_Data!]!
+  ): [VideoDigestion_KeyOutput!]! @fdc_generated(from: "VideoDigestion", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `Album` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Album` or `null` if not found.
+  """
+  album_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Album_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Album_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Album_Data!
+  ): Album_KeyOutput @fdc_generated(from: "Album", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Artist` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Artist` or `null` if not found.
+  """
+  artist_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Artist_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Artist_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Artist_Data!
+  ): Artist_KeyOutput @fdc_generated(from: "Artist", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Audiobook` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Audiobook` or `null` if not found.
+  """
+  audiobook_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Audiobook_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Audiobook_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Audiobook_Data!
+  ): Audiobook_KeyOutput @fdc_generated(from: "Audiobook", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `AuthIdentity` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `AuthIdentity` or `null` if not found.
+  """
+  authIdentity_update(
+    """
+    The key used to identify the object.
+    """
+    key: AuthIdentity_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AuthIdentity_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: AuthIdentity_Data!
+  ): AuthIdentity_KeyOutput @fdc_generated(from: "AuthIdentity", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Author` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Author` or `null` if not found.
+  """
+  author_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Author_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Author_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Author_Data!
+  ): Author_KeyOutput @fdc_generated(from: "Author", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `BookmarkedTrack` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `BookmarkedTrack` or `null` if not found.
+  """
+  bookmarkedTrack_update(
+    """
+    The key used to identify the object.
+    """
+    key: BookmarkedTrack_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: BookmarkedTrack_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: BookmarkedTrack_Data!
+  ): BookmarkedTrack_KeyOutput @fdc_generated(from: "BookmarkedTrack", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `CameraCapture` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `CameraCapture` or `null` if not found.
+  """
+  cameraCapture_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: CameraCapture_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: CameraCapture_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: CameraCapture_Data!
+  ): CameraCapture_KeyOutput @fdc_generated(from: "CameraCapture", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Category` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Category` or `null` if not found.
+  """
+  category_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Category_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Category_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Category_Data!
+  ): Category_KeyOutput @fdc_generated(from: "Category", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Chapter` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Chapter` or `null` if not found.
+  """
+  chapter_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Chapter_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Chapter_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Chapter_Data!
+  ): Chapter_KeyOutput @fdc_generated(from: "Chapter", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Episode` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Episode` or `null` if not found.
+  """
+  episode_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Episode_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Episode_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Episode_Data!
+  ): Episode_KeyOutput @fdc_generated(from: "Episode", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `LikedTrack` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `LikedTrack` or `null` if not found.
+  """
+  likedTrack_update(
+    """
+    The key used to identify the object.
+    """
+    key: LikedTrack_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: LikedTrack_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: LikedTrack_Data!
+  ): LikedTrack_KeyOutput @fdc_generated(from: "LikedTrack", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `MusicCategory` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `MusicCategory` or `null` if not found.
+  """
+  musicCategory_update(
+    """
+    The key used to identify the object.
+    """
+    key: MusicCategory_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: MusicCategory_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: MusicCategory_Data!
+  ): MusicCategory_KeyOutput @fdc_generated(from: "MusicCategory", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `PaymentHistory` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `PaymentHistory` or `null` if not found.
+  """
+  paymentHistory_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: PaymentHistory_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PaymentHistory_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: PaymentHistory_Data!
+  ): PaymentHistory_KeyOutput @fdc_generated(from: "PaymentHistory", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Playlist` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Playlist` or `null` if not found.
+  """
+  playlist_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Playlist_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Playlist_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Playlist_Data!
+  ): Playlist_KeyOutput @fdc_generated(from: "Playlist", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `PlaylistEntry` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `PlaylistEntry` or `null` if not found.
+  """
+  playlistEntry_update(
+    """
+    The key used to identify the object.
+    """
+    key: PlaylistEntry_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PlaylistEntry_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: PlaylistEntry_Data!
+  ): PlaylistEntry_KeyOutput @fdc_generated(from: "PlaylistEntry", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `PodcastCategory` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `PodcastCategory` or `null` if not found.
+  """
+  podcastCategory_update(
+    """
+    The key used to identify the object.
+    """
+    key: PodcastCategory_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PodcastCategory_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: PodcastCategory_Data!
+  ): PodcastCategory_KeyOutput @fdc_generated(from: "PodcastCategory", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Show` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Show` or `null` if not found.
+  """
+  show_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Show_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Show_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Show_Data!
+  ): Show_KeyOutput @fdc_generated(from: "Show", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Track` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Track` or `null` if not found.
+  """
+  track_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Track_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Track_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Track_Data!
+  ): Track_KeyOutput @fdc_generated(from: "Track", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `TrackArtist` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `TrackArtist` or `null` if not found.
+  """
+  trackArtist_update(
+    """
+    The key used to identify the object.
+    """
+    key: TrackArtist_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: TrackArtist_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: TrackArtist_Data!
+  ): TrackArtist_KeyOutput @fdc_generated(from: "TrackArtist", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `User` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `User` or `null` if not found.
+  """
+  user_update(
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: User_Data!
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `UserEpisodeProgress` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `UserEpisodeProgress` or `null` if not found.
+  """
+  userEpisodeProgress_update(
+    """
+    The key used to identify the object.
+    """
+    key: UserEpisodeProgress_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserEpisodeProgress_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: UserEpisodeProgress_Data!
+  ): UserEpisodeProgress_KeyOutput @fdc_generated(from: "UserEpisodeProgress", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `UserSettings` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `UserSettings` or `null` if not found.
+  """
+  userSettings_update(
+    """
+    The key used to identify the object.
+    """
+    key: UserSettings_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserSettings_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: UserSettings_Data!
+  ): UserSettings_KeyOutput @fdc_generated(from: "UserSettings", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `VideoDigestion` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `VideoDigestion` or `null` if not found.
+  """
+  videoDigestion_update(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: VideoDigestion_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: VideoDigestion_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: VideoDigestion_Data!
+  ): VideoDigestion_KeyOutput @fdc_generated(from: "VideoDigestion", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update `Album` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  album_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Album_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Album_Data!
+  ): Int! @fdc_generated(from: "Album", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Artist` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  artist_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Artist_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Artist_Data!
+  ): Int! @fdc_generated(from: "Artist", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Audiobook` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  audiobook_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Audiobook_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Audiobook_Data!
+  ): Int! @fdc_generated(from: "Audiobook", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `AuthIdentity` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  authIdentity_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: AuthIdentity_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: AuthIdentity_Data!
+  ): Int! @fdc_generated(from: "AuthIdentity", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Author` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  author_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Author_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Author_Data!
+  ): Int! @fdc_generated(from: "Author", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `BookmarkedTrack` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  bookmarkedTrack_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: BookmarkedTrack_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: BookmarkedTrack_Data!
+  ): Int! @fdc_generated(from: "BookmarkedTrack", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `CameraCapture` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  cameraCapture_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: CameraCapture_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: CameraCapture_Data!
+  ): Int! @fdc_generated(from: "CameraCapture", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Category` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  category_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Category_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Category_Data!
+  ): Int! @fdc_generated(from: "Category", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Chapter` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  chapter_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Chapter_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Chapter_Data!
+  ): Int! @fdc_generated(from: "Chapter", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Episode` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  episode_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Episode_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Episode_Data!
+  ): Int! @fdc_generated(from: "Episode", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `LikedTrack` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  likedTrack_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: LikedTrack_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: LikedTrack_Data!
+  ): Int! @fdc_generated(from: "LikedTrack", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `MusicCategory` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  musicCategory_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: MusicCategory_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: MusicCategory_Data!
+  ): Int! @fdc_generated(from: "MusicCategory", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `PaymentHistory` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  paymentHistory_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: PaymentHistory_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: PaymentHistory_Data!
+  ): Int! @fdc_generated(from: "PaymentHistory", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Playlist` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  playlist_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Playlist_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Playlist_Data!
+  ): Int! @fdc_generated(from: "Playlist", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `PlaylistEntry` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  playlistEntry_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: PlaylistEntry_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: PlaylistEntry_Data!
+  ): Int! @fdc_generated(from: "PlaylistEntry", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `PodcastCategory` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  podcastCategory_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: PodcastCategory_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: PodcastCategory_Data!
+  ): Int! @fdc_generated(from: "PodcastCategory", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Show` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  show_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Show_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Show_Data!
+  ): Int! @fdc_generated(from: "Show", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Track` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  track_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Track_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Track_Data!
+  ): Int! @fdc_generated(from: "Track", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `TrackArtist` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  trackArtist_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: TrackArtist_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: TrackArtist_Data!
+  ): Int! @fdc_generated(from: "TrackArtist", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `User` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  user_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: User_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: User_Data!
+  ): Int! @fdc_generated(from: "User", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `UserEpisodeProgress` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  userEpisodeProgress_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: UserEpisodeProgress_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: UserEpisodeProgress_Data!
+  ): Int! @fdc_generated(from: "UserEpisodeProgress", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `UserSettings` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  userSettings_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: UserSettings_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: UserSettings_Data!
+  ): Int! @fdc_generated(from: "UserSettings", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `VideoDigestion` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  videoDigestion_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: VideoDigestion_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: VideoDigestion_Data!
+  ): Int! @fdc_generated(from: "VideoDigestion", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Delete a single `Album` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  album_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Album_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Album_FirstRow
+  ): Album_KeyOutput @fdc_generated(from: "Album", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Artist` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  artist_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Artist_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Artist_FirstRow
+  ): Artist_KeyOutput @fdc_generated(from: "Artist", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Audiobook` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  audiobook_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Audiobook_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Audiobook_FirstRow
+  ): Audiobook_KeyOutput @fdc_generated(from: "Audiobook", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `AuthIdentity` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  authIdentity_delete(
+    """
+    The key used to identify the object.
+    """
+    key: AuthIdentity_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AuthIdentity_FirstRow
+  ): AuthIdentity_KeyOutput @fdc_generated(from: "AuthIdentity", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Author` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  author_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Author_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Author_FirstRow
+  ): Author_KeyOutput @fdc_generated(from: "Author", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `BookmarkedTrack` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  bookmarkedTrack_delete(
+    """
+    The key used to identify the object.
+    """
+    key: BookmarkedTrack_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: BookmarkedTrack_FirstRow
+  ): BookmarkedTrack_KeyOutput @fdc_generated(from: "BookmarkedTrack", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `CameraCapture` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  cameraCapture_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: CameraCapture_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: CameraCapture_FirstRow
+  ): CameraCapture_KeyOutput @fdc_generated(from: "CameraCapture", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Category` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  category_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Category_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Category_FirstRow
+  ): Category_KeyOutput @fdc_generated(from: "Category", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Chapter` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  chapter_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Chapter_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Chapter_FirstRow
+  ): Chapter_KeyOutput @fdc_generated(from: "Chapter", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Episode` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  episode_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Episode_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Episode_FirstRow
+  ): Episode_KeyOutput @fdc_generated(from: "Episode", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `LikedTrack` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  likedTrack_delete(
+    """
+    The key used to identify the object.
+    """
+    key: LikedTrack_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: LikedTrack_FirstRow
+  ): LikedTrack_KeyOutput @fdc_generated(from: "LikedTrack", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `MusicCategory` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  musicCategory_delete(
+    """
+    The key used to identify the object.
+    """
+    key: MusicCategory_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: MusicCategory_FirstRow
+  ): MusicCategory_KeyOutput @fdc_generated(from: "MusicCategory", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `PaymentHistory` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  paymentHistory_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: PaymentHistory_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PaymentHistory_FirstRow
+  ): PaymentHistory_KeyOutput @fdc_generated(from: "PaymentHistory", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Playlist` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  playlist_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Playlist_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Playlist_FirstRow
+  ): Playlist_KeyOutput @fdc_generated(from: "Playlist", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `PlaylistEntry` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  playlistEntry_delete(
+    """
+    The key used to identify the object.
+    """
+    key: PlaylistEntry_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PlaylistEntry_FirstRow
+  ): PlaylistEntry_KeyOutput @fdc_generated(from: "PlaylistEntry", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `PodcastCategory` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  podcastCategory_delete(
+    """
+    The key used to identify the object.
+    """
+    key: PodcastCategory_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PodcastCategory_FirstRow
+  ): PodcastCategory_KeyOutput @fdc_generated(from: "PodcastCategory", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Show` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  show_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Show_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Show_FirstRow
+  ): Show_KeyOutput @fdc_generated(from: "Show", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Track` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  track_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Track_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Track_FirstRow
+  ): Track_KeyOutput @fdc_generated(from: "Track", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `TrackArtist` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  trackArtist_delete(
+    """
+    The key used to identify the object.
+    """
+    key: TrackArtist_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: TrackArtist_FirstRow
+  ): TrackArtist_KeyOutput @fdc_generated(from: "TrackArtist", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `User` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  user_delete(
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `UserEpisodeProgress` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  userEpisodeProgress_delete(
+    """
+    The key used to identify the object.
+    """
+    key: UserEpisodeProgress_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserEpisodeProgress_FirstRow
+  ): UserEpisodeProgress_KeyOutput @fdc_generated(from: "UserEpisodeProgress", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `UserSettings` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  userSettings_delete(
+    """
+    The key used to identify the object.
+    """
+    key: UserSettings_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserSettings_FirstRow
+  ): UserSettings_KeyOutput @fdc_generated(from: "UserSettings", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `VideoDigestion` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  videoDigestion_delete(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: VideoDigestion_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: VideoDigestion_FirstRow
+  ): VideoDigestion_KeyOutput @fdc_generated(from: "VideoDigestion", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `Album` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  album_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Album_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Album", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Artist` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  artist_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Artist_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Artist", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Audiobook` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  audiobook_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Audiobook_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Audiobook", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `AuthIdentity` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  authIdentity_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: AuthIdentity_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "AuthIdentity", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Author` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  author_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Author_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Author", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `BookmarkedTrack` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  bookmarkedTrack_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: BookmarkedTrack_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "BookmarkedTrack", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `CameraCapture` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  cameraCapture_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: CameraCapture_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "CameraCapture", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Category` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  category_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Category_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Category", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Chapter` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  chapter_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Chapter_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Chapter", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Episode` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  episode_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Episode_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Episode", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `LikedTrack` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  likedTrack_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: LikedTrack_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "LikedTrack", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `MusicCategory` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  musicCategory_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: MusicCategory_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "MusicCategory", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `PaymentHistory` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  paymentHistory_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: PaymentHistory_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "PaymentHistory", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Playlist` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  playlist_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Playlist_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Playlist", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `PlaylistEntry` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  playlistEntry_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: PlaylistEntry_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "PlaylistEntry", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `PodcastCategory` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  podcastCategory_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: PodcastCategory_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "PodcastCategory", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Show` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  show_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Show_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Show", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Track` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  track_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Track_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Track", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `TrackArtist` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  trackArtist_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: TrackArtist_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "TrackArtist", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `User` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  user_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: User_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "User", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `UserEpisodeProgress` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  userEpisodeProgress_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: UserEpisodeProgress_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "UserEpisodeProgress", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `UserSettings` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  userSettings_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: UserSettings_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "UserSettings", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `VideoDigestion` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  videoDigestion_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: VideoDigestion_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "VideoDigestion", purpose: DELETE_MULTIPLE)
+}

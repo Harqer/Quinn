@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    id("com.google.firebase.crashlytics")
 }
 
 val localProperties = Properties().apply {
@@ -20,6 +21,14 @@ val localProperties = Properties().apply {
 // until you distribute via a release channel (see Wearables Developer Center).
 // Never hardcode real values here; set them via local.properties (gitignored)
 // or CI secrets (MWDAT_APPLICATION_ID / MWDAT_CLIENT_TOKEN env vars).
+// Keystore properties
+val keystoreProperties = Properties().apply {
+    val keystorePropertiesFile = File(rootDir, "keystore.properties")
+    if (keystorePropertiesFile.exists()) {
+        keystorePropertiesFile.inputStream().use { load(it) }
+    }
+}
+
 val mwdatApplicationId: String =
     System.getenv("MWDAT_APPLICATION_ID") ?: (localProperties.getProperty("mwdat_application_id") ?: "0")
 val mwdatClientToken: String =
@@ -51,8 +60,18 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(keystoreProperties.getProperty("storeFile") ?: "release.jks")
+            storePassword = keystoreProperties.getProperty("storePassword") ?: System.getenv("KEYSTORE_PASSWORD")
+            keyAlias = keystoreProperties.getProperty("keyAlias") ?: "release"
+            keyPassword = keystoreProperties.getProperty("keyPassword") ?: System.getenv("KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -108,12 +127,14 @@ dependencies {
     kspTest(libs.hilt.compiler)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.functions)
     implementation(libs.firebase.database)
     implementation(libs.firebase.ai)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.appcheck.playintegrity)
     implementation(libs.firebase.appcheck.debug)
+    implementation(libs.recaptcha)
     
     implementation(libs.timber)
     implementation(libs.androidx.identity)

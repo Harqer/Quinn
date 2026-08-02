@@ -1,0 +1,152 @@
+extend type Album {
+  """
+  ✨ Implicit foreign key field based on `Album`.`primaryArtist`. It must match the value of `Artist`.`id`. See `@ref` for how to customize it.
+  """
+  primaryArtistId: String! @fdc_generated(from: "Album.primaryArtist", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Audiobook {
+  """
+  ✨ Implicit foreign key field based on `Audiobook`.`author`. It must match the value of `Author`.`id`. See `@ref` for how to customize it.
+  """
+  authorId: String! @fdc_generated(from: "Audiobook.author", purpose: IMPLICIT_REF_FIELD)
+}
+extend type AuthIdentity {
+  """
+  ✨ Implicit foreign key field based on `AuthIdentity`.`user`. It must match the value of `User`.`uid`. See `@ref` for how to customize it.
+  """
+  userUid: String! @fdc_generated(from: "AuthIdentity.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type BookmarkedTrack {
+  """
+  ✨ Implicit foreign key field based on `BookmarkedTrack`.`user`. It must match the value of `User`.`uid`. See `@ref` for how to customize it.
+  """
+  userUid: String! @fdc_generated(from: "BookmarkedTrack.user", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `BookmarkedTrack`.`track`. It must match the value of `Track`.`id`. See `@ref` for how to customize it.
+  """
+  trackId: String! @fdc_generated(from: "BookmarkedTrack.track", purpose: IMPLICIT_REF_FIELD)
+}
+extend type CameraCapture {
+  """
+  ✨ Implicit foreign key field based on `CameraCapture`.`generatedTrack`. It must match the value of `Track`.`id`. See `@ref` for how to customize it.
+  """
+  generatedTrackId: String @fdc_generated(from: "CameraCapture.generatedTrack", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `CameraCapture`.`user`. It must match the value of `User`.`uid`. See `@ref` for how to customize it.
+  """
+  userUid: String! @fdc_generated(from: "CameraCapture.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Chapter {
+  """
+  ✨ Implicit foreign key field based on `Chapter`.`audiobook`. It must match the value of `Audiobook`.`id`. See `@ref` for how to customize it.
+  """
+  audiobookId: String! @fdc_generated(from: "Chapter.audiobook", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Episode {
+  """
+  ✨ Implicit foreign key field based on `Episode`.`show`. It must match the value of `Show`.`id`. See `@ref` for how to customize it.
+  """
+  showId: String! @fdc_generated(from: "Episode.show", purpose: IMPLICIT_REF_FIELD)
+}
+extend type LikedTrack {
+  """
+  ✨ Implicit foreign key field based on `LikedTrack`.`user`. It must match the value of `User`.`uid`. See `@ref` for how to customize it.
+  """
+  userUid: String! @fdc_generated(from: "LikedTrack.user", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `LikedTrack`.`track`. It must match the value of `Track`.`id`. See `@ref` for how to customize it.
+  """
+  trackId: String! @fdc_generated(from: "LikedTrack.track", purpose: IMPLICIT_REF_FIELD)
+}
+extend type MusicCategory {
+  """
+  ✨ Implicit foreign key field based on `MusicCategory`.`track`. It must match the value of `Track`.`id`. See `@ref` for how to customize it.
+  """
+  trackId: String! @fdc_generated(from: "MusicCategory.track", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `MusicCategory`.`category`. It must match the value of `Category`.`id`. See `@ref` for how to customize it.
+  """
+  categoryId: String! @fdc_generated(from: "MusicCategory.category", purpose: IMPLICIT_REF_FIELD)
+}
+extend type PaymentHistory {
+  """
+  ✨ Implicit foreign key field based on `PaymentHistory`.`user`. It must match the value of `User`.`uid`. See `@ref` for how to customize it.
+  """
+  userUid: String! @fdc_generated(from: "PaymentHistory.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Playlist {
+  """
+  ✨ Implicit foreign key field based on `Playlist`.`owner`. It must match the value of `User`.`uid`. See `@ref` for how to customize it.
+  """
+  ownerUid: String! @fdc_generated(from: "Playlist.owner", purpose: IMPLICIT_REF_FIELD)
+}
+extend type PlaylistEntry {
+  """
+  ✨ Implicit foreign key field based on `PlaylistEntry`.`playlist`. It must match the value of `Playlist`.`id`. See `@ref` for how to customize it.
+  """
+  playlistId: String! @fdc_generated(from: "PlaylistEntry.playlist", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `PlaylistEntry`.`track`. It must match the value of `Track`.`id`. See `@ref` for how to customize it.
+  """
+  trackId: String! @fdc_generated(from: "PlaylistEntry.track", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `PlaylistEntry`.`addedBy`. It must match the value of `User`.`uid`. See `@ref` for how to customize it.
+  """
+  addedByUid: String! @fdc_generated(from: "PlaylistEntry.addedBy", purpose: IMPLICIT_REF_FIELD)
+}
+extend type PodcastCategory {
+  """
+  ✨ Implicit foreign key field based on `PodcastCategory`.`show`. It must match the value of `Show`.`id`. See `@ref` for how to customize it.
+  """
+  showId: String! @fdc_generated(from: "PodcastCategory.show", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `PodcastCategory`.`category`. It must match the value of `Category`.`id`. See `@ref` for how to customize it.
+  """
+  categoryId: String! @fdc_generated(from: "PodcastCategory.category", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Track {
+  """
+  ✨ Implicit foreign key field based on `Track`.`album`. It must match the value of `Album`.`id`. See `@ref` for how to customize it.
+  """
+  albumId: String! @fdc_generated(from: "Track.album", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Track`.`owner`. It must match the value of `User`.`uid`. See `@ref` for how to customize it.
+  """
+  ownerUid: String! @fdc_generated(from: "Track.owner", purpose: IMPLICIT_REF_FIELD)
+}
+extend type TrackArtist {
+  """
+  ✨ Implicit foreign key field based on `TrackArtist`.`track`. It must match the value of `Track`.`id`. See `@ref` for how to customize it.
+  """
+  trackId: String! @fdc_generated(from: "TrackArtist.track", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `TrackArtist`.`artist`. It must match the value of `Artist`.`id`. See `@ref` for how to customize it.
+  """
+  artistId: String! @fdc_generated(from: "TrackArtist.artist", purpose: IMPLICIT_REF_FIELD)
+}
+extend type UserEpisodeProgress {
+  """
+  ✨ Implicit foreign key field based on `UserEpisodeProgress`.`user`. It must match the value of `User`.`uid`. See `@ref` for how to customize it.
+  """
+  userUid: String! @fdc_generated(from: "UserEpisodeProgress.user", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `UserEpisodeProgress`.`episode`. It must match the value of `Episode`.`id`. See `@ref` for how to customize it.
+  """
+  episodeId: String! @fdc_generated(from: "UserEpisodeProgress.episode", purpose: IMPLICIT_REF_FIELD)
+}
+extend type UserSettings {
+  """
+  ✨ Implicit foreign key field based on `UserSettings`.`user`. It must match the value of `User`.`uid`. See `@ref` for how to customize it.
+  """
+  userUid: String! @fdc_generated(from: "UserSettings.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type VideoDigestion {
+  """
+  ✨ Implicit foreign key field based on `VideoDigestion`.`generatedTrack`. It must match the value of `Track`.`id`. See `@ref` for how to customize it.
+  """
+  generatedTrackId: String @fdc_generated(from: "VideoDigestion.generatedTrack", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `VideoDigestion`.`user`. It must match the value of `User`.`uid`. See `@ref` for how to customize it.
+  """
+  userUid: String! @fdc_generated(from: "VideoDigestion.user", purpose: IMPLICIT_REF_FIELD)
+}

@@ -1,0 +1,34 @@
+
+
+  private renderAndroidEmail() {
+    return html`
+      <div class="android-flow-inputs">
+        <div class="android-flow-header">
+          <button class="android-header-back" @click=${() => this.androidFlowStep = "welcome"}>
+            <span class="material-icons-round">arrow_back</span>
+          </button>
+          <span class="android-header-title">Create account</span>
+        </div>
+        
+        <div class="input-form-container">
+          <h2 class="form-title">What's your email?</h2>
+          <input 
+            type="email" 
+            class="form-text-input" 
+            placeholder="Email" 
+            .value=${this.androidEmail}
+            @input=${(e: any) => this.androidEmail = e.target.value}
+          />
+          <span class="form-subtext">You'll need to confirm this email later.</span>
+          
+          <button 
+            class="form-next-btn ${this.androidEmail.includes("@") ? "active" : ""}"
+            ?disabled=${!this.androidEmail.includes("@")}
+            @click=${() => this.androidFlowStep = "password"}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    `;
+  }

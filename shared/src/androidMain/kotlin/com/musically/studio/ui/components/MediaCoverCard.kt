@@ -38,8 +38,9 @@ fun MediaCoverCard(
     onLikeClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
     onDownloadClick: () -> Unit = {},
-    onMoreClick: () -> Unit = {},
+    onRemixClick: (() -> Unit)? = null,
     onPlayClick: () -> Unit = {},
+    onMoreClick: () -> Unit = {},
     style: Style = Style
 ) {
     val interactionSource = androidx.compose.runtime.remember { MutableInteractionSource() }
@@ -149,7 +150,21 @@ fun MediaCoverCard(
                         )
                     }
                     
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    if (onRemixClick != null) {
+                        FloatingActionButton(
+                            onClick = onRemixClick,
+                            containerColor = Color(0xFF10b981), // Emerald
+                            contentColor = Color.White,
+                            modifier = Modifier.size(40.dp),
+                            shape = CircleShape,
+                            elevation = FloatingActionButtonDefaults.elevation(0.dp)
+                        ) {
+                            Icon(imageVector = androidx.compose.material.icons.Icons.Filled.PlayArrow, contentDescription = "Remix", modifier = Modifier.size(24.dp))
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
                     
                     // Prominent Play Button (Spotify style)
                     FloatingActionButton(

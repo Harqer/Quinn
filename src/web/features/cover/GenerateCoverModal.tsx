@@ -162,7 +162,7 @@ export const GenerateCoverModal: React.FC<GenerateCoverModalProps> = ({
               <button
                 key={preset}
                 onClick={() => setSelectedPreset(preset)}
-                className={`px-3.5 py-1.5 rounded-full flex items-center justify-center transition-all ${
+                className={`px-3.5 py-1.5 rounded-full flex items-center justify-center gap-1.5 transition-all ${
                   selectedPreset === preset
                     ? 'bg-[#1db954] text-black shadow-sm font-bold'
                     : 'bg-[#282a2b] text-text-secondary hover:bg-surface-container hover:text-white'
@@ -170,6 +170,7 @@ export const GenerateCoverModal: React.FC<GenerateCoverModalProps> = ({
                 title={preset}
               >
                 <Icon name={iconName} size="sm" />
+                <span className="text-xs font-semibold">{preset}</span>
               </button>
               );
             })}
@@ -199,13 +200,15 @@ export const GenerateCoverModal: React.FC<GenerateCoverModalProps> = ({
             title={`Create ${coverType === 'image' ? 'Image' : 'Video'} Cover`}
           >
             <Icon name="auto_awesome" size="lg" />
+            <span>{isGenerating ? "Synthesizing Cover..." : `Create ${coverType === 'image' ? 'Image' : 'Video'} Cover`}</span>
           </button>
           <button
             onClick={() => setCoverType(coverType === 'image' ? 'video' : 'image')}
-            className="text-xs text-text-secondary hover:text-white py-1 transition-colors flex items-center justify-center"
+            className="text-xs text-text-secondary hover:text-white py-1 transition-colors flex items-center justify-center gap-1"
             title={coverType === 'image' ? t('cover.switchToVideo') : t('cover.switchToImage')}
           >
             <Icon name="swap_horiz" size="md" />
+            <span>{coverType === 'image' ? t('cover.switchToVideo') : t('cover.switchToImage')}</span>
           </button>
         </div>
       </div>

@@ -1,0 +1,1579 @@
+extend type Query {
+  """
+  ✨ Look up a single `Album` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  album(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Album_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Album_FirstRow
+  ): Album @fdc_generated(from: "Album", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Artist` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  artist(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Artist_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Artist_FirstRow
+  ): Artist @fdc_generated(from: "Artist", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Audiobook` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  audiobook(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Audiobook_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Audiobook_FirstRow
+  ): Audiobook @fdc_generated(from: "Audiobook", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `AuthIdentity` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  authIdentity(
+    """
+    The key used to identify the object.
+    """
+    key: AuthIdentity_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AuthIdentity_FirstRow
+  ): AuthIdentity @fdc_generated(from: "AuthIdentity", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Author` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  author(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Author_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Author_FirstRow
+  ): Author @fdc_generated(from: "Author", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `BookmarkedTrack` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  bookmarkedTrack(
+    """
+    The key used to identify the object.
+    """
+    key: BookmarkedTrack_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: BookmarkedTrack_FirstRow
+  ): BookmarkedTrack @fdc_generated(from: "BookmarkedTrack", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `CameraCapture` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  cameraCapture(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: CameraCapture_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: CameraCapture_FirstRow
+  ): CameraCapture @fdc_generated(from: "CameraCapture", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Category` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  category(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Category_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Category_FirstRow
+  ): Category @fdc_generated(from: "Category", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Chapter` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  chapter(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Chapter_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Chapter_FirstRow
+  ): Chapter @fdc_generated(from: "Chapter", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Episode` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  episode(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Episode_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Episode_FirstRow
+  ): Episode @fdc_generated(from: "Episode", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `LikedTrack` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  likedTrack(
+    """
+    The key used to identify the object.
+    """
+    key: LikedTrack_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: LikedTrack_FirstRow
+  ): LikedTrack @fdc_generated(from: "LikedTrack", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `MusicCategory` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  musicCategory(
+    """
+    The key used to identify the object.
+    """
+    key: MusicCategory_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: MusicCategory_FirstRow
+  ): MusicCategory @fdc_generated(from: "MusicCategory", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `PaymentHistory` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  paymentHistory(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: PaymentHistory_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PaymentHistory_FirstRow
+  ): PaymentHistory @fdc_generated(from: "PaymentHistory", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Playlist` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  playlist(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Playlist_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Playlist_FirstRow
+  ): Playlist @fdc_generated(from: "Playlist", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `PlaylistEntry` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  playlistEntry(
+    """
+    The key used to identify the object.
+    """
+    key: PlaylistEntry_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PlaylistEntry_FirstRow
+  ): PlaylistEntry @fdc_generated(from: "PlaylistEntry", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `PodcastCategory` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  podcastCategory(
+    """
+    The key used to identify the object.
+    """
+    key: PodcastCategory_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PodcastCategory_FirstRow
+  ): PodcastCategory @fdc_generated(from: "PodcastCategory", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Show` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  show(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Show_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Show_FirstRow
+  ): Show @fdc_generated(from: "Show", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Track` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  track(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: Track_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Track_FirstRow
+  ): Track @fdc_generated(from: "Track", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `TrackArtist` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  trackArtist(
+    """
+    The key used to identify the object.
+    """
+    key: TrackArtist_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: TrackArtist_FirstRow
+  ): TrackArtist @fdc_generated(from: "TrackArtist", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  user(
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `UserEpisodeProgress` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  userEpisodeProgress(
+    """
+    The key used to identify the object.
+    """
+    key: UserEpisodeProgress_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserEpisodeProgress_FirstRow
+  ): UserEpisodeProgress @fdc_generated(from: "UserEpisodeProgress", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `UserSettings` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  userSettings(
+    """
+    The key used to identify the object.
+    """
+    key: UserSettings_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserSettings_FirstRow
+  ): UserSettings @fdc_generated(from: "UserSettings", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `VideoDigestion` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  videoDigestion(
+    """
+    The unique ID of the object.
+    """
+    id: String
+
+    """
+    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
+    """
+    id_expr: String_Expr
+
+    """
+    The key used to identify the object.
+    """
+    key: VideoDigestion_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: VideoDigestion_FirstRow
+  ): VideoDigestion @fdc_generated(from: "VideoDigestion", purpose: QUERY_SINGLE)
+  """
+  ✨ List `Album` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  albums(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Album_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Album_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Album_Having
+  ): [Album!]! @fdc_generated(from: "Album", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Artist` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  artists(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Artist_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Artist_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Artist_Having
+  ): [Artist!]! @fdc_generated(from: "Artist", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Audiobook` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  audiobooks(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Audiobook_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Audiobook_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Audiobook_Having
+  ): [Audiobook!]! @fdc_generated(from: "Audiobook", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `AuthIdentity` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  authIdentities(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: AuthIdentity_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [AuthIdentity_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: AuthIdentity_Having
+  ): [AuthIdentity!]! @fdc_generated(from: "AuthIdentity", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Author` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  authors(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Author_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Author_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Author_Having
+  ): [Author!]! @fdc_generated(from: "Author", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `BookmarkedTrack` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  bookmarkedTracks(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: BookmarkedTrack_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [BookmarkedTrack_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: BookmarkedTrack_Having
+  ): [BookmarkedTrack!]! @fdc_generated(from: "BookmarkedTrack", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `CameraCapture` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  cameraCaptures(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: CameraCapture_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [CameraCapture_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: CameraCapture_Having
+  ): [CameraCapture!]! @fdc_generated(from: "CameraCapture", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Category` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  categories(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Category_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Category_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Category_Having
+  ): [Category!]! @fdc_generated(from: "Category", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Chapter` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  chapters(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Chapter_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Chapter_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Chapter_Having
+  ): [Chapter!]! @fdc_generated(from: "Chapter", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Episode` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  episodes(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Episode_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Episode_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Episode_Having
+  ): [Episode!]! @fdc_generated(from: "Episode", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `LikedTrack` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  likedTracks(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: LikedTrack_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [LikedTrack_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: LikedTrack_Having
+  ): [LikedTrack!]! @fdc_generated(from: "LikedTrack", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `MusicCategory` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  musicCategories(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: MusicCategory_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [MusicCategory_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: MusicCategory_Having
+  ): [MusicCategory!]! @fdc_generated(from: "MusicCategory", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `PaymentHistory` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  paymentHistories(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: PaymentHistory_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [PaymentHistory_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: PaymentHistory_Having
+  ): [PaymentHistory!]! @fdc_generated(from: "PaymentHistory", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Playlist` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  playlists(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Playlist_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Playlist_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Playlist_Having
+  ): [Playlist!]! @fdc_generated(from: "Playlist", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `PlaylistEntry` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  playlistEntries(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: PlaylistEntry_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [PlaylistEntry_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: PlaylistEntry_Having
+  ): [PlaylistEntry!]! @fdc_generated(from: "PlaylistEntry", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `PodcastCategory` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  podcastCategories(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: PodcastCategory_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [PodcastCategory_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: PodcastCategory_Having
+  ): [PodcastCategory!]! @fdc_generated(from: "PodcastCategory", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Show` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  shows(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Show_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Show_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Show_Having
+  ): [Show!]! @fdc_generated(from: "Show", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Track` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  tracks(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Track_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Track_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Track_Having
+  ): [Track!]! @fdc_generated(from: "Track", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `TrackArtist` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  trackArtists(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: TrackArtist_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [TrackArtist_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: TrackArtist_Having
+  ): [TrackArtist!]! @fdc_generated(from: "TrackArtist", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  users(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: User_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [User_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: User_Having
+  ): [User!]! @fdc_generated(from: "User", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `UserEpisodeProgress` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  userEpisodeProgresses(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserEpisodeProgress_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserEpisodeProgress_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserEpisodeProgress_Having
+  ): [UserEpisodeProgress!]! @fdc_generated(from: "UserEpisodeProgress", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `UserSettings` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  userSettingss(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserSettings_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserSettings_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserSettings_Having
+  ): [UserSettings!]! @fdc_generated(from: "UserSettings", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `VideoDigestion` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  videoDigestions(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: VideoDigestion_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [VideoDigestion_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: VideoDigestion_Having
+  ): [VideoDigestion!]! @fdc_generated(from: "VideoDigestion", purpose: QUERY_MULTIPLE)
+  """
+  ✨ Search for `Album` objects where fields with the @searchable directive contain a query string. Return selected fields, ordered by relevance of the query.
+  """
+  albums_search(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Album_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Album_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Album_Having
+
+    """
+    The search term to use.
+    """
+    query: String
+
+    """
+    Relevance threshold to use for search results. If a result has a relevance score below this threshold, it will not be returned.
+    """
+    relevanceThreshold: Float = 0
+
+    """
+    The query format for the search term.
+    """
+    queryFormat: Search_QueryFormat = QUERY
+  ): [Album!]! @fdc_generated(from: "Album", purpose: QUERY_MULTIPLE_BY_FULL_TEXT_SEARCH)
+  """
+  ✨ Search for `Artist` objects where fields with the @searchable directive contain a query string. Return selected fields, ordered by relevance of the query.
+  """
+  artists_search(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Artist_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Artist_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Artist_Having
+
+    """
+    The search term to use.
+    """
+    query: String
+
+    """
+    Relevance threshold to use for search results. If a result has a relevance score below this threshold, it will not be returned.
+    """
+    relevanceThreshold: Float = 0
+
+    """
+    The query format for the search term.
+    """
+    queryFormat: Search_QueryFormat = QUERY
+  ): [Artist!]! @fdc_generated(from: "Artist", purpose: QUERY_MULTIPLE_BY_FULL_TEXT_SEARCH)
+  """
+  ✨ Search for `Audiobook` objects where fields with the @searchable directive contain a query string. Return selected fields, ordered by relevance of the query.
+  """
+  audiobooks_search(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Audiobook_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Audiobook_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Audiobook_Having
+
+    """
+    The search term to use.
+    """
+    query: String
+
+    """
+    Relevance threshold to use for search results. If a result has a relevance score below this threshold, it will not be returned.
+    """
+    relevanceThreshold: Float = 0
+
+    """
+    The query format for the search term.
+    """
+    queryFormat: Search_QueryFormat = QUERY
+  ): [Audiobook!]! @fdc_generated(from: "Audiobook", purpose: QUERY_MULTIPLE_BY_FULL_TEXT_SEARCH)
+  """
+  ✨ Search for `Author` objects where fields with the @searchable directive contain a query string. Return selected fields, ordered by relevance of the query.
+  """
+  authors_search(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Author_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Author_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Author_Having
+
+    """
+    The search term to use.
+    """
+    query: String
+
+    """
+    Relevance threshold to use for search results. If a result has a relevance score below this threshold, it will not be returned.
+    """
+    relevanceThreshold: Float = 0
+
+    """
+    The query format for the search term.
+    """
+    queryFormat: Search_QueryFormat = QUERY
+  ): [Author!]! @fdc_generated(from: "Author", purpose: QUERY_MULTIPLE_BY_FULL_TEXT_SEARCH)
+  """
+  ✨ Search for `Episode` objects where fields with the @searchable directive contain a query string. Return selected fields, ordered by relevance of the query.
+  """
+  episodes_search(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Episode_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Episode_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Episode_Having
+
+    """
+    The search term to use.
+    """
+    query: String
+
+    """
+    Relevance threshold to use for search results. If a result has a relevance score below this threshold, it will not be returned.
+    """
+    relevanceThreshold: Float = 0
+
+    """
+    The query format for the search term.
+    """
+    queryFormat: Search_QueryFormat = QUERY
+  ): [Episode!]! @fdc_generated(from: "Episode", purpose: QUERY_MULTIPLE_BY_FULL_TEXT_SEARCH)
+  """
+  ✨ Search for `Show` objects where fields with the @searchable directive contain a query string. Return selected fields, ordered by relevance of the query.
+  """
+  shows_search(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Show_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Show_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Show_Having
+
+    """
+    The search term to use.
+    """
+    query: String
+
+    """
+    Relevance threshold to use for search results. If a result has a relevance score below this threshold, it will not be returned.
+    """
+    relevanceThreshold: Float = 0
+
+    """
+    The query format for the search term.
+    """
+    queryFormat: Search_QueryFormat = QUERY
+  ): [Show!]! @fdc_generated(from: "Show", purpose: QUERY_MULTIPLE_BY_FULL_TEXT_SEARCH)
+  """
+  ✨ Search for `Track` objects where fields with the @searchable directive contain a query string. Return selected fields, ordered by relevance of the query.
+  """
+  tracks_search(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Track_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Track_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Track_Having
+
+    """
+    The search term to use.
+    """
+    query: String
+
+    """
+    Relevance threshold to use for search results. If a result has a relevance score below this threshold, it will not be returned.
+    """
+    relevanceThreshold: Float = 0
+
+    """
+    The query format for the search term.
+    """
+    queryFormat: Search_QueryFormat = QUERY
+  ): [Track!]! @fdc_generated(from: "Track", purpose: QUERY_MULTIPLE_BY_FULL_TEXT_SEARCH)
+}

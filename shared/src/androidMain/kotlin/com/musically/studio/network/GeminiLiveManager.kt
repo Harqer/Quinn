@@ -213,6 +213,50 @@ class GeminiLiveManager(
         }
     }
 
+    fun sendVideoFrame(base64: String, mimeType: String = "image/jpeg") {
+        try {
+            val json = JSONObject()
+            val realtimeInput = JSONObject()
+            val inputVideo = JSONObject()
+            inputVideo.put("data", base64)
+            inputVideo.put("mimeType", mimeType)
+            realtimeInput.put("video", inputVideo)
+            json.put("realtimeInput", realtimeInput)
+            webSocket?.send(json.toString())
+        } catch (e: Exception) {
+            Timber.e(e, "Error sending video frame base64")
+        }
+    }
+
+    fun sendText(text: String) {
+        try {
+            val json = JSONObject()
+            val clientContent = JSONObject()
+            val turn = JSONObject()
+            turn.put("role", "user")
+            
+            val parts = org.json.JSONArray()
+            val part = JSONObject()
+            part.put("text", text)
+            parts.put(part)
+            
+            turn.put("parts", parts)
+            
+            val turns = org.json.JSONArray()
+            turns.put(turn)
+            
+            clientContent.put("turns", turns)
+            clientContent.put("turnComplete", true)
+            
+            json.put("clientContent", clientContent)
+            webSocket?.send(json.toString())
+        } catch (e: Exception) {
+            Timber.e(e, "Error sending text")
+        }
+    }
+
+    fun sendTextMessage(text: String) = sendText(text)
+
     fun sendResponse(callId: String, name: String, result: JSONObject) {
         try {
             val json = JSONObject()

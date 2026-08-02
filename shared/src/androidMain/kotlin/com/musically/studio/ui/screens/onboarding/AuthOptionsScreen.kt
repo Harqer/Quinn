@@ -70,14 +70,7 @@ fun AuthOptionsScreen(
                 style = MaveStyles.outlinedButton
             )
             
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            MaveButton(
-                text = "Continue with Apple",
-                onClick = onAppleClick,
-                modifier = Modifier.fillMaxWidth(),
-                style = MaveStyles.outlinedButton
-            )
+
             
             Spacer(modifier = Modifier.weight(1f))
             

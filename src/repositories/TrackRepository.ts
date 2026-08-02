@@ -1,21 +1,23 @@
 import { getRedis } from "../config/redis.js";
 import logger from "../config/logger.js";
 import crypto from "crypto";
-// Note: Firestore (db) has been removed as part of the backend Data Connect refactor.
 
-export interface Track {
+export interface RepositoryTrack {
   id: string;
   title: string;
-  artist: string;
-  vibe?: string;
-  type?: "music" | "podcast";
-  imageUrl?: string;
-  userId?: string;
-  createdAt: any;
+  artistName?: string;
+  albumTitle?: string;
+  audioUrl: string;
+  coverUrl?: string;
+  durationMs: number;
+  prompt?: string;
+  visibility: string;
+  isCommunity: boolean;
+  ownerUid?: string;
+  createdAt: string;
 }
 
 export class TrackRepository {
-
   /**
    * Generates a short code and maps it to a trackId in Redis.
    * This provides fast shortlink resolution without database contention.

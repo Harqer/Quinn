@@ -1,72 +1,40 @@
 package com.musically.studio.ui.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LibraryMusic
-import androidx.compose.material.icons.filled.PhoneAndroid
-import androidx.compose.material.icons.filled.Podcasts
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import androidx.compose.foundation.style.styleable
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Text
-
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.foundation.style.styleable
-import androidx.compose.foundation.style.rememberUpdatedStyleState
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import com.musically.studio.ui.theme.MaveStyles
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation3.runtime.NavEntry
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
-import androidx.navigation3.runtime.NavKey
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.scene.SceneStrategy
+import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import com.musically.studio.ui.MainViewModel
-import com.musically.studio.ui.*
-import com.musically.studio.ui.components.MiniPlayer
-import com.musically.studio.ui.screens.NowPlayingScreen
+import com.musically.studio.ui.bookmarkTrack
+import com.musically.studio.ui.components.organisms.AppBottomSheet
+import com.musically.studio.ui.components.organisms.AppDrawer
+import com.musically.studio.ui.components.organisms.AppNavigationSuite
+import com.musically.studio.ui.theme.MaveStyles
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,20 +43,17 @@ fun MaveApp(
     onAcknowledgePermissions: () -> Unit,
     hasPermissions: Boolean
 ) {
-    val adaptiveInfo = androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2()
-    val isExpanded = adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(840)
-
+    val adaptiveInfo = currentWindowAdaptiveInfoV2()
     val topLevelRoutes = setOf<Route>(Route.Welcome, Route.Home, Route.Discover, Route.Search, Route.Chat, Route.Podcast, Route.Devices, Route.Library)
-    val startRoute: Route = Route.Welcome
-
-    val sceneStrategies: List<androidx.navigation3.scene.SceneStrategy<Route>> = listOf(
-        BottomSheetSceneStrategy<Route>(),
-        androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy<Route>(),
-        androidx.navigation3.scene.SinglePaneSceneStrategy<Route>()
+    
+    val sceneStrategies: List<SceneStrategy<Route>> = listOf(
+        BottomSheetSceneStrategy(),
+        androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy(),
+        SinglePaneSceneStrategy()
     )
 
     val navigationState = rememberNavigationState(
-        startRoute = startRoute,
+        startRoute = Route.Welcome,
         topLevelRoutes = topLevelRoutes,
         serializer = androidx.savedstate.compose.serialization.serializers.MutableStateSerializer(Route.serializer())
     )
@@ -99,14 +64,11 @@ fun MaveApp(
     
     val scaffoldState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
-    val currentModality by viewModel.currentModality.collectAsStateWithLifecycle()
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.shouldExpandBottomSheet.collectLatest { expand ->
-            if (expand) {
-                scaffoldState.bottomSheetState.expand()
-            }
+            if (expand) scaffoldState.bottomSheetState.expand()
         }
     }
     
@@ -126,27 +88,16 @@ fun MaveApp(
     val showNavSuite = currentRoute in listOf(Route.Home, Route.Discover, Route.Search, Route.Chat, Route.Podcast, Route.Library, Route.Devices) || currentRoute is Route.AlbumView || currentRoute is Route.UserProfile
     
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
     val layoutType = if (showNavSuite) {
-        val defaultType = androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
-        if (defaultType == androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.NavigationDrawer) {
-            androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.None
-        } else {
-            defaultType
-        }
-    } else {
-        androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType.None
-    }
+        val defaultType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+        if (defaultType == NavigationSuiteType.NavigationDrawer) NavigationSuiteType.None else defaultType
+    } else NavigationSuiteType.None
 
     val entryProvider = maveEntryProvider(
         viewModel = viewModel,
         navigator = navigator,
         onAcknowledgePermissions = onAcknowledgePermissions,
-        onMenuClick = {
-            coroutineScope.launch {
-                drawerState.open()
-            }
-        },
+        onMenuClick = { coroutineScope.launch { drawerState.open() } },
         onLikeClick = { id -> viewModel.bookmarkTrack(id) },
         onDownloadClick = { id -> 
             val track = viewModel.tracks.value.find { it.id == id } ?: viewModel.communityTracks.value.find { it.id == id }
@@ -154,197 +105,40 @@ fun MaveApp(
             val request = android.app.DownloadManager.Request(url.toUri())
                 .setTitle(track?.name ?: "Unknown Track")
                 .setDescription("Downloading track")
+                .setDestinationInExternalPublicDir(android.os.Environment.DIRECTORY_DOWNLOADS, "${track?.name?.replace(" ", "_") ?: "Track"}.mp3")
                 .setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             val downloadManager = context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
             downloadManager.enqueue(request)
         }
     )
 
-    ModalNavigationDrawer(
+    AppDrawer(
         drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet(
-                modifier = Modifier.windowInsetsPadding(
-                    androidx.compose.foundation.layout.WindowInsets.safeDrawing.only(
-                        androidx.compose.foundation.layout.WindowInsetsSides.Top
-                    )
-                )
-            ) {
-                androidx.compose.foundation.layout.Spacer(Modifier.height(12.dp))
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                    label = { Text("Home") },
-                    selected = currentRoute == Route.Home,
-                    onClick = { 
-                        navigator.navigate(Route.Home) 
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Podcasts, contentDescription = null) },
-                    label = { Text("Discover") },
-                    selected = currentRoute == Route.Discover,
-                    onClick = { 
-                        navigator.navigate(Route.Discover) 
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    label = { Text("Search") },
-                    selected = currentRoute == Route.Search,
-                    onClick = { 
-                        navigator.navigate(Route.Search) 
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.AutoAwesome, contentDescription = null) },
-                    label = { Text("Mave") },
-                    selected = currentRoute == Route.Chat,
-                    onClick = { 
-                        navigator.navigate(Route.Chat) 
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Podcasts, contentDescription = null) },
-                    label = { Text("Podcast") },
-                    selected = currentRoute == Route.Podcast,
-                    onClick = { 
-                        navigator.navigate(Route.Podcast) 
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.PhoneAndroid, contentDescription = null) },
-                    label = { Text("Devices") },
-                    selected = currentRoute == Route.Devices,
-                    onClick = { 
-                        navigator.navigate(Route.Devices) 
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.LibraryMusic, contentDescription = null) },
-                    label = { Text("Library") },
-                    selected = currentRoute == Route.Library,
-                    onClick = { 
-                        navigator.navigate(Route.Library) 
-                        coroutineScope.launch { drawerState.close() }
-                    },
-                    modifier = Modifier.padding(androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp))
-                )
-            }
-        }
+        currentRoute = currentRoute,
+        navigator = navigator
     ) {
-
-    NavigationSuiteScaffold(
-        layoutType = layoutType,
-        navigationSuiteItems = {
-            item(
-                icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                label = { Text("Home") },
-                selected = currentRoute == Route.Home,
-                onClick = { navigator.navigate(Route.Home) }
-            )
-
-            item(
-                icon = { Icon(Icons.Default.Podcasts, contentDescription = null) },
-                label = { Text("Discover") },
-                selected = currentRoute == Route.Discover,
-                onClick = { navigator.navigate(Route.Discover) }
-            )
-            item(
-                icon = { Icon(Icons.Default.AutoAwesome, contentDescription = null) },
-                label = { Text("Mave") },
-                selected = currentRoute == Route.Chat,
-                onClick = { navigator.navigate(Route.Chat) }
-            )
-            item(
-                icon = { Icon(Icons.Default.Podcasts, contentDescription = null) },
-                label = { Text("Podcast") },
-                selected = currentRoute == Route.Podcast,
-                onClick = { navigator.navigate(Route.Podcast) }
-            )
-            item(
-                icon = { Icon(Icons.Default.PhoneAndroid, contentDescription = null) },
-                label = { Text("Devices") },
-                selected = currentRoute == Route.Devices,
-                onClick = { navigator.navigate(Route.Devices) }
-            )
-            item(
-                icon = { Icon(Icons.Default.LibraryMusic, contentDescription = null) },
-                label = { Text("Library") },
-                selected = currentRoute == Route.Library,
-                onClick = { navigator.navigate(Route.Library) }
-            )
-        }
-    ) {
-        BottomSheetScaffold(
-            scaffoldState = scaffoldState,
-            sheetPeekHeight = if (currentPlayingTrack != null) 72.dp else 0.dp,
-            sheetDragHandle = null,
-            sheetContent = {
-                if (currentPlayingTrack != null) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        NowPlayingScreen(
-                            track = currentPlayingTrack,
-                            viewModel = viewModel,
-                            modality = currentModality,
-                            onCollapse = {
-                                coroutineScope.launch {
-                                    scaffoldState.bottomSheetState.partialExpand()
-                                }
-                            },
-                            onMoreOptions = { navigator.navigate(Route.TrackOptions(currentPlayingTrack!!.id)) },
-                            onQueueClick = { 
-                                navigator.navigate(Route.Queue)
-                            },
-                            onLyricsClick = { 
-                                currentPlayingTrack?.let { navigator.navigate(Route.Lyrics(it.id)) }
-                            },
-                            onDeviceClick = {
-                                navigator.navigate(Route.Devices)
-                            }
-                        )
-                        if (scaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
-                            MiniPlayer(
-                                track = currentPlayingTrack!!,
-                                isPlaying = isPlaying,
-                                onPlayPauseClick = { viewModel.togglePlayPause() },
-                                onClick = {
-                                    coroutineScope.launch {
-                                        scaffoldState.bottomSheetState.expand()
-                                    }
-                                }
-                            )
-                        }
-                    }
-                } else {
-                    Box(modifier = Modifier.height(1.dp))
-                }
-            }
-        ) { paddingValues ->
-            val interactionSource = remember { MutableInteractionSource() }
-            val styleState = rememberUpdatedStyleState(interactionSource) {}
-            
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .consumeWindowInsets(paddingValues)
-                    .styleable(styleState, MaveStyles.scaffoldStyle),
-                contentAlignment = Alignment.Center
-            ) {
+        AppNavigationSuite(
+            layoutType = layoutType,
+            currentRoute = currentRoute,
+            navigator = navigator
+        ) {
+            AppBottomSheet(
+                scaffoldState = scaffoldState,
+                currentPlayingTrack = currentPlayingTrack,
+                isPlaying = isPlaying,
+                viewModel = viewModel,
+                navigator = navigator
+            ) { paddingValues ->
+                val interactionSource = remember { MutableInteractionSource() }
+                val styleState = rememberUpdatedStyleState(interactionSource) {}
+                
                 Box(
-                    modifier = Modifier.fillMaxSize() // Will adjust to max width if necessary
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .consumeWindowInsets(paddingValues)
+                        .styleable(styleState, MaveStyles.scaffoldStyle),
+                    contentAlignment = Alignment.Center
                 ) {
                     NavDisplay(
                         entries = navigationState.toEntries(entryProvider),
@@ -356,7 +150,5 @@ fun MaveApp(
                 }
             }
         }
-        }
     }
 }
-

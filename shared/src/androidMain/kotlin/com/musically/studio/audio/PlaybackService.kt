@@ -19,7 +19,6 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
-import com.musically.studio.network.MaveSessionManager
 import com.musically.studio.network.GeminiLiveManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -32,9 +31,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 @OptIn(UnstableApi::class)
 class PlaybackService : MediaSessionService() {
-
-    @Inject
-    lateinit var maveSessionManager: MaveSessionManager
 
     @Inject
     lateinit var geminiLiveManager: GeminiLiveManager
@@ -66,7 +62,7 @@ class PlaybackService : MediaSessionService() {
             
         // Collect audio bytes and write them to the pipe from both sources
         scope.launch {
-            merge(maveSessionManager.audioStream, geminiLiveManager.audioOutput).collect { bytes ->
+            geminiLiveManager.audioOutput.collect { bytes ->
                 try {
                     pipedOutputStream.write(bytes)
                     pipedOutputStream.flush()
@@ -84,13 +80,12 @@ class PlaybackService : MediaSessionService() {
         player.setMediaSource(mediaSource)
         player.prepare()
         player.playWhenReady = true
-        
         player.addListener(object : androidx.media3.common.Player.Listener {
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                 if (playWhenReady) {
-                    maveSessionManager.play()
+                    geminiLiveManager.sendText("User resumed audio playback")
                 } else {
-                    maveSessionManager.pause()
+                    geminiLiveManager.sendText("User paused audio playback")
                 }
             }
         })
@@ -155,10 +150,8 @@ class FlowDataSource(private val inputStream: java.io.InputStream) : BaseDataSou
     override fun read(buffer: ByteArray, offset: Int, length: Int): Int {
         if (length == 0) return 0
         return try {
-            // Check availability to prevent coroutine blocking on the producer side if ExoPlayer stalls
             if (inputStream.available() <= 0 && opened) {
-                // Return 0 or small read to let the player loop; blocking read() is the primary cause of deadlocks in this pattern
-                return 0 
+                Thread.sleep(20)
             }
             val bytesRead = inputStream.read(buffer, offset, length)
             if (bytesRead == -1) {

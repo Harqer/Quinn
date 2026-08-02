@@ -84,8 +84,8 @@ type Album @table {
 type Track @table {
   id: String! @default(expr: "uuidV4()")
   title: String! @searchable
-  album: Album!
-  durationMs: Int!
+  album: Album
+  durationMs: Int! @default(value: 0)
   isrcCode: String @unique
   audioUrl: String!
   coverUrl: String

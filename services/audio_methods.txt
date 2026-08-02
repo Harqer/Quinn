@@ -1,0 +1,301 @@
+
+  private playInstrumentSynth() {
+    const ctx = this.liveMusicHelper?.audioContext;
+    if (!ctx) return;
+    
+    if (ctx.state === "suspended") {
+      ctx.resume();
+    }
+
+    this.stopAllSynthesizers();
+
+    // Map gestureX (0 to 1) to MIDI note range 48 (C3) to 84 (C6)
+    const midiNote = 48 + this.gestureX * 36;
+    const baseFreq = 440 * Math.pow(2, (midiNote - 69) / 12);
+    this.currentPlayingPitch = this.getNoteName(midiNote);
+
+    const now = ctx.currentTime;
+    const destination = ctx.destination;
+
+    // Harmonic chord voicings setup: based on voicing multiplier, build chords
+    const noteFrequencies: number[] = [baseFreq];
+    
+    if (this.harmonicVoicing >= 1.5) {
+      const intervalMultiplier = this.harmonicVoicing >= 3.0 ? 1.5 : 1.25; // Perfect 5th or Major 3rd
+      noteFrequencies.push(baseFreq * intervalMultiplier);
+    }
+    if (this.harmonicVoicing >= 2.8) {
+      noteFrequencies.push(baseFreq * 2.0); // Octave
+    }
+    if (this.harmonicVoicing >= 4.0) {
+      noteFrequencies.push(baseFreq * 3.0); // Chords fifth/octave
+    }
+
+    noteFrequencies.forEach((freq, index) => {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(0, now);
+      
+      const maxVolume = 0.22 / noteFrequencies.length;
+      
+      if (this.currentInstrument === "piano") {
+        // Grand Piano additive synthesis
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const osc3 = ctx.createOscillator();
+
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(freq, now);
+
+        osc2.type = "sine";
+        osc2.frequency.setValueAtTime(freq * 2, now);
+
+        osc3.type = "sine";
+        osc3.frequency.setValueAtTime(freq * 3, now);
+
+        const g1 = ctx.createGain();
+        const g2 = ctx.createGain();
+        const g3 = ctx.createGain();
+
+        g1.gain.setValueAtTime(1.0, now);
+        g2.gain.setValueAtTime(0.4, now);
+        g3.gain.setValueAtTime(0.15, now);
+
+        osc1.connect(g1).connect(voiceGain);
+        osc2.connect(g2).connect(voiceGain);
+        osc3.connect(g3).connect(voiceGain);
+
+        voiceGain.gain.linearRampToValueAtTime(maxVolume, now + 0.02);
+        voiceGain.gain.exponentialRampToValueAtTime(maxVolume * 0.4, now + 0.6);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc3.start(now);
+
+        this.activeSynthOscillators.push(
+          { osc: osc1, gain: voiceGain },
+          { osc: osc2, gain: g2 },
+          { osc: osc3, gain: g3 }
+        );
+
+      } else if (this.currentInstrument === "clarinet") {
+        // Woodwind triangle wave with envelope + vibrato LFO
+        const osc = ctx.createOscillator();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, now);
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        const filterFreq = 600 + (1.0 - this.gestureY) * 1500;
+        filter.frequency.setValueAtTime(filterFreq, now);
+
+        const lfo = ctx.createOscillator();
+        lfo.type = "sine";
+        lfo.frequency.setValueAtTime(5.5, now);
+
+        const lfoGain = ctx.createGain();
+        lfoGain.gain.setValueAtTime(3.5, now);
+
+        lfo.connect(lfoGain).connect(osc.frequency);
+        osc.connect(filter).connect(voiceGain);
+
+        voiceGain.gain.linearRampToValueAtTime(maxVolume, now + 0.08);
+
+        lfo.start(now);
+        osc.start(now);
+
+        this.activeSynthOscillators.push({ osc, gain: voiceGain, filter });
+        if (index === 0) {
+          this.activeSynthLfo = lfo;
+          this.activeSynthLfoGain = lfoGain;
+        }
+
+      } else if (this.currentInstrument === "violin") {
+        // String sawtooth detuning
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+
+        osc1.type = "sawtooth";
+        osc1.frequency.setValueAtTime(freq, now);
+
+        osc2.type = "sawtooth";
+        osc2.frequency.setValueAtTime(freq * 1.006, now);
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        const filterFreq = 300 + (1.0 - this.gestureY) * 2800;
+        filter.frequency.setValueAtTime(filterFreq, now);
+
+        const lfo = ctx.createOscillator();
+        lfo.type = "sine";
+        lfo.frequency.setValueAtTime(6.0, now);
+
+        const lfoGain = ctx.createGain();
+        lfoGain.gain.setValueAtTime(4.0, now);
+
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc1.frequency);
+        lfoGain.connect(osc2.frequency);
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(voiceGain);
+
+        voiceGain.gain.linearRampToValueAtTime(maxVolume, now + 0.15);
+
+        lfo.start(now);
+        osc1.start(now);
+        osc2.start(now);
+
+        this.activeSynthOscillators.push(
+          { osc: osc1, gain: voiceGain, filter },
+          { osc: osc2, gain: voiceGain, filter }
+        );
+        if (index === 0) {
+          this.activeSynthLfo = lfo;
+          this.activeSynthLfoGain = lfoGain;
+        }
+
+      } else if (this.currentInstrument === "chimes") {
+        // Celestial metal chimes high bell oscillators
+        const chimeFreq = freq * 2.0;
+        const osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(chimeFreq, now);
+
+        const oscHarmonic = ctx.createOscillator();
+        oscHarmonic.type = "sine";
+        oscHarmonic.frequency.setValueAtTime(chimeFreq * 2.51, now);
+
+        const harmGain = ctx.createGain();
+        harmGain.gain.setValueAtTime(0.3, now);
+
+        oscHarmonic.connect(harmGain).connect(voiceGain);
+        osc.connect(voiceGain);
+
+        voiceGain.gain.linearRampToValueAtTime(maxVolume * 1.2, now + 0.01);
+        voiceGain.gain.exponentialRampToValueAtTime(maxVolume * 0.02, now + 1.2);
+
+        osc.start(now);
+        oscHarmonic.start(now);
+
+        this.activeSynthOscillators.push(
+          { osc, gain: voiceGain },
+          { osc: oscHarmonic, gain: harmGain }
+        );
+      }
+
+      voiceGain.connect(destination);
+    });
+  }
+
+
+  private updateInstrumentSynth() {
+    const ctx = this.liveMusicHelper?.audioContext;
+    if (!ctx || this.activeSynthOscillators.length === 0) return;
+
+    const midiNote = 48 + this.gestureX * 36;
+    const baseFreq = 440 * Math.pow(2, (midiNote - 69) / 12);
+    this.currentPlayingPitch = this.getNoteName(midiNote);
+
+    if (this.currentPlayingPitch !== this.lastPlayingPitch) {
+      this.lastPlayingPitch = this.currentPlayingPitch;
+      if (this.isHapticsEnabled && navigator.vibrate) {
+        navigator.vibrate(6); // Very crisp click when note switches
+      }
+    }
+
+    const now = ctx.currentTime;
+
+    const freqs: number[] = [baseFreq];
+    if (this.harmonicVoicing >= 1.5) {
+      const intervalMultiplier = this.harmonicVoicing >= 3.0 ? 1.5 : 1.25;
+      freqs.push(baseFreq * intervalMultiplier);
+    }
+    if (this.harmonicVoicing >= 2.8) {
+      freqs.push(baseFreq * 2.0);
+    }
+    if (this.harmonicVoicing >= 4.0) {
+      freqs.push(baseFreq * 3.0);
+    }
+
+    let freqIndex = 0;
+    this.activeSynthOscillators.forEach((item, idx) => {
+      try {
+        const targetFreq = freqs[freqIndex] || baseFreq;
+
+        if (this.currentInstrument === "piano") {
+          const mult = (idx % 3) + 1;
+          item.osc.frequency.setTargetAtTime(targetFreq * mult, now, 0.05);
+          if (idx % 3 === 2) freqIndex++;
+        } else if (this.currentInstrument === "clarinet") {
+          item.osc.frequency.setTargetAtTime(targetFreq, now, 0.05);
+          if (item.filter) {
+            const filterFreq = 600 + (1.0 - this.gestureY) * 1500;
+            item.filter.frequency.setTargetAtTime(filterFreq, now, 0.05);
+          }
+          freqIndex++;
+        } else if (this.currentInstrument === "violin") {
+          const detuneMult = (idx % 2 === 0) ? 1.0 : 1.006;
+          item.osc.frequency.setTargetAtTime(targetFreq * detuneMult, now, 0.05);
+          if (item.filter) {
+            const filterFreq = 300 + (1.0 - this.gestureY) * 2800;
+            item.filter.frequency.setTargetAtTime(filterFreq, now, 0.05);
+          }
+          if (idx % 2 === 1) freqIndex++;
+        } else if (this.currentInstrument === "chimes") {
+          const chimeFreq = targetFreq * 2.0;
+          const isHarmonic = (idx % 2 === 1);
+          item.osc.frequency.setTargetAtTime(isHarmonic ? chimeFreq * 2.51 : chimeFreq, now, 0.05);
+          if (isHarmonic) freqIndex++;
+        }
+      } catch (e) {
+        console.warn("Error updating frequency:", e);
+      }
+    });
+  }
+
+
+  private triggerBeatHaptic(avgVolume: number) {
+    if (!this.isHapticsEnabled || !navigator.vibrate) return;
+
+    const now = Date.now();
+    // Throttle: don't vibrate too close together (at least 150ms apart, matching tempo of beats)
+    if (now - this.lastVibrationTime < 150) return;
+
+    // Track a moving history of recent average volume spikes to dynamically adapt to music volume
+    this.volumeHistory.push(avgVolume);
+    if (this.volumeHistory.length > 20) {
+      this.volumeHistory.shift();
+    }
+
+    const avgHist = this.volumeHistory.reduce((a, b) => a + b, 0) / (this.volumeHistory.length || 1);
+
+    // Trigger a pulse on significant volume spikes (beat) or heavy transient energy
+    const isSpike = avgVolume > avgHist * 1.3 && avgVolume > 12;
+    const isStrongBeat = avgVolume > 60;
+
+    if (isSpike || isStrongBeat) {
+      this.lastVibrationTime = now;
+      
+      // Determine haptic duration/pattern in sync with the beat and instrument intensity
+      let pattern: number | number[] = 15; // Light crisp beat tap (15ms)
+
+      // Strings/Violin has smooth swelling haptics, while piano/chimes are crisp taps
+      if (this.currentInstrument === "violin") {
+        // Strings swell: longer, lower-intensity feeling (e.g. 25ms pulse)
+        pattern = Math.min(35, Math.floor(avgVolume * 0.25 + 10));
+      } else if (this.currentInstrument === "piano") {
+        // Piano hits: short, sharp percussion (e.g. 12ms pulse)
+        pattern = Math.min(20, Math.max(8, Math.floor(avgVolume * 0.15)));
+      } else if (this.currentInstrument === "clarinet") {
+        // Woodwind breath: medium tactile pulse (e.g. 18ms pulse)
+        pattern = Math.min(25, Math.max(10, Math.floor(avgVolume * 0.18)));
+      } else { // Chimes/others
+        // Shimmer: multi-pulse vibration (double tap)
+        pattern = [10, 30, 10];
+      }
+
+      navigator.vibrate(pattern);
+    }
+  }
+

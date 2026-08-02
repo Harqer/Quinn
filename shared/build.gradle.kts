@@ -104,6 +104,7 @@ kotlin {
             implementation(libs.firebase.database)
             implementation(libs.firebase.auth)
             implementation(libs.firebase.crashlytics)
+            implementation(libs.firebase.functions)
 
             implementation(libs.timber)
             implementation(libs.hilt.android)
@@ -114,6 +115,7 @@ kotlin {
             // Engage SDK & WorkManager
             implementation(libs.engage.core)
             implementation(libs.androidx.work.runtime.ktx)
+            implementation(libs.recaptcha)
             
             // Media3
             implementation(libs.media3.exoplayer)

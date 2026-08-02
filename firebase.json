@@ -8,5 +8,33 @@
   },
   "dataconnect": {
     "source": "dataconnect"
+  },
+  "auth": {
+    "providers": {
+      "emailPassword": true,
+      "anonymous": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Mave",
+        "supportEmail": "shaolingene@gmail.com",
+        "authorizedRedirectUris": [
+          "https://musically-studio.firebaseapp.com",
+          "http://localhost"
+        ]
+      }
+    }
+  },
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }

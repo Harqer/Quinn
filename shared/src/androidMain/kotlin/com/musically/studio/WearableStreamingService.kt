@@ -110,10 +110,18 @@ class WearableStreamingService : Service() {
     }
 
     private fun createNotification(): Notification {
-        return Notification.Builder(this, "wearable_service_channel")
+        val intent = packageManager.getLaunchIntentForPackage(packageName)?.apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        } ?: Intent()
+        val pendingIntent = android.app.PendingIntent.getActivity(
+            this@WearableStreamingService, 0, intent, android.app.PendingIntent.FLAG_IMMUTABLE
+        )
+        return Notification.Builder(this@WearableStreamingService, "wearable_service_channel")
             .setContentTitle("Mave Wearable")
             .setContentText("Streaming POV to Mave Studio...")
             .setSmallIcon(android.R.drawable.ic_menu_camera)
+            .setContentIntent(pendingIntent)
+            .setOngoing(true)
             .build()
     }
 
@@ -121,55 +129,78 @@ class WearableStreamingService : Service() {
         scope.launch {
             val targetDevice = deviceId?.let { id -> Wearables.devices.value.find { it.identifier == id } }
 
-            val result = if (targetDevice != null) {
+            val sessionResult = if (targetDevice != null) {
                 Wearables.createSession(SpecificDeviceSelector(targetDevice))
             } else {
                 Wearables.createSession(AutoDeviceSelector())
             }
             
-            result.onSuccess { session ->
+            sessionResult.onSuccess { session ->
                 activeSession = session
-                
-                // Monitor session state for proper lifecycle handling
+
                 scope.launch {
                     session.state.collect { state ->
                         Timber.d("Session state changed: $state")
-                        if (state == DeviceSessionState.IDLE || state == DeviceSessionState.STOPPED) {
-                            stopSelf()
+                        when (state) {
+                            DeviceSessionState.PAUSED -> {
+                                Timber.w("Glasses session PAUSED. Suspending stream processing.")
+                            }
+                            DeviceSessionState.STOPPED -> {
+                                Timber.i("Glasses session STOPPED. Stopping service.")
+                                stopSelf()
+                            }
+                            else -> Unit
                         }
                     }
                 }
 
                 session.start()
                 attachCapabilities(session)
+            }.onFailure { error, _ ->
+                Timber.e("Failed to create session: ${error.description}")
+                stopSelf()
             }
         }
     }
 
-    private suspend fun attachCapabilities(session: DeviceSession) {
+    private fun attachCapabilities(session: DeviceSession) {
         session.addDisplay(DisplayConfiguration()).onSuccess { display ->
             activeDisplay = display
             updateWearableUi("", "") // Initial UI render
             startStream(session)
+        }.onFailure { error, _ ->
+            Timber.e("Failed to add Display capability: ${error.description}")
+            startStream(session)
         }
     }
 
-    private suspend fun startStream(session: DeviceSession) {
-        val config = StreamConfiguration(VideoQuality.MEDIUM, 24, false)
+    private fun startStream(session: DeviceSession) {
+        val config = StreamConfiguration(VideoQuality.MEDIUM, 15, false)
         session.addStream(config).onSuccess { stream ->
             activeStream = stream
             stream.start().onSuccess {
                 startFrameCollection(stream)
+            }.onFailure { error, _ ->
+                Timber.e("Failed to start stream: ${error.description}")
             }
+        }.onFailure { error, _ ->
+            Timber.e("Failed to add Stream capability: ${error.description}")
         }
     }
 
+    private var lastFrameTimeMs = 0L
+    private val frameIntervalMs = 1000L / 5L // 5 FPS max rate limiting
+
     private fun startFrameCollection(stream: Stream) {
-        scope.launch {
+        scope.launch(Dispatchers.IO) {
             stream.videoStream.collect { frame ->
-                val bytes = ByteArray(frame.buffer.remaining())
-                frame.buffer.get(bytes)
-                _cameraFrames.emit(bytes)
+                val now = System.currentTimeMillis()
+                if (now - lastFrameTimeMs >= frameIntervalMs) {
+                    lastFrameTimeMs = now
+                    val bytes = ByteArray(frame.buffer.remaining())
+                    frame.buffer.get(bytes)
+                    _cameraFrames.emit(bytes)
+                }
             }
         }
     }
@@ -274,7 +305,7 @@ class WearableStreamingService : Service() {
         )
 
         try {
-            audioRecord = AudioRecord(
+            val recorder = AudioRecord(
                 MediaRecorder.AudioSource.MIC,
                 sampleRate,
                 AudioFormat.CHANNEL_IN_MONO,
@@ -282,8 +313,15 @@ class WearableStreamingService : Service() {
                 bufferSize
             )
 
+            if (recorder.state != AudioRecord.STATE_INITIALIZED) {
+                Timber.e("AudioRecord failed to initialize")
+                recorder.release()
+                return
+            }
+
+            audioRecord = recorder
             isRecording = true
-            audioRecord?.startRecording()
+            recorder.startRecording()
 
             recordingJob = scope.launch(Dispatchers.IO) {
                 val audioBuffer = ShortArray(bufferSize)
@@ -308,8 +346,16 @@ class WearableStreamingService : Service() {
     private fun stopAudioRecording() {
         isRecording = false
         recordingJob?.cancel()
-        audioRecord?.stop()
-        audioRecord?.release()
+        audioRecord?.let { recorder ->
+            if (recorder.state == AudioRecord.STATE_INITIALIZED) {
+                try {
+                    recorder.stop()
+                } catch (e: Exception) {
+                    Timber.e(e, "Error stopping AudioRecord")
+                }
+            }
+            recorder.release()
+        }
         audioRecord = null
     }
 
@@ -326,26 +372,19 @@ class WearableStreamingService : Service() {
         instance = null
         _isServiceActive.value = false
         
-        scope.launch {
+        runBlocking(Dispatchers.IO) {
             val session = activeSession
-            val display = activeDisplay
-            val stream = activeStream
-
             if (session != null) {
                 try {
-                    if (activeDisplay != null) {
-                        session.removeDisplay()
-                    }
-                    if (activeStream != null) {
-                        session.removeStream()
-                    }
+                    activeDisplay?.let { session.removeDisplay() }
+                    activeStream?.let { session.removeStream() }
                     session.stop()
                 } catch (e: Exception) {
                     Timber.e(e, "Error during Meta Wearable session cleanup")
                 }
             }
-            scope.cancel()
         }
+        scope.cancel()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

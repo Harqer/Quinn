@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { logger } from '@/web/lib/logger';
+import { logger } from '../../lib/logger';
 import { MusicVisualizer } from './MusicVisualizer';
 import { useMave } from '../../hooks/useMave';
 import { useAppContext } from '../../contexts/AppContext';
@@ -78,6 +78,44 @@ export const MainDashboard: React.FC = () => {
     };
   }, [videoActive, isConnected, sendVisionFrame]);
 
+  const [inputText, setInputText] = useState('');
+
+  const handleSend = () => {
+    if (!inputText.trim()) return;
+    sendText(inputText);
+    setInputText('');
+  };
+
+  const handleCameraSnapshot = () => {
+    if (videoRef.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        canvas.width = 320;
+        canvas.height = 240;
+        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+        const base64Frame = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
+        sendVisionFrame(base64Frame);
+        showToast("POV snapshot captured and sent to Mave");
+      }
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = (event.target?.result as string)?.split(',')[1];
+        if (base64) {
+          sendVisionFrame(base64);
+          showToast("Media file attached and sent to Mave");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-[#121212] text-white relative">
       <canvas ref={canvasRef} className="hidden" />
@@ -105,8 +143,8 @@ export const MainDashboard: React.FC = () => {
           <MaveHeaderHub 
             mode={mode} 
             videoActive={videoActive} 
-            onSwitchMode={switchMode} 
-            onToggleVideo={() => setVideoActive(!videoActive)} 
+            switchMode={switchMode} 
+            setVideoActive={setVideoActive} 
           />
         </div>
 
@@ -122,11 +160,14 @@ export const MainDashboard: React.FC = () => {
       <DashboardBottomBar 
         mode={mode} 
         isRecording={isRecording} 
-        onSendText={sendText} 
-        onSendVisionFrame={sendVisionFrame} 
-        onToggleRecording={toggleRecording} 
-        showToast={showToast} 
+        inputText={inputText}
+        setInputText={setInputText}
+        handleSend={handleSend}
+        toggleRecording={toggleRecording} 
+        handleCameraSnapshot={handleCameraSnapshot}
+        handleFileUpload={handleFileUpload}
       />
     </div>
   );
 };
+

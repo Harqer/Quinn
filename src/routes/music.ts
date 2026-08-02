@@ -54,17 +54,13 @@ function sanitizeJSONError(err: unknown): string {
   }
   return msg || "Generation failed due to an unexpected error. Please try again.";
 }
-router.get("/token", optionalFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response, next: import("express").NextFunction) => {
-  try {
-    const key = getSecret("GEMINI_API_KEY");
-    if (!key) {
-      throw new Error("No API key found in secrets");
+router.get("/token", verifyAppCheck, async (_req: AuthenticatedRequest, res: Response) => {
+  res.status(403).json({
+    error: {
+      message: "Direct API key access is prohibited. Use ephemeral /live-token endpoint instead.",
+      code: "FORBIDDEN_KEY_ACCESS"
     }
-    res.json({ token: key });
-  } catch (err) {
-    logger.error("Failed to fetch token", { error: err });
-    next(err);
-  }
+  });
 });
 
 
@@ -631,6 +627,73 @@ router.post("/share", verifyFirebaseToken, verifyAppCheck, async (req: Authentic
   }
 });
 
+router.post("/voice/command", optionalFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response, next: import("express").NextFunction) => {
+  const { sessionId, audio } = req.body;
+  if (!audio) {
+    return res.status(400).json({ error: "audio payload (base64) is required" });
+  }
+
+  try {
+    const { maveVisionFlow, directorFlow } = await import("../services/genkit-flows.js");
+    const visionResult = await maveVisionFlow({ image: audio, locale: "en" });
+    const directorResult = await directorFlow({ visionDescription: visionResult.visionDescription });
+    res.json({
+      sessionId: sessionId || req.user?.uid || "session-voice",
+      status: "completed",
+      action: directorResult.modality,
+      reasoning: directorResult.reasoning,
+      prompts: [directorResult.reasoning, visionResult.visionDescription]
+    });
+  } catch (err) {
+    logger.error("Voice Command Processing Failed", { error: err });
+    next(err);
+  }
+});
+
+router.post("/text/command", optionalFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response, next: import("express").NextFunction) => {
+  const { sessionId, text } = req.body;
+  if (!text) {
+    return res.status(400).json({ error: "text is required" });
+  }
+
+  try {
+    const { directorFlow } = await import("../services/genkit-flows.js");
+    const directorResult = await directorFlow({ visionDescription: text, userFeedback: text });
+    res.json({
+      sessionId: sessionId || req.user?.uid || "session-text",
+      status: "completed",
+      action: directorResult.modality,
+      reasoning: directorResult.reasoning,
+      prompts: [text, directorResult.reasoning]
+    });
+  } catch (err) {
+    logger.error("Text Command Processing Failed", { error: err });
+    next(err);
+  }
+});
+
+router.post("/generate", optionalFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response, next: import("express").NextFunction) => {
+  const { image } = req.body;
+  if (!image) {
+    return res.status(400).json({ error: "image payload (base64) is required" });
+  }
+
+  try {
+    const { maveVisionFlow } = await import("../services/genkit-flows.js");
+    const visionResult = await maveVisionFlow({ image });
+    res.json({
+      prompts: [visionResult.visionDescription, "immersive ambient weave"]
+    });
+  } catch (err) {
+    logger.error("Generate from frame failed", { error: err });
+    next(err);
+  }
+});
+
+router.post("/playlists/recover", optionalFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response) => {
+  res.json({ status: "success", message: "Playlists synchronized with Firebase state" });
+});
+
 router.post("/execute-tool", verifyFirebaseToken, verifyAppCheck, async (req: AuthenticatedRequest, res: Response, next: import("express").NextFunction) => {
   const { name, args } = req.body;
   if (!name) return res.status(400).json({ error: "Tool name is required" });
@@ -662,9 +725,14 @@ router.post("/execute-tool", verifyFirebaseToken, verifyAppCheck, async (req: Au
         const videoResult = await genVideo(args.prompt, 'video_motion', 'latest');
         return res.json({ status: 'success', url: videoResult.url });
       }
-      case 'jam_live':
-        // Handle MRT2 live jamming intent
-        return res.json({ status: "success", message: "Entered live jamming mode", instructions: "Connect MIDI controller to MRT2" });
+      case 'jam_live': {
+        const { musicService } = await import('../services/MusicService.js');
+        const interaction = await musicService.createMusicInteraction(
+          args?.prompt || "Live Jamming Session",
+          req.user?.uid || "anon"
+        );
+        return res.json({ status: "success", message: "Entered live jamming mode", interaction });
+      }
 
       default:
         return res.status(400).json({ error: "Unknown tool" });

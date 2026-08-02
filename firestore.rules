@@ -1,6 +1,18 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Users can only access documents where the document ID matches their own authentication UID.
+    // This perfectly covers paths like /customers/{uid}/checkout_sessions without exposing other users' data.
+    match /{collection}/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      
+      // Allow access to any subcollections (like checkout_sessions) under their UID
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+    
+    // Globally deny everything else
     match /{document=**} {
       allow read, write: if false;
     }

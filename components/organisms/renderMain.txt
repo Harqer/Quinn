@@ -1,0 +1,374 @@
+
+
+  private renderMain() {
+    const isPlaying = this.playbackState === "playing";
+
+    return html`
+      <div id="feed-switcher">
+        ${isPlaying ? html`
+          <div id="music-radar-badge">
+            <span class="radar-dot animate-pulse"></span>
+            <span class="radar-text">Camera Audio Active</span>
+            <div class="audio-mini-waves">
+              <span class="wave-bar w-1 animate-eq"></span>
+              <span class="wave-bar w-2 animate-eq" style="animation-delay: 0.15s;"></span>
+              <span class="wave-bar w-3 animate-eq" style="animation-delay: 0.3s;"></span>
+              <span class="wave-bar w-4 animate-eq" style="animation-delay: 0.45s;"></span>
+            </div>
+          </div>
+        ` : ""}
+        <button
+          class="switcher-btn ${this.feedType === "webcam" ? "active" : ""}"
+          @click=${() => this.switchFeed("webcam")}
+        >
+          <span class="material-icons-round">videocam</span>
+          Webcam
+        </button>
+        <button
+          class="switcher-btn ${this.feedType === "simulation" ? "active" : ""}"
+          @click=${() => this.switchFeed("simulation")}
+        >
+          <span class="material-icons-round">auto_awesome</span>
+          Cosmic Feed
+        </button>
+      </div>
+
+      <div id="video-container" class="${isPlaying ? "music-active" : ""}">
+        <canvas id="music-visualizer-canvas"></canvas>
+        ${this.feedType === "webcam"
+          ? html`
+              <video 
+                .srcObject=${this.cameraStream} 
+                autoplay 
+                playsinline 
+                muted 
+                @loadedmetadata=${(e: Event) => {
+                  console.log("[CAMERA] loadedmetadata event successfully triggered.");
+                  if (this.videoTimeoutId) {
+                    window.clearTimeout(this.videoTimeoutId);
+                    this.videoTimeoutId = null;
+                  }
+                  this.videoLoading = false;
+                  this.videoLoadError = null;
+                  
+                  const video = e.currentTarget as HTMLVideoElement;
+                  video.play().catch(err => {
+                    console.error("[CAMERA_DIAGNOSTICS] autoplay/play blocked by browser sandbox or permissions:", err);
+                    this.videoLoadError = "Video playback was blocked by browser autoplay rules. Click Retry or tap to initiate stream play.";
+                  });
+                }}
+                @error=${(e: Event) => {
+                  const video = e.currentTarget as HTMLVideoElement;
+                  console.error(`[CAMERA_DIAGNOSTICS] HTMLVideoElement error event triggered. Error code: ${video.error?.code ?? "unknown"}, Message: ${video.error?.message ?? "unknown"}`);
+                  if (this.videoTimeoutId) {
+                    window.clearTimeout(this.videoTimeoutId);
+                    this.videoTimeoutId = null;
+                  }
+                  this.videoLoading = false;
+                  this.videoLoadError = `The browser media engine encountered a critical error decoding/rendering the video feed (Code: ${video.error?.code ?? "unknown"}).`;
+                }}
+                style="transform: scaleX(-1);"
+              ></video>
+
+              ${this.videoLoading
+                ? html`
+                    <div class="video-feedback-overlay">
+                      <div class="feedback-loading-spinner"></div>
+                      <div class="feedback-title info">
+                        <span class="material-icons-round feedback-btn-icon spin">sync</span>
+                        Initializing Camera Stream
+                      </div>
+                      <div class="feedback-desc">Connecting stream and fetching metadata. Please allow camera access permissions if prompted...</div>
+                    </div>
+                  `
+                : ""}
+
+              ${this.videoLoadError
+                ? html`
+                    <div class="video-feedback-overlay">
+                      <span class="material-icons-round feedback-icon">error_outline</span>
+                      <div class="feedback-title">${this.videoLoadErrorTitle || "Camera Stream Failed"}</div>
+                      <div class="feedback-desc">${this.videoLoadError}</div>
+                      <div class="btn-group">
+                        <button class="feedback-btn" @click=${this.setupCamera}>
+                          <span class="material-icons-round feedback-btn-icon">refresh</span>
+                          Retry Setup
+                        </button>
+                        <button class="feedback-btn" @click=${() => this.switchFeed("simulation")}>
+                          <span class="material-icons-round feedback-btn-icon">auto_awesome</span>
+                          Use Cosmic Feed
+                        </button>
+                      </div>
+                    </div>
+                  `
+                : ""}
+            `
+          : html`<canvas id="simulation-canvas"></canvas>`}
+      </div>
+      <div id="overlay">
+        <!-- Voice & Text Communication & Control Panel -->
+        <div class="voice-card">
+          <div class="voice-card-header">
+            <span class="material-icons-round voice-card-icon animate-pulse text-indigo-400">forum</span>
+            <div class="voice-card-title-container">
+              <h4 class="voice-card-title">Vocal & Text Director</h4>
+              <p class="voice-card-subtitle">Natural language music control and custom vibes powered by Gemini Live TTS & Firestore bidirectional sync</p>
+            </div>
+            <div class="voice-status-badge status-${this.voiceStatus}">
+              <span class="voice-status-dot"></span>
+              <span class="voice-status-text">
+                ${this.voiceStatus === "listening" ? "Listening..." :
+                  this.voiceStatus === "processing" ? "Thinking..." :
+                  this.voiceStatus === "speaking" ? "Speaking..." : "Standby"}
+              </span>
+            </div>
+          </div>
+
+          <div class="voice-card-body">
+            <div class="mic-button-wrapper">
+              <button 
+                class="mic-button ${this.isRecordingVoice ? "recording" : ""} ${this.voiceStatus === "processing" ? "disabled" : ""}"
+                ?disabled=${this.voiceStatus === "processing"}
+                @click=${this.toggleVoiceRecording}
+                title="${this.isRecordingVoice ? "Stop Recording" : "Start Recording Voice Command"}"
+              >
+                <span class="material-icons-round mic-icon">
+                  ${this.isRecordingVoice ? "stop" : "mic"}
+                </span>
+              </button>
+              <div class="mic-pulse-ring ring-1"></div>
+              <div class="mic-pulse-ring ring-2"></div>
+            </div>
+
+            <div class="voice-transcript-area">
+              ${this.voiceTranscript ? html`
+                <div class="transcript-text">
+                  <strong class="text-indigo-400">You:</strong> "${this.voiceTranscript}"
+                </div>
+              ` : html`
+                <div class="transcript-placeholder">
+                  Press the mic button and say, or type your vibe/command below:<br/>
+                  <em class="text-indigo-300">"Play some relaxing lofi beats"</em> or <em class="text-indigo-300">"Stop the music"</em>
+                </div>
+              `}
+
+              ${this.geminiVoiceReply ? html`
+                <div class="ai-reply-text animate-fade-in">
+                  <strong class="text-pink-400">Gemini:</strong> "${this.geminiVoiceReply}"
+                </div>
+              ` : ""}
+
+              <div class="voice-text-input-row">
+                <input 
+                  type="text" 
+                  id="text-vibe-input"
+                  class="voice-text-field"
+                  placeholder="Type custom vibe or command & press Enter..."
+                  @keydown=${(e: KeyboardEvent) => {
+                    if (e.key === "Enter") {
+                      void this.submitTextCommand();
+                    }
+                  }}
+                  ?disabled=${this.voiceStatus === "processing"}
+                />
+                <button 
+                  class="voice-text-submit-btn" 
+                  @click=${this.submitTextCommand}
+                  ?disabled=${this.voiceStatus === "processing"}
+                  title="Submit Vibe Command"
+                >
+                  <span class="material-icons-round">send</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Jacob Collier-style Interactive Orchestrator -->
+        <div class="orchestrator-card">
+          <div class="orchestrator-header">
+            <h4 class="orchestrator-title">
+              <span class="material-icons-round text-pink-400">music_note</span>
+              Audience Orchestrator
+            </h4>
+            <div class="orchestrator-actions">
+              <button 
+                class="orchestrator-help-btn ${this.isHapticsEnabled ? "text-pink-400" : ""}"
+                @click=${() => {
+                  this.isHapticsEnabled = !this.isHapticsEnabled;
+                  if (this.isHapticsEnabled && navigator.vibrate) {
+                    navigator.vibrate(20);
+                  }
+                }}
+                title="${this.isHapticsEnabled ? "Disable Haptic Immersion" : "Enable Haptic Immersion"}"
+                style="${this.isHapticsEnabled ? "color: #f472b6;" : ""}"
+              >
+                <span class="material-icons-round">${this.isHapticsEnabled ? "vibration" : "mobile_off"}</span>
+              </button>
+              <button 
+                class="orchestrator-help-btn"
+                @click=${() => this.showGestureTutorial = !this.showGestureTutorial}
+                title="Toggle Gesture Tutorial Guide"
+              >
+                <span class="material-icons-round">help_outline</span>
+              </button>
+              <span class="orchestrator-badge">Live Synth</span>
+            </div>
+          </div>
+
+          <p class="orchestrator-description">
+            Be the orchestrator like Jacob Collier. Tap and drag inside the coordinate grid to play real-time chords with hands. Adjust the harmonic voicing to stack octaves!
+          </p>
+
+          <!-- Instrument Selection Tabs -->
+          <div class="orchestrator-sections">
+            <button 
+              class="orchestrator-section-btn ${this.currentInstrument === "piano" ? "active piano" : ""}" 
+              @click=${() => this.switchInstrument("piano")}
+              title="Acoustic Grand Piano"
+            >
+              <span class="material-icons-round section-icon">piano</span>
+              <span class="section-label">Piano</span>
+            </button>
+            <button 
+              class="orchestrator-section-btn ${this.currentInstrument === "clarinet" ? "active" : ""}" 
+              @click=${() => this.switchInstrument("clarinet")}
+              title="Concert Clarinet woodwind"
+            >
+              <span class="material-icons-round section-icon">air</span>
+              <span class="section-label">Clarinet</span>
+            </button>
+            <button 
+              class="orchestrator-section-btn ${this.currentInstrument === "violin" ? "active" : ""}" 
+              @click=${() => this.switchInstrument("violin")}
+              title="Orchestral Saw Strings"
+            >
+              <span class="material-icons-round section-icon">auto_stories</span>
+              <span class="section-label">Strings</span>
+            </button>
+            <button 
+              class="orchestrator-section-btn ${this.currentInstrument === "chimes" ? "active" : ""}" 
+              @click=${() => this.switchInstrument("chimes")}
+              title="Celestial Chimes"
+            >
+              <span class="material-icons-round section-icon">filter_vintage</span>
+              <span class="section-label">Chimes</span>
+            </button>
+          </div>
+
+          <!-- The Coordinate Gesture Interaction Pad -->
+          <div 
+            class="orchestrator-gesture-pad ${this.isGestureActive ? "active" : ""}"
+            @mousedown=${this.handleGestureStart}
+            @mousemove=${this.handleGestureMove}
+            @mouseup=${this.handleGestureEnd}
+            @mouseleave=${this.handleGestureEnd}
+            @touchstart=${this.handleGestureStart}
+            @touchmove=${this.handleGestureMove}
+            @touchend=${this.handleGestureEnd}
+            @wheel=${this.handleGestureWheel}
+          >
+            <div class="gesture-pad-grid"></div>
+            <canvas class="gesture-pad-canvas"></canvas>
+            
+            <!-- Crosshair Target -->
+            <div 
+              class="gesture-pad-target" 
+              style="left: ${this.gestureX * 100}%; top: ${this.gestureY * 100}%;"
+            ></div>
+
+            <!-- Labels -->
+            <div class="gesture-pad-label-x">Pitch / Frequency (C3 - C6)</div>
+            <div class="gesture-pad-label-y">Timbre / Tone</div>
+            <div class="gesture-pad-status">
+              ${this.isGestureActive ? `PITCH: ${this.currentPlayingPitch}` : "TAP & DRAG TO PLAY"}
+            </div>
+
+            <!-- Swipe/Pinch Tutorial Interactive Overlay -->
+            ${this.showGestureTutorial ? html`
+              <div class="gesture-tutorial-overlay" @mousedown=${(e: Event) => e.stopPropagation()} @touchstart=${(e: Event) => e.stopPropagation()}>
+                <div class="tutorial-path-animation">
+                  <div class="tutorial-path-point start"></div>
+                  <div class="tutorial-path-point end"></div>
+                  <div class="tutorial-path-hand">
+                    <span class="material-icons-round">touch_app</span>
+                  </div>
+                </div>
+                <div class="gesture-tutorial-content">
+                  <div class="tutorial-guide-title">
+                    <span class="material-icons-round">school</span>
+                    <span>Interactive Gesture Guide</span>
+                  </div>
+                  <ul class="tutorial-instructions">
+                    <li>
+                      <span class="instruction-bullet x">↔</span>
+                      <span>Drag <strong>Left / Right</strong> to shift <strong>Pitch</strong></span>
+                    </li>
+                    <li>
+                      <span class="instruction-bullet y">↕</span>
+                      <span>Drag <strong>Up / Down</strong> to filter <strong>Tone/Timbre</strong></span>
+                    </li>
+                    <li>
+                      <span class="instruction-bullet scroll">⤢</span>
+                      <span><strong>Pinch</strong> or <strong>Scroll</strong> to adjust chord width</span>
+                    </li>
+                  </ul>
+                  <button class="tutorial-got-it-btn" @click=${(e: Event) => { e.stopPropagation(); this.showGestureTutorial = false; }}>
+                    Got it, play!
+                  </button>
+                </div>
+              </div>
+            ` : ""}
+          </div>
+
+          <!-- Harmonic Chord Sliders -->
+          <div class="orchestrator-sliders">
+            <div class="orchestrator-slider-row">
+              <div class="orchestrator-slider-header">
+                <span class="orchestrator-slider-label">Harmonic Chord Voicing Span</span>
+                <span class="orchestrator-slider-value">x${this.harmonicVoicing.toFixed(1)}</span>
+              </div>
+              <input 
+                type="range" 
+                min="1.0" 
+                max="5.0" 
+                step="0.1" 
+                class="orchestrator-slider-input" 
+                .value=${this.harmonicVoicing}
+                @input=${(e: any) => {
+                  this.harmonicVoicing = parseFloat(e.target.value);
+                  this.updateInstrumentSynth();
+                }}
+              />
+            </div>
+          </div>
+
+          <div class="orchestrator-footer-tip">
+            <span class="material-icons-round text-pink-400 animate-pulse">pinch</span>
+            <span>Tip: Scroll inside pad or pinch to change chord spacing!</span>
+          </div>
+        </div>
+
+        <div id="prompts-container">
+          ${this.prompts.map(
+            (p) => html`
+              <div class="prompt-tag">
+                ${p.text}
+              </div>
+            `
+          )}
+        </div>
+        <div id="controls">
+          <button
+            class="action-btn ${isPlaying ? "stop" : "play"}"
+            @click=${this.togglePlayback}
+          >
+            <span class="material-icons-round">
+              ${isPlaying ? "stop" : "play_arrow"}
+            </span>
+            ${isPlaying ? "Stop Music" : "Start Music"}
+          </button>
+        </div>
+      </div>
+    `;
+  }

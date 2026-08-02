@@ -38,6 +38,8 @@ query GetCommunityTracks @auth(level: PUBLIC) {
       }
     }
     coverUrl
+    audioUrl
+    prompt
     createdAt
     owner {
       uid

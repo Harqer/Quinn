@@ -171,15 +171,11 @@ class PlayBillingManager(
         billingClient.acknowledgePurchase(acknowledgePurchaseParams) { billingResult ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                 val productId = purchase.products.firstOrNull()
-                Timber.d("Purchase acknowledged successfully: $productId")
+                Timber.d("Purchase acknowledged successfully for token ${purchase.purchaseToken.take(10)}... productId: $productId")
                 if (productId != null) {
                     _currentProductId.value = productId
                     onPurchaseAcknowledged(productId)
                 }
-                // NOTE: the backend webhook (Stripe / Play Developer Notifications) is the
-                // authoritative source for updating UserSettings.isPremium in the DB.
-                // The onPurchaseAcknowledged callback allows the VM to optimistically update
-                // its local state while the webhook propagates.
             } else {
                 Timber.e("Acknowledgement failed: ${billingResult.debugMessage}")
             }

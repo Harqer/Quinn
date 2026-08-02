@@ -20,7 +20,8 @@
         android:label="Mave"
         android:icon="@drawable/mave_brand_dark"
         android:roundIcon="@drawable/mave_brand_dark"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Mave">
         
         <meta-data
             android:name="com.meta.wearable.mwdat.APPLICATION_ID"
@@ -60,6 +61,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="lyriacamera" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/auth_deep_link_scheme" android:host="@string/auth_deep_link_host" />
             </intent-filter>
         </activity>
     </application>

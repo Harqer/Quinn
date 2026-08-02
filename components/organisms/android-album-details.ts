@@ -1,0 +1,110 @@
+import { LitElement, html, nothing } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { AndroidAlbumDetailsStyles } from './android-album-details.styles';
+
+@customElement('android-album-details')
+export class AndroidAlbumDetails extends LitElement {
+  static styles = AndroidAlbumDetailsStyles;
+
+  @property() androidLikedSongs: any;
+  @property() toggleLikeSong: any;
+  @property() dispatchError: any;
+  @property() playTrack: any;
+  @property() androidActiveSongTitle: any;
+  @property() openOptionsMenu: any;
+  @property() androidActiveSongArtist: any;
+  @property() playbackState: any;
+
+  render() {
+    
+  
+    const tracks = [
+      { id: 1, title: "Love Me Do - Mono / Remastered", vibe: "upbeat harmonica early vintage rock" },
+      { id: 2, title: "From Me to You - Mono / Remastered", vibe: "classic beatles pop rock harmonies" },
+      { id: 3, title: "She Loves You - Mono / Remastered", vibe: "energetic vintage pop rock yeah yeah yeah" },
+      { id: 4, title: "I Want To Hold Your Hand - Remastered 2015", vibe: "driving early rock classic guitar progressions" }
+    ];
+
+    return html`
+      <div class="android-flow-album-details animate-fade-in" style="background: linear-gradient(to bottom, #440c15 0%, #121212 50%); height: 100%; overflow-y: auto; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column;">
+        <!-- Header Nav Row -->
+        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+          <button style="background: transparent; border: none; color: #ffffff; cursor: pointer; padding: 4px;" @click=${() => this.dispatchEvent(new CustomEvent("step-change", { detail: "search_home", bubbles: true, composed: true }))}>
+            <span class="material-icons-round" style="font-size: 24px;">arrow_back</span>
+          </button>
+        </div>
+
+        <!-- Album Art Box -->
+        <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+          <div style="background: #e3001a; width: 180px; height: 180px; border-radius: 4px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; box-shadow: 0 12px 24px rgba(0,0,0,0.5);">
+            <div style="position: absolute; top: 16px; left: 16px; color: #fcd34d; font-size: 9px; font-weight: 900; letter-spacing: 0.5px;">GENERATIVE</div>
+            <div style="color: #fcd34d; font-size: 110px; font-weight: 900; line-height: 1; margin-top: 10px;">1</div>
+          </div>
+        </div>
+
+        <!-- Album Titles & Info -->
+        <div style="margin-bottom: 16px; text-align: left;">
+          <h1 style="font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 8px;">1 (Remastered)</h1>
+          
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <div style="width: 20px; height: 20px; border-radius: 50%; background: #27272a; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=50" style="width: 100%; height: 100%; object-fit: cover;" />
+            </div>
+            <span style="font-size: 12px; font-weight: 700; color: #ffffff;">Unknown Artist</span>
+          </div>
+
+          <div style="font-size: 11px; color: #a1a1aa; margin-bottom: 16px;">Album • 2000</div>
+
+          <!-- Buttons Bar -->
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; gap: 16px; align-items: center;">
+              <button style="background: transparent; border: none; color: ${this.androidLikedSongs.includes("1 (Remastered)") ? "#1db954" : "#b3b3b3"}; cursor: pointer;" @click=${() => this.toggleLikeSong("1 (Remastered)")}>
+                <span class="material-icons-round">${this.androidLikedSongs.includes("1 (Remastered)") ? "favorite" : "favorite_border"}</span>
+              </button>
+              <button style="background: transparent; border: none; color: #b3b3b3; cursor: pointer;" @click=${() => this.dispatchError("Downloading to glasses offline cache...")}>
+                <span class="material-icons-round">arrow_circle_down</span>
+              </button>
+              <button style="background: transparent; border: none; color: #b3b3b3; cursor: pointer;" @click=${() => this.openOptionsMenu("1 (Remastered)", this.androidActiveSongArtist || "Unknown Artist", "default_album_cover")}>
+                <span class="material-icons-round">more_horiz</span>
+              </button>
+            </div>
+
+            <!-- Big Green Play Button -->
+            <button style="background: #1db954; border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #ffffff; transition: transform 0.2s;" @click=${() => this.playTrack(tracks[1])}>
+              <span class="material-icons-round" style="font-size: 24px; color: #000000;">${this.playbackState === "playing" && this.androidActiveSongArtist === this.androidActiveSongArtist || "Unknown Artist" ? "pause" : "play_arrow"}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tracks List -->
+        <div style="display: flex; flex-direction: column; gap: 12px; flex-grow: 1; margin-bottom: 80px;">
+          ${tracks.map(track => {
+            const isCurrent = this.androidActiveSongTitle === track.title;
+            const isPlaying = isCurrent && this.playbackState === "playing";
+
+            return html`
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; cursor: pointer;" @click=${() => this.playTrack(track)}>
+                <div style="display: flex; flex-direction: column; text-align: left; flex: 1; min-width: 0;">
+                  <span style="font-size: 13px; font-weight: 600; color: ${isCurrent ? "#1db954" : "#ffffff"}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px;">
+                    ${isPlaying ? html`
+                      <span class="material-icons-round text-emerald-400 font-icon-small animate-pulse" style="font-size: 14px;">equalizer</span>
+                    ` : ""}
+                    ${track.title}
+                  </span>
+                  <span style="font-size: 11px; color: #b3b3b3; margin-top: 3px; display: flex; align-items: center; gap: 4px;">
+                    <span class="material-icons-round text-emerald-400" style="font-size: 11px;">arrow_circle_down</span>
+                    Unknown Artist
+                  </span>
+                </div>
+                <button style="background: transparent; border: none; color: #b3b3b3; cursor: pointer; padding: 4px;" @click=${(e: Event) => { e.stopPropagation(); this.openOptionsMenu(track.title, this.androidActiveSongArtist || "Unknown Artist", "default_album_cover"); }}>
+                  <span class="material-icons-round">more_horiz</span>
+                </button>
+              </div>
+            `;
+          })}
+        </div>
+      </div>
+    `;
+  
+  }
+}

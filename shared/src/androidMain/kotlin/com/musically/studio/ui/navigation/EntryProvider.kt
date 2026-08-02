@@ -281,7 +281,8 @@ fun maveEntryProvider(
         SettingsScreen(
             viewModel = viewModel,
             onBack = { navigator.goBack() },
-            onNavigateToPremium = { navigator.navigate(Route.Premium) }
+            onNavigateToPremium = { navigator.navigate(Route.Premium) },
+            onNavigateToMfa = { navigator.navigate(Route.MfaEnrollment) }
         )
     }
 
@@ -295,9 +296,8 @@ fun maveEntryProvider(
     }
 
     entry<Route.EmailInput> {
-        EmailInputScreen(
+        EmailLinkInputScreen(
             viewModel = viewModel,
-            onNextClick = { navigator.navigate(Route.PasswordInput) },
             onBackClick = { navigator.goBack() }
         )
     }
@@ -358,6 +358,29 @@ fun maveEntryProvider(
             onDone = { navigator.navigate(Route.Home) }
         )
     }
+
+    entry<Route.MfaEnrollment> {
+        com.musically.studio.ui.screens.onboarding.MfaEnrollmentScreen(
+            viewModel = viewModel,
+            onEnrolled = { navigator.navigate(Route.Home) },
+            onBack = { navigator.goBack() }
+        )
+    }
+
+    entry<Route.MfaVerification> {
+        val resolver = viewModel.mfaResolver
+        if (resolver != null) {
+            com.musically.studio.ui.screens.onboarding.MfaVerificationScreen(
+                viewModel = viewModel,
+                resolver = resolver,
+                onSuccess = { navigator.navigate(Route.Home) },
+                onBack = { navigator.goBack() }
+            )
+        } else {
+            androidx.compose.material3.Text("Error: No MFA session active")
+        }
+    }
+
 
     entry<Route.GenerateCover> { key ->
         GenerateCoverScreen(

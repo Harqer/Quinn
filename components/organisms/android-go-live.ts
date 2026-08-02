@@ -1,0 +1,83 @@
+import { LitElement, html, nothing } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { AndroidGoLiveStyles } from './android-go-live.styles';
+
+@customElement('android-go-live')
+export class AndroidGoLive extends LitElement {
+  static styles = AndroidGoLiveStyles;
+
+  @property() cameraStream: any;
+  @property() dispatchError: any;
+  @property() isHapticsEnabled: any;
+  @property() triggerLiveHapticPattern: any;
+  @property() isAndroidCameraActive: any;
+  @property() liveFilter: any;
+
+  render() {
+      
+    return html`
+      <div class="android-flow-go-live animate-fade-in">
+        <div class="community-header-row" style="margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="chevron-btn" @click=${() => { this.dispatchEvent(new CustomEvent("step-change", { detail: "community", bubbles: true, composed: true })); if (this.isHapticsEnabled && navigator.vibrate) navigator.vibrate(8); }} style="background: transparent; border: none; color: white; display: flex; align-items: center; justify-content: center; padding: 4px;">
+              <span class="material-icons-round" style="font-size: 20px;">arrow_back</span>
+            </button>
+            <h1 class="community-title-large" style="font-size: 16px;">Live Broadcast</h1>
+          </div>
+          <button class="go-live-pulsing-btn" style="background: #ef4444; color: white;" @click=${() => { this.dispatchEvent(new CustomEvent("step-change", { detail: "community", bubbles: true, composed: true })); this.dispatchError("Broadcast stopped successfully."); if (this.isHapticsEnabled && navigator.vibrate) navigator.vibrate(15); }}>
+            <span>END</span>
+          </button>
+        </div>
+
+        <div class="live-video-pane">
+          <div class="live-badge-overlay">
+            <span class="pulsing-dot-red"></span>
+            <span>RAYBAN META POV</span>
+          </div>
+          ${this.isAndroidCameraActive ? html`
+            <video class="live-video-feed-actual filter-${this.liveFilter}" .srcObject=${this.cameraStream} autoplay playsinline muted></video>
+          ` : html`
+            <div style="width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#18181b; color:#a1a1aa; padding: 20px; text-align:center; gap:8px;">
+              <span class="material-icons-round" style="font-size:36px; color:#ef4444;">videocam_off</span>
+              <span style="font-size:11px; font-weight:700;">Glasses POV stream off</span>
+              <span style="font-size:9px; color:#71717a;">Tap the camera icon in the search page or mini-player to start streaming glasses view</span>
+            </div>
+          `}
+        </div>
+
+        <div class="filters-control-row">
+          <button class="filter-tab-btn ${this.liveFilter === 'normal' ? 'active' : ''}" @click=${() => { this.liveFilter = "normal"; if (this.isHapticsEnabled && navigator.vibrate) navigator.vibrate(5); }}>Original</button>
+          <button class="filter-tab-btn ${this.liveFilter === 'neon' ? 'active' : ''}" @click=${() => { this.liveFilter = "neon"; if (this.isHapticsEnabled && navigator.vibrate) navigator.vibrate(5); }}>Cyber Neon</button>
+          <button class="filter-tab-btn ${this.liveFilter === 'vintage' ? 'active' : ''}" @click=${() => { this.liveFilter = "vintage"; if (this.isHapticsEnabled && navigator.vibrate) navigator.vibrate(5); }}>Vintage Retro</button>
+          <button class="filter-tab-btn ${this.liveFilter === 'monochrome' ? 'active' : ''}" @click=${() => { this.liveFilter = "monochrome"; if (this.isHapticsEnabled && navigator.vibrate) navigator.vibrate(5); }}>B&W</button>
+        </div>
+
+        <div class="live-control-deck-card">
+          <div class="deck-section-title">Glasses Interaction Triggers</div>
+          <div class="haptic-grid-2">
+            <button class="haptic-control-btn" @click=${() => this.triggerLiveHapticPattern("single")}>
+              <span class="material-icons-round haptic-btn-icon">vibration</span>
+              <span class="haptic-btn-lbl">Single Pulse</span>
+              <span class="haptic-btn-sub">Vibrate Frame</span>
+            </button>
+            <button class="haptic-control-btn" @click=${() => this.triggerLiveHapticPattern("double")}>
+              <span class="material-icons-round haptic-btn-icon" style="color:#ef4444;">notification_important</span>
+              <span class="haptic-btn-lbl">Alert Double</span>
+              <span class="haptic-btn-sub">Send Haptic Alert</span>
+            </button>
+          </div>
+
+          <div class="stream-active-orchestrator" style="margin-top: 10px;">
+            <span style="font-size:9px; color:#1db954; font-weight:bold;">AUDIO SYNTH SYNCING ACTIVE:</span>
+            <div class="waveform-bar-sim" style="animation-delay: 0.1s;"></div>
+            <div class="waveform-bar-sim" style="animation-delay: 0.3s;"></div>
+            <div class="waveform-bar-sim" style="animation-delay: 0.5s;"></div>
+            <div class="waveform-bar-sim" style="animation-delay: 0.2s;"></div>
+            <div class="waveform-bar-sim" style="animation-delay: 0.4s;"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  
+  }
+}

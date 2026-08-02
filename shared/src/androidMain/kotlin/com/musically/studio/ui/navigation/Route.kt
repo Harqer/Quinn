@@ -35,6 +35,8 @@ sealed interface Route : NavKey {
     @Serializable data object Loading : Route
     @Serializable data object Notification : Route
     @Serializable data object ArtistSelection : Route
+    @Serializable data object MfaEnrollment : Route
+    @Serializable data object MfaVerification : Route
 
     @Serializable data class NowPlaying(val trackId: String?) : Route
     @Serializable data class GenerateCover(val trackId: String?, val initialType: String = "image") : Route

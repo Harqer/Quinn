@@ -24,8 +24,12 @@ export const WelcomeScreen: React.FC<{ onSignUp: () => void, onLogin: () => void
         </Typography>
 
         <div className="w-full space-y-3 flex flex-col items-center">
-          <Button fullWidth onClick={onSignUp} icon={<Icon name="person_add" />} title={t('welcome.signUp')} />
-          <Button variant="outlined" fullWidth onClick={onLogin} icon={<Icon name="login" />} title={t('welcome.logIn')} />
+          <Button fullWidth onClick={onSignUp} icon={<Icon name="person_add" />}>
+            {t('welcome.signUp') || 'Sign Up'}
+          </Button>
+          <Button variant="outlined" fullWidth onClick={onLogin} icon={<Icon name="login" />}>
+            {t('welcome.logIn') || 'Log In'}
+          </Button>
         </div>
         
         <button onClick={onLogin} className="mt-8 text-white font-bold text-base hover:scale-105 transition-transform active:scale-95 disabled:opacity-50" title={t('welcome.logIn')}>

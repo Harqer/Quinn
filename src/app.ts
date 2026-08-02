@@ -72,6 +72,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/music", musicRouter);
+app.use("/api", musicRouter);
 app.use("/api/spotify", spotifyRouter);
 app.use("/api/chat", chatRouter);
 app.use("/api/stripe", stripeRouter);

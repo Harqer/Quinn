@@ -1,0 +1,8 @@
+spawn npx -y firebase-tools@latest dataconnect:sql:shell
+expect "Enter your SQL query"
+send "ALTER TABLE \"public\".\"category\" DROP COLUMN \"type\";\r\r"
+expect "Are you sure you want to proceed?"
+send "y\r"
+expect "Enter your SQL query"
+send ".exit\r"
+expect eof

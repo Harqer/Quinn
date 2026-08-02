@@ -137,7 +137,8 @@ fun LibraryScreen(
                         TrackItem(
                             track = track,
                             onClick = { onNavigateToNowPlaying(track.id) },
-                            onAlbumClick = { onNavigateToAlbum(track.album.id) }
+                            onAlbumClick = { onNavigateToAlbum(track.album.id) },
+                            onRemixClick = { viewModel.generateFromTrack(track) }
                         )
                     }
                 }

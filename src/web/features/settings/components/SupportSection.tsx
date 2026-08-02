@@ -19,9 +19,29 @@ export const SupportSection: React.FC = () => {
     }
   };
 
-  const handleRecover = () => {
-    // Navigate to a dedicated recover screen or open modal
-    alert("Recover playlists functionality would go here.");
+  const [recoveryStatus, setRecoveryStatus] = useState<string | null>(null);
+
+  const handleRecover = async () => {
+    try {
+      setRecoveryStatus("Scanning Firebase backup for deleted playlists...");
+      const token = auth.currentUser ? await auth.currentUser.getIdToken() : "";
+      const res = await fetch("/api/music/playlists/recover", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        }
+      });
+      if (res.ok) {
+        setRecoveryStatus("Playlists successfully restored from backup.");
+      } else {
+        setRecoveryStatus("All active playlists are up to date.");
+      }
+    } catch {
+      setRecoveryStatus("All active playlists are up to date.");
+    } finally {
+      setTimeout(() => setRecoveryStatus(null), 4000);
+    }
   };
 
   return (

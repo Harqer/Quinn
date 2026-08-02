@@ -26,6 +26,7 @@ export class QuotaResetService {
           
           for (const uid of uids) {
             const count = await this.cleanupExpiredMonths(uid, currentMonthKey);
+            await this.resetUserUsage(uid, currentMonthKey);
             archivedMonths += count;
             processedUsers++;
           }

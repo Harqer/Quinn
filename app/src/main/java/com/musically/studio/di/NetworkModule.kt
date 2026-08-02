@@ -2,11 +2,7 @@ package com.musically.studio.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.musically.studio.network.ApiClient
-import com.musically.studio.network.RealApiClient
-import com.musically.studio.network.MaveSessionManager
 import com.musically.studio.network.GeminiLiveManager
-import com.musically.studio.network.StreamingApiClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,26 +18,13 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
+            .pingInterval(30, java.util.concurrent.TimeUnit.SECONDS)
+            .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+            .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
             .build()
     }
 
-    @Provides
-    @Singleton
-    fun provideApiClient(okHttpClient: OkHttpClient): ApiClient {
-        return RealApiClient(okHttpClient)
-    }
 
-    @Provides
-    @Singleton
-    fun provideStreamingApiClient(okHttpClient: OkHttpClient): StreamingApiClient {
-        return StreamingApiClient(okHttpClient)
-    }
-
-    @Provides
-    @Singleton
-    fun provideMaveSessionManager(okHttpClient: OkHttpClient): MaveSessionManager {
-        return MaveSessionManager(okHttpClient)
-    }
 
     @Provides
     @Singleton

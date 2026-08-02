@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mave</string>
+    <string name="google_web_client_id">759854762539-ralu2gin45k87gi3qm0t9spug55tsfqt.apps.googleusercontent.com</string>
+    <string name="auth_deep_link_scheme">https</string>
+    <string name="auth_deep_link_host">musically-studio.firebaseapp.com</string>
+    <string name="auth_deep_link_url">https://musically-studio.firebaseapp.com/finishSignUp</string>
+    <string name="recaptcha_key_id">REPLACE_WITH_YOUR_KEY</string>
+</resources>
