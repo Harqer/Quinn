@@ -65,7 +65,7 @@ fun MaveHomeScreen(
                 modifier = Modifier.size(72.dp)
             ) {
                 Icon(
-                    imageVector = androidx.compose.material.icons.Icons.Default.PhotoCamera,
+                    imageVector = androidx.compose.material.icons.filled.PhotoCamera,
                     contentDescription = "Open Camera",
                     tint = androidx.compose.ui.graphics.Color.White,
                     modifier = Modifier.size(36.dp)
