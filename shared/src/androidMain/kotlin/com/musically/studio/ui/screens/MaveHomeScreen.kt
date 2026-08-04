@@ -64,11 +64,12 @@ fun MaveHomeScreen(
                 containerColor = com.musically.studio.ui.theme.MaveBrand,
                 modifier = Modifier.size(72.dp)
             ) {
-                Icon(
-                    imageVector = androidx.compose.material.icons.filled.PhotoCamera,
-                    contentDescription = "Open Camera",
-                    tint = androidx.compose.ui.graphics.Color.White,
-                    modifier = Modifier.size(36.dp)
+                // Camera Shutter Button UI
+                androidx.compose.foundation.layout.Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .background(androidx.compose.ui.graphics.Color.White, shape = androidx.compose.foundation.shape.CircleShape)
+                        .border(4.dp, androidx.compose.ui.graphics.Color.LightGray, shape = androidx.compose.foundation.shape.CircleShape)
                 )
             }
         },
