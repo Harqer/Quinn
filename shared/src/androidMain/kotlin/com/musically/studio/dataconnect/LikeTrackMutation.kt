@@ -37,7 +37,7 @@ public interface LikeTrackMutation :
     @kotlinx.serialization.Serializable
   public data class Data(
   
-    val likedTrack_insert: LikedTrackKey,
+    val likedTrack_upsert: LikedTrackKey,
   
   ) {
     

@@ -219,3 +219,47 @@ type VideoDigestion @table {
   generatedTrack: Track
   createdAt: Timestamp! @default(expr: "request.time")
 }
+
+# -------------------------------------
+# CHAT & AI
+# -------------------------------------
+type ChatMessage @table {
+  id: String! @default(expr: "uuidV4()")
+  user: User!
+  sender: String! # "user" or "ai"
+  text: String!
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# -------------------------------------
+# PREMIUM & APP CONTENT
+# -------------------------------------
+type SubscriptionPlan @table {
+  id: String! @default(expr: "uuidV4()")
+  name: String!
+  tier: SubscriptionTier! @unique
+  priceMonthly: Float!
+  priceAnnually: Float!
+  description: String!
+  isActive: Boolean! @default(value: true)
+}
+
+type SubscriptionFeature @table(key: ["plan", "feature"]) {
+  plan: SubscriptionPlan!
+  feature: String!
+}
+
+type FaqItem @table {
+  id: String! @default(expr: "uuidV4()")
+  question: String!
+  answer: String!
+  orderIndex: Int!
+}
+
+type AIPreset @table {
+  id: String! @default(expr: "uuidV4()")
+  name: String!
+  promptFragment: String!
+  imageUrl: String
+  isActive: Boolean! @default(value: true)
+}

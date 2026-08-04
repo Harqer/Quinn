@@ -49,24 +49,20 @@ class ChatViewModel @Inject constructor(
 
     private suspend fun loadChatHistory() {
         try {
-            val res = chatRepository.loadChatHistory()
-            if (res.has("messages")) {
-                val msgsArray = res.getJSONArray("messages")
-                if (msgsArray.length() > 0) {
-                    val loadedMsgs = mutableListOf<MaveChatMessage>()
-                    for (i in 0 until msgsArray.length()) {
-                        val obj = msgsArray.getJSONObject(i)
-                        loadedMsgs.add(
-                            MaveChatMessage(
-                                id = obj.optString("id", i.toString()),
-                                sender = obj.optString("sender", "ai"),
-                                text = obj.optString("text", "")
-                            )
-                        )
-                    }
-                    _messages.value = loadedMsgs
-                    return
+            val userId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
+            val result = com.musically.studio.dataconnect.DefaultConnector.instance.listChatMessages(userId = userId).execute()
+            val msgs = result.data.chatMessages
+            
+            if (msgs.isNotEmpty()) {
+                val loadedMsgs = msgs.map {
+                    MaveChatMessage(
+                        id = it.id,
+                        sender = it.sender,
+                        text = it.text
+                    )
                 }
+                _messages.value = loadedMsgs
+                return
             }
         } catch (e: Exception) {
             Log.e("ChatViewModel", "Failed to load chat history", e)
@@ -82,24 +78,21 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun saveChatHistory() {
-        val currentMessages = _messages.value
-        if (currentMessages.isEmpty()) return
-        
+        // DataConnect handles messages individually as they are added, so this is unused.
+        // We will call saveMessage(msg) below.
+    }
+
+    private fun saveMessage(msg: MaveChatMessage) {
         viewModelScope.launch {
             try {
-                val msgsArray = org.json.JSONArray()
-                for (msg in currentMessages) {
-                    val obj = JSONObject()
-                    obj.put("id", msg.id)
-                    obj.put("sender", msg.sender)
-                    obj.put("text", msg.text)
-                    msgsArray.put(obj)
-                }
-                val body = JSONObject()
-                body.put("messages", msgsArray)
-                chatRepository.saveChatHistory(body)
+                val userId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
+                com.musically.studio.dataconnect.DefaultConnector.instance.addChatMessage(
+                    userId = userId,
+                    sender = msg.sender,
+                    text = msg.text
+                ).execute()
             } catch (e: Exception) {
-                Log.e("ChatViewModel", "Failed to save chat history", e)
+                Log.e("ChatViewModel", "Failed to save message to Data Connect", e)
             }
         }
     }
@@ -108,7 +101,7 @@ class ChatViewModel @Inject constructor(
         if (text.isBlank()) return
         val userMsg = MaveChatMessage(id = System.currentTimeMillis().toString(), sender = "user", text = text.trim())
         _messages.value = _messages.value + userMsg
-        saveChatHistory()
+        saveMessage(userMsg)
 
         val responseId = (System.currentTimeMillis() + 1).toString()
         var fullText = ""
@@ -133,7 +126,12 @@ class ChatViewModel @Inject constructor(
                         }
                     }
                 }
-                saveChatHistory()
+                
+                // Save AI message when stream completes
+                val finalMsg = _messages.value.find { it.id == responseId }
+                if (finalMsg != null) {
+                    saveMessage(finalMsg)
+                }
             } catch (e: Exception) {
                 Log.e("ChatViewModel", "sendMessage failed", e)
                 handleError(e, responseId, addedEmptyMessage)
@@ -161,7 +159,7 @@ class ChatViewModel @Inject constructor(
                 text = "[Error] Error: $errMsg"
             )
         }
-        saveChatHistory()
+        _messages.value.lastOrNull()?.let { saveMessage(it) }
     }
 
     private fun handleToolCall(name: String, args: Map<String, Any?>) {
@@ -181,7 +179,7 @@ class ChatViewModel @Inject constructor(
                     sender = "ai",
                     text = "[Error] Tool error (${name}): ${e.message}"
                 )
-                saveChatHistory()
+                _messages.value.lastOrNull()?.let { saveMessage(it) }
             }
         }
     }
@@ -202,7 +200,7 @@ class ChatViewModel @Inject constructor(
             type = "track"
         )
         _messages.value = _messages.value + msg
-        saveChatHistory()
+        _messages.value.lastOrNull()?.let { saveMessage(it) }
         
         if (!audioUrl.isNullOrBlank()) {
             withContext(Dispatchers.Main) {
@@ -229,7 +227,7 @@ class ChatViewModel @Inject constructor(
             audioUrl = audioUrl,
             type = if (audioUrl != null) "track" else null
         )
-        saveChatHistory()
+        _messages.value.lastOrNull()?.let { saveMessage(it) }
     }
 
     private suspend fun handleGenerateCoverArt(args: Map<String, Any?>) {
@@ -252,7 +250,7 @@ class ChatViewModel @Inject constructor(
                 text = "[Error] Cover art generation failed"
             )
         }
-        saveChatHistory()
+        _messages.value.lastOrNull()?.let { saveMessage(it) }
     }
 
     private suspend fun handleGenerateVideo(args: Map<String, Any?>) {
@@ -276,7 +274,7 @@ class ChatViewModel @Inject constructor(
                 else it
             }
         }
-        saveChatHistory()
+        _messages.value.lastOrNull()?.let { saveMessage(it) }
     }
 
     private suspend fun handleGenericToolCall(name: String, args: Map<String, Any?>) {
@@ -286,7 +284,7 @@ class ChatViewModel @Inject constructor(
             sender = "ai",
             text = result.optString("message", "Done.")
         )
-        saveChatHistory()
+        _messages.value.lastOrNull()?.let { saveMessage(it) }
     }
 
     fun generateCoverArt(prompt: String, hq: Boolean = false) {

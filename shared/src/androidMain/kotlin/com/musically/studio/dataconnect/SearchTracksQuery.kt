@@ -52,7 +52,7 @@ public interface SearchTracksQuery :
   
     val title: String,
   
-    val album: Album,
+    val album: Album?,
   
     val coverUrl: String?,
   

@@ -42,9 +42,13 @@ public interface GetCommunityTracksQuery :
   
     val title: String,
   
-    val album: Album,
+    val album: Album?,
   
     val coverUrl: String?,
+  
+    val audioUrl: String,
+  
+    val prompt: String?,
   
     val createdAt: @kotlinx.serialization.Serializable(with = com.google.firebase.dataconnect.serializers.TimestampSerializer::class) com.google.firebase.Timestamp,
   

@@ -19,6 +19,8 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   override val dataConnect: com.google.firebase.dataconnect.FirebaseDataConnect
 
   
+    public val addChatMessage: AddChatMessageMutation
+  
     public val addTrackToPlaylist: AddTrackToPlaylistMutation
   
     public val bookmarkTrack: BookmarkTrackMutation
@@ -66,6 +68,14 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
     public val getUserVideoDigestions: GetUserVideoDigestionsQuery
   
     public val likeTrack: LikeTrackMutation
+  
+    public val listAiPresets: ListAiPresetsQuery
+  
+    public val listChatMessages: ListChatMessagesQuery
+  
+    public val listFaqItems: ListFaqItemsQuery
+  
+    public val listSubscriptionPlans: ListSubscriptionPlansQuery
   
     public val recordPayment: RecordPaymentMutation
   
@@ -123,6 +133,10 @@ public fun DefaultConnector.Companion.getInstance(
 private class DefaultConnectorImpl(
   override val dataConnect: com.google.firebase.dataconnect.FirebaseDataConnect
 ) : DefaultConnector {
+  
+    override val addChatMessage by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      AddChatMessageMutationImpl(this)
+    }
   
     override val addTrackToPlaylist by lazy(LazyThreadSafetyMode.PUBLICATION) {
       AddTrackToPlaylistMutationImpl(this)
@@ -220,6 +234,22 @@ private class DefaultConnectorImpl(
       LikeTrackMutationImpl(this)
     }
   
+    override val listAiPresets by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      ListAiPresetsQueryImpl(this)
+    }
+  
+    override val listChatMessages by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      ListChatMessagesQueryImpl(this)
+    }
+  
+    override val listFaqItems by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      ListFaqItemsQueryImpl(this)
+    }
+  
+    override val listSubscriptionPlans by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      ListSubscriptionPlansQueryImpl(this)
+    }
+  
     override val recordPayment by lazy(LazyThreadSafetyMode.PUBLICATION) {
       RecordPaymentMutationImpl(this)
     }
@@ -256,7 +286,8 @@ private class DefaultConnectorImpl(
   @com.google.firebase.dataconnect.ExperimentalFirebaseDataConnect
   override fun mutations(): List<com.google.firebase.dataconnect.generated.GeneratedMutation<DefaultConnector, *, *>> =
     listOf(
-      addTrackToPlaylist,
+      addChatMessage,
+        addTrackToPlaylist,
         bookmarkTrack,
         createCameraCapture,
         createPlaylist,
@@ -292,6 +323,10 @@ private class DefaultConnectorImpl(
         getUserSettings,
         getUserTracks,
         getUserVideoDigestions,
+        listAiPresets,
+        listChatMessages,
+        listFaqItems,
+        listSubscriptionPlans,
         searchTracks,
         
     )
@@ -426,6 +461,21 @@ private open class DefaultConnectorGeneratedMutationImpl<Data, Variables>(
     "connector=$connector)"
 }
 
+
+
+private class AddChatMessageMutationImpl(
+  connector: DefaultConnector
+):
+  AddChatMessageMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      AddChatMessageMutation.Data,
+      AddChatMessageMutation.Variables
+  >(
+    connector,
+    AddChatMessageMutation.Companion.operationName,
+    AddChatMessageMutation.Companion.dataDeserializer,
+    AddChatMessageMutation.Companion.variablesSerializer,
+  )
 
 
 private class AddTrackToPlaylistMutationImpl(
@@ -785,6 +835,66 @@ private class LikeTrackMutationImpl(
     LikeTrackMutation.Companion.operationName,
     LikeTrackMutation.Companion.dataDeserializer,
     LikeTrackMutation.Companion.variablesSerializer,
+  )
+
+
+private class ListAiPresetsQueryImpl(
+  connector: DefaultConnector
+):
+  ListAiPresetsQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      ListAiPresetsQuery.Data,
+      Unit
+  >(
+    connector,
+    ListAiPresetsQuery.Companion.operationName,
+    ListAiPresetsQuery.Companion.dataDeserializer,
+    ListAiPresetsQuery.Companion.variablesSerializer,
+  )
+
+
+private class ListChatMessagesQueryImpl(
+  connector: DefaultConnector
+):
+  ListChatMessagesQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      ListChatMessagesQuery.Data,
+      ListChatMessagesQuery.Variables
+  >(
+    connector,
+    ListChatMessagesQuery.Companion.operationName,
+    ListChatMessagesQuery.Companion.dataDeserializer,
+    ListChatMessagesQuery.Companion.variablesSerializer,
+  )
+
+
+private class ListFaqItemsQueryImpl(
+  connector: DefaultConnector
+):
+  ListFaqItemsQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      ListFaqItemsQuery.Data,
+      Unit
+  >(
+    connector,
+    ListFaqItemsQuery.Companion.operationName,
+    ListFaqItemsQuery.Companion.dataDeserializer,
+    ListFaqItemsQuery.Companion.variablesSerializer,
+  )
+
+
+private class ListSubscriptionPlansQueryImpl(
+  connector: DefaultConnector
+):
+  ListSubscriptionPlansQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      ListSubscriptionPlansQuery.Data,
+      Unit
+  >(
+    connector,
+    ListSubscriptionPlansQuery.Companion.operationName,
+    ListSubscriptionPlansQuery.Companion.dataDeserializer,
+    ListSubscriptionPlansQuery.Companion.variablesSerializer,
   )
 
 

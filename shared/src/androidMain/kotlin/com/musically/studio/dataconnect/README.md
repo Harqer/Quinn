@@ -80,9 +80,9 @@ val connector: DefaultConnector = DefaultConnector.getInstance(
 ### DefaultConnector - Query and Mutation Properties
 
 The `default` Data Connect connector defines
-17 queries and
-14 mutations,
-a total of 31 operations.
+21 queries and
+15 mutations,
+a total of 36 operations.
 Each of these operations is exposed
 as a property of [DefaultConnector].
 
@@ -93,8 +93,8 @@ which can be accessed via the [DefaultConnector.getAlbumTracks] property.
 
 
 An example of the property for a mutation
-is the mutation named "AddTrackToPlaylist",
-which can be accessed via the [DefaultConnector.addTrackToPlaylist] property.
+is the mutation named "AddChatMessage",
+which can be accessed via the [DefaultConnector.addChatMessage] property.
 
 
 ### DefaultConnector - The `dataConnect` Property
@@ -221,14 +221,14 @@ last argument of the `execute()` method.
 If a mutation has _required_ variables then they must be specified as
 arguments to the `execute()` method.
 
-For example, the "CreateTrack" mutation has 4 required variables ("title", "albumId", "audioUrl", and "isCommunity")
-and can be executed via the [DefaultConnector.createTrack]
+For example, the "RecordPayment" mutation has 4 required variables ("userUid", "amount", "currency", and "status")
+and can be executed via the [DefaultConnector.recordPayment]
 property as follows:
 
 ```kotlin
 val connector = DefaultConnector.instance
-val mutationResult = connector.createTrack.execute(title="thud", albumId="quux", audioUrl="bar", isCommunity=false)
-println("CreateTrack mutation returned: ${mutationResult.data}")
+val mutationResult = connector.recordPayment.execute(userUid="garply", amount=5666.45, currency="foo", status="garply")
+println("RecordPayment mutation returned: ${mutationResult.data}")
 ```
 
 

@@ -26,3 +26,16 @@ package com.musically.studio.dataconnect
   
   }
 
+  
+  
+  public enum class SubscriptionTier {
+  FREE,
+  PREMIUM,
+  FAMILY;
+  
+  
+    public object EnumValueSerializer :
+      com.musically.studio.dataconnect.EnumValueSerializer<SubscriptionTier>(SubscriptionTier.entries)
+  
+  }
+

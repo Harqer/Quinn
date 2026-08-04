@@ -52,7 +52,7 @@ public interface GetLikedTracksQuery :
   
     val title: String,
   
-    val album: Album,
+    val album: Album?,
   
     val coverUrl: String?,
   

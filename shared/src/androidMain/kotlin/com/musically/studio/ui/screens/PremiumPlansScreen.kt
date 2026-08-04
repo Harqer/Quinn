@@ -44,6 +44,39 @@ fun PremiumPlansScreen(
 
     val currentProductId by viewModel.currentProductId.collectAsStateWithLifecycle()
 
+    var dynamicSubscriptionTiers by remember { mutableStateOf(com.musically.studio.ui.screens.SUBSCRIPTION_TIERS) }
+    var dynamicFaqItems by remember { mutableStateOf(com.musically.studio.ui.screens.FAQ_ITEMS) }
+
+    LaunchedEffect(Unit) {
+        try {
+            val plansResult = com.musically.studio.dataconnect.DefaultConnector.instance.listSubscriptionPlans().execute()
+            if (plansResult.data.subscriptionPlans.isNotEmpty()) {
+                dynamicSubscriptionTiers = plansResult.data.subscriptionPlans.map { plan ->
+                    com.musically.studio.ui.screens.SubscriptionTier(
+                        productId = plan.id,
+                        name = plan.name,
+                        price = "$${plan.priceMonthly.toInt()}",
+                        features = plan.features.map { it.feature },
+                        badge = if (plan.tier.value.name == "PRO") "MOST POPULAR" else null,
+                        isHighlighted = plan.tier.value.name == "PRO"
+                    )
+                }.sortedBy { it.price.replace("$", "").toIntOrNull() ?: 0 }
+            }
+            
+            val faqResult = com.musically.studio.dataconnect.DefaultConnector.instance.listFaqItems().execute()
+            if (faqResult.data.faqItems.isNotEmpty()) {
+                dynamicFaqItems = faqResult.data.faqItems.map { faq ->
+                    com.musically.studio.ui.screens.FaqItem(
+                        question = faq.question,
+                        answer = faq.answer
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("PremiumPlansScreen", "Failed to load DataConnect", e)
+        }
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -105,7 +138,7 @@ fun PremiumPlansScreen(
                 )
             }
 
-            items(SUBSCRIPTION_TIERS) { tier ->
+            items(dynamicSubscriptionTiers) { tier ->
                 PlanCard(
                     planName = tier.name,
                     price = tier.price,
@@ -153,7 +186,7 @@ fun PremiumPlansScreen(
                 Spacer(modifier = Modifier.height(MaveSpacing().small))
             }
 
-            items(FAQ_ITEMS) { faq ->
+            items(dynamicFaqItems) { faq ->
                 FaqAccordionItem(faq = faq)
             }
 

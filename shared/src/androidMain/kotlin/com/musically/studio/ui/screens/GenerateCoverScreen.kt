@@ -37,16 +37,20 @@ fun GenerateCoverScreen(
     var isGenerating by remember { mutableStateOf(false) }
     var generatedCoverUrl by remember { mutableStateOf<String?>(null) }
 
-    val dynamicPresets by viewModel.generatedPrompts.collectAsState()
+    var dynamicPresets by remember { mutableStateOf(listOf("Vibrant Synthwave", "Minimalist Neon", "Abstract Cyberpunk", "Retro Vinyl")) }
     
     LaunchedEffect(Unit) {
-        if (dynamicPresets.isEmpty()) {
-            viewModel.generateMusicPrompts("")
+        try {
+            val result = com.musically.studio.dataconnect.DefaultConnector.instance.listAiPresets().execute()
+            if (result.data.aIPresets.isNotEmpty()) {
+                dynamicPresets = result.data.aIPresets.map { it.name }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("GenerateCoverScreen", "Failed to load AI presets from DataConnect", e)
         }
     }
 
-    val presets = if (dynamicPresets.isNotEmpty()) dynamicPresets else listOf("Vibrant Synthwave", "Minimalist Neon", "Abstract Cyberpunk", "Retro Vinyl")
-    var selectedPreset by remember(coverType, presets) { mutableStateOf(presets.firstOrNull() ?: "") }
+    var selectedPreset by remember(coverType, dynamicPresets) { mutableStateOf(dynamicPresets.firstOrNull() ?: "") }
     
     val view = LocalView.current
 
@@ -105,7 +109,7 @@ fun GenerateCoverScreen(
             )
 
             StylePresetPills(
-                presets = presets,
+                presets = dynamicPresets,
                 selectedPreset = selectedPreset,
                 onPresetSelected = { selectedPreset = it },
                 primaryGreen = primaryGreen

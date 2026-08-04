@@ -168,3 +168,14 @@ mutation CreateVideoDigestion(
     generatedTrackId: $generatedTrackId
   })
 }
+
+# -------------------------------------
+# CHAT & AI
+# -------------------------------------
+mutation AddChatMessage($userId: String!, $sender: String!, $text: String!) @auth(level: USER) {
+  chatMessage_insert(data: {
+    userUid: $userId,
+    sender: $sender,
+    text: $text
+  })
+}

@@ -310,3 +310,49 @@ query SearchTracks($query: String!) @auth(level: PUBLIC) {
     createdAt
   }
 }
+
+# -------------------------------------
+# CHAT & AI
+# -------------------------------------
+query ListChatMessages($userId: String!) @auth(level: USER) {
+  chatMessages(where: { user: { uid: { eq: $userId } } }, orderBy: [{ createdAt: ASC }]) {
+    id
+    sender
+    text
+    createdAt
+  }
+}
+
+# -------------------------------------
+# PREMIUM & APP CONTENT
+# -------------------------------------
+query ListSubscriptionPlans @auth(level: PUBLIC) {
+  subscriptionPlans(where: { isActive: { eq: true } }, orderBy: [{ priceMonthly: ASC }]) {
+    id
+    name
+    tier
+    priceMonthly
+    priceAnnually
+    description
+    features: subscriptionFeatures_on_plan {
+      feature
+    }
+  }
+}
+
+query ListFaqItems @auth(level: PUBLIC) {
+  faqItems(orderBy: [{ orderIndex: ASC }]) {
+    id
+    question
+    answer
+  }
+}
+
+query ListAIPresets @auth(level: PUBLIC) {
+  aIPresets(where: { isActive: { eq: true } }) {
+    id
+    name
+    promptFragment
+    imageUrl
+  }
+}

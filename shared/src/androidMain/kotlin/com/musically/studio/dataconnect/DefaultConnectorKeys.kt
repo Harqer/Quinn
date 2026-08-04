@@ -36,6 +36,16 @@ package com.musically.studio.dataconnect
   }
 
   @kotlinx.serialization.Serializable
+  public data class ChatMessageKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
   public data class LikedTrackKey(
   
     val userUid: String,

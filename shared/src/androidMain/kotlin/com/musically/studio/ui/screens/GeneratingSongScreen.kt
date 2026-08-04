@@ -20,28 +20,15 @@ fun GeneratingSongScreen(
     viewModel: MainViewModel,
     onComplete: () -> Unit
 ) {
-    var stepIndex by remember { mutableIntStateOf(0) }
-    
-    val steps = listOf(
-        "Analyzing visual vibe...",
-        "Identifying subjects and mood...",
-        "Extracting aesthetic keywords...",
-        "Composing contextual lyrics...",
-        "Generating instrumental track..."
-    )
+    val thinkingText by viewModel.thinkingText.collectAsState()
 
     LaunchedEffect(Unit) {
-        // Mock chain of thought progression
-        for (i in steps.indices) {
-            stepIndex = i
-            delay(1500)
-        }
-        
-        // Trigger the actual generation via viewModel
-        viewModel.generateMusicPrompts(imageBase64)
+        // Send the image and prompt Gemini to generate a song based on it
+        viewModel.sendFrame(imageBase64)
+        viewModel.sendTextCommand("Look at the picture I just sent and give me a chain of thought describing the visual vibe, the aesthetic, and the musical mood it inspires. Think out loud! Then use the generate_cover_media tool to generate the cover and apply the music preset.")
         
         // Wait a bit more to simulate completion before navigating
-        delay(1000)
+        delay(15000) // Gemini should ideally call a function and trigger navigation, but for now we timeout
         onComplete()
     }
 
@@ -64,15 +51,15 @@ fun GeneratingSongScreen(
             Spacer(modifier = Modifier.height(32.dp))
             
             AnimatedContent(
-                targetState = stepIndex,
+                targetState = thinkingText,
                 transitionSpec = {
                     (fadeIn(animationSpec = tween(500)) + slideInVertically { height -> height })
                         .togetherWith(fadeOut(animationSpec = tween(500)) + slideOutVertically { height -> -height })
                 },
                 label = "ChainOfThoughtStep"
-            ) { index ->
+            ) { text ->
                 Text(
-                    text = steps[index],
+                    text = text.ifBlank { "Analyzing visual vibe..." },
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onBackground
                 )
