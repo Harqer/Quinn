@@ -27,6 +27,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.Firebase
+import com.google.firebase.functions.functions
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.musically.studio.WearableStreamingService
 import com.musically.studio.billing.GenerationBlockReason
 import com.musically.studio.billing.PlayBillingManager
@@ -136,6 +140,58 @@ class MainViewModel @Inject constructor(
     internal val _playlists = MutableStateFlow<List<com.musically.studio.network.MavePlaylist>>(emptyList())
     val playlists: StateFlow<List<com.musically.studio.network.MavePlaylist>> = _playlists.asStateFlow()
 
+    internal val _recentTracks = MutableStateFlow<List<MaveTrack>>(emptyList())
+    val recentTracks: StateFlow<List<MaveTrack>> = _recentTracks.asStateFlow()
+
+    internal val _isOfflineMode = MutableStateFlow(prefs.getBoolean("offline_mode", false))
+    val isOfflineMode: StateFlow<Boolean> = _isOfflineMode.asStateFlow()
+
+    internal val _notificationsEnabled = MutableStateFlow(prefs.getBoolean("notifications_enabled", true))
+    val notificationsEnabled: StateFlow<Boolean> = _notificationsEnabled.asStateFlow()
+
+    internal val _appsDevicesEnabled = MutableStateFlow(prefs.getBoolean("apps_devices_enabled", true))
+    val appsDevicesEnabled: StateFlow<Boolean> = _appsDevicesEnabled.asStateFlow()
+
+    fun toggleOfflineMode(enabled: Boolean) {
+        prefs.edit { putBoolean("offline_mode", enabled) }
+        _isOfflineMode.value = enabled
+    }
+
+    fun toggleNotifications(enabled: Boolean) {
+        prefs.edit { putBoolean("notifications_enabled", enabled) }
+        _notificationsEnabled.value = enabled
+    }
+
+    fun toggleAppsDevices(enabled: Boolean) {
+        prefs.edit { putBoolean("apps_devices_enabled", enabled) }
+        _appsDevicesEnabled.value = enabled
+    }
+
+    private val gson = Gson()
+
+    fun loadRecentTracks() {
+        val json = prefs.getString("recent_tracks", "[]")
+        try {
+            val type = object : TypeToken<List<MaveTrack>>() {}.type
+            val tracks: List<MaveTrack> = gson.fromJson(json, type) ?: emptyList()
+            _recentTracks.value = tracks
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to parse recent tracks")
+            _recentTracks.value = emptyList()
+        }
+    }
+
+    fun addRecentTrack(track: MaveTrack) {
+        val current = _recentTracks.value.toMutableList()
+        current.removeAll { it.id == track.id }
+        current.add(0, track)
+        val trimmed = current.take(50)
+        _recentTracks.value = trimmed
+
+        val json = gson.toJson(trimmed)
+        prefs.edit { putString("recent_tracks", json) }
+    }
+
     internal val _categories = MutableStateFlow<List<com.musically.studio.network.MaveCategory>>(emptyList())
     val categories: StateFlow<List<com.musically.studio.network.MaveCategory>> = _categories.asStateFlow()
 
@@ -244,9 +300,18 @@ class MainViewModel @Inject constructor(
     internal val _navigationEvent = MutableSharedFlow<Route>(extraBufferCapacity = 1)
     val navigationEvent = _navigationEvent.asSharedFlow()
 
+    internal val _clearNavigationEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val clearNavigationEvent = _clearNavigationEvent.asSharedFlow()
+
     fun navigateTo(route: Route) {
         viewModelScope.launch {
             _navigationEvent.emit(route)
+        }
+    }
+
+    fun clearNavigation() {
+        viewModelScope.launch {
+            _clearNavigationEvent.emit(Unit)
         }
     }
 
@@ -354,6 +419,7 @@ class MainViewModel @Inject constructor(
     }
 
     init {
+        loadRecentTracks()
         try {
             val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
             val maxVolume = audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
@@ -583,7 +649,13 @@ class MainViewModel @Inject constructor(
             geminiLiveManager.transcripts.collect { text ->
                 if (text.isNotBlank()) {
                     messages.add(0, ChatMessage(text, false))
-                    WearableStreamingService.updateUi("Mave Studio", text, _currentCoverUrl.value)
+                    WearableStreamingService.updateUi(
+                        songTitle = _currentPlayingTrack.value?.name ?: "Mave Studio",
+                        geminiResponse = text,
+                        coverArtUrl = _currentCoverUrl.value,
+                        isThinking = false,
+                        isPlaying = _isPlaying.value
+                    )
                 }
             }
         }
@@ -598,12 +670,40 @@ class MainViewModel @Inject constructor(
                         val pitch = args?.optString("creative_pitch") ?: "Generating visual..."
                         _thinkingText.value = pitch
                         
-                        // We would call the API here to generate the media in a real implementation.
-                        // For now, we simulate success back to Gemini.
                         geminiLiveManager.sendResponse(call.optString("id", "0"), name, JSONObject().apply {
                             put("status", "success")
                             put("message", "Triggered $intent generation")
                         })
+                    } else if (name == "search_concerts") {
+                        val query = args?.optString("query") ?: ""
+                        _thinkingText.value = "Searching for $query concerts near you..."
+                        
+                        viewModelScope.launch {
+                            try {
+                                val locationManager = com.musically.studio.location.LocationManager(context)
+                                val location = locationManager.getCurrentLocation()
+                                
+                                val functionArgs = mutableMapOf<String, Any>("q" to query)
+                                if (location != null) {
+                                    functionArgs["lat"] = location.latitude
+                                    functionArgs["lon"] = location.longitude
+                                    functionArgs["range"] = "50mi"
+                                }
+                                
+                                val functions = com.google.firebase.Firebase.functions
+                                val result = functions.getHttpsCallable("searchConcerts").call(functionArgs).await()
+                                
+                                val data = result.data as? Map<String, Any>
+                                val jsonResponse = JSONObject(data ?: emptyMap<String, Any>())
+                                
+                                geminiLiveManager.sendResponse(call.optString("id", "0"), name, jsonResponse)
+                            } catch (e: Exception) {
+                                Timber.e(e, "Failed to search concerts")
+                                geminiLiveManager.sendResponse(call.optString("id", "0"), name, JSONObject().apply {
+                                    put("error", e.message)
+                                })
+                            }
+                        }
                     }
                 } catch (e: Exception) {
                     Timber.e(e, "Failed to handle tool call")
@@ -853,8 +953,6 @@ class MainViewModel @Inject constructor(
     }
 
 sealed interface AuthSideEffect {
-    data object LaunchGoogleSignIn : AuthSideEffect
-    data object LaunchAppleSignIn : AuthSideEffect
     data object LaunchVerifiedEmail : AuthSideEffect
     data class LaunchMfaVerification(val resolver: com.google.firebase.auth.MultiFactorResolver) : AuthSideEffect
 

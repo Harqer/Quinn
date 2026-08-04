@@ -81,7 +81,8 @@ export const LiveSessionScreen: React.FC = () => {
     }
   };
 
-  const captureAndSendFrame = () => {
+  const captureAndSendFrame = (isAuto: boolean | React.MouseEvent = false) => {
+    const isAutomatic = isAuto === true;
     if (!videoRef.current || !showCamera || isGenerating) return;
     
     const canvas = document.createElement('canvas');
@@ -94,8 +95,25 @@ export const LiveSessionScreen: React.FC = () => {
     const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
     sendVisionFrame(dataUrl);
     
-    toggleCamera();
+    if (isAutomatic) {
+       sendText("Tweak the instrumentation based on this new visual.");
+    } else {
+       sendText("Make a song based on this picture");
+       toggleCamera();
+    }
   };
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    if (showCamera) {
+      intervalId = setInterval(() => {
+        captureAndSendFrame(true);
+      }, 5000); // Capture frame every 5 seconds
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [showCamera, isGenerating]);
 
   return (
     <div className="flex flex-col h-full w-full bg-background overflow-hidden relative pb-[80px]">

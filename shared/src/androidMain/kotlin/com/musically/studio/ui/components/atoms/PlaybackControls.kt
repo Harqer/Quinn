@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import android.view.HapticFeedbackConstants
+import androidx.compose.ui.platform.LocalView
 
 @Composable
 fun PlaybackControls(
@@ -27,15 +29,23 @@ fun PlaybackControls(
     onPlayPause: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val view = LocalView.current
+
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onToggleShuffle) {
+        IconButton(onClick = {
+            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+            onToggleShuffle()
+        }) {
             Icon(Icons.Default.Shuffle, contentDescription = "Shuffle", tint = if (isShuffleEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground)
         }
-        IconButton(onClick = onPrevious) {
+        IconButton(onClick = {
+            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+            onPrevious()
+        }) {
             Icon(Icons.Default.SkipPrevious, contentDescription = "Previous", tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(36.dp))
         }
         
@@ -43,7 +53,10 @@ fun PlaybackControls(
             modifier = Modifier
                 .size(64.dp)
                 .background(Color.White, CircleShape)
-                .clickable { onPlayPause() },
+                .clickable {
+                    view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                    onPlayPause()
+                },
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -54,10 +67,16 @@ fun PlaybackControls(
             )
         }
         
-        IconButton(onClick = onNext) {
+        IconButton(onClick = {
+            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+            onNext()
+        }) {
             Icon(Icons.Default.SkipNext, contentDescription = "Next", tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(36.dp))
         }
-        IconButton(onClick = onToggleRepeat) {
+        IconButton(onClick = {
+            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+            onToggleRepeat()
+        }) {
             Icon(
                 if (isRepeatEnabled == "one") Icons.Default.RepeatOne else Icons.Default.Repeat,
                 contentDescription = "Repeat",

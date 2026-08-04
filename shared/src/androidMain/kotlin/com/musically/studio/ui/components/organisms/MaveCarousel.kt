@@ -35,11 +35,13 @@ fun MaveCarousel(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(tracks) { track ->
-                MaveCard(
-                    track = track,
-                    onClick = { onTrackClick(track.id) }
-                )
+            items(tracks, key = { it.id }) { track ->
+                Box(modifier = Modifier.animateItem()) {
+                    MaveCard(
+                        track = track,
+                        onClick = { onTrackClick(track.id) }
+                    )
+                }
             }
         }
     }

@@ -16,6 +16,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import android.view.HapticFeedbackConstants
+import androidx.compose.ui.platform.LocalView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,6 +32,8 @@ fun PodcastInputBar(
     secondaryNeonCyan: Color,
     onSurfaceColor: Color
 ) {
+    val view = LocalView.current
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -64,7 +68,14 @@ fun PodcastInputBar(
             )
             
             IconButton(
-                onClick = onRecordToggle,
+                onClick = {
+                    if (isRecording) {
+                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                    } else {
+                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                    }
+                    onRecordToggle()
+                },
                 modifier = Modifier
                     .background(
                         brush = Brush.linearGradient(listOf(primaryElectricViolet, secondaryNeonCyan)),
@@ -81,7 +92,10 @@ fun PodcastInputBar(
             if (promptText.isNotBlank()) {
                 Spacer(modifier = Modifier.width(8.dp))
                 IconButton(
-                    onClick = onSend,
+                    onClick = {
+                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                        onSend()
+                    },
                     modifier = Modifier
                         .background(surfaceColor, RoundedCornerShape(50))
                 ) {

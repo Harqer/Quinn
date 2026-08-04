@@ -34,6 +34,8 @@ import java.io.ByteArrayOutputStream
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
+    userPhotoUrl: String? = null,
+    userDisplayName: String? = null,
     onNavigateBack: () -> Unit,
     onMenuClick: () -> Unit = {},
     onTrackClick: (String) -> Unit = {},
@@ -62,21 +64,6 @@ fun ChatScreen(
         }
     }
     
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
-        bitmap?.let {
-            coroutineScope.launch(Dispatchers.IO) {
-                try {
-                    val stream = ByteArrayOutputStream()
-                    it.compress(Bitmap.CompressFormat.JPEG, 90, stream)
-                    val base64 = Base64.encodeToString(stream.toByteArray(), Base64.NO_WRAP)
-                    viewModel.sendVisionFrame(base64, "image/jpeg")
-                } catch (e: Exception) {
-                    Timber.e(e, "Failed to capture or encode image from Camera")
-                }
-            }
-        }
-    }
-    
     // Adaptive & Edge-to-edge
     Box(
         modifier = Modifier
@@ -91,8 +78,12 @@ fun ChatScreen(
                 TopAppBar(
                     title = { Text("Mave", fontWeight = FontWeight.Bold) },
                     navigationIcon = {
-                        IconButton(onClick = onMenuClick) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        Box(modifier = Modifier.padding(start = 16.dp)) {
+                            com.musically.studio.ui.components.atoms.UserAvatarButton(
+                                photoUrl = userPhotoUrl,
+                                displayName = userDisplayName,
+                                onClick = onMenuClick
+                            )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -109,7 +100,6 @@ fun ChatScreen(
                         inputValue = ""
                     },
                     onAttachImage = { imagePickerLauncher.launch("image/*") },
-                    onCameraCapture = { cameraLauncher.launch(null) },
                     onVoiceRecord = { viewModel.recordVoice(context) },
                     onGenerateCoverArt = {
                         coroutineScope.launch {
@@ -126,12 +116,6 @@ fun ChatScreen(
             containerColor = Color.Transparent
         ) { paddingValues ->
             Box(modifier = Modifier.fillMaxSize()) {
-                Image(
-                    painter = painterResource(id = R.drawable.mave_brand_dark),
-                    contentDescription = "Mave Background",
-                    modifier = Modifier.fillMaxSize().alpha(0.05f),
-                    contentScale = ContentScale.Crop
-                )
                 ChatMessageList(
                     messages = messages,
                     paddingValues = paddingValues,

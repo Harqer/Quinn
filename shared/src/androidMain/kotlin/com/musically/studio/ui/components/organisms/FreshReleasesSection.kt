@@ -19,6 +19,7 @@ import com.musically.studio.ui.components.atoms.MaveButton
 @Composable
 fun FreshReleasesSection(
     communityTracks: List<MaveTrack>,
+    isLoading: Boolean = false,
     errorMessage: String?,
     onRetry: () -> Unit,
     onNavigateToMore: () -> Unit,
@@ -43,7 +44,11 @@ fun FreshReleasesSection(
             }
         }
 
-        if (errorMessage != null && communityTracks.isEmpty()) {
+        if (isLoading && communityTracks.isEmpty()) {
+            Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                androidx.compose.material3.CircularProgressIndicator(color = Color.White)
+            }
+        } else if (errorMessage != null && communityTracks.isEmpty()) {
             Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(errorMessage, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyLarge)

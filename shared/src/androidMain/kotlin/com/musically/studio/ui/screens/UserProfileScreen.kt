@@ -28,7 +28,8 @@ fun UserProfileScreen(
     onBack: () -> Unit,
     onSignedOut: () -> Unit = onBack,
     onNavigateToAlbum: (String) -> Unit = {},
-    onNavigateToSettings: () -> Unit = {}
+    onNavigateToSettings: () -> Unit = {},
+    onNavigateToDevices: () -> Unit = {}
 ) {
     val vibes by viewModel.userVibes.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
@@ -124,7 +125,8 @@ fun UserProfileScreen(
                     UserAccountActions(
                         deletionState = deletionState,
                         onSignOutClick = { showSignOutConfirmDialog = true },
-                        onDeleteAccountClick = { showDeleteConfirmDialog = true }
+                        onDeleteAccountClick = { showDeleteConfirmDialog = true },
+                        onNavigateToDevices = onNavigateToDevices
                     )
                 }
             }

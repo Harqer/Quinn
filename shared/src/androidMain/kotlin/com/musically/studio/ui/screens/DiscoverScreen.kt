@@ -51,6 +51,7 @@ fun DiscoverScreen(
     val errorMessage by viewModel.catalogErrorMessage.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
     val hasSeenTooltipTour by viewModel.hasSeenTooltipTour.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.fetchCommunityTracks()
@@ -71,8 +72,12 @@ fun DiscoverScreen(
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = onNavigateToSettings) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
+                        Box(modifier = Modifier.padding(start = 16.dp)) {
+                            com.musically.studio.ui.components.atoms.UserAvatarButton(
+                                photoUrl = viewModel.getUserPhotoUrl(),
+                                displayName = viewModel.getUserDisplayName(),
+                                onClick = onNavigateToSettings
+                            )
                         }
                     },
                     actions = {
@@ -140,6 +145,7 @@ fun DiscoverScreen(
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     FreshReleasesSection(
                         communityTracks = communityTracks,
+                        isLoading = isLoading,
                         errorMessage = errorMessage,
                         onRetry = { viewModel.fetchCommunityTracks() },
                         onNavigateToMore = onNavigateToMore,
@@ -156,6 +162,7 @@ fun DiscoverScreen(
                 
                 featuredPlaylistsSection(
                     playlists = playlists,
+                    isLoading = isLoading,
                     errorMessage = errorMessage,
                     onRetry = { viewModel.fetchPlaylists() },
                     onNavigateToMore = onNavigateToMore,

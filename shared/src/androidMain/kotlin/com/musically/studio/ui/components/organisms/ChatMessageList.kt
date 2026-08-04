@@ -46,10 +46,10 @@ fun ChatMessageList(
             }
         }
         
-        items(messages) { msg ->
+        items(messages, key = { it.id }) { msg ->
             if (msg.sender == "ai") {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp).animateItem(),
                     horizontalArrangement = Arrangement.Start
                 ) {
                     AiMessageBubble(
@@ -73,7 +73,7 @@ fun ChatMessageList(
                 }
             } else {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp).animateItem(),
                     horizontalArrangement = Arrangement.End
                 ) {
                     UserMessageBubble(

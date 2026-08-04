@@ -23,8 +23,10 @@ import { BottomNav } from './components/organisms/BottomNav';
 import { PlayerBar } from './components/organisms/PlayerBar';
 import { MobilePlayerScreen } from './components/organisms/MobilePlayerScreen';
 import { ProfileSettingsButton } from './components/molecules/ProfileSettingsButton';
-import { useAppContext } from './contexts/AppContext';
+import { useAppContext, AppProvider } from './contexts/AppContext';
 import { PlayerProvider, usePlayerContext } from './contexts/PlayerContext';
+import { MoodAdScreenWrapper } from './features/onboarding/MoodAdScreenWrapper';
+import { PlayerBarWrapper } from './components/organisms/PlayerBarWrapper';
 
 type Route = 'welcome' | 'login' | 'home' | 'search' | 'library' | 'album' | 'podcast' | 'devices' | 'delete-account' | 'chat' | 'profile' | 'settings' | 'premium' | 'discover' | 'live' | 'category' | 'playlist';
 
@@ -42,11 +44,16 @@ export const App: React.FC = () => {
   const [route, setRoute] = useState<Route>('welcome');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [showMoodAd, setShowMoodAd] = useState(false);
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      if (user && !sessionStorage.getItem('lyria_mood_ad_seen')) {
+        setShowMoodAd(true);
+        sessionStorage.setItem('lyria_mood_ad_seen', 'true');
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -75,6 +82,8 @@ export const App: React.FC = () => {
   const showPlayerBar = ['home', 'discover', 'live', 'category', 'playlist', 'search', 'library', 'album', 'podcast', 'devices', 'chat', 'profile', 'settings', 'premium'].includes(route);
 
   return (
+    <AppProvider>
+    <PlayerProvider>
     <SidebarContext.Provider value={{ isSidebarOpen, toggleSidebar: () => setIsSidebarOpen(prev => !prev) }}>
       <NavigationContext.Provider value={setRoute}>
         <div className="flex h-full w-full p-0 md:p-6 md:gap-6 gap-2 text-text-primary font-sans overflow-hidden bg-black pb-0 md:pb-[92px]">
@@ -138,86 +147,14 @@ export const App: React.FC = () => {
         {showPlayerBar && (
           <PlayerBarWrapper onAlbumClick={() => setRoute('album')} />
         )}
+
+        {showMoodAd && (
+          <MoodAdScreenWrapper onClose={() => setShowMoodAd(false)} />
+        )}
       </div>
     </NavigationContext.Provider>
     </SidebarContext.Provider>
-  );
-};
-
-const PlayerBarWrapper: React.FC<{ onAlbumClick: () => void }> = ({ onAlbumClick }) => {
-  const { 
-    currentTrack, 
-    playerState, 
-    currentTime, 
-    duration, 
-    shuffle,
-    repeat,
-    skipNext,
-    skipPrevious,
-    toggleShuffle,
-    toggleRepeat,
-    togglePlayPause, 
-    seek 
-  } = usePlayerContext();
-  
-  const { isMobilePlayerExpanded, setIsMobilePlayerExpanded } = useAppContext();
-  const navigate = useNavigate();
-  
-  return (
-    <>
-      <footer 
-        onClick={() => {
-          if (window.innerWidth < 768) {
-            setIsMobilePlayerExpanded(true);
-          } else {
-            onAlbumClick();
-          }
-        }} 
-        className="fixed bottom-[72px] md:bottom-0 left-0 right-0 h-[72px] md:h-[92px] bg-black px-2 md:px-6 flex items-center justify-between z-40 cursor-pointer hover:bg-surface-container transition-colors border-t border-surface-container md:border-t-0"
-      >
-        <PlayerBar 
-          trackName={currentTrack?.title}
-          artistName={currentTrack?.artist}
-          albumArtUrl={currentTrack?.albumArtUrl}
-          isPlaying={playerState === 'playing'}
-          currentTime={currentTime}
-          duration={duration}
-          isShuffleEnabled={shuffle}
-          repeatMode={repeat}
-          onSeek={seek}
-          onPlayPause={(e) => {
-            e.stopPropagation();
-            togglePlayPause();
-          }}
-          onShuffle={(e) => { e.stopPropagation(); toggleShuffle(); }}
-          onSkipPrevious={(e) => { e.stopPropagation(); skipPrevious(); }}
-          onSkipNext={(e) => { e.stopPropagation(); skipNext(); }}
-          onRepeat={(e) => { e.stopPropagation(); toggleRepeat(); }}
-        />
-      </footer>
-      
-      {isMobilePlayerExpanded && (
-        <MobilePlayerScreen
-          track={currentTrack}
-          isPlaying={playerState === 'playing'}
-          currentTime={currentTime}
-          duration={duration}
-          onPlayPause={(e) => {
-            e.stopPropagation();
-            togglePlayPause();
-          }}
-          onSeek={seek}
-          onShuffle={() => toggleShuffle()}
-          onSkipPrevious={() => skipPrevious()}
-          onSkipNext={() => skipNext()}
-          onRepeat={() => toggleRepeat()}
-          onClose={() => setIsMobilePlayerExpanded(false)}
-          onDevicesClick={() => {
-            setIsMobilePlayerExpanded(false);
-            navigate('devices');
-          }}
-        />
-      )}
-    </>
+    </PlayerProvider>
+    </AppProvider>
   );
 };

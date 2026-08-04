@@ -31,41 +31,35 @@ fun maveEntryProvider(
     viewModel: MainViewModel,
     navigator: Navigator,
     onAcknowledgePermissions: () -> Unit,
+    hasPermissions: Boolean = false,
     onMenuClick: () -> Unit,
     onLikeClick: (String) -> Unit = {},
     onDownloadClick: (String) -> Unit = {}
 ) = entryProvider {
     entry<Route.Welcome> {
         WelcomeScreen(
-            viewModel = viewModel,
-            onSignUpClick = { navigator.navigate(Route.AuthOptions) },
-            onLoginClick = { navigator.navigate(Route.Login) }
-        )
-    }
-
-    entry<Route.AuthOptions> {
-        val activity = androidx.activity.compose.LocalActivity.current
-        AuthOptionsScreen(
-            onEmailClick = { navigator.navigate(Route.EmailInput) },
-            onGoogleClick = { viewModel.triggerGoogleSignIn() },
-            onAppleClick = { viewModel.triggerAppleSignIn() },
-            onLoginClick = { navigator.navigate(Route.Login) },
-            onBackClick = { navigator.goBack() }
-        )
-    }
-
-    entry<Route.Login> {
-        LoginScreen(
-            onLoginSuccess = { navigator.navigate(Route.Home) },
-            onNavigateToSignUp = { navigator.navigate(Route.AuthOptions) },
             viewModel = viewModel
         )
     }
 
+    entry<Route.SignIn> {
+        com.musically.studio.ui.screens.auth.SignInScreen(
+            viewModel = viewModel
+        )
+    }
+
+
     entry<Route.Home> {
         MaveHomeScreen(
             viewModel = viewModel,
+            hasPermissions = hasPermissions,
+            onAcknowledgePermissions = onAcknowledgePermissions,
             onNavigateToProfile = onMenuClick,
+            onNavigateToCamera = { navigator.navigate(Route.Camera) },
+            onNavigateToConcerts = { navigator.navigate(Route.Concerts) },
+            onNavigateToPodcast = { navigator.navigate(Route.Podcast) },
+            onNavigateToAudiobooks = { }, // TODO: Add audiobooks route
+            onNavigateToMusic = { }, // TODO: Add music route
             onTrackClick = { trackId ->
                 viewModel.tracks.value.find { it.id == trackId }?.let {
                     viewModel.playTrack(it)
@@ -102,12 +96,24 @@ fun maveEntryProvider(
             onImageCaptured = { base64 ->
                 if (viewModel.isLiveSessionActive.value) {
                     viewModel.sendFrame(base64)
+                    navigator.goBack()
                 } else {
-                    viewModel.generateMusicPrompts(base64)
+                    navigator.navigate(Route.GeneratingSong(base64))
                 }
-                navigator.goBack()
             },
             onClose = { navigator.goBack() }
+        )
+    }
+
+    entry<Route.GeneratingSong>(
+        metadata = maveVerticalTransitionMetadata()
+    ) { key ->
+        GeneratingSongScreen(
+            imageBase64 = key.imageBase64,
+            viewModel = viewModel,
+            onComplete = {
+                navigator.navigate(Route.Home)
+            }
         )
     }
 
@@ -159,6 +165,13 @@ fun maveEntryProvider(
         )
     }
 
+    entry<Route.Concerts> {
+        ConcertsScreen(
+            viewModel = viewModel,
+            onMenuClick = onMenuClick
+        )
+    }
+
     entry<Route.Chat>(
         metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
             Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
@@ -167,6 +180,8 @@ fun maveEntryProvider(
         }
     ) {
         ChatScreen(
+            userPhotoUrl = viewModel.getUserPhotoUrl(),
+            userDisplayName = viewModel.getUserDisplayName(),
             onNavigateBack = { navigator.goBack() },
             onMenuClick = onMenuClick,
             onTrackClick = { trackId ->
@@ -267,11 +282,12 @@ fun maveEntryProvider(
             viewModel = viewModel,
             onBack = { navigator.goBack() },
             onSignedOut = {
-                // Clear back-stack to Login so the user cannot back-navigate after sign-out/deletion
-                navigator.navigate(Route.Login)
+                // Clear back-stack to Welcome so the user cannot back-navigate after sign-out/deletion
+                navigator.navigate(Route.Welcome)
             },
             onNavigateToAlbum = { navigator.navigate(Route.AlbumView(it)) },
-            onNavigateToSettings = { navigator.navigate(Route.Settings) }
+            onNavigateToSettings = { navigator.navigate(Route.Settings) },
+            onNavigateToDevices = { navigator.navigate(Route.Devices) }
         )
     }
 
@@ -286,6 +302,23 @@ fun maveEntryProvider(
         )
     }
 
+    entry<Route.Recents>(
+        metadata = maveVerticalTransitionMetadata()
+    ) {
+        com.musically.studio.ui.screens.RecentsScreen(
+            viewModel = viewModel,
+            onBack = { navigator.goBack() }
+        )
+    }
+
+    entry<Route.Downloaded>(
+        metadata = maveVerticalTransitionMetadata()
+    ) {
+        com.musically.studio.ui.screens.DownloadedTracksScreen(
+            viewModel = viewModel,
+            onBack = { navigator.goBack() }
+        )
+    }
     entry<Route.Premium>(
         metadata = maveVerticalTransitionMetadata()
     ) {
@@ -295,69 +328,6 @@ fun maveEntryProvider(
         )
     }
 
-    entry<Route.EmailInput> {
-        EmailLinkInputScreen(
-            viewModel = viewModel,
-            onBackClick = { navigator.goBack() }
-        )
-    }
-
-    entry<Route.PasswordInput> {
-        PasswordInputScreen(
-            viewModel = viewModel,
-            onNextClick = { navigator.navigate(Route.BirthdayInput) },
-            onBackClick = { navigator.goBack() }
-        )
-    }
-
-    entry<Route.BirthdayInput> {
-        BirthdayInputScreen(
-            viewModel = viewModel,
-            onNextClick = { navigator.navigate(Route.GenderInput) },
-            onBackClick = { navigator.goBack() }
-        )
-    }
-
-    entry<Route.GenderInput> {
-        GenderInputScreen(
-            viewModel = viewModel,
-            onNextClick = { navigator.navigate(Route.NameTerms) },
-            onBackClick = { navigator.goBack() }
-        )
-    }
-
-    entry<Route.NameTerms> {
-        NameTermsScreen(
-            viewModel = viewModel,
-            onNextClick = { navigator.navigate(Route.Loading) },
-            onBackClick = { navigator.goBack() }
-        )
-    }
-
-    entry<Route.Loading> {
-        LoadingScreen()
-        LaunchedEffect(Unit) {
-            kotlinx.coroutines.delay(2000)
-            navigator.navigate(Route.Notification)
-        }
-    }
-
-    entry<Route.Notification> {
-        NotificationScreen(
-            onTurnOn = { 
-                onAcknowledgePermissions()
-                navigator.navigate(Route.ArtistSelection)
-            },
-            onNotNow = { navigator.navigate(Route.ArtistSelection) }
-        )
-    }
-
-    entry<Route.ArtistSelection> {
-        ArtistSelectionScreen(
-            viewModel = viewModel,
-            onDone = { navigator.navigate(Route.Home) }
-        )
-    }
 
     entry<Route.MfaEnrollment> {
         com.musically.studio.ui.screens.onboarding.MfaEnrollmentScreen(
@@ -463,6 +433,12 @@ fun maveEntryProvider(
             viewModel = viewModel,
             onNavigateToPremium = { navigator.navigate(Route.Premium) },
             onDismiss = { navigator.goBack() }
+        )
+    }
+
+    entry<Route.NotFound> {
+        com.musically.studio.ui.components.organisms.NotFound404Card(
+            onNavigateBack = { navigator.goBack() }
         )
     }
 }

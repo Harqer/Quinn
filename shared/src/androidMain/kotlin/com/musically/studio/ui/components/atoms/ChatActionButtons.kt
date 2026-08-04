@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -46,9 +47,16 @@ fun SendButton(onClick: () -> Unit) {
         modifier = Modifier.styleable(styleState = styleState, style = MaveStyles.sendButtonStyle)
     ) {
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.Send,
+            imageVector = Icons.Default.ArrowUpward,
             contentDescription = "Send", tint = Color.Black
         )
+    }
+}
+
+@Composable
+fun VoiceInputButton(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(Icons.Default.Mic, contentDescription = "Voice Input", tint = LocalMaveColorScheme.current.onSurface)
     }
 }
 

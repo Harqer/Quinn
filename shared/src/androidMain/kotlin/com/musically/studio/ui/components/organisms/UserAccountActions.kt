@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.PersonOff
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,7 +18,8 @@ import com.musically.studio.ui.components.molecules.AccountActionCard
 fun UserAccountActions(
     deletionState: AccountDeletionState?,
     onSignOutClick: () -> Unit,
-    onDeleteAccountClick: () -> Unit
+    onDeleteAccountClick: () -> Unit,
+    onNavigateToDevices: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -41,6 +43,19 @@ fun UserAccountActions(
             iconTintColor = MaterialTheme.colorScheme.onPrimaryContainer,
             titleColor = MaterialTheme.colorScheme.onSurface,
             onClick = onSignOutClick
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        AccountActionCard(
+            title = "Devices",
+            subtitle = "Manage connected smart glasses and wearables",
+            icon = Icons.Default.Phone,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            iconContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            iconTintColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            titleColor = MaterialTheme.colorScheme.onSurface,
+            onClick = onNavigateToDevices
         )
 
         Spacer(modifier = Modifier.height(8.dp))

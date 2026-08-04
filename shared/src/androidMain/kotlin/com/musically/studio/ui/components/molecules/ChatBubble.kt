@@ -55,38 +55,20 @@ fun ChatBubble(message: ChatMessage, viewModel: MainViewModel, modifier: Modifie
             }
             Spacer(modifier = Modifier.width(8.dp))
         }
-        val context = androidx.compose.ui.platform.LocalContext.current
-        val clipboardManager = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
         
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (message.isUser) {
-                IconButton(onClick = { 
-                    clipboardManager.setPrimaryClip(android.content.ClipData.newPlainText("text", message.text))
-                    android.widget.Toast.makeText(context, "Copied", android.widget.Toast.LENGTH_SHORT).show()
-                }) {
-                    Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp), tint = Color.White)
-                }
-            }
-            Box(
-                modifier = Modifier.widthIn(max = 280.dp)
-                    .clip(RoundedCornerShape(
-                        topStart = if (message.isUser) 16.dp else 4.dp,
-                        topEnd = if (message.isUser) 4.dp else 16.dp,
-                        bottomStart = 16.dp, bottomEnd = 16.dp
-                    ))
-                    .background(if (message.isUser) MaterialTheme.colorScheme.primary else bgColor.copy(alpha = 0.3f))
-                    .padding(horizontal = 14.dp, vertical = 10.dp)
-            ) {
+        Box(
+            modifier = Modifier.widthIn(max = 280.dp)
+                .clip(RoundedCornerShape(
+                    topStart = if (message.isUser) 16.dp else 4.dp,
+                    topEnd = if (message.isUser) 4.dp else 16.dp,
+                    bottomStart = 16.dp, bottomEnd = 16.dp
+                ))
+                .background(if (message.isUser) MaterialTheme.colorScheme.primary else bgColor.copy(alpha = 0.3f))
+                .padding(horizontal = 14.dp, vertical = 10.dp)
+        ) {
+            androidx.compose.foundation.text.selection.SelectionContainer {
                 Text(text = message.text, style = MaterialTheme.typography.bodyMedium,
                     color = if (message.isUser) Color.White else com.musically.studio.ui.theme.MaveBlueGray200)
-            }
-            if (!message.isUser) {
-                IconButton(onClick = { 
-                    clipboardManager.setPrimaryClip(android.content.ClipData.newPlainText("text", message.text))
-                    android.widget.Toast.makeText(context, "Copied", android.widget.Toast.LENGTH_SHORT).show()
-                }) {
-                    Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(16.dp), tint = com.musically.studio.ui.theme.MaveBlueGray200)
-                }
             }
         }
     }

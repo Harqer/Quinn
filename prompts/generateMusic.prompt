@@ -1,0 +1,13 @@
+---
+model: googleai/gemini-1.5-flash
+input:
+  schema:
+    promptText: string
+output:
+  format: json
+  schema:
+    trackName: string
+    artistName: string
+---
+
+Generate a JSON object with 'trackName' and 'artistName' for a song described as: {{promptText}}. Do not use markdown tags, just return the JSON.

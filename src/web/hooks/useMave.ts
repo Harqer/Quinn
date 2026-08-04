@@ -2,6 +2,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { getAuth } from 'firebase/auth';
 import { logger } from "../lib/logger";
 import { GoogleGenAI, Modality } from '@google/genai';
+import { readSSE } from '../utils/sse';
+import { audioService } from '../services/AudioService';
+
 
 export type MaveMode = 'music' | 'podcast' | 'audiobook';
 
@@ -74,32 +77,7 @@ const functionDeclarations = [
   }
 ];
 
-// SSE helper: reads a server-sent events stream from a fetch POST
-async function* readSSE(
-  url: string,
-  body: object,
-  token?: string
-): AsyncGenerator<{ type: string; [key: string]: any }> {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-  const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) });
-  if (!res.ok || !res.body) throw new Error(`SSE request failed: ${res.status}`);
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() || '';
-    for (const line of lines) {
-      if (line.startsWith('data: ')) {
-        try { yield JSON.parse(line.slice(6)); } catch { /* skip malformed */ }
-      }
-    }
-  }
-}
+// SSE helper has been extracted to utils/sse.ts
 
 export function useMave() {
   const [messages, setMessages] = useState<MaveMessage[]>([]);
@@ -282,11 +260,14 @@ export function useMave() {
           let reasoningText = '';
           setMessages(prev => [{ id: responseId, text: '', sender: 'mave' as const }, ...prev].slice(0, 15));
 
+          const currentAudioUrl = audioService.currentTrack?.audioUrl;
+
           for await (const event of readSSE(`${baseUrl}/api/music/lyria/steer`, {
             prompt: toolCall.args?.prompt,
             bpm: toolCall.args?.bpm,
             density: toolCall.args?.density,
-            brightness: toolCall.args?.brightness
+            brightness: toolCall.args?.brightness,
+            reference_audio_url: currentAudioUrl
           }, authToken)) {
             if (event.type === 'reasoning' && event.text) {
               reasoningText += event.text;
@@ -302,8 +283,15 @@ export function useMave() {
                 audioUrl: event.audioUrl,
                 type: 'track'
               } : m));
-              const audio = new Audio(event.audioUrl);
-              audio.play().catch(e => logger.error('Autoplay failed', e));
+              
+              audioService.addToQueue({
+                id: responseId,
+                title: 'Tweaked Track',
+                artist: 'Lyria',
+                audioUrl: event.audioUrl,
+                duration: 0
+              });
+              audioService.skipNext(); // crossfade to the new track
             } else if (event.type === 'error') {
               setMessages(prev => prev.map(m => m.id === responseId ? { ...m, text: `Error: ${event.message}` } : m));
             }

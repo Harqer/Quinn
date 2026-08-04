@@ -154,6 +154,7 @@ import android.util.Base64
     }
 
     fun MainViewModel.playTrack(track: MaveTrack) {
+        addRecentTrack(track)
         _currentPlayingTrack.value = track
         _isPlaying.value = true
         if (_isLiveSessionActive.value) {

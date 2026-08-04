@@ -16,15 +16,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+import com.musically.studio.network.MaveCategory
+
 @Composable
-fun CategoryCardsRow(onCategoryClick: (String) -> Unit) {
-    val categories = listOf(
-        "Pop" to Color(0xFF9333EA), // Purple
-        "Indie" to Color(0xFF059669), // Emerald
-        "Workout" to Color(0xFFE11D48), // Rose
-        "Chill" to Color(0xFF0284C7) // Sky Blue
+fun CategoryCardsRow(
+    categories: List<MaveCategory>,
+    onCategoryClick: (String) -> Unit
+) {
+    val defaultColors = listOf(
+        Color(0xFF9333EA), // Purple
+        Color(0xFF059669), // Emerald
+        Color(0xFFE11D48), // Rose
+        Color(0xFF0284C7)  // Sky Blue
     )
-    
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,18 +45,20 @@ fun CategoryCardsRow(onCategoryClick: (String) -> Unit) {
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(categories) { (name, color) ->
+            items(categories.size) { index ->
+                val category = categories[index]
+                val color = try { category.colorHex?.let { Color(android.graphics.Color.parseColor(it)) } } catch (e: Exception) { null } ?: defaultColors[index % defaultColors.size]
                 Box(
                     modifier = Modifier
                         .width(120.dp)
                         .height(80.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(color)
-                        .clickable { onCategoryClick(name) },
+                        .clickable { onCategoryClick(category.id) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = name,
+                        text = category.name,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium

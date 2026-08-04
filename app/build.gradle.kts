@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
     id("com.google.firebase.crashlytics")
 }
 
@@ -72,7 +73,7 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -141,6 +142,7 @@ dependencies {
     implementation(libs.androidx.identity.play)
     implementation(libs.androidx.appfunctions)
     implementation(libs.androidx.appfunctions.service)
+    implementation(libs.androidx.core.splashscreen)
     
     // UI dependencies (Compose, Material, Navigation)
     implementation(project(":shared"))

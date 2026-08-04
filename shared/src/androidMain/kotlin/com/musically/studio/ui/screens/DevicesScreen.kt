@@ -80,35 +80,35 @@ fun DevicesScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item(span = { GridItemSpan(maxLineSpan) }) {
-                BluetoothToggleCard(
-                    isBluetoothEnabled = isBluetoothEnabled,
-                    colors = colors,
-                    onToggle = {
-                        if (!isBluetoothEnabled) {
-                            try {
-                                val intent = android.content.Intent(android.bluetooth.BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                                intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                                context.startActivity(intent)
-                            } catch (e: Exception) {
-                                // Log or ignore if permission missing
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    BluetoothToggleCard(
+                        isBluetoothEnabled = isBluetoothEnabled,
+                        colors = colors,
+                        onToggle = {
+                            if (!isBluetoothEnabled) {
+                                try {
+                                    val intent = android.content.Intent(android.bluetooth.BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                                    intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                    // Log or ignore if permission missing
+                                }
+                            } else {
+                                viewModel.startBluetoothDiscovery(context)
                             }
-                        } else {
-                            viewModel.startBluetoothDiscovery(context)
                         }
-                    }
-                )
+                    )
 
-                Text("Current device", color = colors.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 16.dp))
-                
-                val currentDevice = devices.find { it.isCurrent }
-                
-                CurrentDeviceCard(
-                    currentDevice = currentDevice,
-                    colors = colors
-                )
+                    Text("Current device", color = colors.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 8.dp))
+                    
+                    val currentDevice = devices.find { it.isCurrent }
+                    
+                    CurrentDeviceCard(
+                        currentDevice = currentDevice,
+                        colors = colors
+                    )
+                }
             }
-
-
 
             item(span = { GridItemSpan(maxLineSpan) }) {
                 SelectDeviceHeader(

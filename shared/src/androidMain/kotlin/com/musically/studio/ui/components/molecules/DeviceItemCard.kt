@@ -24,6 +24,8 @@ import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.style.rememberUpdatedStyleState
 import com.musically.studio.ui.theme.MaveStyles
 
+import com.musically.studio.ui.utils.debouncedClickable
+
 @Composable
 fun DeviceItemCard(
     device: AudioDevice,
@@ -36,10 +38,8 @@ fun DeviceItemCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(interactionSource = interactionSource, indication = null) { 
-                onClick()
-            }
-            .styleable(styleState = styleState, style = MaveStyles.deviceCardStyle)
+            .debouncedClickable { onClick() }
+            .styleable(styleState = styleState, style = MaveStyles.deviceCardStyle),
     ) {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
@@ -59,5 +59,24 @@ fun DeviceItemCard(
                 }
             }
         }
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DeviceItemCardPreview() {
+    val dummyDevice = AudioDevice(
+        id = "1",
+        name = "Ray-Ban Meta",
+        subtitle = "Connected",
+        type = DeviceType.BLUETOOTH,
+        isCurrent = false
+    )
+    androidx.compose.material3.MaterialTheme {
+        DeviceItemCard(
+            device = dummyDevice,
+            colors = androidx.compose.material3.darkColorScheme(),
+            onClick = {}
+        )
     }
 }

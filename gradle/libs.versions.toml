@@ -18,6 +18,7 @@ hilt = "2.60.1"
 mockk = "1.14.11"
 robolectric = "4.16.1"
 junit = "4.13.2"
+androidxSplashScreen = "1.0.1"
 kotlin = "2.1.10"
 ksp = "2.1.10-1.0.30"
 nav3Core = "1.1.5"
@@ -46,6 +47,7 @@ mockito = "5.3.1"
 mockito-kotlin = "5.0.0"
 billing = "9.1.0"
 recaptcha = "18.9.2"
+play-services-location = "21.3.0"
 
 [libraries]
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -69,6 +71,7 @@ firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appc
 firebase-ai = { group = "com.google.firebase", name = "firebase-ai" }
 android-billing = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
 recaptcha = { group = "com.google.android.recaptcha", name = "recaptcha", version.ref = "recaptcha" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "play-services-location" }
 
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version = "1.10.1" }
 media3-ui = { group = "androidx.media3", name = "media3-ui", version = "1.10.1" }
@@ -94,6 +97,7 @@ mwdat-camera = { group = "com.meta.wearable", name = "mwdat-camera", version.ref
 mwdat-display = { group = "com.meta.wearable", name = "mwdat-display", version.ref = "mwdat" }
 mwdat-mockdevice = { group = "com.meta.wearable", name = "mwdat-mockdevice", version.ref = "mwdat" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidxSplashScreen" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
@@ -147,3 +151,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
+google-services = { id = "com.google.gms.google-services", version = "4.4.2" }

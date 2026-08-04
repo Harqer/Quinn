@@ -115,6 +115,7 @@ kotlin {
             // Engage SDK & WorkManager
             implementation(libs.engage.core)
             implementation(libs.androidx.work.runtime.ktx)
+            implementation(libs.play.services.location)
             implementation(libs.recaptcha)
             
             // Media3

@@ -127,7 +127,8 @@ import kotlinx.coroutines.delay
                     songTitle = currentPlayingTrack.value?.name ?: "",
                     geminiResponse = "",
                     coverArtUrl = currentCoverUrl.value,
-                    isThinking = true
+                    isThinking = true,
+                    isPlaying = isPlaying.value
                 )
             }
         }
@@ -136,6 +137,37 @@ import kotlinx.coroutines.delay
             geminiLiveManager.connectionState.collect { connected ->
                 if (!connected) {
                     Timber.w("Gemini Live Disconnected")
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            isPlaying.collectLatest { playing ->
+                val track = currentPlayingTrack.value
+                if (track != null) {
+                    WearableStreamingService.updateUi(
+                        songTitle = track.name,
+                        geminiResponse = "",
+                        coverArtUrl = currentCoverUrl.value,
+                        isThinking = false,
+                        isPlaying = playing
+                    )
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            currentPlayingTrack.collectLatest { track ->
+                if (track != null) {
+                    WearableStreamingService.updateUi(
+                        songTitle = track.name,
+                        geminiResponse = "",
+                        coverArtUrl = currentCoverUrl.value,
+                        isThinking = false,
+                        isPlaying = isPlaying.value
+                    )
+                } else {
+                    WearableStreamingService.updateUi("", "") // Clear
                 }
             }
         }

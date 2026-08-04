@@ -15,6 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.core.*
+import androidx.compose.ui.draw.scale
+import androidx.compose.runtime.getValue
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.*
 
@@ -86,7 +89,7 @@ fun LiveSessionBottomBar(
                         viewModel.recordVoice(context)
                     },
                     modifier = Modifier.size(52.dp),
-                    containerColor = if (isRecording) com.musically.studio.ui.theme.MaveRed600 else MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = Color.White,
                     elevation = FloatingActionButtonDefaults.elevation(4.dp)
                 ) {

@@ -23,6 +23,8 @@ import androidx.compose.foundation.style.Style
 import androidx.compose.foundation.style.rememberUpdatedStyleState
 import androidx.compose.foundation.style.styleable
 import com.musically.studio.ui.theme.MaveStyles
+import android.view.HapticFeedbackConstants
+import androidx.compose.ui.platform.LocalView
 
 @Composable
 fun MiniPlayer(
@@ -37,12 +39,16 @@ fun MiniPlayer(
     val styleState = rememberUpdatedStyleState(interactionSource) {
         it.isEnabled = true
     }
+    val view = LocalView.current
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clickable(
-                onClick = onClick,
+                onClick = {
+                    view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                    onClick()
+                },
                 interactionSource = interactionSource,
                 indication = null
             )
@@ -94,7 +100,10 @@ fun MiniPlayer(
                 )
             }
             
-            IconButton(onClick = onPlayPauseClick) {
+            IconButton(onClick = {
+                view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                onPlayPauseClick()
+            }) {
                 Icon(
                     imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
                     contentDescription = if (isPlaying) "Pause" else "Play",

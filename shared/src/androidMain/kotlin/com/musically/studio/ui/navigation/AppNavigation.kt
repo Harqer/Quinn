@@ -6,9 +6,15 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.style.rememberUpdatedStyleState
-import androidx.compose.foundation.style.styleable
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Text
+import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.ui.unit.dp
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
@@ -30,7 +36,6 @@ import androidx.navigation3.ui.NavDisplay
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.bookmarkTrack
 import com.musically.studio.ui.components.organisms.AppBottomSheet
-import com.musically.studio.ui.components.organisms.AppDrawer
 import com.musically.studio.ui.components.organisms.AppNavigationSuite
 import com.musically.studio.ui.theme.MaveStyles
 import kotlinx.coroutines.flow.collectLatest
@@ -44,7 +49,7 @@ fun MaveApp(
     hasPermissions: Boolean
 ) {
     val adaptiveInfo = currentWindowAdaptiveInfoV2()
-    val topLevelRoutes = setOf<Route>(Route.Welcome, Route.Home, Route.Discover, Route.Search, Route.Chat, Route.Podcast, Route.Devices, Route.Library)
+    val topLevelRoutes = setOf<Route>(Route.Welcome, Route.Home, Route.Library, Route.Search, Route.Chat)
     
     val sceneStrategies: List<SceneStrategy<Route>> = listOf(
         BottomSheetSceneStrategy(),
@@ -63,6 +68,7 @@ fun MaveApp(
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     
     val scaffoldState = rememberBottomSheetScaffoldState()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -79,15 +85,20 @@ fun MaveApp(
     }
 
     LaunchedEffect(Unit) {
+        viewModel.clearNavigationEvent.collectLatest {
+            navigator.clearAll()
+        }
+    }
+
+    LaunchedEffect(Unit) {
         viewModel.generationBlockedEvent.collectLatest { reason ->
             navigator.navigate(Route.UsageLimitSheet(reason.name))
         }
     }
 
     val currentRoute = navigationState.backStacks[navigationState.topLevelRoute]?.last() ?: navigationState.topLevelRoute
-    val showNavSuite = currentRoute in listOf(Route.Home, Route.Discover, Route.Search, Route.Chat, Route.Podcast, Route.Library, Route.Devices) || currentRoute is Route.AlbumView || currentRoute is Route.UserProfile
+    val showNavSuite = currentRoute in listOf(Route.Home, Route.Library, Route.Search, Route.Chat) || currentRoute is Route.AlbumView || currentRoute is Route.UserProfile
     
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val layoutType = if (showNavSuite) {
         val defaultType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
         if (defaultType == NavigationSuiteType.NavigationDrawer) NavigationSuiteType.None else defaultType
@@ -96,8 +107,11 @@ fun MaveApp(
     val entryProvider = maveEntryProvider(
         viewModel = viewModel,
         navigator = navigator,
+        hasPermissions = hasPermissions,
         onAcknowledgePermissions = onAcknowledgePermissions,
-        onMenuClick = { coroutineScope.launch { drawerState.open() } },
+        onMenuClick = {
+            coroutineScope.launch { drawerState.open() }
+        },
         onLikeClick = { id -> viewModel.bookmarkTrack(id) },
         onDownloadClick = { id -> 
             val track = viewModel.tracks.value.find { it.id == id } ?: viewModel.communityTracks.value.find { it.id == id }
@@ -112,43 +126,86 @@ fun MaveApp(
         }
     )
 
-    AppDrawer(
+    ModalNavigationDrawer(
         drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Text(
+                    text = "Mave Settings",
+                    modifier = Modifier.padding(16.dp),
+                    style = androidx.compose.material3.MaterialTheme.typography.titleLarge
+                )
+                HorizontalDivider()
+                NavigationDrawerItem(
+                    label = { Text("Premium") },
+                    selected = false,
+                    onClick = { 
+                        coroutineScope.launch { drawerState.close() }
+                        navigator.navigate(Route.Premium)
+                    },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                NavigationDrawerItem(
+                    label = { Text("Settings & Privacy") },
+                    selected = false,
+                    onClick = { 
+                        coroutineScope.launch { drawerState.close() }
+                        navigator.navigate(Route.Settings)
+                    },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                NavigationDrawerItem(
+                    label = { Text("Recents") },
+                    selected = false,
+                    onClick = { 
+                        coroutineScope.launch { drawerState.close() }
+                        navigator.navigate(Route.Recents)
+                    },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                NavigationDrawerItem(
+                    label = { Text("Downloaded") },
+                    selected = false,
+                    onClick = { 
+                        coroutineScope.launch { drawerState.close() }
+                        navigator.navigate(Route.Downloaded)
+                    },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+            }
+        }
+    ) {
+        AppNavigationSuite(
+        layoutType = layoutType,
         currentRoute = currentRoute,
         navigator = navigator
     ) {
-        AppNavigationSuite(
-            layoutType = layoutType,
-            currentRoute = currentRoute,
+        AppBottomSheet(
+            scaffoldState = scaffoldState,
+            currentPlayingTrack = currentPlayingTrack,
+            isPlaying = isPlaying,
+            viewModel = viewModel,
             navigator = navigator
-        ) {
-            AppBottomSheet(
-                scaffoldState = scaffoldState,
-                currentPlayingTrack = currentPlayingTrack,
-                isPlaying = isPlaying,
-                viewModel = viewModel,
-                navigator = navigator
-            ) { paddingValues ->
-                val interactionSource = remember { MutableInteractionSource() }
-                val styleState = rememberUpdatedStyleState(interactionSource) {}
-                
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .consumeWindowInsets(paddingValues)
-                        .styleable(styleState, MaveStyles.scaffoldStyle),
-                    contentAlignment = Alignment.Center
-                ) {
-                    NavDisplay(
-                        entries = navigationState.toEntries(entryProvider),
-                        onBack = { navigator.goBack() },
-                        transitionSpec = maveTransitionSpec(),
-                        popTransitionSpec = mavePopTransitionSpec(),
-                        sceneStrategies = sceneStrategies
-                    )
-                }
+        ) { paddingValues ->
+            val interactionSource = remember { MutableInteractionSource() }
+            val styleState = rememberUpdatedStyleState(interactionSource) {}
+            
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .consumeWindowInsets(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                NavDisplay(
+                    entries = navigationState.toEntries(entryProvider),
+                    onBack = { navigator.goBack() },
+                    transitionSpec = maveTransitionSpec(),
+                    popTransitionSpec = mavePopTransitionSpec(),
+                    sceneStrategies = sceneStrategies
+                )
             }
         }
+    }
     }
 }

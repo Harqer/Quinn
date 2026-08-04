@@ -15,8 +15,10 @@ class CrashlyticsTree : Timber.Tree() {
         tag?.let { crashlytics.setCustomKey("tag", it) }
         crashlytics.log(message)
 
-        t?.let {
-            crashlytics.recordException(it)
+        if (priority == Log.ERROR && t == null) {
+            crashlytics.recordException(Exception(message))
+        } else if (t != null) {
+            crashlytics.recordException(t)
         }
     }
 }

@@ -46,20 +46,19 @@ class MyApplication : Application(), AppFunctionConfiguration.Provider {
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         
         if (isDebug) {
-            Timber.plant(Timber.DebugTree())
             firebaseAppCheck.installAppCheckProviderFactory(DebugAppCheckProviderFactory.getInstance())
-            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
-            FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(false)
+            Timber.plant(Timber.DebugTree())
         } else {
             firebaseAppCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
-            if (hasAcceptedPrivacy) {
-                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-                FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
-                Timber.plant(CrashlyticsTree())
-            } else {
-                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
-                FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(false)
-            }
+        }
+        
+        if (hasAcceptedPrivacy) {
+            Timber.plant(CrashlyticsTree())
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+            FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
+        } else {
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+            FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(false)
         }
 
         val result = Wearables.initialize(this)

@@ -13,6 +13,7 @@ interface PlayerContextType {
   repeat: RepeatMode;
   playTrack: (track: Track) => void;
   playQueue: (tracks: Track[], startIndex?: number) => void;
+  addToQueue: (track: Track) => void;
   skipNext: () => void;
   skipPrevious: () => void;
   toggleShuffle: () => void;
@@ -61,6 +62,7 @@ export const PlayerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   const playTrack = (track: Track) => audioService.playTrack(track);
   const playQueue = (tracks: Track[], startIndex: number = 0) => audioService.playQueue(tracks, startIndex);
+  const addToQueue = (track: Track) => audioService.addToQueue(track);
   const skipNext = () => audioService.skipNext();
   const skipPrevious = () => audioService.skipPrevious();
   const toggleShuffle = () => audioService.toggleShuffle();
@@ -81,6 +83,7 @@ export const PlayerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       repeat,
       playTrack,
       playQueue,
+      addToQueue,
       skipNext,
       skipPrevious,
       toggleShuffle,

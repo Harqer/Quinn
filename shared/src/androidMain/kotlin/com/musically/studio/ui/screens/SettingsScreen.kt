@@ -13,6 +13,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import android.view.HapticFeedbackConstants
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.MainViewModel
@@ -33,6 +35,7 @@ fun SettingsScreen(
     val userSettings by viewModel.userSettings.collectAsState()
     val isPremium by viewModel.isPremium.collectAsState()
     val paymentHistory by viewModel.paymentHistory.collectAsState()
+    val view = LocalView.current
 
     LaunchedEffect(Unit) {
         viewModel.stripeUrl.collectLatest { url ->
@@ -40,6 +43,8 @@ fun SettingsScreen(
             customTabsIntent.launchUrl(context, Uri.parse(url))
         }
     }
+
+    val colors = MaterialTheme.colorScheme
 
     Scaffold(
         containerColor = com.musically.studio.ui.theme.MaveBackground,
@@ -92,7 +97,67 @@ fun SettingsScreen(
                     trailingContent = {
                         Switch(
                             checked = isDark,
-                            onCheckedChange = { viewModel.updateTheme(if (it) "dark" else "light") },
+                            onCheckedChange = { 
+                                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                                viewModel.updateTheme(if (it) "dark" else "light") 
+                            },
+                            colors = SwitchDefaults.colors(checkedThumbColor = com.musically.studio.ui.theme.MaveGreenLight, checkedTrackColor = com.musically.studio.ui.theme.MaveGreenLight.copy(alpha = 0.5f))
+                        )
+                    }
+                )
+            }
+
+            item {
+                val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
+                ListItem(
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    headlineContent = { Text("Notifications", color = Color.White) },
+                    supportingContent = { Text("Receive push notifications", color = Color.LightGray) },
+                    trailingContent = {
+                        Switch(
+                            checked = notificationsEnabled,
+                            onCheckedChange = { 
+                                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                                viewModel.toggleNotifications(it) 
+                            },
+                            colors = SwitchDefaults.colors(checkedThumbColor = com.musically.studio.ui.theme.MaveGreenLight, checkedTrackColor = com.musically.studio.ui.theme.MaveGreenLight.copy(alpha = 0.5f))
+                        )
+                    }
+                )
+            }
+
+            item {
+                val appsDevicesEnabled by viewModel.appsDevicesEnabled.collectAsState()
+                ListItem(
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    headlineContent = { Text("Apps & Devices", color = Color.White) },
+                    supportingContent = { Text("Allow other apps and devices to connect", color = Color.LightGray) },
+                    trailingContent = {
+                        Switch(
+                            checked = appsDevicesEnabled,
+                            onCheckedChange = { 
+                                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                                viewModel.toggleAppsDevices(it) 
+                            },
+                            colors = SwitchDefaults.colors(checkedThumbColor = com.musically.studio.ui.theme.MaveGreenLight, checkedTrackColor = com.musically.studio.ui.theme.MaveGreenLight.copy(alpha = 0.5f))
+                        )
+                    }
+                )
+            }
+
+            item {
+                val offlineMode by viewModel.isOfflineMode.collectAsState()
+                ListItem(
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    headlineContent = { Text("Offline Mode", color = Color.White) },
+                    supportingContent = { Text("Only play downloaded tracks", color = Color.LightGray) },
+                    trailingContent = {
+                        Switch(
+                            checked = offlineMode,
+                            onCheckedChange = { 
+                                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                                viewModel.toggleOfflineMode(it) 
+                            },
                             colors = SwitchDefaults.colors(checkedThumbColor = com.musically.studio.ui.theme.MaveGreenLight, checkedTrackColor = com.musically.studio.ui.theme.MaveGreenLight.copy(alpha = 0.5f))
                         )
                     }
@@ -108,7 +173,10 @@ fun SettingsScreen(
                     trailingContent = {
                         Switch(
                             checked = parentalControls,
-                            onCheckedChange = { viewModel.updateParentalControls(it) },
+                            onCheckedChange = { 
+                                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                                viewModel.updateParentalControls(it) 
+                            },
                             colors = SwitchDefaults.colors(checkedThumbColor = com.musically.studio.ui.theme.MaveGreenLight, checkedTrackColor = com.musically.studio.ui.theme.MaveGreenLight.copy(alpha = 0.5f))
                         )
                     }
@@ -138,11 +206,16 @@ fun SettingsScreen(
 
             item {
                 Spacer(modifier = Modifier.height(32.dp))
-                Button(
-                    onClick = { viewModel.signOut() },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red.copy(alpha = 0.2f), contentColor = Color.Red),
-                    modifier = Modifier.fillMaxWidth()
-                ) { Text("Log out") }
+                TextButton(
+                    onClick = { com.musically.studio.ui.utils.executeDebounced { viewModel.signOut() } },
+                    colors = ButtonDefaults.textButtonColors(contentColor = colors.error)
+                ) {
+                    Text(
+                        text = "Log out",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = colors.error
+                    )
+                }
                 Spacer(modifier = Modifier.height(32.dp))
             }
         }

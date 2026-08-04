@@ -28,9 +28,7 @@ import androidx.compose.runtime.remember
 
 @Composable
 fun WelcomeScreen(
-    viewModel: MainViewModel,
-    onSignUpClick: () -> Unit,
-    onLoginClick: () -> Unit
+    viewModel: MainViewModel
 ) {
     val hasAcceptedPrivacyPolicy by viewModel.hasAcceptedPrivacyPolicy.collectAsState()
     val hasDeclinedPrivacyPolicy by viewModel.hasDeclinedPrivacyPolicy.collectAsState()
@@ -117,18 +115,10 @@ fun WelcomeScreen(
             }
             
             MaveButton(
-                text = "Sign up",
-                onClick = onSignUpClick,
+                text = "Sign In or Sign Up",
+                onClick = { viewModel.navigateTo(com.musically.studio.ui.navigation.Route.SignIn) },
                 modifier = Modifier.fillMaxWidth(),
                 style = MaveStyles.primaryButton,
-                enabled = hasAcceptedPrivacyPolicy
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            MaveButton(
-                text = "Log in",
-                onClick = onLoginClick,
-                modifier = Modifier.fillMaxWidth(),
-                style = MaveStyles.outlinedButton,
                 enabled = hasAcceptedPrivacyPolicy
             )
         }

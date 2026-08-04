@@ -50,3 +50,21 @@ fun CurrentDeviceCard(
         }
     }
 }
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun CurrentDeviceCardPreview() {
+    val dummyDevice = AudioDevice(
+        id = "1",
+        name = "AirPods Pro",
+        subtitle = "Connected",
+        type = DeviceType.BLUETOOTH,
+        isCurrent = true
+    )
+    androidx.compose.material3.MaterialTheme {
+        CurrentDeviceCard(
+            currentDevice = dummyDevice,
+            colors = androidx.compose.material3.darkColorScheme()
+        )
+    }
+}

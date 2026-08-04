@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.sp
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.*
 import com.musically.studio.ui.components.atoms.GenerateCoverButton
+import android.view.HapticFeedbackConstants
+import androidx.compose.ui.platform.LocalView
 import com.musically.studio.ui.components.molecules.CustomPromptInput
 import com.musically.studio.ui.components.molecules.ModeSwitcherToggle
 import com.musically.studio.ui.components.molecules.StylePresetPills
@@ -45,6 +47,8 @@ fun GenerateCoverScreen(
 
     val presets = if (dynamicPresets.isNotEmpty()) dynamicPresets else listOf("Vibrant Synthwave", "Minimalist Neon", "Abstract Cyberpunk", "Retro Vinyl")
     var selectedPreset by remember(coverType, presets) { mutableStateOf(presets.firstOrNull() ?: "") }
+    
+    val view = LocalView.current
 
     val primaryGreen = com.musically.studio.ui.theme.MaveBrand
     val darkBackground = com.musically.studio.ui.theme.MaveBackgroundVariant
@@ -116,14 +120,22 @@ fun GenerateCoverScreen(
 
             GenerateCoverButton(
                 onClick = {
+                    val finalPrompt = customPrompt.ifEmpty { selectedPreset }
+                    if (finalPrompt.isBlank()) {
+                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                        return@GenerateCoverButton
+                    }
+                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                     isGenerating = true
-                    viewModel.sendTextCommand("Generate $coverType cover: ${customPrompt.ifEmpty { selectedPreset }}")
+                    viewModel.sendTextCommand("Generate $coverType cover: $finalPrompt")
                     val apiType = if (coverType == "image") "cover_art" else "video_motion"
-                    viewModel.generateCoverMedia(trackId, customPrompt.ifEmpty { selectedPreset }, apiType) { resultUrl ->
+                    viewModel.generateCoverMedia(trackId, finalPrompt, apiType) { resultUrl ->
                         isGenerating = false
                         if (resultUrl != null) {
                             generatedCoverUrl = resultUrl
                             onCoverGenerated(resultUrl)
+                        } else {
+                            view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                         }
                     }
                 },

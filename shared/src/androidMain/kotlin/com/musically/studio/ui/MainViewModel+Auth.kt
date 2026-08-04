@@ -32,6 +32,10 @@ import android.util.Base64
     fun MainViewModel.getUserDisplayName(): String? = auth.currentUser?.displayName
 
     fun MainViewModel.loginWithEmail(email: String, pass: String, callback: (Boolean, String?) -> Unit) {
+        if (email.isBlank() || pass.isBlank()) {
+            callback(false, "Email and password must not be empty.")
+            return
+        }
         _isLoading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -84,18 +88,6 @@ import android.util.Base64
             }
     }
 
-    fun MainViewModel.triggerGoogleSignIn() {
-        viewModelScope.launch {
-            _authSideEffect.emit(AuthSideEffect.LaunchGoogleSignIn)
-        }
-    }
-
-    fun MainViewModel.triggerAppleSignIn() {
-        viewModelScope.launch {
-            _authSideEffect.emit(AuthSideEffect.LaunchAppleSignIn)
-        }
-    }
-
 
 
 
@@ -105,11 +97,33 @@ import android.util.Base64
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener { task ->
-                _isLoading.value = false
                 if (task.isSuccessful) {
-                    startRtdbSync()
-                    callback(true, null)
+                    val user = task.result?.user
+                    if (user != null) {
+                        viewModelScope.launch {
+                            try {
+                                val email = user.email ?: "${user.uid}@noemail.com"
+                                val username = email.substringBefore("@")
+                                com.musically.studio.dataconnect.DefaultConnector.instance.upsertUser.execute(
+                                    username = username,
+                                    email = email
+                                ) {
+                                    this.displayName = user.displayName ?: ""
+                                }
+                            } catch (e: Exception) {
+                                Timber.e(e, "Failed to upsert user profile on Google login")
+                            }
+                            _isLoading.value = false
+                            startRtdbSync()
+                            callback(true, null)
+                        }
+                    } else {
+                        _isLoading.value = false
+                        startRtdbSync()
+                        callback(true, null)
+                    }
                 } else {
+                    _isLoading.value = false
                     val exception = task.exception
                     if (exception is com.google.firebase.auth.FirebaseAuthMultiFactorException) {
                         mfaResolver = exception.resolver
@@ -122,6 +136,74 @@ import android.util.Base64
                     }
                 }
             }
+    }
+
+    fun MainViewModel.loginWithApple(activity: Activity, callback: (Boolean, String?) -> Unit) {
+        _isLoading.value = true
+        val provider = com.google.firebase.auth.OAuthProvider.newBuilder("apple.com").build()
+        auth.startActivityForSignInWithProvider(activity, provider)
+            .addOnSuccessListener { authResult ->
+                val user = authResult.user
+                if (user != null) {
+                    viewModelScope.launch {
+                        try {
+                            val email = user.email ?: "${user.uid}@noemail.com"
+                            val username = email.substringBefore("@")
+                            com.musically.studio.dataconnect.DefaultConnector.instance.upsertUser.execute(
+                                username = username,
+                                email = email
+                            ) {
+                                this.displayName = user.displayName ?: ""
+                            }
+                        } catch (e: Exception) {
+                            Timber.e(e, "Failed to upsert user profile on Apple login")
+                        }
+                        _isLoading.value = false
+                        startRtdbSync()
+                        callback(true, null)
+                    }
+                } else {
+                    _isLoading.value = false
+                    startRtdbSync()
+                    callback(true, null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                _isLoading.value = false
+                if (exception is com.google.firebase.auth.FirebaseAuthMultiFactorException) {
+                    mfaResolver = exception.resolver
+                    viewModelScope.launch {
+                        _authSideEffect.emit(AuthSideEffect.LaunchMfaVerification(exception.resolver))
+                    }
+                    callback(false, null)
+                } else {
+                    callback(false, "Apple sign-in encountered an issue.")
+                }
+            }
+    }
+
+    fun MainViewModel.ensureUserUpserted(callback: (Boolean) -> Unit) {
+        val user = auth.currentUser
+        if (user != null) {
+            viewModelScope.launch {
+                try {
+                    val email = user.email ?: "${user.uid}@noemail.com"
+                    val username = email.substringBefore("@")
+                    com.musically.studio.dataconnect.DefaultConnector.instance.upsertUser.execute(
+                        username = username,
+                        email = email
+                    ) {
+                        this.displayName = user.displayName ?: ""
+                    }
+                    callback(true)
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to upsert user profile")
+                    callback(false)
+                }
+            }
+        } else {
+            callback(false)
+        }
     }
 
     fun MainViewModel.completeRegistration(callback: (Boolean, String?) -> Unit) {
@@ -151,7 +233,12 @@ import android.util.Base64
                     }
                 } else {
                     _isLoading.value = false
-                    callback(false, task.exception?.message ?: "Registration encountered an issue.")
+                    val exception = task.exception
+                    if (exception is com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+                        callback(false, "Account already exists. Please switch to Sign In.")
+                    } else {
+                        callback(false, exception?.message ?: "Registration encountered an issue.")
+                    }
                 }
             }
     }

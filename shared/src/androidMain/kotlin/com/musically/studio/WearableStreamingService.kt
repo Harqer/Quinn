@@ -60,8 +60,8 @@ class WearableStreamingService : Service() {
         
         private var instance: WearableStreamingService? = null
 
-        fun updateUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false) {
-            instance?.updateWearableUi(songTitle, geminiResponse, coverArtUrl, isThinking)
+        fun updateUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false, isPlaying: Boolean = false) {
+            instance?.updateWearableUi(songTitle, geminiResponse, coverArtUrl, isThinking, isPlaying)
         }
         
         fun startVoiceRecording() {
@@ -286,11 +286,53 @@ class WearableStreamingService : Service() {
         }
     }
 
-    fun updateWearableUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false) {
+    fun updateWearableUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false, isPlaying: Boolean = false) {
         when {
             isThinking -> showThinkingNotice()
-            songTitle.isNotEmpty() -> showTrackNotice(songTitle, geminiResponse)
+            songTitle.isNotEmpty() -> showMusicPlayerCard(songTitle, geminiResponse, isPlaying)
             else -> clearDisplay()
+        }
+    }
+
+    private var playerJob: Job? = null
+
+    fun showMusicPlayerCard(
+        title: String,
+        subtitle: String? = null,
+        isPlaying: Boolean
+    ) {
+        autoDismissJob?.cancel()
+        playerJob?.cancel()
+        playerJob = scope.launch {
+            activeDisplay?.sendContent {
+                flexBox(
+                    direction = Direction.COLUMN,
+                    gap = 8,
+                    paddingBottom = 16,
+                    paddingEnd = 16,
+                    paddingStart = 16,
+                    paddingTop = 16,
+                    alignment = Alignment.CENTER,
+                    crossAlignment = Alignment.CENTER
+                ) {
+                    icon(name = IconName.MUSIC_NOTE)
+                    text(content = title, style = TextStyle.HEADING)
+                    if (!subtitle.isNullOrEmpty()) {
+                        text(content = subtitle, style = TextStyle.BODY)
+                    }
+                    flexBox(
+                        direction = Direction.ROW,
+                        gap = 16,
+                        alignment = Alignment.CENTER
+                    ) {
+                        button(label = "Prev", iconName = IconName.TRIANGLE_LEFT_VERTICAL_LINE, onClick = { emitInteraction("previous") })
+                        button(label = if (isPlaying) "Pause" else "Play", iconName = if (isPlaying) IconName.TWO_LINES_PARALLEL else IconName.TRIANGLE_RIGHT, onClick = { emitInteraction("play_pause") })
+                        button(label = "Next", iconName = IconName.TRIANGLE_RIGHT_VERTICAL_LINE, onClick = { emitInteraction("next") })
+                    }
+                }
+            }?.onFailure { error, _ ->
+                Timber.e("Failed to send display content: ${error.description}")
+            }
         }
     }
 

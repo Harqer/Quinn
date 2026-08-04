@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface Route : NavKey {
-    @Serializable data object Login : Route
     @Serializable data object Home : Route
     @Serializable data object Discover : Route
+    @Serializable data object Concerts : Route
 
     @Serializable data object Search : Route
     @Serializable data object Chat : Route
@@ -24,17 +24,11 @@ sealed interface Route : NavKey {
     @Serializable data class CategoryView(val categoryId: String) : Route
     @Serializable data object Settings : Route
     @Serializable data object Premium : Route
+    @Serializable data object Recents : Route
+    @Serializable data object Downloaded : Route
     // Onboarding Sequence
     @Serializable data object Welcome : Route
-    @Serializable data object AuthOptions : Route
-    @Serializable data object EmailInput : Route
-    @Serializable data object PasswordInput : Route
-    @Serializable data object BirthdayInput : Route
-    @Serializable data object GenderInput : Route
-    @Serializable data object NameTerms : Route
-    @Serializable data object Loading : Route
-    @Serializable data object Notification : Route
-    @Serializable data object ArtistSelection : Route
+    @Serializable data object SignIn : Route
     @Serializable data object MfaEnrollment : Route
     @Serializable data object MfaVerification : Route
 
@@ -45,6 +39,8 @@ sealed interface Route : NavKey {
     @Serializable data class Lyrics(val trackId: String?) : Route
     @Serializable data object LiveSessionOptions : Route
     @Serializable data class UsageLimitSheet(val reasonName: String) : Route
+    @Serializable data class GeneratingSong(val imageBase64: String) : Route
+    @Serializable data object NotFound : Route
 }
 
 data class TopLevelRoute<T : Any>(val name: String, val route: T, val icon: ImageVector)

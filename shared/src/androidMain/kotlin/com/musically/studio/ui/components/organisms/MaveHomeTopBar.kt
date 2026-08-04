@@ -41,34 +41,11 @@ fun MaveHomeTopBar(
     TopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                if (photoUrl != null) {
-                    AsyncImage(
-                        model = photoUrl,
-                        contentDescription = "Profile",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .clickable { onNavigateToProfile() }
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .background(com.musically.studio.ui.theme.MaveBrand)
-                            .clickable { onNavigateToProfile() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        val initial = displayName?.firstOrNull()?.toString()?.uppercase() ?: "M"
-                        Text(
-                            text = initial,
-                            color = Color.Black,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
-                }
+                com.musically.studio.ui.components.atoms.UserAvatarButton(
+                    photoUrl = photoUrl,
+                    displayName = displayName,
+                    onClick = onNavigateToProfile
+                )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = greeting,

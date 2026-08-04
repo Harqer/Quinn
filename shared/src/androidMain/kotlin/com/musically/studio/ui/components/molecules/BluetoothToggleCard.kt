@@ -2,6 +2,7 @@ package com.musically.studio.ui.components.molecules
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +20,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material3.ColorScheme
 import com.musically.studio.ui.icons.ToggleOff
 import com.musically.studio.ui.icons.ToggleOn
+import com.musically.studio.ui.utils.debouncedClickable
+import android.view.HapticFeedbackConstants
+import androidx.compose.ui.platform.LocalView
 
 @Composable
 fun BluetoothToggleCard(
@@ -26,11 +30,17 @@ fun BluetoothToggleCard(
     colors: ColorScheme,
     onToggle: () -> Unit
 ) {
+    val view = LocalView.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp, bottom = 16.dp)
             .background(colors.surfaceContainer, RoundedCornerShape(16.dp))
+            .debouncedClickable {
+                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                onToggle()
+            }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -51,7 +61,10 @@ fun BluetoothToggleCard(
             }
         }
         IconButton(
-            onClick = onToggle,
+            onClick = {
+                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                com.musically.studio.ui.utils.executeDebounced { onToggle() }
+            },
             modifier = Modifier.size(48.dp)
         ) {
             Icon(
@@ -61,5 +74,17 @@ fun BluetoothToggleCard(
                 tint = if (isBluetoothEnabled) colors.primary else colors.onSurface
             )
         }
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun BluetoothToggleCardPreview() {
+    androidx.compose.material3.MaterialTheme {
+        BluetoothToggleCard(
+            isBluetoothEnabled = true,
+            colors = androidx.compose.material3.darkColorScheme(),
+            onToggle = {}
+        )
     }
 }

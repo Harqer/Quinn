@@ -10,7 +10,14 @@ type QueueListener = (queue: Track[], index: number) => void;
 type ModeListener = (shuffle: boolean, repeat: RepeatMode) => void;
 
 class AudioService {
-  private audio: HTMLAudioElement;
+  private audioContext: AudioContext;
+  private currentSource: AudioBufferSourceNode | null = null;
+  private currentGain: GainNode | null = null;
+
+  private startTime: number = 0;
+  private bufferDuration: number = 0;
+  private timeUpdateInterval: number | null = null;
+
   private _state: PlayerState = 'idle';
   private _currentTrack: Track | null = null;
   
@@ -28,30 +35,12 @@ class AudioService {
   private modeListeners: Set<ModeListener> = new Set();
 
   constructor() {
-    this.audio = new Audio();
-    
-    this.audio.addEventListener('play', () => this.setState('playing'));
-    this.audio.addEventListener('pause', () => this.setState('paused'));
-    this.audio.addEventListener('waiting', () => this.setState('loading'));
-    this.audio.addEventListener('playing', () => this.setState('playing'));
-    this.audio.addEventListener('ended', () => {
-      this.setState('idle');
-      this.handleTrackEnded();
-    });
-    this.audio.addEventListener('error', () => this.setState('error'));
-    
-    this.audio.addEventListener('timeupdate', () => {
-      this.notifyProgress(this.audio.currentTime, this.audio.duration || 0);
-    });
-    this.audio.addEventListener('loadedmetadata', () => {
-      this.notifyProgress(this.audio.currentTime, this.audio.duration || 0);
-    });
+    this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
 
   private handleTrackEnded() {
     if (this._repeat === 'one') {
-      this.audio.currentTime = 0;
-      this.audio.play().catch(console.error);
+      if (this._currentTrack) this.playTrack(this._currentTrack);
     } else {
       this.skipNext(true); // pass true for auto-advance
     }
@@ -97,18 +86,80 @@ class AudioService {
     this.playTrack(this._queue[this._queueIndex]);
   }
 
-  public playTrack(track: Track) {
+  public addToQueue(track: Track) {
+    this._originalQueue.push(track);
+    this._queue.push(track);
+    
+    // If the queue was empty, play it
+    if (this._queue.length === 1) {
+      this._queueIndex = 0;
+      this.playTrack(this._queue[0]);
+    }
+    this.notifyQueue();
+  }
+
+  public async playTrack(track: Track, crossfadeDuration = 2) {
     this._currentTrack = track;
     this.trackListeners.forEach(l => l(track));
     
-    if (track.audioUrl) {
-      this.audio.src = track.audioUrl;
-      this.audio.play().catch(e => {
-        console.error("Playback failed", e);
-        this.setState('error');
-      });
-    } else {
-      this.audio.src = '';
+    if (!track.audioUrl) {
+      this.setState('error');
+      return;
+    }
+
+    try {
+      this.setState('loading');
+      
+      if (this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
+      }
+      
+      const response = await fetch(track.audioUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+      
+      const newSource = this.audioContext.createBufferSource();
+      newSource.buffer = audioBuffer;
+      
+      const newGain = this.audioContext.createGain();
+      newSource.connect(newGain);
+      newGain.connect(this.audioContext.destination);
+      
+      const now = this.audioContext.currentTime;
+      
+      // fade in new track
+      newGain.gain.setValueAtTime(0, now);
+      newGain.gain.linearRampToValueAtTime(1, now + crossfadeDuration);
+      newSource.start(now);
+      
+      // fade out old track
+      if (this.currentGain && this.currentSource) {
+        this.currentGain.gain.setValueAtTime(this.currentGain.gain.value, now);
+        this.currentGain.gain.linearRampToValueAtTime(0, now + crossfadeDuration);
+        this.currentSource.stop(now + crossfadeDuration);
+      }
+      
+      this.currentSource = newSource;
+      this.currentGain = newGain;
+      this.startTime = now;
+      this.bufferDuration = audioBuffer.duration;
+      
+      this.setState('playing');
+      
+      // start time tracking
+      if (this.timeUpdateInterval) clearInterval(this.timeUpdateInterval);
+      this.timeUpdateInterval = window.setInterval(() => {
+        if (this._state !== 'playing') return;
+        const elapsed = this.audioContext.currentTime - this.startTime;
+        this.notifyProgress(elapsed, this.bufferDuration);
+        if (elapsed >= this.bufferDuration) {
+          clearInterval(this.timeUpdateInterval!);
+          this.handleTrackEnded();
+        }
+      }, 500);
+
+    } catch (e) {
+      console.error("Playback failed", e);
       this.setState('error');
     }
   }
@@ -127,15 +178,19 @@ class AudioService {
       this.playTrack(this._queue[this._queueIndex]);
     } else {
       this.setState('idle'); // Reached end of queue without repeat all
+      if (this.currentSource) this.currentSource.stop();
+      if (this.timeUpdateInterval) clearInterval(this.timeUpdateInterval);
     }
   }
 
   public skipPrevious() {
     if (this._queue.length === 0) return;
     
+    const elapsed = this.audioContext.currentTime - this.startTime;
+    
     // If we're more than 3 seconds in, just restart current track
-    if (this.audio.currentTime > 3) {
-      this.audio.currentTime = 0;
+    if (elapsed > 3) {
+      if (this._currentTrack) this.playTrack(this._currentTrack);
       return;
     }
     
@@ -148,7 +203,7 @@ class AudioService {
       this.notifyQueue();
       this.playTrack(this._queue[this._queueIndex]);
     } else {
-      this.audio.currentTime = 0; // At start of queue, just reset time
+      if (this._currentTrack) this.playTrack(this._currentTrack); // At start of queue, just reset time
     }
   }
   
@@ -180,34 +235,41 @@ class AudioService {
     this.notifyModes();
   }
 
-  public togglePlayPause() {
+  public async togglePlayPause() {
     if (!this._currentTrack) return;
     
     if (this._state === 'playing') {
-      this.audio.pause();
+      this.pause();
     } else {
-      this.audio.play().catch(console.error);
+      this.play();
     }
   }
   
   public pause() {
     if (this._state === 'playing') {
-      this.audio.pause();
+      this.audioContext.suspend();
+      this.setState('paused');
     }
   }
   
   public play() {
     if (this._currentTrack && this._state !== 'playing') {
-      this.audio.play().catch(console.error);
+      this.audioContext.resume();
+      this.setState('playing');
     }
   }
 
   public seek(time: number) {
-    this.audio.currentTime = time;
+     // Simple seek implementation by restarting
+     if (this._currentTrack) {
+         this.playTrack(this._currentTrack);
+     }
   }
 
   public setVolume(volume: number) {
-    this.audio.volume = Math.max(0, Math.min(1, volume));
+    if (this.currentGain) {
+        this.currentGain.gain.value = Math.max(0, Math.min(1, volume));
+    }
   }
 
   public onStateChange(listener: StateListener) {
@@ -237,8 +299,8 @@ class AudioService {
 
   public get state() { return this._state; }
   public get currentTrack() { return this._currentTrack; }
-  public get currentTime() { return this.audio.currentTime; }
-  public get duration() { return this.audio.duration || 0; }
+  public get currentTime() { return this.audioContext.currentTime - this.startTime; }
+  public get duration() { return this.bufferDuration; }
   public get queue() { return this._queue; }
   public get queueIndex() { return this._queueIndex; }
   public get shuffle() { return this._shuffle; }

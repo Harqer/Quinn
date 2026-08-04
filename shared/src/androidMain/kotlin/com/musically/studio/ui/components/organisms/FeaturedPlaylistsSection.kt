@@ -18,6 +18,7 @@ import com.musically.studio.ui.components.molecules.PlaylistRowItem
 
 fun LazyGridScope.featuredPlaylistsSection(
     playlists: List<MavePlaylist>,
+    isLoading: Boolean = false,
     errorMessage: String?,
     onRetry: () -> Unit,
     onNavigateToMore: () -> Unit,
@@ -43,7 +44,13 @@ fun LazyGridScope.featuredPlaylistsSection(
         }
     }
 
-    if (errorMessage != null && playlists.isEmpty()) {
+    if (isLoading && playlists.isEmpty()) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                androidx.compose.material3.CircularProgressIndicator(color = Color.White)
+            }
+        }
+    } else if (errorMessage != null && playlists.isEmpty()) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {

@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.musically.studio.ui.MainViewModel
+import com.musically.studio.ui.getUserPhotoUrl
+import com.musically.studio.ui.getUserDisplayName
 import com.musically.studio.ui.*
 import com.musically.studio.ui.components.molecules.AIMessageBubble
 import com.musically.studio.ui.components.molecules.UserMessageBubble
@@ -51,8 +53,12 @@ fun PodcastGeneratorScreen(
                     ) 
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = onSurfaceColor)
+                    Box(modifier = Modifier.padding(start = 16.dp)) {
+                        com.musically.studio.ui.components.atoms.UserAvatarButton(
+                            photoUrl = viewModel.getUserPhotoUrl(),
+                            displayName = viewModel.getUserDisplayName(),
+                            onClick = onNavigateToSettings
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

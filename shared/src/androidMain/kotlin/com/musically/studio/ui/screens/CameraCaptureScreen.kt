@@ -25,10 +25,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.musically.studio.ui.utils.debouncedClickable
 import androidx.core.content.ContextCompat
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
-
+import android.view.HapticFeedbackConstants
+import androidx.compose.ui.platform.LocalView
 import android.view.View
 
 @Composable
@@ -42,8 +44,11 @@ fun CameraCaptureScreen(
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
 
+    val view = LocalView.current
+
     val onCaptureClick: () -> Unit = click@{
         val capture = imageCapture ?: return@click
+        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
         val executor = ContextCompat.getMainExecutor(context)
         capture.takePicture(
             executor,
@@ -93,37 +98,14 @@ fun CameraCaptureScreen(
         previewView
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .debouncedClickable { onCaptureClick() }
+    ) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = factoryView
         )
-
-        val closeIconColor = Color.White
-        // Close button
-        IconButton(
-            onClick = onClose,
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.TopStart)
-                .statusBarsPadding()
-        ) {
-            Icon(Icons.Default.Close, contentDescription = "Close Camera", tint = closeIconColor)
-        }
-
-        val captureIcon = Icons.Default.PhotoCamera
-        // Capture button
-        FloatingActionButton(
-            onClick = onCaptureClick,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 48.dp)
-                .navigationBarsPadding(),
-            containerColor = Color.White,
-            contentColor = Color.Black
-        ) {
-            Icon(captureIcon, contentDescription = "Take Photo")
-        }
     }
 }
 

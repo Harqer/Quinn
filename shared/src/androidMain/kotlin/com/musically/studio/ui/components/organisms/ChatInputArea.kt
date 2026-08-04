@@ -1,44 +1,103 @@
 package com.musically.studio.ui.components.organisms
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.style.styleable
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.Animation
+import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.components.atoms.*
-import com.musically.studio.ui.theme.MaveStyles
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatInputArea(
     inputValue: String,
     onValueChange: (String) -> Unit,
     onSend: () -> Unit,
     onAttachImage: () -> Unit,
-    onCameraCapture: () -> Unit,
     onVoiceRecord: () -> Unit,
     onGenerateCoverArt: () -> Unit,
     onGenerateVideo: () -> Unit
 ) {
-    Box(
+    var showAttachmentMenu by remember { mutableStateOf(false) }
+
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.navigationBars) // Edge-to-Edge compliance
+            .windowInsetsPadding(WindowInsets.navigationBars)
             .windowInsetsPadding(WindowInsets.ime)
-            .padding(16.dp)
+            .padding(8.dp)
     ) {
+        AnimatedVisibility(
+            visible = showAttachmentMenu,
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    AttachmentOption(icon = Icons.Default.PhotoLibrary, label = "Cover Image", onClick = {
+                        onAttachImage()
+                        showAttachmentMenu = false
+                    })
+                    AttachmentOption(icon = Icons.Default.Animation, label = "Animate", onClick = {
+                        onGenerateVideo()
+                        showAttachmentMenu = false
+                    })
+                }
+            }
+        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .styleable(style = MaveStyles.chatInputRowStyle), // Styles API compliance
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceContainer)
+                .padding(horizontal = 4.dp, vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AttachImageButton(onClick = onAttachImage)
-            CameraCaptureButton(onClick = onCameraCapture)
+            IconButton(onClick = { showAttachmentMenu = !showAttachmentMenu }) {
+                AnimatedContent(
+                    targetState = showAttachmentMenu,
+                    label = "AttachmentMenuIcon"
+                ) { isMenuShowing ->
+                    Icon(
+                        imageVector = if (isMenuShowing) Icons.Default.Close else Icons.Default.Add,
+                        contentDescription = "Attach Media",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
             
             TextField(
                 value = inputValue,
@@ -48,18 +107,55 @@ fun ChatInputArea(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 ),
                 modifier = Modifier.weight(1f)
             )
             
-            if (inputValue.isNotBlank()) {
-                SendButton(onClick = onSend)
-            } else {
-                VoiceRecordButton(onClick = onVoiceRecord)
-                GenerateCoverArtButton(onClick = onGenerateCoverArt)
-                GenerateVideoButton(onClick = onGenerateVideo)
+            AnimatedContent(
+                targetState = inputValue.isNotBlank(),
+                label = "SendVoiceTransition"
+            ) { hasText ->
+                if (hasText) {
+                    SendButton(onClick = onSend)
+                } else {
+                    VoiceInputButton(onClick = onVoiceRecord)
+                }
             }
         }
+    }
+}
+
+@Composable
+fun AttachmentOption(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    onClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(8.dp)
+    ) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
