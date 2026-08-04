@@ -31,6 +31,12 @@ import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import android.view.HapticFeedbackConstants
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import android.view.View
 import android.Manifest
 import android.content.pm.PackageManager

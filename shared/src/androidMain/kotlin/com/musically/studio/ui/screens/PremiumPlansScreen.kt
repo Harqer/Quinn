@@ -1,3 +1,4 @@
+import com.musically.studio.dataconnect.instance
 package com.musically.studio.ui.screens
 
 import android.app.Activity
@@ -49,7 +50,7 @@ fun PremiumPlansScreen(
 
     LaunchedEffect(Unit) {
         try {
-            val plansResult = com.musically.studio.dataconnect.DefaultConnector.instance.listSubscriptionPlans().execute()
+            val plansResult = DefaultConnector.instance.listSubscriptionPlans().execute()
             if (plansResult.data.subscriptionPlans.isNotEmpty()) {
                 dynamicSubscriptionTiers = plansResult.data.subscriptionPlans.map { plan ->
                     com.musically.studio.ui.screens.SubscriptionTier(
@@ -63,7 +64,7 @@ fun PremiumPlansScreen(
                 }.sortedBy { it.price.replace("$", "").toIntOrNull() ?: 0 }
             }
             
-            val faqResult = com.musically.studio.dataconnect.DefaultConnector.instance.listFaqItems().execute()
+            val faqResult = DefaultConnector.instance.listFaqItems().execute()
             if (faqResult.data.faqItems.isNotEmpty()) {
                 dynamicFaqItems = faqResult.data.faqItems.map { faq ->
                     com.musically.studio.ui.screens.FaqItem(

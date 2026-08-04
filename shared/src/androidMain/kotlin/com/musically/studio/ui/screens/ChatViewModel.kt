@@ -1,3 +1,4 @@
+import com.musically.studio.dataconnect.instance
 package com.musically.studio.ui.screens
 
 import android.media.MediaPlayer

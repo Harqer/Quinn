@@ -24,8 +24,8 @@ fun GeneratingSongScreen(
 
     LaunchedEffect(Unit) {
         // Send the image and prompt Gemini to generate a song based on it
-        viewModel.sendFrame(imageBase64)
-        viewModel.sendTextCommand("Look at the picture I just sent and give me a chain of thought describing the visual vibe, the aesthetic, and the musical mood it inspires. Think out loud! Then use the generate_cover_media tool to generate the cover and apply the music preset.")
+        viewModel.geminiLiveManager.sendVideoFrame(imageBase64)
+        viewModel.geminiLiveManager.sendText("Look at the picture I just sent and give me a chain of thought describing the visual vibe, the aesthetic, and the musical mood it inspires. Think out loud! Then use the generate_cover_media tool to generate the cover and apply the music preset.")
         
         // Wait a bit more to simulate completion before navigating
         delay(15000) // Gemini should ideally call a function and trigger navigation, but for now we timeout

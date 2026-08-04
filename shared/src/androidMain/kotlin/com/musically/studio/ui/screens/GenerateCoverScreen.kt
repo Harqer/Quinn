@@ -1,3 +1,4 @@
+import com.musically.studio.dataconnect.instance
 package com.musically.studio.ui.screens
 
 import androidx.compose.foundation.layout.*
@@ -10,14 +11,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.musically.studio.dataconnect.DefaultConnector
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.*
 import com.musically.studio.ui.components.atoms.GenerateCoverButton
-import android.view.HapticFeedbackConstants
-import androidx.compose.ui.platform.LocalView
 import com.musically.studio.ui.components.molecules.CustomPromptInput
 import com.musically.studio.ui.components.molecules.ModeSwitcherToggle
 import com.musically.studio.ui.components.molecules.StylePresetPills
