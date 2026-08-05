@@ -1,5 +1,5 @@
-import com.musically.studio.dataconnect.instance
 package com.musically.studio.ui.screens
+import com.musically.studio.dataconnect.instance
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.musically.studio.dataconnect.DefaultConnector
+import com.musically.studio.dataconnect.instance
+import com.musically.studio.dataconnect.execute
+import android.view.HapticFeedbackConstants
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.*
 import com.musically.studio.ui.components.atoms.GenerateCoverButton
@@ -42,7 +45,7 @@ fun GenerateCoverScreen(
     
     LaunchedEffect(Unit) {
         try {
-            val result = com.musically.studio.dataconnect.DefaultConnector.instance.listAiPresets().execute()
+            val result = com.musically.studio.dataconnect.DefaultConnector.instance.listAiPresets.execute()
             if (result.data.aIPresets.isNotEmpty()) {
                 dynamicPresets = result.data.aIPresets.map { it.name }
             }

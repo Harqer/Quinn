@@ -1,5 +1,6 @@
-import com.musically.studio.dataconnect.instance
 package com.musically.studio.ui.screens
+import com.musically.studio.dataconnect.instance
+import com.musically.studio.dataconnect.DefaultConnector
 
 import android.app.Activity
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,9 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.musically.studio.dataconnect.execute
+import com.musically.studio.dataconnect.ListFaqItemsQuery
+import com.musically.studio.dataconnect.ListSubscriptionPlansQuery
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.*
@@ -50,7 +54,7 @@ fun PremiumPlansScreen(
 
     LaunchedEffect(Unit) {
         try {
-            val plansResult = DefaultConnector.instance.listSubscriptionPlans().execute()
+            val plansResult = DefaultConnector.instance.listSubscriptionPlans.execute()
             if (plansResult.data.subscriptionPlans.isNotEmpty()) {
                 dynamicSubscriptionTiers = plansResult.data.subscriptionPlans.map { plan ->
                     com.musically.studio.ui.screens.SubscriptionTier(
@@ -58,13 +62,13 @@ fun PremiumPlansScreen(
                         name = plan.name,
                         price = "$${plan.priceMonthly.toInt()}",
                         features = plan.features.map { it.feature },
-                        badge = if (plan.tier.value.name == "PRO") "MOST POPULAR" else null,
-                        isHighlighted = plan.tier.value.name == "PRO"
+                        badge = if (plan.tier.value?.name == "PRO") "MOST POPULAR" else null,
+                        isHighlighted = plan.tier.value?.name == "PRO"
                     )
                 }.sortedBy { it.price.replace("$", "").toIntOrNull() ?: 0 }
             }
             
-            val faqResult = DefaultConnector.instance.listFaqItems().execute()
+            val faqResult = DefaultConnector.instance.listFaqItems.execute()
             if (faqResult.data.faqItems.isNotEmpty()) {
                 dynamicFaqItems = faqResult.data.faqItems.map { faq ->
                     com.musically.studio.ui.screens.FaqItem(

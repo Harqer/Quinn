@@ -95,10 +95,11 @@ class DataConnectRepository @Inject constructor(
         try {
             connector.createTrack.execute(
                 title = title,
-                albumId = albumId,
                 audioUrl = audioUrl,
                 isCommunity = isCommunity
-            )
+            ) {
+                this.albumId = albumId
+            }
         } catch (e: Exception) {
             Timber.e(e, "Failed to create track")
         }

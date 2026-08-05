@@ -1,5 +1,7 @@
-import com.musically.studio.dataconnect.instance
 package com.musically.studio.ui.screens
+
+import com.musically.studio.dataconnect.instance
+import com.musically.studio.dataconnect.execute
 
 import android.media.MediaPlayer
 import android.util.Log
@@ -51,7 +53,7 @@ class ChatViewModel @Inject constructor(
     private suspend fun loadChatHistory() {
         try {
             val userId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
-            val result = com.musically.studio.dataconnect.DefaultConnector.instance.listChatMessages(userId = userId).execute()
+            val result = com.musically.studio.dataconnect.DefaultConnector.instance.listChatMessages.execute(userId = userId)
             val msgs = result.data.chatMessages
             
             if (msgs.isNotEmpty()) {
@@ -87,11 +89,11 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val userId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
-                com.musically.studio.dataconnect.DefaultConnector.instance.addChatMessage(
+                com.musically.studio.dataconnect.DefaultConnector.instance.addChatMessage.execute(
                     userId = userId,
                     sender = msg.sender,
                     text = msg.text
-                ).execute()
+                )
             } catch (e: Exception) {
                 Log.e("ChatViewModel", "Failed to save message to Data Connect", e)
             }
