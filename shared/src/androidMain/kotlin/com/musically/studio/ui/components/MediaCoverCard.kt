@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -32,6 +33,7 @@ import com.musically.studio.ui.theme.MaveStyles
 fun MediaCoverCard(
     title: String,
     subtitle: String,
+    description: String? = null,
     imageUrl: String?,
     modifier: Modifier = Modifier,
     isLiked: Boolean = false,
@@ -48,8 +50,9 @@ fun MediaCoverCard(
         it.isEnabled = true
     }
 
-    Box(
-        modifier = modifier.styleable(styleState, MaveStyles.maveCardStyle, style)
+    Card(
+        modifier = modifier.styleable(styleState, MaveStyles.maveCardStyle, style),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
     ) {
         Column {
             // Large Square Cover Art
@@ -155,7 +158,7 @@ fun MediaCoverCard(
                     if (onRemixClick != null) {
                         FloatingActionButton(
                             onClick = onRemixClick,
-                            containerColor = Color(0xFF10b981), // Emerald
+                            containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = Color.White,
                             modifier = Modifier.size(40.dp),
                             shape = CircleShape,
@@ -166,17 +169,22 @@ fun MediaCoverCard(
                         Spacer(modifier = Modifier.width(8.dp))
                     }
                     
-                    // Prominent Play Button (Spotify style)
                     FloatingActionButton(
                         onClick = onPlayClick,
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(40.dp),
-                        shape = CircleShape,
-                        elevation = FloatingActionButtonDefaults.elevation(0.dp)
+                        modifier = Modifier.size(48.dp)
                     ) {
-                        Icon(Icons.Default.PlayArrow, contentDescription = "Play", modifier = Modifier.size(24.dp))
+                        Icon(Icons.Default.PlayArrow, contentDescription = "Play")
                     }
+                }
+                
+                if (description != null) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    com.musically.studio.ui.components.molecules.ExpandableDescription(
+                        text = description,
+                        collapsedMaxLines = 3
+                    )
                 }
             }
         }

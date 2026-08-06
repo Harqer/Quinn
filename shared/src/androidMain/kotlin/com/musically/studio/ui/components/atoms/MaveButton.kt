@@ -1,5 +1,7 @@
 package com.musically.studio.ui.components.atoms
 
+import com.musically.studio.ui.utils.debouncedClickable
+
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,7 +33,7 @@ fun MaveButton(
 
     Box(
         modifier = modifier
-            .clickable(
+            .debouncedClickable(
                 onClick = onClick,
                 enabled = enabled,
                 interactionSource = interactionSource,

@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.organisms
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,14 +38,13 @@ fun PodcastInputBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .imePadding()
             .padding(16.dp)
-            .clip(RoundedCornerShape(24.dp))
+            .clip(MaterialTheme.shapes.extraLarge)
             .background(surfaceColor.copy(alpha = 0.8f))
             .border(
                 width = 1.dp,
                 color = Color.White.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(24.dp)
+                shape = MaterialTheme.shapes.extraLarge
             )
             .padding(8.dp)
     ) {

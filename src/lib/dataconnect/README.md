@@ -29,6 +29,10 @@ This README will guide you through the process of using the generated JavaScript
   - [*ListSubscriptionPlans*](#listsubscriptionplans)
   - [*ListFaqItems*](#listfaqitems)
   - [*ListAIPresets*](#listaipresets)
+  - [*ListFeatureHighlights*](#listfeaturehighlights)
+  - [*ListHomeSections*](#listhomesections)
+  - [*GetUsers*](#getusers)
+  - [*GetTrack*](#gettrack)
 - [**Mutations**](#mutations)
   - [*CreateTrack*](#createtrack)
   - [*UpsertUser*](#upsertuser)
@@ -45,6 +49,8 @@ This README will guide you through the process of using the generated JavaScript
   - [*CreateCameraCapture*](#createcameracapture)
   - [*CreateVideoDigestion*](#createvideodigestion)
   - [*AddChatMessage*](#addchatmessage)
+  - [*SeedTrack*](#seedtrack)
+  - [*SeedUser*](#seeduser)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `default`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -2340,6 +2346,421 @@ executeQuery(ref).then((response) => {
 });
 ```
 
+## ListFeatureHighlights
+You can execute the `ListFeatureHighlights` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+listFeatureHighlights(options?: ExecuteQueryOptions): QueryPromise<ListFeatureHighlightsData, undefined>;
+
+interface ListFeatureHighlightsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListFeatureHighlightsData, undefined>;
+}
+export const listFeatureHighlightsRef: ListFeatureHighlightsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listFeatureHighlights(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListFeatureHighlightsData, undefined>;
+
+interface ListFeatureHighlightsRef {
+  ...
+  (dc: DataConnect): QueryRef<ListFeatureHighlightsData, undefined>;
+}
+export const listFeatureHighlightsRef: ListFeatureHighlightsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listFeatureHighlightsRef:
+```typescript
+const name = listFeatureHighlightsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListFeatureHighlights` query has no variables.
+### Return Type
+Recall that executing the `ListFeatureHighlights` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListFeatureHighlightsData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListFeatureHighlightsData {
+  featureHighlights: ({
+    id: string;
+    iconName: string;
+    title: string;
+    description: string;
+  } & FeatureHighlight_Key)[];
+}
+```
+### Using `ListFeatureHighlights`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listFeatureHighlights } from '@musically/dataconnect';
+
+
+// Call the `listFeatureHighlights()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listFeatureHighlights();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listFeatureHighlights(dataConnect);
+
+console.log(data.featureHighlights);
+
+// Or, you can use the `Promise` API.
+listFeatureHighlights().then((response) => {
+  const data = response.data;
+  console.log(data.featureHighlights);
+});
+```
+
+### Using `ListFeatureHighlights`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listFeatureHighlightsRef } from '@musically/dataconnect';
+
+
+// Call the `listFeatureHighlightsRef()` function to get a reference to the query.
+const ref = listFeatureHighlightsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listFeatureHighlightsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.featureHighlights);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.featureHighlights);
+});
+```
+
+## ListHomeSections
+You can execute the `ListHomeSections` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+listHomeSections(options?: ExecuteQueryOptions): QueryPromise<ListHomeSectionsData, undefined>;
+
+interface ListHomeSectionsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListHomeSectionsData, undefined>;
+}
+export const listHomeSectionsRef: ListHomeSectionsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listHomeSections(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListHomeSectionsData, undefined>;
+
+interface ListHomeSectionsRef {
+  ...
+  (dc: DataConnect): QueryRef<ListHomeSectionsData, undefined>;
+}
+export const listHomeSectionsRef: ListHomeSectionsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listHomeSectionsRef:
+```typescript
+const name = listHomeSectionsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListHomeSections` query has no variables.
+### Return Type
+Recall that executing the `ListHomeSections` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListHomeSectionsData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListHomeSectionsData {
+  homeSections: ({
+    id: string;
+    title: string;
+    orderIndex: number;
+    route: string;
+  } & HomeSection_Key)[];
+}
+```
+### Using `ListHomeSections`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listHomeSections } from '@musically/dataconnect';
+
+
+// Call the `listHomeSections()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listHomeSections();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listHomeSections(dataConnect);
+
+console.log(data.homeSections);
+
+// Or, you can use the `Promise` API.
+listHomeSections().then((response) => {
+  const data = response.data;
+  console.log(data.homeSections);
+});
+```
+
+### Using `ListHomeSections`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listHomeSectionsRef } from '@musically/dataconnect';
+
+
+// Call the `listHomeSectionsRef()` function to get a reference to the query.
+const ref = listHomeSectionsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listHomeSectionsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.homeSections);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.homeSections);
+});
+```
+
+## GetUsers
+You can execute the `GetUsers` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+getUsers(options?: ExecuteQueryOptions): QueryPromise<GetUsersData, undefined>;
+
+interface GetUsersRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetUsersData, undefined>;
+}
+export const getUsersRef: GetUsersRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetUsersData, undefined>;
+
+interface GetUsersRef {
+  ...
+  (dc: DataConnect): QueryRef<GetUsersData, undefined>;
+}
+export const getUsersRef: GetUsersRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getUsersRef:
+```typescript
+const name = getUsersRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetUsers` query has no variables.
+### Return Type
+Recall that executing the `GetUsers` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetUsersData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetUsersData {
+  users: ({
+    uid: string;
+    username: string;
+  } & User_Key)[];
+}
+```
+### Using `GetUsers`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getUsers } from '@musically/dataconnect';
+
+
+// Call the `getUsers()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getUsers();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getUsers(dataConnect);
+
+console.log(data.users);
+
+// Or, you can use the `Promise` API.
+getUsers().then((response) => {
+  const data = response.data;
+  console.log(data.users);
+});
+```
+
+### Using `GetUsers`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getUsersRef } from '@musically/dataconnect';
+
+
+// Call the `getUsersRef()` function to get a reference to the query.
+const ref = getUsersRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getUsersRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.users);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.users);
+});
+```
+
+## GetTrack
+You can execute the `GetTrack` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+getTrack(vars: GetTrackVariables, options?: ExecuteQueryOptions): QueryPromise<GetTrackData, GetTrackVariables>;
+
+interface GetTrackRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetTrackVariables): QueryRef<GetTrackData, GetTrackVariables>;
+}
+export const getTrackRef: GetTrackRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getTrack(dc: DataConnect, vars: GetTrackVariables, options?: ExecuteQueryOptions): QueryPromise<GetTrackData, GetTrackVariables>;
+
+interface GetTrackRef {
+  ...
+  (dc: DataConnect, vars: GetTrackVariables): QueryRef<GetTrackData, GetTrackVariables>;
+}
+export const getTrackRef: GetTrackRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getTrackRef:
+```typescript
+const name = getTrackRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetTrack` query requires an argument of type `GetTrackVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetTrackVariables {
+  id: string;
+}
+```
+### Return Type
+Recall that executing the `GetTrack` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetTrackData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetTrackData {
+  track?: {
+    id: string;
+    title: string;
+    album?: {
+      id: string;
+      title: string;
+      primaryArtist: {
+        id: string;
+        name: string;
+        imageUrl?: string | null;
+      } & Artist_Key;
+      coverUrl?: string | null;
+    } & Album_Key;
+    durationMs: number;
+    audioUrl: string;
+    coverUrl?: string | null;
+    playCount: Int64String;
+    prompt?: string | null;
+    isCommunity: boolean;
+    createdAt: TimestampString;
+  } & Track_Key;
+}
+```
+### Using `GetTrack`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getTrack, GetTrackVariables } from '@musically/dataconnect';
+
+// The `GetTrack` query requires an argument of type `GetTrackVariables`:
+const getTrackVars: GetTrackVariables = {
+  id: ..., 
+};
+
+// Call the `getTrack()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getTrack(getTrackVars);
+// Variables can be defined inline as well.
+const { data } = await getTrack({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getTrack(dataConnect, getTrackVars);
+
+console.log(data.track);
+
+// Or, you can use the `Promise` API.
+getTrack(getTrackVars).then((response) => {
+  const data = response.data;
+  console.log(data.track);
+});
+```
+
+### Using `GetTrack`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getTrackRef, GetTrackVariables } from '@musically/dataconnect';
+
+// The `GetTrack` query requires an argument of type `GetTrackVariables`:
+const getTrackVars: GetTrackVariables = {
+  id: ..., 
+};
+
+// Call the `getTrackRef()` function to get a reference to the query.
+const ref = getTrackRef(getTrackVars);
+// Variables can be defined inline as well.
+const ref = getTrackRef({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getTrackRef(dataConnect, getTrackVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.track);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.track);
+});
+```
+
 # Mutations
 
 There are two ways to execute a Data Connect Mutation using the generated Web SDK:
@@ -4083,6 +4504,245 @@ console.log(data.chatMessage_insert);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.chatMessage_insert);
+});
+```
+
+## SeedTrack
+You can execute the `SeedTrack` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+seedTrack(vars: SeedTrackVariables): MutationPromise<SeedTrackData, SeedTrackVariables>;
+
+interface SeedTrackRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedTrackVariables): MutationRef<SeedTrackData, SeedTrackVariables>;
+}
+export const seedTrackRef: SeedTrackRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+seedTrack(dc: DataConnect, vars: SeedTrackVariables): MutationPromise<SeedTrackData, SeedTrackVariables>;
+
+interface SeedTrackRef {
+  ...
+  (dc: DataConnect, vars: SeedTrackVariables): MutationRef<SeedTrackData, SeedTrackVariables>;
+}
+export const seedTrackRef: SeedTrackRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the seedTrackRef:
+```typescript
+const name = seedTrackRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SeedTrack` mutation requires an argument of type `SeedTrackVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SeedTrackVariables {
+  title: string;
+  audioUrl: string;
+  durationMs?: number | null;
+  prompt?: string | null;
+  isCommunity: boolean;
+  ownerUid: string;
+}
+```
+### Return Type
+Recall that executing the `SeedTrack` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SeedTrackData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SeedTrackData {
+  track_insert: Track_Key;
+}
+```
+### Using `SeedTrack`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, seedTrack, SeedTrackVariables } from '@musically/dataconnect';
+
+// The `SeedTrack` mutation requires an argument of type `SeedTrackVariables`:
+const seedTrackVars: SeedTrackVariables = {
+  title: ..., 
+  audioUrl: ..., 
+  durationMs: ..., // optional
+  prompt: ..., // optional
+  isCommunity: ..., 
+  ownerUid: ..., 
+};
+
+// Call the `seedTrack()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await seedTrack(seedTrackVars);
+// Variables can be defined inline as well.
+const { data } = await seedTrack({ title: ..., audioUrl: ..., durationMs: ..., prompt: ..., isCommunity: ..., ownerUid: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await seedTrack(dataConnect, seedTrackVars);
+
+console.log(data.track_insert);
+
+// Or, you can use the `Promise` API.
+seedTrack(seedTrackVars).then((response) => {
+  const data = response.data;
+  console.log(data.track_insert);
+});
+```
+
+### Using `SeedTrack`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, seedTrackRef, SeedTrackVariables } from '@musically/dataconnect';
+
+// The `SeedTrack` mutation requires an argument of type `SeedTrackVariables`:
+const seedTrackVars: SeedTrackVariables = {
+  title: ..., 
+  audioUrl: ..., 
+  durationMs: ..., // optional
+  prompt: ..., // optional
+  isCommunity: ..., 
+  ownerUid: ..., 
+};
+
+// Call the `seedTrackRef()` function to get a reference to the mutation.
+const ref = seedTrackRef(seedTrackVars);
+// Variables can be defined inline as well.
+const ref = seedTrackRef({ title: ..., audioUrl: ..., durationMs: ..., prompt: ..., isCommunity: ..., ownerUid: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = seedTrackRef(dataConnect, seedTrackVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.track_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.track_insert);
+});
+```
+
+## SeedUser
+You can execute the `SeedUser` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+seedUser(vars: SeedUserVariables): MutationPromise<SeedUserData, SeedUserVariables>;
+
+interface SeedUserRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedUserVariables): MutationRef<SeedUserData, SeedUserVariables>;
+}
+export const seedUserRef: SeedUserRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+seedUser(dc: DataConnect, vars: SeedUserVariables): MutationPromise<SeedUserData, SeedUserVariables>;
+
+interface SeedUserRef {
+  ...
+  (dc: DataConnect, vars: SeedUserVariables): MutationRef<SeedUserData, SeedUserVariables>;
+}
+export const seedUserRef: SeedUserRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the seedUserRef:
+```typescript
+const name = seedUserRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SeedUser` mutation requires an argument of type `SeedUserVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SeedUserVariables {
+  uid: string;
+  username: string;
+  email: string;
+}
+```
+### Return Type
+Recall that executing the `SeedUser` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SeedUserData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SeedUserData {
+  user_upsert: User_Key;
+}
+```
+### Using `SeedUser`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, seedUser, SeedUserVariables } from '@musically/dataconnect';
+
+// The `SeedUser` mutation requires an argument of type `SeedUserVariables`:
+const seedUserVars: SeedUserVariables = {
+  uid: ..., 
+  username: ..., 
+  email: ..., 
+};
+
+// Call the `seedUser()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await seedUser(seedUserVars);
+// Variables can be defined inline as well.
+const { data } = await seedUser({ uid: ..., username: ..., email: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await seedUser(dataConnect, seedUserVars);
+
+console.log(data.user_upsert);
+
+// Or, you can use the `Promise` API.
+seedUser(seedUserVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_upsert);
+});
+```
+
+### Using `SeedUser`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, seedUserRef, SeedUserVariables } from '@musically/dataconnect';
+
+// The `SeedUser` mutation requires an argument of type `SeedUserVariables`:
+const seedUserVars: SeedUserVariables = {
+  uid: ..., 
+  username: ..., 
+  email: ..., 
+};
+
+// Call the `seedUserRef()` function to get a reference to the mutation.
+const ref = seedUserRef(seedUserVars);
+// Variables can be defined inline as well.
+const ref = seedUserRef({ uid: ..., username: ..., email: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = seedUserRef(dataConnect, seedUserVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_upsert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_upsert);
 });
 ```
 

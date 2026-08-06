@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,22 +24,33 @@ import com.musically.studio.shared.R
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.models.ChatMessage
 
+import androidx.compose.foundation.style.Style
+import androidx.compose.foundation.style.styleable
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import com.musically.studio.ui.theme.MaveStyles
+import com.musically.studio.ui.utils.debouncedClickable
+
 @Composable
 fun TrackItem(
     track: MaveTrack, 
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onAlbumClick: () -> Unit = {},
-    onRemixClick: (() -> Unit)? = null
+    onRemixClick: (() -> Unit)? = null,
+    style: Style = Style
 ) {
+    val interactionSource = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource)
+    
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(
+            .debouncedClickable(
                 onClick = onClick,
                 indication = null,
-                interactionSource = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                interactionSource = interactionSource
             )
+            .styleable(styleState, MaveStyles.listRowItemStyle, style)
     ) {
         Row(
             modifier = Modifier.padding(16.dp).fillMaxWidth(),
@@ -54,7 +66,7 @@ fun TrackItem(
                     .size(64.dp)
                     .clip(MaterialTheme.shapes.small)
                     .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                    .clickable { onAlbumClick() }
+                    .debouncedClickable { onAlbumClick() }
             )
             
             Spacer(modifier = Modifier.width(16.dp))
@@ -100,18 +112,23 @@ fun ChatBubble(
     message: ChatMessage,
     modifier: Modifier = Modifier,
     onLike: () -> Unit = {},
-    onBookmark: () -> Unit = {}
+    onBookmark: () -> Unit = {},
+    style: Style = Style
 ) {
     val alignment = if (message.isUser) Alignment.End else Alignment.Start
     val contentColor = if (message.isUser) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onPrimary
+    val defaultStyle = if (message.isUser) MaveStyles.userMessageBubbleStyle else MaveStyles.aiMessageBubbleStyle
 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = alignment
     ) {
+        val interactionSource = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+        val styleState = rememberUpdatedStyleState(interactionSource)
         Box(
             modifier = Modifier
                 .widthIn(max = 300.dp)
+                .styleable(styleState, defaultStyle, style)
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(

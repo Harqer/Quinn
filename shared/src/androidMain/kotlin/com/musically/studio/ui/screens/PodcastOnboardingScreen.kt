@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +22,7 @@ import coil.compose.AsyncImage
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.*
+import com.musically.studio.ui.utils.debouncedClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,10 +39,14 @@ fun PodcastOnboardingScreen(
         viewModel.fetchUserTracks()
     }
 
-    val filteredTracks = if (searchQuery.isBlank()) {
-        tracks
-    } else {
-        tracks.filter { it.name.contains(searchQuery, ignoreCase = true) }
+    val filteredTracks by remember(searchQuery, tracks) {
+        derivedStateOf {
+            if (searchQuery.isBlank()) {
+                tracks
+            } else {
+                tracks.filter { it.name.contains(searchQuery, ignoreCase = true) }
+            }
+        }
     }
 
     Scaffold(
@@ -119,7 +125,7 @@ fun PodcastOnboardingScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding() + 16.dp)
                 ) {
-                    items(filteredTracks) { track ->
+                    items(filteredTracks, key = { it.id }) { track ->
                         PodcastTile(
                             track = track,
                             isSelected = selectedPodcasts.contains(track.id),
@@ -138,7 +144,7 @@ fun PodcastOnboardingScreen(
 @Composable
 fun PodcastTile(track: MaveTrack, isSelected: Boolean, onClick: () -> Unit) {
     Column(
-        modifier = Modifier.clickable { onClick() },
+        modifier = Modifier.debouncedClickable { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier.aspectRatio(1f)) {
@@ -148,13 +154,13 @@ fun PodcastTile(track: MaveTrack, isSelected: Boolean, onClick: () -> Unit) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.DarkGray, shape = MaterialTheme.shapes.small)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, shape = MaterialTheme.shapes.small)
             )
             if (isSelected) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.5f))
+                        .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
                 )
             }
         }

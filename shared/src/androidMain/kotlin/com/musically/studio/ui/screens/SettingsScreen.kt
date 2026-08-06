@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
@@ -190,7 +191,7 @@ fun SettingsScreen(
                     Text("Payment History", style = MaterialTheme.typography.titleMedium, color = Color.Gray)
                 }
                 
-                items(paymentHistory) { payment ->
+                items(paymentHistory, key = { it.createdAt.seconds }) { payment ->
                     ListItem(
                         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                         headlineContent = { Text(payment.status.replaceFirstChar { it.uppercase() }, color = Color.White) },

@@ -47,9 +47,11 @@ fun AlbumViewScreen(
     onDownloadClick: () -> Unit = {}
 ) {
     val tracks by viewModel.tracks.collectAsState()
+    val likedTracks by viewModel.likedTracks.collectAsState()
     val context = LocalContext.current
     val albumTracks = tracks.filter { it.album.id == albumId }
     val albumInfo = albumTracks.firstOrNull()?.album
+    val isLiked = albumTracks.isNotEmpty() && albumTracks.all { t -> likedTracks.any { it.id == t.id } }
     
     val bgColor = remember(albumId) {
         val hash = abs(albumId.hashCode())
@@ -104,10 +106,12 @@ fun AlbumViewScreen(
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     AlbumHeader(
                         title = albumInfo?.name ?: "Unknown Album",
-                        subtitle = albumInfo?.description ?: albumInfo?.artists?.joinToString { it.name } ?: "Unknown Artist",
+                        subtitle = albumInfo?.artists?.joinToString { it.name } ?: "Unknown Artist",
+                        description = albumInfo?.description,
                         imageUrl = albumInfo?.images?.firstOrNull()?.url,
                         albumId = albumId,
                         context = context,
+                        isLiked = isLiked,
                         onLikeClick = onLikeClick,
                         onDownloadClick = onDownloadClick,
                         onMoreClick = { albumTracks.firstOrNull()?.let { onMoreClick(it.id) } },

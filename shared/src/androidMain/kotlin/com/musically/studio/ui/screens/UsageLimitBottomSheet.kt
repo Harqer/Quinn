@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -96,7 +97,7 @@ fun UsageLimitBottomSheet(
             )
 
             Surface(
-                shape = RoundedCornerShape(8.dp),
+                shape = MaterialTheme.shapes.small,
                 color = MaveBackground
             ) {
                 Text(
@@ -116,7 +117,7 @@ fun UsageLimitBottomSheet(
                     onNavigateToPremium()
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaveBrand,
                     contentColor = MaveBackground

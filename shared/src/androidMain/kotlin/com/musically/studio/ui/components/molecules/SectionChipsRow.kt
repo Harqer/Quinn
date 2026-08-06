@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.musically.studio.ui.utils.debouncedClickable
 
 data class SectionChip(
     val label: String,
@@ -32,13 +33,13 @@ fun SectionChipsRow(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(chips) { chip ->
+        items(chips, key = { it.label }) { chip ->
             Box(
                 modifier = Modifier
                     .height(32.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                    .clickable { chip.onClick() }
+                    .debouncedClickable { chip.onClick() }
                     .padding(horizontal = 16.dp),
                 contentAlignment = Alignment.Center
             ) {

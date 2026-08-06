@@ -155,6 +155,7 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.coil.compose)
     
     // Media3 dependencies
     implementation(libs.media3.exoplayer)

@@ -70,7 +70,7 @@ fun LazyGridScope.featuredPlaylistsSection(
             }
         }
     } else {
-        gridItems(playlists) { playlist ->
+        gridItems(playlists, key = { it.id }) { playlist ->
             PlaylistRowItem(playlist = playlist, onClick = { 
                 onNavigateToPlaylist(playlist.id)
             })

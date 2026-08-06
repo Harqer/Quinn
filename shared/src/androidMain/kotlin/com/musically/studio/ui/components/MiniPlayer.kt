@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +26,7 @@ import androidx.compose.foundation.style.styleable
 import com.musically.studio.ui.theme.MaveStyles
 import android.view.HapticFeedbackConstants
 import androidx.compose.ui.platform.LocalView
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun MiniPlayer(
@@ -44,7 +46,7 @@ fun MiniPlayer(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(
+            .debouncedClickable(
                 onClick = {
                     view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
                     onClick()
@@ -67,14 +69,14 @@ fun MiniPlayer(
                     contentDescription = null,
                     modifier = Modifier
                         .size(48.dp)
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(MaterialTheme.shapes.extraSmall)
                 )
             } else {
                 Box(
                     modifier = Modifier
                         .size(48.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(Color.DarkGray)
+                        .clip(MaterialTheme.shapes.extraSmall)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 )
             }
             

@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.molecules
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -44,28 +45,31 @@ fun ChatBubble(message: ChatMessage, viewModel: MainViewModel, modifier: Modifie
                     modifier = Modifier.size(32.dp).clip(CircleShape)
                 )
             } else {
-                Box(
-                    modifier = Modifier.size(32.dp)
-                        .background(bgColor.copy(alpha = 0.5f), CircleShape),
-                    contentAlignment = Alignment.Center
+                Surface(
+                    modifier = Modifier.size(32.dp),
+                    shape = CircleShape,
+                    color = bgColor.copy(alpha = 0.5f)
                 ) {
+                    Box(contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.MusicNote, contentDescription = null,
                         tint = Color.White, modifier = Modifier.size(16.dp))
+                }
+            }
                 }
             }
             Spacer(modifier = Modifier.width(8.dp))
         }
         
-        Box(
-            modifier = Modifier.widthIn(max = 280.dp)
-                .clip(RoundedCornerShape(
-                    topStart = if (message.isUser) 16.dp else 4.dp,
-                    topEnd = if (message.isUser) 4.dp else 16.dp,
-                    bottomStart = 16.dp, bottomEnd = 16.dp
-                ))
-                .background(if (message.isUser) MaterialTheme.colorScheme.primary else bgColor.copy(alpha = 0.3f))
-                .padding(horizontal = 14.dp, vertical = 10.dp)
+        Surface(
+            modifier = Modifier.widthIn(max = 280.dp),
+            shape = RoundedCornerShape(
+                topStart = if (message.isUser) 16.dp else 4.dp,
+                topEnd = if (message.isUser) 4.dp else 16.dp,
+                bottomStart = 16.dp, bottomEnd = 16.dp
+            ),
+            color = if (message.isUser) MaterialTheme.colorScheme.primary else bgColor.copy(alpha = 0.3f)
         ) {
+            Box(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
             androidx.compose.foundation.text.selection.SelectionContainer {
                 Text(text = message.text, style = MaterialTheme.typography.bodyMedium,
                     color = if (message.isUser) Color.White else com.musically.studio.ui.theme.MaveBlueGray200)

@@ -23,6 +23,12 @@ data class MaveAlbum(
     @SerializedName("durationMs") val durationMs: Long = 0L
 )
 
+data class MaveLyricLine(
+    @SerializedName("text") val text: String,
+    @SerializedName("startMs") val startMs: Long,
+    @SerializedName("endMs") val endMs: Long
+)
+
 data class MaveTrack(
     @SerializedName("id") val id: String,
     @SerializedName("name") val name: String,
@@ -31,7 +37,9 @@ data class MaveTrack(
     @SerializedName("userId") val userId: String? = null, // Mave Creator UID if community track
     @SerializedName("durationMs") val durationMs: Long = 0L,
     @SerializedName("videoUrl") val videoUrl: String? = null,
-    @SerializedName("audioUrl") val audioUrl: String? = null
+    @SerializedName("audioUrl") val audioUrl: String? = null,
+    @SerializedName("lyrics") val lyrics: List<MaveLyricLine>? = null,
+    @SerializedName("prompt") val prompt: String? = null
 )
 
 data class MaveTrackItem(

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.theme.MaveStyles
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun LargePodcastCard(
@@ -32,7 +33,7 @@ fun LargePodcastCard(
     Column(
         modifier = modifier
             .width(240.dp)
-            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .debouncedClickable(interactionSource = interactionSource, indication = null, onClick = onClick)
             .styleable(styleState, MaveStyles.largePodcastCardStyle, style)
     ) {
         Box(modifier = Modifier.aspectRatio(3f/4f)) {
@@ -40,7 +41,7 @@ fun LargePodcastCard(
                 model = track.album.images.firstOrNull()?.url,
                 contentDescription = track.name,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().background(Color.DarkGray, shape = MaterialTheme.shapes.small)
+                modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceVariant, shape = MaterialTheme.shapes.small)
             )
         }
         Spacer(modifier = Modifier.height(12.dp))

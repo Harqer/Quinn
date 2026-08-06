@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.theme.MaveStyles
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun TrendingItemRow(
@@ -33,7 +34,7 @@ fun TrendingItemRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .debouncedClickable(interactionSource = interactionSource, indication = null, onClick = onClick)
             .styleable(styleState, MaveStyles.listRowItemStyle, style),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -41,7 +42,7 @@ fun TrendingItemRow(
             model = track.album.images.firstOrNull()?.url,
             contentDescription = track.name,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(80.dp).background(Color.DarkGray, shape = MaterialTheme.shapes.small)
+            modifier = Modifier.size(80.dp).background(MaterialTheme.colorScheme.surfaceVariant, shape = MaterialTheme.shapes.small)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {

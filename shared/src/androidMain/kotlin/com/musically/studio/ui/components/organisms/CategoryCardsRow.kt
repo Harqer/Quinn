@@ -17,9 +17,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 import com.musically.studio.network.MaveCategory
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun CategoryCardsRow(
+    modifier: Modifier = Modifier,
     categories: List<MaveCategory>,
     onCategoryClick: (String) -> Unit
 ) {
@@ -30,7 +32,7 @@ fun CategoryCardsRow(
         Color(0xFF0284C7)  // Sky Blue
     )
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp)
     ) {
@@ -45,16 +47,16 @@ fun CategoryCardsRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(categories.size) { index ->
+            items(categories.size, key = { categories[it].id }) { index ->
                 val category = categories[index]
                 val color = try { category.colorHex?.let { Color(android.graphics.Color.parseColor(it)) } } catch (e: Exception) { null } ?: defaultColors[index % defaultColors.size]
                 Box(
                     modifier = Modifier
                         .width(120.dp)
                         .height(80.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(MaterialTheme.shapes.small)
                         .background(color)
-                        .clickable { onCategoryClick(category.id) },
+                        .debouncedClickable { onCategoryClick(category.id) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

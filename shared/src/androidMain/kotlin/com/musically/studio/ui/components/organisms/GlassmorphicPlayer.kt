@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.organisms
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.musically.studio.network.MaveTrack
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun GlassmorphicPlayer(
@@ -32,6 +34,7 @@ fun GlassmorphicPlayer(
     isPlaying: Boolean,
     progress: Float,
     onPlayPauseClick: () -> Unit,
+    onEqClick: (() -> Unit)? = null,
     onCloseClick: () -> Unit,
     onUndoClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -52,7 +55,7 @@ fun GlassmorphicPlayer(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -65,7 +68,7 @@ fun GlassmorphicPlayer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(32.dp))
-                    .background(Color.White.copy(alpha = 0.2f))
+                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.2f))
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Row(
@@ -82,14 +85,14 @@ fun GlassmorphicPlayer(
                             modifier = Modifier
                                 .size(48.dp)
                                 .clip(CircleShape)
-                                .background(Color.DarkGray)
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
                         )
                         
                         Spacer(modifier = Modifier.width(16.dp))
                         
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "NATURE",
+                                text = track?.prompt?.takeIf { it.isNotBlank() }?.take(15)?.uppercase() ?: "LYRIA AI",
                                 color = Color.White.copy(alpha = 0.7f),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
@@ -106,7 +109,7 @@ fun GlassmorphicPlayer(
                             onClick = onCloseClick,
                             modifier = Modifier
                                 .size(32.dp)
-                                .background(Color.White, CircleShape)
+                                .background(MaterialTheme.colorScheme.surface, CircleShape)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Close,
@@ -121,7 +124,7 @@ fun GlassmorphicPlayer(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(1.dp)
-                            .background(Color.White.copy(alpha = 0.1f))
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.1f))
                     )
                     
                     Row(
@@ -133,8 +136,8 @@ fun GlassmorphicPlayer(
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
-                                .background(Color.White, CircleShape)
-                                .clickable { onPlayPauseClick() },
+                                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                                .debouncedClickable { onPlayPauseClick() },
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -150,8 +153,8 @@ fun GlassmorphicPlayer(
                         Box(
                             modifier = Modifier
                                 .size(32.dp)
-                                .background(Color.White.copy(alpha = 0.2f), CircleShape)
-                                .clickable { onUndoClick() },
+                                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.2f), CircleShape)
+                                .debouncedClickable { onUndoClick() },
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -177,13 +180,13 @@ fun GlassmorphicPlayer(
                                 .weight(1f)
                                 .height(4.dp)
                                 .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.3f))
+                                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.3f))
                         ) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(progressRatio)
                                     .fillMaxHeight()
-                                    .background(Color.White)
+                                    .background(MaterialTheme.colorScheme.surface)
                             )
                         }
                         
@@ -200,7 +203,8 @@ fun GlassmorphicPlayer(
                         Box(
                             modifier = Modifier
                                 .size(32.dp)
-                                .background(Color.White.copy(alpha = 0.2f), CircleShape),
+                                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.2f), CircleShape)
+                                .clickable { onEqClick?.invoke() },
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(

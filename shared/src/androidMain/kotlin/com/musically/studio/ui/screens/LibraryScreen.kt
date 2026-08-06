@@ -1,9 +1,10 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -11,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +27,7 @@ import com.musically.studio.ui.components.molecules.LibraryFilterRow
 import com.musically.studio.ui.components.organisms.ConnectionsSection
 import com.musically.studio.ui.components.organisms.EmptyLibraryState
 import com.musically.studio.ui.components.organisms.LibraryErrorState
+import com.musically.studio.ui.navigation.Route
 import com.musically.studio.ui.theme.FormFactorPreviews
 import com.musically.studio.ui.theme.MaveBackground
 
@@ -41,12 +44,15 @@ fun LibraryScreen(
 ) {
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
     val likedTracks by viewModel.likedTracks.collectAsStateWithLifecycle()
+    val bookmarkedTracks by viewModel.bookmarkedTracks.collectAsStateWithLifecycle()
+    val downloadedTracks by viewModel.downloadedTracks.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val errorMessage by viewModel.catalogErrorMessage.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.fetchUserTracks()
         viewModel.fetchLikedTracks()
+        viewModel.fetchBookmarkedTracks()
     }
 
     val spotifyConnected by viewModel.spotifyConnected.collectAsStateWithLifecycle()
@@ -61,6 +67,8 @@ fun LibraryScreen(
     }
     
     val selectedFilterState = remember { mutableStateOf<String?>(null) }
+    var isListView by remember { mutableStateOf(false) }
+    var sortOrder by remember { mutableStateOf("Recently played") }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
@@ -70,11 +78,22 @@ fun LibraryScreen(
             TopAppBar(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier.size(32.dp).background(Color.DarkGray, CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("M", color = Color.White, fontWeight = FontWeight.Bold)
+                        val photoUrl = viewModel.getUserPhotoUrl()
+                        val displayName = viewModel.getUserDisplayName()
+                        if (photoUrl != null) {
+                            coil.compose.AsyncImage(
+                                model = photoUrl,
+                                contentDescription = "Profile",
+                                modifier = Modifier.size(32.dp).clip(CircleShape),
+                                contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier.size(32.dp).background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(displayName.take(1).uppercase(), color = Color.White, fontWeight = FontWeight.Bold)
+                            }
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
@@ -102,7 +121,9 @@ fun LibraryScreen(
         ) {
             LibraryFilterRow(
                 selectedFilter = selectedFilterState.value,
-                onFilterSelected = { selectedFilterState.value = it }
+                onFilterSelected = { selectedFilterState.value = it },
+                onSortClick = { sortOrder = if (sortOrder == "Recently played") "Alphabetical" else "Recently played" },
+                onViewToggleClick = { isListView = !isListView }
             )
 
             if (isLoading && tracks.isEmpty()) {
@@ -120,26 +141,52 @@ fun LibraryScreen(
             } else if (tracks.isEmpty()) {
                 EmptyLibraryState(onNavigateToHome = onNavigateToHome)
             } else {
-                val filteredTracks = if (selectedFilterState.value == "Liked") likedTracks else tracks
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 120.dp)
-                ) {
-                    item {
-                        ConnectionsSection(
-                            viewModel = viewModel,
-                            spotifyConnected = spotifyConnected,
-                            youtubeConnected = youtubeConnected
-                        )
+                val filteredTracks by remember {
+                    derivedStateOf {
+                        val tracksList = when (selectedFilterState.value) {
+                            "Liked" -> likedTracks
+                            "Bookmarks" -> bookmarkedTracks
+                            "Downloads" -> downloadedTracks
+                            else -> tracks
+                        }
+                        
+                        if (sortOrder == "Alphabetical") {
+                            tracksList.sortedBy { it.name }
+                        } else {
+                            tracksList
+                        }
                     }
-                    items(filteredTracks) { track ->
-                        TrackItem(
-                            track = track,
-                            onClick = { onNavigateToNowPlaying(track.id) },
-                            onAlbumClick = { onNavigateToAlbum(track.album.id) },
-                            onRemixClick = { viewModel.generateFromTrack(track) }
-                        )
+                }
+
+                androidx.compose.material3.pulltorefresh.PullToRefreshBox(
+                    isRefreshing = isLoading,
+                    onRefresh = { 
+                        viewModel.fetchUserTracks()
+                        viewModel.fetchLikedTracks()
+                        viewModel.fetchBookmarkedTracks()
+                    },
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
+                        columns = androidx.compose.foundation.lazy.grid.GridCells.Adaptive(360.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 120.dp)
+                    ) {
+                        item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
+                            ConnectionsSection(
+                                viewModel = viewModel,
+                                spotifyConnected = spotifyConnected,
+                                youtubeConnected = youtubeConnected
+                            )
+                        }
+                        items(filteredTracks, key = { it.id }) { track ->
+                            TrackItem(
+                                track = track,
+                                onClick = { onNavigateToNowPlaying(track.id) },
+                                onAlbumClick = { onNavigateToAlbum(track.album.id) },
+                                onRemixClick = { viewModel.navigateTo(Route.JamRemix) }
+                            )
+                        }
                     }
                 }
             }

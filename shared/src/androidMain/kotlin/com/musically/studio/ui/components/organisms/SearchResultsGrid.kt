@@ -11,6 +11,7 @@ import com.musically.studio.ui.components.TrackItem
 
 @Composable
 fun SearchResultsGrid(
+    modifier: Modifier = Modifier,
     filteredResults: List<MaveTrack>,
     contentPadding: PaddingValues,
     onPlayTrack: (MaveTrack) -> Unit,
@@ -18,10 +19,10 @@ fun SearchResultsGrid(
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding
     ) {
-        items(filteredResults.size) { index ->
+        items(filteredResults.size, key = { filteredResults[it].id }) { index ->
             val track = filteredResults[index]
             TrackItem(
                 track = track,

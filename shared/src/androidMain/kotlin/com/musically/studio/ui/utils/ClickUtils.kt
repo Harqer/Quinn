@@ -1,9 +1,13 @@
 package com.musically.studio.ui.utils
 
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.ui.composed
+
 import android.os.SystemClock
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import com.musically.studio.ui.utils.debouncedClickable
 
 private var globalLastClickTime = 0L
 
@@ -19,6 +23,7 @@ fun executeDebounced(debounceInterval: Long = 500L, action: () -> Unit) {
     }
 }
 
+
 /**
  * A custom clickable modifier that debounces rapid clicks.
  */
@@ -29,6 +34,25 @@ fun Modifier.debouncedClickable(
     debounceInterval: Long = 500L,
     onClick: () -> Unit
 ): Modifier = this.clickable(
+    enabled = enabled,
+    onClickLabel = onClickLabel,
+    role = role,
+    onClick = {
+        executeDebounced(debounceInterval, onClick)
+    }
+)
+
+fun Modifier.debouncedClickable(
+    interactionSource: androidx.compose.foundation.interaction.MutableInteractionSource,
+    indication: androidx.compose.foundation.Indication?,
+    enabled: Boolean = true,
+    onClickLabel: String? = null,
+    role: Role? = null,
+    debounceInterval: Long = 500L,
+    onClick: () -> Unit
+): Modifier = this.clickable(
+    interactionSource = interactionSource,
+    indication = indication,
     enabled = enabled,
     onClickLabel = onClickLabel,
     role = role,

@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens.onboarding
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

@@ -7,6 +7,7 @@ import com.musically.studio.dataconnect.GetPlaylistsQuery
 import com.musically.studio.dataconnect.GetCategoriesQuery
 import com.musically.studio.dataconnect.GetAudiobooksQuery
 import com.musically.studio.dataconnect.GetPodcastsQuery
+import com.musically.studio.dataconnect.GetBookmarkedTracksQuery
 
 fun GetUserTracksQuery.Data.TracksItem.toMaveTrack(): MaveTrack {
     return MaveTrack(
@@ -27,6 +28,17 @@ fun GetLikedTracksQuery.Data.LikedTracksItem.toMaveTrack(): MaveTrack {
         audioUrl = this.track.audioUrl
     )
 }
+
+fun GetBookmarkedTracksQuery.Data.BookmarkedTracksItem.toMaveTrack(): MaveTrack {
+    return MaveTrack(
+        id = this.track.id.toString(),
+        name = this.track.title,
+        artists = listOf(MaveArtist(id = this.track.album?.primaryArtist?.id?.toString() ?: "", name = this.track.album?.primaryArtist?.name ?: "Unknown")),
+        album = MaveAlbum(id = this.track.album?.id?.toString() ?: "", name = this.track.album?.title ?: "Unknown", images = listOf(MaveImage(url = this.track.coverUrl ?: ""))),
+        audioUrl = this.track.audioUrl
+    )
+}
+
 
 fun GetCommunityTracksQuery.Data.TracksItem.toMaveTrack(): MaveTrack {
     return MaveTrack(

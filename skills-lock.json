@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "skills": {
+    "acquiring-disk-image-with-dd-and-dcfldd": {
+      "source": "mukul975/anthropic-cybersecurity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/acquiring-disk-image-with-dd-and-dcfldd/SKILL.md",
+      "computedHash": "255304ceea0cd24416fd3f1f5a11bc89f0e654b3fd6ad025da5484d1bb050ce7"
+    },
+    "analyzing-api-gateway-access-logs": {
+      "source": "mukul975/anthropic-cybersecurity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/analyzing-api-gateway-access-logs/SKILL.md",
+      "computedHash": "41d6adad4cd61c58453581e409c823fca9cb83e2a806cc442813527574b68e0a"
+    },
+    "android-security-best-practices": {
+      "source": "krutikjain/android-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/android-security-best-practices/SKILL.md",
+      "computedHash": "33d8c2d14efe6c96b4a204916bc1e36bcc139853d7488e7e87acb4d21204d1e0"
+    },
+    "brainstorming": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/brainstorming/SKILL.md",
+      "computedHash": "225b53fce53d627d3a1e94bfea84060ccdbf11a58a2d5cf11eefef89d598020e"
+    },
+    "caveman": {
+      "source": "juliusbrussee/caveman",
+      "sourceType": "github",
+      "skillPath": "skills/caveman/SKILL.md",
+      "computedHash": "59e1fe0d3eeb4189ee5c467efde567672e5cacb41f157c477a6152ca907d44ea"
+    },
+    "conducting-mobile-app-penetration-test": {
+      "source": "mukul975/anthropic-cybersecurity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/conducting-mobile-app-penetration-test/SKILL.md",
+      "computedHash": "b0a2b61a76d000bc7b5a7f419cdf99cc31241479a0254d327c1014b2a6cd395a"
+    },
+    "cybersecurity-analyst": {
+      "source": "rysweet/amplihack",
+      "sourceType": "github",
+      "skillPath": "skills/cybersecurity-analyst/SKILL.md",
+      "computedHash": "4f804565a002629ad80e311b460d710783af11bfddda5ddecee18c4b8f54cc0e"
+    },
+    "deploy-to-vercel": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/deploy-to-vercel/SKILL.md",
+      "computedHash": "03e0eaaa9bf13ba1e7ffa387f5893de6f324c0868c627001f179395a8feaa7c9"
+    },
+    "diagnosing-bugs": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/diagnosing-bugs/SKILL.md",
+      "computedHash": "fd6c99466b7ba43be624e6e66ed6d7af2796ded7218f24c83820823977819e22"
+    },
+    "owasp-mobile-security-checker": {
+      "source": "harishwarrior/flutter-claude-skills",
+      "sourceType": "github",
+      "skillPath": "owasp-mobile-security-checker/SKILL.md",
+      "computedHash": "0c3c4075421cce785ca2c411826fea84c88d1f48335607ad4abe13841a54ac92"
+    },
+    "python-cybersecurity-tool-development": {
+      "source": "mindrally/skills",
+      "sourceType": "github",
+      "skillPath": "python-cybersecurity-tool-development/SKILL.md",
+      "computedHash": "5b64dbf6251565912a65eea6e180a5a73751a021d1fb8d81386a6bb099abac7e"
+    },
+    "systematic-debugging": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/systematic-debugging/SKILL.md",
+      "computedHash": "a2750dfbaed1690da73b120254892c4f926b4576cb82eb16fc877783941fe39b"
+    },
+    "testing-mobile-api-authentication": {
+      "source": "mukul975/anthropic-cybersecurity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/testing-mobile-api-authentication/SKILL.md",
+      "computedHash": "ef2365538feaaa38efb9ad918d60caa3cd368cb1775c4f9c6f7fe10f56460e8b"
+    },
+    "using-superpowers": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/using-superpowers/SKILL.md",
+      "computedHash": "a77a803b7fc1a19c87605cf7a5ef318c5adc233de10b9ebeecb2ee2609f5454e"
+    },
+    "vercel-cli-with-tokens": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vercel-cli-with-tokens/SKILL.md",
+      "computedHash": "eb16b20dcbe6ce51e0372083d624e0847af1b09487ec99249227d5a8eddebfc0"
+    },
+    "vercel-composition-patterns": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/composition-patterns/SKILL.md",
+      "computedHash": "575757e3e25761c8c562d6e395d29f0b76c98b1273c0bd72d88e6ab1bc9c7d42"
+    },
+    "vercel-optimize": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vercel-optimize/SKILL.md",
+      "computedHash": "ad0ef9c5c980f824e2ec19cba5c45426aba923a17e71fbaf6d1830574b62cc44"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "computedHash": "ca7b0c0c6e5f2750043f7f0cd72d16ac4e2abc48f9b5500d047a4b77a2506212"
+    },
+    "vercel-react-native-skills": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-native-skills/SKILL.md",
+      "computedHash": "41d24eafa7c3d82e270439808f7cfbc4d51aeb2d14f2809a2267c16275784d06"
+    },
+    "vercel-react-view-transitions": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-view-transitions/SKILL.md",
+      "computedHash": "c8952fc9127fa0564d0cb71dccb4215a5608ac933b5831104f09173a97a46f85"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "f3bc47f890f42a44db1007ab390709ec368e4b8c089baee6b0007182236ac474"
+    },
+    "writing-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/writing-guidelines/SKILL.md",
+      "computedHash": "25aa3a33a97bddbcb1847ce4a6169106ec25e5b19b15b99c66e75ab383866ef2"
+    },
+    "writing-plans": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/writing-plans/SKILL.md",
+      "computedHash": "a8a8b0d07b744173079b25d26c6a189a0b5e7ddd80444ce92055b974dab7352b"
+    }
+  }
+}

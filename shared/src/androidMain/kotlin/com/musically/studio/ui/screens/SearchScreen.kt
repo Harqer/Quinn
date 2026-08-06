@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.musically.studio.ui.theme.FormFactorPreviews
@@ -46,6 +47,7 @@ fun SearchScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = com.musically.studio.ui.theme.MaveBackground,
+        contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             SearchTopBar(
                 scrollBehavior = scrollBehavior,
@@ -56,17 +58,21 @@ fun SearchScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
-                    .imePadding()
             ) {
-                Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding() + 16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = query,
-                    onValueChange = { query = it },
+                    onValueChange = { 
+                        query = it
+                        viewModel.searchCatalog(it)
+                    },
                     placeholder = { Text("What do you want to listen to?", color = Color.Black.copy(alpha = 0.6f)) },
                     leadingIcon = { 
                         Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.Black)
@@ -100,11 +106,7 @@ fun SearchScreen(
                         onNavigateToCategory = onNavigateToCategory
                     )
                 } else {
-                    val searchResults by viewModel.communityTracks.collectAsStateWithLifecycle()
-                    val filteredResults = searchResults.filter {
-                        it.name.contains(query, ignoreCase = true) || 
-                        it.artists.any { artist -> artist.name.contains(query, ignoreCase = true) }
-                    }
+                    val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
                     
                     Text(
                         text = "Search results for \"$query\"",
@@ -114,13 +116,13 @@ fun SearchScreen(
                         modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
                     )
                     
-                    if (filteredResults.isEmpty()) {
+                    if (searchResults.isEmpty()) {
                         Box(modifier = Modifier.fillMaxSize().padding(top = 32.dp), contentAlignment = Alignment.TopCenter) {
                             Text("No tracks found", color = Color.White.copy(alpha = 0.7f))
                         }
                     } else {
                         SearchResultsGrid(
-                            filteredResults = filteredResults,
+                            filteredResults = searchResults,
                             contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding() + 100.dp),
                             onPlayTrack = { viewModel.playTrack(it) },
                             onNavigateToAlbum = onNavigateToAlbum

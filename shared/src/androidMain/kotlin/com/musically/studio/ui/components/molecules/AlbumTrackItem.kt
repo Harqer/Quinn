@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.molecules
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.musically.studio.shared.R
 import com.musically.studio.network.MaveTrack
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun AlbumTrackItem(
@@ -24,7 +26,7 @@ fun AlbumTrackItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .debouncedClickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

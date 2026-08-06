@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -69,7 +70,7 @@ fun CameraCaptureScreen(
     }
 
     if (!hasCameraPermission) {
-        Box(modifier = Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
             Text("Camera permission is required.", color = Color.White)
         }
         return

@@ -179,3 +179,33 @@ mutation AddChatMessage($userId: String!, $sender: String!, $text: String!) @aut
     text: $text
   })
 }
+
+mutation SeedTrack(
+  $title: String!,
+  $audioUrl: String!,
+  $durationMs: Int,
+  $prompt: String,
+  $isCommunity: Boolean!,
+  $ownerUid: String!
+) @auth(level: PUBLIC) {
+  track_insert(data: {
+    title: $title,
+    audioUrl: $audioUrl,
+    durationMs: $durationMs,
+    prompt: $prompt,
+    isCommunity: $isCommunity,
+    ownerUid: $ownerUid
+  })
+}
+
+mutation SeedUser(
+  $uid: String!,
+  $username: String!,
+  $email: String!
+) @auth(level: PUBLIC) {
+  user_upsert(data: {
+    uid: $uid,
+    username: $username,
+    email: $email
+  })
+}

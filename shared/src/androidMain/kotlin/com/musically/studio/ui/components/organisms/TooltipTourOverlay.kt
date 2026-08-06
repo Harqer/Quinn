@@ -20,7 +20,7 @@ fun TooltipTourOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.8f))
+            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.8f))
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {

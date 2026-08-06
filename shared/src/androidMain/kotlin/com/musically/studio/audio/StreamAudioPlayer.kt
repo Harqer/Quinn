@@ -56,6 +56,17 @@ class StreamAudioPlayer {
         }
     }
 
+    fun queueAudioChunk(pcmData: ByteArray) {
+        if (!isPlaying) {
+            start()
+        }
+        try {
+            queue.trySend(pcmData)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to queue audio chunk")
+        }
+    }
+
     fun queueAudioChunk(base64Data: String) {
         if (!isPlaying) {
             start()

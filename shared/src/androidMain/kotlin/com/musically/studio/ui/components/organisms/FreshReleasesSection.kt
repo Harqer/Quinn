@@ -18,6 +18,7 @@ import com.musically.studio.ui.components.atoms.MaveButton
 
 @Composable
 fun FreshReleasesSection(
+    modifier: Modifier = Modifier,
     communityTracks: List<MaveTrack>,
     isLoading: Boolean = false,
     errorMessage: String?,
@@ -25,7 +26,7 @@ fun FreshReleasesSection(
     onNavigateToMore: () -> Unit,
     onNavigateToTrack: (String) -> Unit
 ) {
-    Column(modifier = Modifier.padding(bottom = 32.dp)) {
+    Column(modifier = modifier.padding(bottom = 32.dp)) {
         PaddingValues(horizontal = 24.dp).let {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(it).padding(bottom = 16.dp),
@@ -68,7 +69,7 @@ fun FreshReleasesSection(
                 contentPadding = PaddingValues(horizontal = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                listItems(communityTracks) { track ->
+                listItems(communityTracks, key = { it.id }) { track ->
                     LargePodcastCard(track = track, onClick = { 
                         onNavigateToTrack(track.id)
                     })

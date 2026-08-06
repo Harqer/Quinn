@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.*
+import com.musically.studio.ui.utils.debouncedClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,7 +50,7 @@ fun QueueBottomSheet(
                             ) 
                         },
                         supportingContent = { Text(track.artists.joinToString { it.name }, color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                        modifier = Modifier.clickable {
+                        modifier = Modifier.debouncedClickable {
                             viewModel.playQueue(queue, index)
                         }
                     )

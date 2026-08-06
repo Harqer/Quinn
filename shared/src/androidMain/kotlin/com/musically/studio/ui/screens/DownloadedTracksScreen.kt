@@ -2,8 +2,8 @@ package com.musically.studio.ui.screens
 
 import android.os.Environment
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -18,6 +18,7 @@ import com.musically.studio.ui.playTrack
 import com.musically.studio.ui.components.molecules.RecentTrackItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,7 +37,7 @@ fun DownloadedTracksScreen(viewModel: MainViewModel, onBack: () -> Unit) {
                     id = file.absolutePath,
                     name = file.nameWithoutExtension.replace("_", " "),
                     artists = emptyList(),
-                    album = MaveAlbum(id = "", name = "Downloads", images = emptyList()),
+                    album = MaveAlbum(id = "local_downloads", name = "Downloads", images = emptyList()),
                     audioUrl = file.toURI().toString()
                 )
             }
@@ -65,15 +66,42 @@ fun DownloadedTracksScreen(viewModel: MainViewModel, onBack: () -> Unit) {
                 Text("No downloaded tracks found.", style = MaterialTheme.typography.bodyLarge)
             }
         } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(bottom = 120.dp)
+            val coroutineScope = rememberCoroutineScope()
+            androidx.compose.material3.pulltorefresh.PullToRefreshBox(
+                isRefreshing = isLoading,
+                onRefresh = { 
+                    coroutineScope.launch {
+                        isLoading = true
+                        withContext(Dispatchers.IO) {
+                            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                            val files = downloadsDir.listFiles { _, name -> name.endsWith(".mp3") } ?: emptyArray()
+                            
+                            downloadedTracks = files.map { file ->
+                                MaveTrack(
+                                    id = file.absolutePath,
+                                    name = file.nameWithoutExtension.replace("_", " "),
+                                    artists = emptyList(),
+                                    album = MaveAlbum(id = "local_downloads", name = "Downloads", images = emptyList()),
+                                    audioUrl = file.toURI().toString()
+                                )
+                            }
+                        }
+                        isLoading = false
+                    }
+                },
+                modifier = Modifier.fillMaxSize().padding(padding)
             ) {
-                items(downloadedTracks) { track ->
-                    RecentTrackItem(
-                        track = track,
-                        onClick = { viewModel.playTrack(track) }
-                    )
+                androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
+                    columns = androidx.compose.foundation.lazy.grid.GridCells.Adaptive(360.dp),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 120.dp)
+                ) {
+                    items(downloadedTracks, key = { it.id }) { track ->
+                        RecentTrackItem(
+                            track = track,
+                            onClick = { viewModel.playTrack(track) }
+                        )
+                    }
                 }
             }
         }

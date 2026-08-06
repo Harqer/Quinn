@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.theme.MaveStyles
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun FilterPill(
@@ -33,9 +34,9 @@ fun FilterPill(
     }
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
+            .clip(MaterialTheme.shapes.large)
             .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
-            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .debouncedClickable(interactionSource = interactionSource, indication = null, onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .styleable(styleState, MaveStyles.filterPillStyle, style)
     ) {

@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun MediaCard(
@@ -26,13 +27,13 @@ fun MediaCard(
     Column(
         modifier = Modifier
             .width(140.dp)
-            .clickable(onClick = onClick)
+            .debouncedClickable(onClick = onClick)
     ) {
         Box(
             modifier = Modifier
                 .size(140.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.DarkGray)
+                .clip(MaterialTheme.shapes.small)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             if (imageUrl != null) {
                 AsyncImage(

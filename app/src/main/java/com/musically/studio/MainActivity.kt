@@ -24,6 +24,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
+import androidx.compose.foundation.layout.fillMaxSize
+import coil.compose.AsyncImage
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
 import timber.log.Timber
@@ -147,19 +149,26 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            val isPlaying by mainViewModel.isPlaying.collectAsStateWithLifecycle()
+            val track by mainViewModel.currentPlayingTrack.collectAsStateWithLifecycle()
+
+            LaunchedEffect(isPlaying) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val params = android.app.PictureInPictureParams.Builder()
+                        .setAutoEnterEnabled(isPlaying)
+                        .build()
+                    setPictureInPictureParams(params)
+                }
+            }
+
             MaveAppTheme(dynamicColor = true) {
                 if (isPipMode) {
-                    val track by mainViewModel.currentPlayingTrack.collectAsStateWithLifecycle()
-                    val isPlaying by mainViewModel.isPlaying.collectAsStateWithLifecycle()
-                    val progress by mainViewModel.trackProgress.collectAsStateWithLifecycle()
-                    com.musically.studio.ui.components.organisms.GlassmorphicPlayer(
-                        track = track,
-                        isPlaying = isPlaying,
-                        progress = progress * (track?.durationMs?.toFloat() ?: 0f), // trackProgress is 0f to 1f? No, trackProgress seems to be position in seconds based on MainViewModel+Player (where > 3f restarts). Wait, I need to check seekTo(0f). Let's assume it's in seconds or ms. MainViewModel+Player seekTo(0f) suggests seconds or just position. In GlassmorphicPlayer I did progress / 1000, so progress must be in MS. We'll pass it in MS.
-                        // Actually I'll just pass progress directly, GlassmorphicPlayer will assume it's in ms.
-                        onPlayPauseClick = { mainViewModel.togglePlayPause() },
-                        onCloseClick = { finish() },
-                        onUndoClick = { mainViewModel.seekTo(0f) }
+                    val imageUrl = track?.album?.images?.firstOrNull()?.url
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = "Cover",
+                        contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
                     )
                 } else {
                     MaveApp(
@@ -210,14 +219,17 @@ class MainActivity : ComponentActivity() {
         val destination = intent.getStringExtra("DESTINATION")
         val prompt = intent.getStringExtra("PROMPT")
         
-        if (destination == "library") {
-            viewModel.navigateTo(Route.Library)
-        } else if (destination == "home") {
-            viewModel.navigateTo(Route.Home)
-        }
-        
-        if (!prompt.isNullOrBlank()) {
-            viewModel.sendTextCommand(prompt)
+        // Prevent Deep Link Intent Spoofing: Only process internal commands if not ACTION_VIEW
+        if (intent.action != Intent.ACTION_VIEW) {
+            if (destination == "library") {
+                viewModel.navigateTo(Route.Library)
+            } else if (destination == "home") {
+                viewModel.navigateTo(Route.Home)
+            }
+            
+            if (!prompt.isNullOrBlank()) {
+                viewModel.sendTextCommand(prompt)
+            }
         }
     }
 

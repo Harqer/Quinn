@@ -1,10 +1,11 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
@@ -94,11 +95,12 @@ fun ConcertsScreen(
                     Text("No concerts found.", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             } else {
-                LazyColumn(
+                androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
+                    columns = androidx.compose.foundation.lazy.grid.GridCells.Adaptive(360.dp),
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(vertical = 8.dp)
                 ) {
-                    items(concerts) { concert ->
+                    items(concerts, key = { it.id }) { concert ->
                         ConcertCard(
                             concert = concert,
                             onClick = { com.musically.studio.ui.utils.executeDebounced {

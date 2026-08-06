@@ -11,8 +11,10 @@
   "dependencies": {
     "@distube/ytdl-core": "^4.16.12",
     "@firebase/vertexai-preview": "^0.0.4",
+    "@genkit-ai/ai": "^1.40.1",
     "@genkit-ai/dotprompt": "^0.9.12",
     "@genkit-ai/google-genai": "^1.40.1",
+    "@genkit-ai/googleai": "^1.28.0",
     "@google-cloud/firestore": "^8.7.0",
     "@google-cloud/logging-winston": "^6.0.2",
     "@google-cloud/secret-manager": "^6.3.0",

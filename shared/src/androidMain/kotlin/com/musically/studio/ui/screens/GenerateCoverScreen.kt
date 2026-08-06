@@ -41,7 +41,7 @@ fun GenerateCoverScreen(
     var isGenerating by remember { mutableStateOf(false) }
     var generatedCoverUrl by remember { mutableStateOf<String?>(null) }
 
-    var dynamicPresets by remember { mutableStateOf(listOf("Vibrant Synthwave", "Minimalist Neon", "Abstract Cyberpunk", "Retro Vinyl")) }
+    var dynamicPresets by remember { mutableStateOf<List<String>>(emptyList()) }
     
     LaunchedEffect(Unit) {
         try {
@@ -112,12 +112,19 @@ fun GenerateCoverScreen(
                 primaryGreen = primaryGreen
             )
 
-            StylePresetPills(
-                presets = dynamicPresets,
-                selectedPreset = selectedPreset,
-                onPresetSelected = { selectedPreset = it },
-                primaryGreen = primaryGreen
-            )
+            if (dynamicPresets.isEmpty()) {
+                CircularProgressIndicator(
+                    color = primaryGreen,
+                    modifier = Modifier.padding(16.dp)
+                )
+            } else {
+                StylePresetPills(
+                    presets = dynamicPresets,
+                    selectedPreset = selectedPreset,
+                    onPresetSelected = { selectedPreset = it },
+                    primaryGreen = primaryGreen
+                )
+            }
 
             CustomPromptInput(
                 customPrompt = customPrompt,

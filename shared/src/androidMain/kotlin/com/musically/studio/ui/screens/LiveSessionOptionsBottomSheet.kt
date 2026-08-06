@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.*
+import com.musically.studio.ui.utils.debouncedClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +53,7 @@ fun LiveSessionOptionsBottomSheet(
             ListItem(
                 headlineContent = { Text(headlineShare, color = MaterialTheme.colorScheme.onSurface) },
                 leadingContent = { Icon(shareIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
-                modifier = Modifier.clickable(onClick = onShare)
+                modifier = Modifier.debouncedClickable(onClick = onShare)
             )
             
             val onClear: () -> Unit = {
@@ -64,7 +66,7 @@ fun LiveSessionOptionsBottomSheet(
             ListItem(
                 headlineContent = { Text(headlineClear, color = MaterialTheme.colorScheme.error) },
                 leadingContent = { Icon(clearIcon, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
-                modifier = Modifier.clickable(onClick = onClear)
+                modifier = Modifier.debouncedClickable(onClick = onClear)
             )
             Spacer(modifier = Modifier.height(24.dp))
         }

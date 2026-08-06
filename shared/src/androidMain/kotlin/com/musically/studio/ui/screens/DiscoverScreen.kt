@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -42,7 +43,8 @@ fun DiscoverScreen(
     onNavigateToLiveSession: () -> Unit = {},
     onNavigateToCategory: (String) -> Unit = {},
     onNavigateToTrack: (String) -> Unit = {},
-    onNavigateToPlaylist: (String) -> Unit = {}
+    onNavigateToPlaylist: (String) -> Unit = {},
+    onNavigateToSearch: (String) -> Unit = {}
 ) {
     val communityTracks by viewModel.communityTracks.collectAsStateWithLifecycle()
     val userTracks by viewModel.tracks.collectAsStateWithLifecycle()
@@ -64,6 +66,7 @@ fun DiscoverScreen(
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             containerColor = com.musically.studio.ui.theme.MaveBackgroundVariant,
+            contentWindowInsets = WindowInsets.safeDrawing,
             topBar = {
                 TopAppBar(
                     title = {
@@ -107,9 +110,7 @@ fun DiscoverScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(com.musically.studio.ui.theme.MaveBackgroundVariant.copy(alpha = 0.9f))
-                        .imePadding()
                         .padding(24.dp)
-                        .navigationBarsPadding()
                 ) {
                     MaveTextField(
                         value = searchQuery,
@@ -120,9 +121,15 @@ fun DiscoverScreen(
                                 IconButton(onClick = onNavigateToCamera) {
                                     Icon(Icons.Default.PhotoCamera, contentDescription = "Camera", tint = Color.Gray)
                                 }
-                                Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) 
+                                IconButton(onClick = { if (searchQuery.isNotEmpty()) onNavigateToSearch(searchQuery) }) {
+                                    Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.Gray) 
+                                }
                             }
                         },
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Search),
+                        keyboardActions = androidx.compose.foundation.text.KeyboardActions(onSearch = { 
+                            if (searchQuery.isNotEmpty()) onNavigateToSearch(searchQuery)
+                        }),
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -134,40 +141,48 @@ fun DiscoverScreen(
                 }
             }
         ) { innerPadding ->
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(300.dp),
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
+            androidx.compose.material3.pulltorefresh.PullToRefreshBox(
+                isRefreshing = isLoading,
+                onRefresh = { 
+                    viewModel.fetchCommunityTracks()
+                    viewModel.fetchUserTracks()
+                },
+                modifier = Modifier.fillMaxSize().padding(
                     top = innerPadding.calculateTopPadding(),
                     bottom = innerPadding.calculateBottomPadding()
                 )
             ) {
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    FreshReleasesSection(
-                        communityTracks = communityTracks,
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(300.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        FreshReleasesSection(
+                            communityTracks = communityTracks,
+                            isLoading = isLoading,
+                            errorMessage = errorMessage,
+                            onRetry = { viewModel.fetchCommunityTracks() },
+                            onNavigateToMore = onNavigateToMore,
+                            onNavigateToTrack = onNavigateToTrack
+                        )
+                    }
+
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        DiscoverCategoriesGrid(
+                            categories = categories,
+                            onNavigateToCategory = onNavigateToCategory
+                        )
+                    }
+                    
+                    featuredPlaylistsSection(
+                        playlists = playlists,
                         isLoading = isLoading,
                         errorMessage = errorMessage,
-                        onRetry = { viewModel.fetchCommunityTracks() },
+                        onRetry = { viewModel.fetchPlaylists() },
                         onNavigateToMore = onNavigateToMore,
-                        onNavigateToTrack = onNavigateToTrack
+                        onNavigateToPlaylist = onNavigateToPlaylist
                     )
                 }
-
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    DiscoverCategoriesGrid(
-                        categories = categories,
-                        onNavigateToCategory = onNavigateToCategory
-                    )
-                }
-                
-                featuredPlaylistsSection(
-                    playlists = playlists,
-                    isLoading = isLoading,
-                    errorMessage = errorMessage,
-                    onRetry = { viewModel.fetchPlaylists() },
-                    onNavigateToMore = onNavigateToMore,
-                    onNavigateToPlaylist = onNavigateToPlaylist
-                )
             }
         } // Close Scaffold
         

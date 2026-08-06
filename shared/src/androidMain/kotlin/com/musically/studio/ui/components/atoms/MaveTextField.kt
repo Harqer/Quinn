@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.atoms
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -25,6 +26,7 @@ fun MaveTextField(
     errorMessage: String? = null,
     isPassword: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: androidx.compose.foundation.text.KeyboardActions = androidx.compose.foundation.text.KeyboardActions.Default,
     trailingIcon: @Composable (() -> Unit)? = null,
     style: Style = Style
 ) {
@@ -43,6 +45,7 @@ fun MaveTextField(
             singleLine = true,
             visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
             keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
             trailingIcon = trailingIcon,
             interactionSource = interactionSource,
             modifier = Modifier

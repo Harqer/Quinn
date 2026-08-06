@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun ConnectionButton(
@@ -40,9 +41,9 @@ fun ConnectionButton(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
+            .clip(MaterialTheme.shapes.small)
             .background(bgColor)
-            .clickable { if (!isConnected) onClick() }
+            .debouncedClickable { if (!isConnected) onClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -75,7 +76,7 @@ fun ConnectionButton(
             Icon(
                 imageVector = OpenInNewIcon,
                 contentDescription = "Open in new window",
-                tint = Color(0xFFE3E3E3),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(24.dp)
             )
         }

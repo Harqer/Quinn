@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.organisms
+import androidx.compose.material3.MaterialTheme
 
 import android.content.Context
 import androidx.compose.foundation.layout.*
@@ -33,7 +34,7 @@ fun LiveSessionBottomBar(
     onNavigateToGallery: () -> Unit
 ) {
     Surface(
-        modifier = Modifier.fillMaxWidth().navigationBarsPadding().imePadding(),
+        modifier = Modifier.fillMaxWidth(),
         color = com.musically.studio.ui.theme.MaveBackgroundVariant2,
         tonalElevation = 8.dp
     ) {
@@ -52,7 +53,7 @@ fun LiveSessionBottomBar(
                     },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
-                    shape = RoundedCornerShape(24.dp),
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = com.musically.studio.ui.theme.MaveSurfaceVariant4,

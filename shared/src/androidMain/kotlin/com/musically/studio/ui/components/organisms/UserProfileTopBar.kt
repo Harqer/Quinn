@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.organisms
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack

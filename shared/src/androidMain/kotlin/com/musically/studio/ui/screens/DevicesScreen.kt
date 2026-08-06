@@ -35,6 +35,11 @@ fun DevicesScreen(
     var showTooltip by remember { mutableStateOf(true) }
     val colors = LocalMaveColorScheme.current
     val devices by viewModel.devices.collectAsStateWithLifecycle()
+    val availableDevices by remember {
+        derivedStateOf {
+            devices.filter { !it.isCurrent }
+        }
+    }
 
     val isBluetoothEnabled by viewModel.isBluetoothEnabled.collectAsStateWithLifecycle()
     val isScanning by viewModel.isScanning.collectAsStateWithLifecycle()
@@ -120,7 +125,7 @@ fun DevicesScreen(
                 )
             }
 
-            items(devices.filter { !it.isCurrent }) { device ->
+            items(availableDevices, key = { it.name }) { device ->
                 DeviceItemCard(
                     device = device,
                     colors = colors,

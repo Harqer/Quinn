@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.atoms
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -27,7 +28,7 @@ fun PlanCtaButton(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(MaterialTheme.shapes.medium)
                     .background(MaveBrand.copy(alpha = 0.12f))
                     .padding(vertical = 12.dp),
                 horizontalArrangement = Arrangement.Center,
@@ -64,7 +65,7 @@ fun PlanCtaButton(
             Button(
                 onClick = onSelectClick,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isHighlighted) MaveBrand else MaveSurfaceVariant2,
                     contentColor = if (isHighlighted) MaveBackground else MaveOnSurface

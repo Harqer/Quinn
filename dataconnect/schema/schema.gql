@@ -263,3 +263,17 @@ type AIPreset @table {
   imageUrl: String
   isActive: Boolean! @default(value: true)
 }
+
+type FeatureHighlight @table {
+  id: String! @default(expr: "uuidV4()")
+  iconName: String!
+  title: String!
+  description: String!
+}
+
+type HomeSection @table {
+  id: String! @default(expr: "uuidV4()")
+  title: String!
+  orderIndex: Int!
+  route: String!
+}

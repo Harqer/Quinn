@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
@@ -7,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.*
+import com.musically.studio.ui.utils.debouncedClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,7 +51,7 @@ fun TrackOptionsBottomSheet(
                 ListItem(
                     headlineContent = { Text(headlineAdd, color = MaterialTheme.colorScheme.onSurface) },
                     leadingContent = { Icon(addIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    modifier = Modifier.clickable { 
+                    modifier = Modifier.debouncedClickable { 
                         viewModel.addToPlaylist(track.id)
                         onDismiss()
                     }
@@ -59,7 +62,7 @@ fun TrackOptionsBottomSheet(
                 ListItem(
                     headlineContent = { Text(headlineArtist, color = MaterialTheme.colorScheme.onSurface) },
                     leadingContent = { Icon(personIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    modifier = Modifier.clickable { 
+                    modifier = Modifier.debouncedClickable { 
                         viewModel.viewArtist(context, track)
                         onDismiss()
                     }
@@ -84,7 +87,18 @@ fun TrackOptionsBottomSheet(
                 ListItem(
                     headlineContent = { Text(headlineShare, color = MaterialTheme.colorScheme.onSurface) },
                     leadingContent = { Icon(shareIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    modifier = Modifier.clickable(onClick = onShare)
+                    modifier = Modifier.debouncedClickable(onClick = onShare)
+                )
+
+                val headlineDownload = "Download for offline"
+                val downloadIcon = Icons.Default.KeyboardArrowDown
+                ListItem(
+                    headlineContent = { Text(headlineDownload, color = MaterialTheme.colorScheme.onSurface) },
+                    leadingContent = { Icon(downloadIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    modifier = Modifier.debouncedClickable {
+                        viewModel.downloadTrack(track.id)
+                        onDismiss()
+                    }
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))

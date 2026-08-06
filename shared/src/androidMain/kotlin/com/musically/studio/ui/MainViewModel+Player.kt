@@ -164,7 +164,18 @@ import android.util.Base64
     }
 
     suspend fun MainViewModel.getTrack(trackId: String): MaveTrack? {
-        Timber.w("getTrack is deprecated without external backend")
-        return null
+        val dto = dataConnectRepository.getTrack(trackId) ?: return null
+        return MaveTrack(
+            id = dto.id,
+            name = dto.title,
+            artists = listOf(MaveArtist(id = dto.album?.primaryArtist?.id ?: "", name = dto.album?.primaryArtist?.name ?: "Unknown Artist")),
+            album = MaveAlbum(
+                id = dto.album?.id ?: "",
+                name = dto.album?.title ?: "",
+                images = listOf(MaveImage(url = dto.coverUrl ?: dto.album?.coverUrl ?: ""))
+            ),
+            audioUrl = dto.audioUrl,
+            prompt = dto.prompt
+        )
     }
 

@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.molecules
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,7 +42,7 @@ fun CustomPromptInput(
                 )
             },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = containerColor,
                 unfocusedContainerColor = containerColor,

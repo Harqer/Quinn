@@ -11,14 +11,7 @@ fun MainViewModel.startLiveSession() {
     viewModelScope.launch {
         _isLiveSessionActive.value = true
         try {
-            // Call the Firebase Function we set up to get the token!
-            val tokenResult = com.google.firebase.functions.FirebaseFunctions.getInstance().getHttpsCallable("getLiveToken").call().await()
-            val token = (tokenResult.data as? Map<String, Any>)?.get("token") as? String
-            if (token != null) {
-                geminiLiveManager.connect(token)
-            } else {
-                Timber.e("Failed to parse token from Firebase Function")
-            }
+            geminiLiveManager.connect()
         } catch (e: Exception) {
             Timber.e(e, "Error starting live session")
         }
@@ -51,7 +44,5 @@ fun MainViewModel.sendVisionFrame(bytes: ByteArray) {
 }
 
 fun MainViewModel.generateFromTrack(track: MaveTrack) {
-    viewModelScope.launch {
-        Timber.e("generateFromTrack is deprecated without external backend")
-    }
+    sendTextCommand("Generate a track similar to ${track.name} by ${track.album?.artists?.firstOrNull()?.name ?: "Unknown Artist"}")
 }

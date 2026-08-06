@@ -91,6 +91,16 @@ class DataConnectRepository @Inject constructor(
         }
     }
 
+    fun getBookmarkedTracks(): Flow<List<GetBookmarkedTracksQuery.Data.BookmarkedTracksItem>> = flow {
+        try {
+            val response = connector.getBookmarkedTracks.execute()
+            emit(response.data.bookmarkedTracks)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to fetch bookmarked tracks from DC")
+            emit(emptyList())
+        }
+    }
+
     suspend fun createTrack(title: String, albumId: String, audioUrl: String, isCommunity: Boolean) {
         try {
             connector.createTrack.execute(
@@ -122,6 +132,46 @@ class DataConnectRepository @Inject constructor(
         } catch (e: Exception) {
             Timber.e(e, "Failed to like track")
             false
+        }
+    }
+
+    suspend fun unlikeTrack(trackId: String): Boolean {
+        return try {
+            connector.removeLikedTrack.execute(trackId = trackId)
+            true
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to unlike track")
+            false
+        }
+    }
+
+    suspend fun addTrackToPlaylist(trackId: String, playlistId: String): Boolean {
+        return try {
+            connector.addTrackToPlaylist.execute(trackId = trackId, playlistId = playlistId)
+            true
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to add track to playlist")
+            false
+        }
+    }
+
+    fun searchTracks(query: String): Flow<List<SearchTracksQuery.Data.TracksItem>> = flow {
+        try {
+            val response = connector.searchTracks.execute(query = query)
+            emit(response.data.tracks)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to search tracks")
+            emit(emptyList())
+        }
+    }
+
+    suspend fun getTrack(trackId: String): GetTrackQuery.Data.Track? {
+        return try {
+            val response = connector.getTrack.execute(id = trackId)
+            response.data.track
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to fetch track")
+            null
         }
     }
 }

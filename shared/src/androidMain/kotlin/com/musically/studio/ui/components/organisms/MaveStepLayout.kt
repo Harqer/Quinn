@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.organisms
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,7 @@ fun MaveStepLayout(
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) },
@@ -53,8 +55,7 @@ fun MaveStepLayout(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .consumeWindowInsets(paddingValues)
-                .imePadding(),
+                .consumeWindowInsets(paddingValues),
             contentAlignment = Alignment.TopCenter
         ) {
             Column(

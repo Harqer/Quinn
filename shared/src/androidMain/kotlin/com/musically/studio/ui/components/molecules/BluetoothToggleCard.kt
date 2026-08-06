@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.molecules
+import androidx.compose.material3.MaterialTheme
 
 import android.content.Context
 import androidx.compose.foundation.background
@@ -36,7 +37,7 @@ fun BluetoothToggleCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp, bottom = 16.dp)
-            .background(colors.surfaceContainer, RoundedCornerShape(16.dp))
+            .background(colors.surfaceContainer, MaterialTheme.shapes.large)
             .debouncedClickable {
                 view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                 onToggle()

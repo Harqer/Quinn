@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun MaveArtistCard(
@@ -27,7 +28,7 @@ fun MaveArtistCard(
     Column(
         modifier = Modifier
             .width(100.dp)
-            .clickable(onClick = onClick),
+            .debouncedClickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(contentAlignment = Alignment.Center) {

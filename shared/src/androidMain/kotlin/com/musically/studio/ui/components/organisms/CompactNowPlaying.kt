@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.organisms
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +27,7 @@ import com.musically.studio.ui.components.atoms.PlaybackSlider
 import com.musically.studio.ui.components.atoms.VolumeSlider
 import com.musically.studio.ui.components.molecules.SeamlessVideoPlayer
 import kotlin.math.abs
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun CompactNowPlaying(
@@ -94,7 +96,7 @@ fun CompactNowPlaying(
             if (currentVideoUrl != null) {
                 SeamlessVideoPlayer(
                     videoUrl = currentVideoUrl,
-                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp))
+                    modifier = Modifier.fillMaxSize().clip(MaterialTheme.shapes.small)
                 )
             } else {
                 AsyncImage(
@@ -105,7 +107,7 @@ fun CompactNowPlaying(
                     error = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(MaterialTheme.shapes.small)
                         .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                 )
             }
@@ -120,12 +122,12 @@ fun CompactNowPlaying(
             AssistChip(
                 onClick = onRequestCover,
                 label = { Text("Regenerate Cover") },
-                leadingIcon = { Icon(Icons.Default.Palette, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                leadingIcon = { Icon(Icons.Default.Palette, contentDescription = "Remix Theme", modifier = Modifier.size(18.dp)) }
             )
             AssistChip(
                 onClick = onRequestVideo,
                 label = { Text("Generate Video") },
-                leadingIcon = { Icon(Icons.Default.VideoLibrary, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                leadingIcon = { Icon(Icons.Default.VideoLibrary, contentDescription = "Generate Music Video", modifier = Modifier.size(18.dp)) }
             )
         }
         
@@ -195,8 +197,8 @@ fun CompactNowPlaying(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .clickable { onDeviceClick() }
+                    .clip(MaterialTheme.shapes.small)
+                    .debouncedClickable { onDeviceClick() }
                     .padding(8.dp)
             ) {
                 Icon(Icons.Default.Bluetooth, contentDescription = "Device", tint = MaveBrand, modifier = Modifier.size(16.dp))
@@ -212,9 +214,7 @@ fun CompactNowPlaying(
                 }
             }
         }
-        
-        Spacer(modifier = Modifier.weight(1f))
-        
+        Spacer(modifier = Modifier.height(16.dp))
         val lyricsColor = remember(track.id) {
             val hash = abs(track.id.hashCode() * 31)
             val r = (hash and 0xFF0000) shr 16
@@ -223,36 +223,23 @@ fun CompactNowPlaying(
             Color(r, g, b).copy(alpha = 0.8f)
         }
         
-        // Lyrics Peek
+        // Lyrics
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(68.dp)
+                .weight(1f)
                 .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                 .background(lyricsColor)
-                .clickable { onLyricsClick() }
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .debouncedClickable { onLyricsClick() }
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 0.dp),
         ) {
-            Box(
-                modifier = Modifier
-                    .width(32.dp)
-                    .height(4.dp)
-                    .background(Color.White.copy(alpha = 0.5f), RoundedCornerShape(2.dp))
+            Text("Lyrics", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(12.dp))
+            SyncedLyricsView(
+                lyrics = track.lyrics ?: emptyList(),
+                currentProgressMs = (trackProgress * track.durationMs).toLong(),
+                modifier = Modifier.fillMaxSize()
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Lyrics", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                Box(
-                    modifier = Modifier.background(Color.Black.copy(alpha = 0.3f), RoundedCornerShape(16.dp)).padding(horizontal = 12.dp, vertical = 4.dp)
-                ) {
-                    Text("MORE", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelSmall)
-                }
-            }
         }
     }
 }

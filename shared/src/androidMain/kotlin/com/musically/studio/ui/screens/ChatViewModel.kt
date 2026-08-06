@@ -18,6 +18,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import javax.inject.Inject
+import com.musically.studio.network.GeminiLiveManager
+import android.Manifest
+import android.content.pm.PackageManager
+import android.media.AudioFormat
+import android.media.AudioRecord
+import android.media.MediaRecorder
+import androidx.core.content.ContextCompat
 
 data class MaveChatTrack(
     val title: String,
@@ -39,10 +46,15 @@ data class MaveChatMessage(
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
-    private val generativeService: ChatGenerativeService
+    private val generativeService: ChatGenerativeService,
+    private val geminiLiveManager: GeminiLiveManager
 ) : ViewModel() {
     private val _messages = MutableStateFlow<List<MaveChatMessage>>(emptyList())
     val messages: StateFlow<List<MaveChatMessage>> = _messages.asStateFlow()
+
+    private var isRecordingVoice = false
+    private var recordingJob: kotlinx.coroutines.Job? = null
+    private var audioRecord: AudioRecord? = null
 
     init {
         viewModelScope.launch {
@@ -71,13 +83,7 @@ class ChatViewModel @Inject constructor(
             Log.e("ChatViewModel", "Failed to load chat history", e)
         }
         
-        _messages.value = listOf(
-            MaveChatMessage(
-                id = "0",
-                sender = "ai",
-                text = "Hi! I'm Mave, your personal audio curator. How can I help you today?"
-            )
-        )
+        _messages.value = emptyList()
     }
 
     private fun saveChatHistory() {
@@ -191,9 +197,10 @@ class ChatViewModel @Inject constructor(
         val result = chatRepository.executeTool(name, args)
         val resObj = result.optJSONObject("result")
         val audioUrl = resObj?.optString("audioUrl")
-        val trackName = resObj?.optString("trackName", "New Track (Lyria 3)") ?: "New Track (Lyria 3)"
-        val artistName = resObj?.optString("artistName", "Mave") ?: "Mave"
-        val responseText = resObj?.optString("response", "Here is your track!") ?: "Here is your track!"
+        val fallbackTitle = args["prompt"] as? String ?: args["description"] as? String ?: "Generated Track"
+        val trackName = resObj?.optString("trackName")?.takeIf { it.isNotBlank() } ?: fallbackTitle
+        val artistName = resObj?.optString("artistName")?.takeIf { it.isNotBlank() } ?: "Lyria"
+        val responseText = resObj?.optString("response")?.takeIf { it.isNotBlank() } ?: "Here is your track!"
         val msg = MaveChatMessage(
             id = System.currentTimeMillis().toString(),
             sender = "ai",
@@ -298,15 +305,69 @@ class ChatViewModel @Inject constructor(
         handleToolCall("generate_video", mapOf("prompt" to prompt))
     }
 
+    @android.annotation.SuppressLint("MissingPermission")
     fun recordVoice(context: android.content.Context) {
-        _messages.value = _messages.value + MaveChatMessage(
-            id = System.currentTimeMillis().toString(),
-            sender = "ai",
-            text = "[Error] Live voice is not yet available in this build. Use the Live Session screen for voice input."
-        )
+        if (isRecordingVoice) {
+            isRecordingVoice = false
+            audioRecord?.stop()
+            audioRecord?.release()
+            audioRecord = null
+            recordingJob?.cancel()
+            _messages.value = _messages.value + MaveChatMessage(
+                id = System.currentTimeMillis().toString(),
+                sender = "ai",
+                text = "Voice sent to live session."
+            )
+            return
+        }
+
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            _messages.value = _messages.value + MaveChatMessage(
+                id = System.currentTimeMillis().toString(),
+                sender = "ai",
+                text = "[Error] Please grant microphone permission."
+            )
+            return
+        }
+
+        val sampleRate = 16000
+        val channelConfig = AudioFormat.CHANNEL_IN_MONO
+        val audioFormat = AudioFormat.ENCODING_PCM_16BIT
+        val bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat)
+
+        try {
+            audioRecord = AudioRecord(
+                MediaRecorder.AudioSource.MIC,
+                sampleRate,
+                channelConfig,
+                audioFormat,
+                bufferSize
+            )
+
+            audioRecord?.startRecording()
+            isRecordingVoice = true
+
+            recordingJob = viewModelScope.launch(Dispatchers.IO) {
+                val buffer = ByteArray(bufferSize)
+                while (isRecordingVoice) {
+                    val read = audioRecord?.read(buffer, 0, bufferSize) ?: 0
+                    if (read > 0) {
+                        val pcmData = buffer.copyOfRange(0, read)
+                        geminiLiveManager.sendAudio(pcmData)
+                    }
+                }
+            }
+            _messages.value = _messages.value + MaveChatMessage(
+                id = System.currentTimeMillis().toString(),
+                sender = "ai",
+                text = "Recording voice... Tap again to stop."
+            )
+        } catch (e: Exception) {
+            Log.e("ChatViewModel", "Failed to start recording", e)
+        }
     }
 
     fun sendVisionFrame(base64: String, mimeType: String) {
-        // Stub for image attachment in chat
+        geminiLiveManager.sendVideoFrame(base64, mimeType)
     }
 }

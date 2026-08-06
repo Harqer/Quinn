@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.network.MaveTrack
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun RecentTrackItem(
@@ -27,9 +28,9 @@ fun RecentTrackItem(
     Row(
         modifier = modifier
             .height(56.dp)
-            .clip(RoundedCornerShape(4.dp))
+            .clip(MaterialTheme.shapes.extraSmall)
             .background(com.musically.studio.ui.theme.MaveSurfaceContainer)
-            .clickable(onClick = onClick),
+            .debouncedClickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val imageUrl = track.album.images.firstOrNull()?.url
@@ -44,7 +45,7 @@ fun RecentTrackItem(
             Box(
                 modifier = Modifier
                     .size(56.dp)
-                    .background(Color.DarkGray)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             )
         }
         Text(

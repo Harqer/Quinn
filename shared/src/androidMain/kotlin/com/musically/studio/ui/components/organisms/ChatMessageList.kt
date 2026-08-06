@@ -67,7 +67,7 @@ fun ChatMessageList(
                                 onClick = onTrackClick
                             )
                         } else if ((msg.tracks?.size ?: 0) > 1) {
-                            msg.tracks?.let { ChatMultiTrackList(tracks = it) }
+                            msg.tracks?.let { ChatMultiTrackList(tracks = it, onAddTrack = onTrackClick) }
                         }
                     }
                 }

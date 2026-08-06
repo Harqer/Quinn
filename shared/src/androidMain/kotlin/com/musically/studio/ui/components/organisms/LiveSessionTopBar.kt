@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.organisms
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -81,7 +82,7 @@ fun LiveSessionTopBar(
             Card(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                 colors = CardDefaults.cardColors(containerColor = com.musically.studio.ui.theme.MaveDarkSurfaceVariant),
-                shape = RoundedCornerShape(12.dp)
+                shape = MaterialTheme.shapes.medium
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     Text("Generated Music Vibes", style = MaterialTheme.typography.labelMedium,

@@ -1,0 +1,17 @@
+{
+  "skill_name": "rlm-infinite-context",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We are adapting a massive fantasy novel (assume 'book_draft.txt' exists and is 1 million tokens long) into a Veo 3 movie. We need a Character Bible for the main character, 'Elara', containing every physical description of her across the entire text so her appearance is consistent across scenes. Using RLM principles, write and execute the Python scripts necessary to search, chunk, and extract this information without loading the whole file into your context.",
+      "expected_output": "The agent should NOT use view_file on the whole document. It should write a Python script using regex or string matching to find 'Elara', extract snippets, and then spawn subagents or synthesize a character bible.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "You are given a massive unformatted text dump of meeting transcripts ('transcripts.txt'). Find every decision made regarding the 'Q4 Video Generation Strategy' and summarize them in chronological order. Do not load the entire file into your context.",
+      "expected_output": "The agent should use grep_search or a Python script to isolate the term 'Q4 Video Generation Strategy', extract the surrounding lines, and compile the timeline programmatically.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+--- /home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/JamRemixScreen.kt
++++ /home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/JamRemixScreen.kt
+@@ -64,23 +64,30 @@
+-                // We fake some active stacks based on participants
+-                val participantIds = session.participants.keys.toList()
+-                items(participantIds) { participant ->
+-                    Row(
+-                        modifier = Modifier
+-                            .fillMaxWidth()
+-                            .clip(RoundedCornerShape(8.dp))
+-                            .background(Color.DarkGray)
+-                            .padding(16.dp),
+-                        verticalAlignment = Alignment.CenterVertically,
+-                        horizontalArrangement = Arrangement.SpaceBetween
+-                    ) {
+-                        Text(
+-                            text = if (participant == localUserId) "You (Synth)" else "Player ${participant.take(4)} (Drums)",
+-                            color = Color.White,
+-                            fontWeight = FontWeight.Bold
+-                        )
+-                        Text(
+-                            text = "Playing...",
+-                            color = Color.Green,
+-                            fontSize = 12.sp
+-                        )
+-                    }
+-                }
++                val trackEntries = session.tracks.toList()
++                if (trackEntries.isEmpty()) {
++                    item {
++                        Text(
++                            text = "No active track layers. Add an instrument below!",
++                            color = Color.Gray,
++                            fontSize = 14.sp,
++                            modifier = Modifier.padding(vertical = 16.dp)
++                        )
++                    }
++                } else {
++                    items(trackEntries, key = { it.first }) { (uid, instrument) ->
++                        val participantName = session.participants[uid]?.displayName?.ifBlank { null }
++                        val displayName = if (uid == localUserId) {
++                            "You ($instrument)"
++                        } else {
++                            "${participantName ?: "Player ${uid.take(4)}"} ($instrument)"
++                        }
++
++                        Row(
++                            modifier = Modifier
++                                .fillMaxWidth()
++                                .clip(RoundedCornerShape(8.dp))
++                                .background(Color.DarkGray)
++                                .padding(16.dp),
++                            verticalAlignment = Alignment.CenterVertically,
++                            horizontalArrangement = Arrangement.SpaceBetween
++                        ) {
++                            Text(
++                                text = displayName,
++                                color = Color.White,
++                                fontWeight = FontWeight.Bold
++                            )
++                            Text(
++                                text = "Playing...",
++                                color = Color.Green,
++                                fontSize = 12.sp
++                            )
++                        }
++                    }
++                }

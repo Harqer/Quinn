@@ -72,11 +72,19 @@ class PlaybackService : MediaSessionService() {
             }
         }
         
-        // Prepare the ExoPlayer with a custom DataSource reading from the pipe
+        val mediaItem = MediaItem.Builder()
+            .setUri("mave://stream".toUri())
+            .setMediaMetadata(
+                androidx.media3.common.MediaMetadata.Builder()
+                    .setTitle("Mave Studio")
+                    .setArtist("AI Generated Vibe")
+                    .build()
+            )
+            .build()
+        
         val factory = DataSource.Factory { FlowDataSource(pipedInputStream) }
         val mediaSource = ProgressiveMediaSource.Factory(factory)
-            .createMediaSource(MediaItem.fromUri("mave://stream".toUri()))
-            
+            .createMediaSource(mediaItem)
         player.setMediaSource(mediaSource)
         player.prepare()
         player.playWhenReady = true
@@ -95,19 +103,8 @@ class PlaybackService : MediaSessionService() {
         return mediaSession
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val notification = Notification.Builder(this, "playback_channel")
-            .setContentTitle("Mave Studio")
-            .setContentText("Playing generated vibe...")
-            .setSmallIcon(android.R.drawable.ic_media_play)
-            .setOngoing(true)
-            .build()
-        
-        startForeground(2, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
-        
-        super.onStartCommand(intent, flags, startId)
-        return START_STICKY
-    }
+    // Media3 automatically handles foreground service and rich media notifications
+    // based on the MediaSession state.
 
     private fun createNotificationChannel() {
         val channel = NotificationChannel(

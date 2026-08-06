@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.molecules
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.shared.R
 import com.musically.studio.network.MaveTrack
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun PlaylistTrackItem(
@@ -27,7 +29,7 @@ fun PlaylistTrackItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .debouncedClickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -37,7 +39,7 @@ fun PlaylistTrackItem(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(48.dp)
-                .background(Color.DarkGray)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {

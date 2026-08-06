@@ -21,6 +21,16 @@ import com.musically.studio.network.toMavePlaylist
 import com.musically.studio.network.toMaveCategory
 import com.musically.studio.network.toMaveAudiobook
 import com.musically.studio.network.toMavePodcast
+import android.Manifest
+import android.content.pm.PackageManager
+import android.media.AudioFormat
+import android.media.AudioRecord
+import android.media.MediaRecorder
+import androidx.core.content.ContextCompat
+import kotlinx.coroutines.Dispatchers
+
+private var audioRecordInstance: AudioRecord? = null
+private var voiceRecordingJob: kotlinx.coroutines.Job? = null
 
 fun MainViewModel.fetchPlaylists() {
     viewModelScope.launch {
@@ -65,6 +75,22 @@ fun MainViewModel.fetchLikedTracks() {
             }
             .collectLatest { items ->
                 _likedTracks.value = items.map { it.toMaveTrack() }
+                _isLoading.value = false
+            }
+    }
+}
+
+fun MainViewModel.fetchBookmarkedTracks() {
+    viewModelScope.launch {
+        dataConnectRepository.getBookmarkedTracks()
+            .onStart { _isLoading.value = true }
+            .catch { e ->
+                Timber.e(e, "[MAIN_VM] Failed to fetch bookmarked tracks")
+                _isLoading.value = false
+                _catalogErrorMessage.value = e.message ?: "Failed to fetch bookmarked tracks"
+            }
+            .collectLatest { items ->
+                _bookmarkedTracks.value = items.map { it.toMaveTrack() }
                 _isLoading.value = false
             }
     }
@@ -182,6 +208,7 @@ fun MainViewModel.clearCatalogError() {
 
 fun MainViewModel.clearLiveSessionHistory() {
     Timber.d("[MAIN_VM] Clearing live session history")
+    messages.clear()
 }
 
 fun MainViewModel.generateLyrics(trackId: String, audioUrl: String?) {
@@ -207,8 +234,52 @@ fun MainViewModel.generateLyrics(trackId: String, audioUrl: String?) {
     }
 }
 
+@android.annotation.SuppressLint("MissingPermission")
 fun MainViewModel.recordVoice(context: Context?) {
-    Timber.d("[MAIN_VM] Initiating voice recording session")
+    if (context == null) return
+
+    if (_isRecording.value) {
+        stopRecording()
+        return
+    }
+
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        Timber.e("[MAIN_VM] Missing RECORD_AUDIO permission")
+        return
+    }
+
+    val sampleRate = 16000
+    val channelConfig = AudioFormat.CHANNEL_IN_MONO
+    val audioFormat = AudioFormat.ENCODING_PCM_16BIT
+    val bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat)
+
+    try {
+        audioRecordInstance = AudioRecord(
+            MediaRecorder.AudioSource.MIC,
+            sampleRate,
+            channelConfig,
+            audioFormat,
+            bufferSize
+        )
+
+        audioRecordInstance?.startRecording()
+        _isRecording.value = true
+        Timber.d("[MAIN_VM] Initiating voice recording session")
+
+        voiceRecordingJob = viewModelScope.launch(Dispatchers.IO) {
+            val buffer = ByteArray(bufferSize)
+            while (_isRecording.value) {
+                val read = audioRecordInstance?.read(buffer, 0, bufferSize) ?: 0
+                if (read > 0) {
+                    val pcmData = buffer.copyOfRange(0, read)
+                    geminiLiveManager.sendAudio(pcmData)
+                }
+            }
+        }
+    } catch (e: Exception) {
+        Timber.e(e, "[MAIN_VM] Failed to start recording")
+        _isRecording.value = false
+    }
 }
 
 fun MainViewModel.generatePodcast(topic: String) {
@@ -219,7 +290,11 @@ fun MainViewModel.generatePodcast(topic: String) {
             val data = result.data as? Map<*, *>
             val script = data?.get("script") as? String
             Timber.d("[MAIN_VM] Generated Podcast Script: %s", script)
-            // In a full implementation, you would update the UI state with the script.
+            if (script != null) {
+                // In a full implementation, you would update the UI state with the script.
+                // Assuming you have a way to add to messages:
+                messages.add(com.musically.studio.ui.models.ChatMessage(script, false))
+            }
         } catch (e: Exception) {
             Timber.e(e, "[MAIN_VM] Failed to generate podcast via Firebase Functions")
         }
@@ -227,11 +302,24 @@ fun MainViewModel.generatePodcast(topic: String) {
 }
 
 fun MainViewModel.addToPlaylist(trackId: String) {
-    Timber.d("[MAIN_VM] Adding track %s to playlist", trackId)
+    viewModelScope.launch {
+        Timber.d("[MAIN_VM] Adding track %s to playlist", trackId)
+        try {
+            dataConnectRepository.bookmarkTrack(trackId)
+            Timber.d("[MAIN_VM] Successfully bookmarked track %s", trackId)
+        } catch (e: Exception) {
+            Timber.e(e, "[MAIN_VM] Failed to bookmark track %s", trackId)
+        }
+    }
 }
 
 fun MainViewModel.viewArtist(context: Context, track: MaveTrack) {
-    Timber.d("[MAIN_VM] Viewing artist for track %s", track.name)
+    val artistId = track.artists.firstOrNull()?.id
+    if (artistId != null) {
+        navigateTo(com.musically.studio.ui.navigation.Route.UserProfile(artistId))
+    } else {
+        Timber.w("No artist ID found for track %s", track.id)
+    }
 }
 
 fun MainViewModel.sendFrame(base64: String) {
@@ -255,6 +343,12 @@ fun MainViewModel.fetchCatalog() {
 
 fun MainViewModel.stopRecording() {
     Timber.d("[MAIN_VM] Stopping voice recording session")
+    _isRecording.value = false
+    audioRecordInstance?.stop()
+    audioRecordInstance?.release()
+    audioRecordInstance = null
+    voiceRecordingJob?.cancel()
+    voiceRecordingJob = null
 }
 
 fun MainViewModel.onGalleryImageSelected(base64: String) {
@@ -273,4 +367,8 @@ fun MainViewModel.sendVisionFrame(base64: String, mimeType: String = "image/jpeg
 
 fun MainViewModel.fetchVibesByUserId(userId: String) {
     Timber.d("[MAIN_VM] Fetching vibes for user: %s", userId)
+    viewModelScope.launch {
+        // Without a specific query, we just refresh community tracks as "vibes"
+        fetchCommunityTracks()
+    }
 }

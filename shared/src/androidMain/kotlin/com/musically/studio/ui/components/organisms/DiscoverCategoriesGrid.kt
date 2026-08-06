@@ -21,13 +21,16 @@ import com.musically.studio.ui.theme.MaveStyles
 import com.musically.studio.ui.theme.MaveBlue500
 import com.musically.studio.ui.theme.MaveOrange500
 import com.musically.studio.ui.theme.MavePurple700
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun DiscoverCategoriesGrid(
+    modifier: Modifier = Modifier,
     categories: List<MaveCategory>,
     onNavigateToCategory: (String) -> Unit
 ) {
-    PaddingValues(horizontal = 24.dp).let { padding ->
+    Column(modifier = modifier.padding(bottom = 24.dp)) {
+        val padding = PaddingValues(horizontal = 24.dp)
         Row(
             modifier = Modifier.fillMaxWidth().padding(padding).padding(bottom = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -43,7 +46,7 @@ fun DiscoverCategoriesGrid(
         
         val colors = listOf(MaveOrange500, MaveBlue500, MavePurple700)
         
-        Column(modifier = Modifier.padding(padding).padding(bottom = 24.dp)) {
+        Column(modifier = Modifier.padding(padding)) {
             for (i in categories.indices step 2) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
@@ -57,7 +60,7 @@ fun DiscoverCategoriesGrid(
                             .weight(1f)
                             .aspectRatio(16f/9f)
                             .background(color1)
-                            .clickable(interactionSource = interactionSource1, indication = null) {
+                            .debouncedClickable(interactionSource = interactionSource1, indication = null) {
                                 onNavigateToCategory(categories[i].id)
                             }
                             .styleable(styleState1, MaveStyles.categoryGridItemStyle)
@@ -73,7 +76,7 @@ fun DiscoverCategoriesGrid(
                                 .weight(1f)
                                 .aspectRatio(16f/9f)
                                 .background(color2)
-                                .clickable(interactionSource = interactionSource2, indication = null) {
+                                .debouncedClickable(interactionSource = interactionSource2, indication = null) {
                                     onNavigateToCategory(categories[i+1].id)
                                 }
                                 .styleable(styleState2, MaveStyles.categoryGridItemStyle)

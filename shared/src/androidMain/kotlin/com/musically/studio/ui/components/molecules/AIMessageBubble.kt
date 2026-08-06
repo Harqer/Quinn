@@ -68,7 +68,7 @@ fun AIMessageBubble(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(MaterialTheme.shapes.small)
                             .background(com.musically.studio.ui.theme.MaveSurfaceVariant2)
                             .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -91,7 +91,7 @@ fun AIMessageBubble(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(MaterialTheme.shapes.small)
                             .background(com.musically.studio.ui.theme.MaveSurfaceVariant2)
                             .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically

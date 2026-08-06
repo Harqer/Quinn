@@ -17,9 +17,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.musically.studio.network.MaveCategory
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun SearchCategoryGrid(
+    modifier: Modifier = Modifier,
     categories: List<MaveCategory>,
     colors: List<Color>,
     contentPadding: PaddingValues,
@@ -29,10 +31,10 @@ fun SearchCategoryGrid(
         columns = GridCells.Adaptive(150.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding
     ) {
-        items(categories.size) { index ->
+        items(categories.size, key = { categories[it].id }) { index ->
             val category = categories[index]
             val color = try { category.colorHex?.let { Color(it.toColorInt()) } } catch(e: Exception) { null } ?: colors[index % colors.size]
             Box(
@@ -40,7 +42,7 @@ fun SearchCategoryGrid(
                     .aspectRatio(1.5f)
                     .clip(MaterialTheme.shapes.small)
                     .background(color)
-                    .clickable { onNavigateToCategory(category.id) }
+                    .debouncedClickable { onNavigateToCategory(category.id) }
             ) {
                 Text(
                     text = category.name,
@@ -56,7 +58,7 @@ fun SearchCategoryGrid(
                         .offset(x = 16.dp, y = 8.dp)
                         .size(64.dp)
                         .rotate(25f)
-                        .background(Color.Black.copy(alpha = 0.2f), MaterialTheme.shapes.small)
+                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), MaterialTheme.shapes.small)
                 )
             }
         }

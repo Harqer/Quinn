@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.network.MaveAlbum
 import com.musically.studio.ui.theme.MaveStyles
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun LibraryAlbumItem(
@@ -37,7 +38,7 @@ fun LibraryAlbumItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .debouncedClickable(interactionSource = interactionSource, indication = null, onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .styleable(styleState, MaveStyles.libraryRowItemStyle, style),
         verticalAlignment = Alignment.CenterVertically
@@ -45,8 +46,8 @@ fun LibraryAlbumItem(
         Box(
             modifier = Modifier
                 .size(64.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(Color.DarkGray),
+                .clip(MaterialTheme.shapes.extraSmall)
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(

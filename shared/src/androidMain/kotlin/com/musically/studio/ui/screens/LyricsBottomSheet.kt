@@ -8,7 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.*
@@ -23,6 +27,7 @@ fun LyricsBottomSheet(
     val tracks by viewModel.tracks.collectAsState()
     val track = tracks.find { it.id == trackId }
     val lyrics by viewModel.lyrics.collectAsState()
+    val trackProgress by viewModel.trackProgress.collectAsState()
 
     androidx.compose.runtime.LaunchedEffect(trackId, track?.audioUrl) {
         if (trackId != null) {
@@ -35,29 +40,42 @@ fun LyricsBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        containerColor = Color.Black // Dark background for better contrast
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(24.dp)
                 .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
         ) {
-            Text(
-                text = "Lyrics - ${track?.name ?: "Unknown"}",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            val actualLyrics = lyrics ?: "Generating lyrics with Gemini Flash..."
+            val words = actualLyrics.split(Regex("\\s+"))
+            
+            // Assume 180 seconds average song length for demo if duration is unknown
+            // trackProgress is in seconds. Let's map it so every word takes 0.5 seconds
+            val estimatedWordCountProgress = (trackProgress * 2).toInt()
+            val highlightedCount = estimatedWordCountProgress.coerceIn(0, words.size)
             
             Text(
-                text = lyrics ?: "Generating lyrics with Gemini Flash...",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyLarge
+                text = buildAnnotatedString {
+                    words.forEachIndexed { index, word ->
+                        if (index < highlightedCount) {
+                            withStyle(style = SpanStyle(color = Color.White)) {
+                                append("$word ")
+                            }
+                        } else {
+                            withStyle(style = SpanStyle(color = Color.DarkGray)) {
+                                append("$word ")
+                            }
+                        }
+                    }
+                },
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight * 1.2f
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }

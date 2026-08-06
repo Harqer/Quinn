@@ -20,6 +20,10 @@ sealed interface Route : NavKey {
     @Serializable data object Camera : Route
     @Serializable data object LiveSession : Route
     @Serializable data object Gallery : Route
+    @Serializable data object JamLobby : Route
+    @Serializable data object JamRemix : Route
+    @Serializable data object JamTrivia : Route
+    @Serializable data object JamSongPicker : Route
     @Serializable data class PlaylistView(val playlistId: String) : Route
     @Serializable data class CategoryView(val categoryId: String) : Route
     @Serializable data object Settings : Route

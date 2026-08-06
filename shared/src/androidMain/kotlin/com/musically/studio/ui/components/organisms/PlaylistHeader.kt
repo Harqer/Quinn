@@ -13,12 +13,16 @@ import com.musically.studio.ui.components.MediaCoverCard
 fun PlaylistHeader(
     title: String,
     subtitle: String,
+    description: String? = null,
     imageUrl: String?,
     playlistId: String,
     context: Context,
+    isLiked: Boolean = false,
     onLikeClick: () -> Unit,
+    onDownloadClick: () -> Unit,
     onMoreClick: () -> Unit,
-    onPlayClick: () -> Unit
+    onPlayClick: () -> Unit,
+    onRemixClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -29,8 +33,9 @@ fun PlaylistHeader(
         MediaCoverCard(
             title = title,
             subtitle = subtitle,
+            description = description,
             imageUrl = imageUrl,
-            isLiked = false,
+            isLiked = isLiked,
             onLikeClick = onLikeClick,
             onShareClick = { 
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -39,8 +44,10 @@ fun PlaylistHeader(
                 }
                 context.startActivity(Intent.createChooser(shareIntent, "Share Playlist"))
             },
+            onDownloadClick = onDownloadClick,
             onMoreClick = onMoreClick,
             onPlayClick = onPlayClick,
+            onRemixClick = onRemixClick,
             modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 16.dp)
         )
         

@@ -17,22 +17,27 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.network.MaveTrack
 
+import androidx.compose.foundation.style.Style
+import androidx.compose.foundation.style.styleable
+import com.musically.studio.ui.theme.MaveStyles
+import com.musically.studio.ui.utils.debouncedClickable
+
 @Composable
 fun MaveCard(
     track: MaveTrack,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    style: Style = Style
 ) {
     Column(
         modifier = Modifier
             .width(140.dp)
-            .clickable(onClick = onClick)
+            .debouncedClickable(onClick = onClick)
     ) {
         val imageUrl = track.album.images.firstOrNull()?.url
         Box(
             modifier = Modifier
                 .size(140.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.DarkGray)
+                .styleable(null, MaveStyles.maveCardStyle, style)
         ) {
             if (imageUrl != null) {
                 AsyncImage(

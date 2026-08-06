@@ -13,9 +13,11 @@ import com.musically.studio.ui.components.MediaCoverCard
 fun AlbumHeader(
     title: String,
     subtitle: String,
+    description: String? = null,
     imageUrl: String?,
     albumId: String,
     context: Context,
+    isLiked: Boolean = false,
     onLikeClick: () -> Unit,
     onDownloadClick: () -> Unit,
     onMoreClick: () -> Unit,
@@ -30,8 +32,9 @@ fun AlbumHeader(
         MediaCoverCard(
             title = title,
             subtitle = subtitle,
+            description = description,
             imageUrl = imageUrl,
-            isLiked = false,
+            isLiked = isLiked,
             onLikeClick = onLikeClick,
             onShareClick = { 
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {

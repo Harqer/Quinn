@@ -65,6 +65,7 @@ fun LiveSessionScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
+        contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             LiveSessionTopBar(
                 viewModel = viewModel,

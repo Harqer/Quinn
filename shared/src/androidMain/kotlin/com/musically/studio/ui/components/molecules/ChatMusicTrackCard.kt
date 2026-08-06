@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.molecules
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ import coil.compose.AsyncImage
 import com.musically.studio.ui.screens.MaveChatTrack
 import com.musically.studio.ui.theme.MaveBrand
 import com.musically.studio.ui.theme.MaveStyles
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun ChatSingleTrackCard(
@@ -41,7 +43,7 @@ fun ChatSingleTrackCard(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(interactionSource = trackInteractionSource, indication = null) {
+            .debouncedClickable(interactionSource = trackInteractionSource, indication = null) {
                 if (!track.trackId.isNullOrBlank()) onClick(track.trackId)
             }
             .styleable(styleState = trackStyleState, style = MaveStyles.musicTrackCardStyle),
@@ -52,10 +54,10 @@ fun ChatSingleTrackCard(
                 model = coverArtUrl,
                 contentDescription = "Track Art",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(64.dp).clip(RoundedCornerShape(8.dp))
+                modifier = Modifier.size(64.dp).clip(MaterialTheme.shapes.small)
             )
         } else {
-            Box(modifier = Modifier.size(64.dp).background(Color.DarkGray, RoundedCornerShape(8.dp)))
+            Box(modifier = Modifier.size(64.dp).background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.small))
         }
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
@@ -73,7 +75,8 @@ fun ChatSingleTrackCard(
 
 @Composable
 fun ChatMultiTrackList(
-    tracks: List<MaveChatTrack>
+    tracks: List<MaveChatTrack>,
+    onAddTrack: (String) -> Unit = {}
 ) {
     Spacer(modifier = Modifier.height(16.dp))
     Column {
@@ -83,7 +86,7 @@ fun ChatMultiTrackList(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
-                    modifier = Modifier.size(40.dp).background(MaveBrand.copy(alpha = 0.2f), RoundedCornerShape(8.dp)),
+                    modifier = Modifier.size(40.dp).background(MaveBrand.copy(alpha = 0.2f), MaterialTheme.shapes.small),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(Icons.Default.Album, contentDescription = null)
@@ -93,7 +96,11 @@ fun ChatMultiTrackList(
                     Text(track.title, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     Text(track.artist, fontSize = 12.sp)
                 }
-                Icon(Icons.Default.AddCircle, contentDescription = "Add")
+                androidx.compose.material3.IconButton(
+                    onClick = { if (!track.trackId.isNullOrBlank()) onAddTrack(track.trackId) }
+                ) {
+                    Icon(Icons.Default.AddCircle, contentDescription = "Add")
+                }
             }
         }
     }

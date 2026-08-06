@@ -44,7 +44,7 @@ fun LazyGridScope.userSongsSection(
             )
         }
     } else {
-        items(vibes) { track ->
+        items(vibes, key = { it.id }) { track ->
             TrackItem(
                 track = track,
                 onClick = { onPlayTrack(track) },

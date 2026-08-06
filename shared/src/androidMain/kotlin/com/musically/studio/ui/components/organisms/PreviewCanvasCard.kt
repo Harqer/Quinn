@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.organisms
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,9 +33,9 @@ fun PreviewCanvasCard(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(24.dp))
+            .clip(MaterialTheme.shapes.extraLarge)
             .background(com.musically.studio.ui.theme.MaveBackgroundVariant3)
-            .border(1.dp, primaryGreen.copy(alpha = 0.3f), RoundedCornerShape(24.dp)),
+            .border(1.dp, primaryGreen.copy(alpha = 0.3f), MaterialTheme.shapes.extraLarge),
         contentAlignment = Alignment.Center
     ) {
         if (generatedCoverUrl != null) {
@@ -69,7 +70,7 @@ fun PreviewCanvasCard(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.7f)),
+                    .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.7f)),
                 contentAlignment = Alignment.Center
             ) {
                 Column(

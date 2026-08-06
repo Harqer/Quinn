@@ -22,7 +22,7 @@ fun FeatureHighlightRow(highlight: FeatureHighlight) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(MaterialTheme.shapes.large)
             .background(MaveSurfaceContainer)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.spacedBy(14.dp),

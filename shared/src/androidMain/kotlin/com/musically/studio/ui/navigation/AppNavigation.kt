@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
-import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,7 +49,7 @@ fun MaveApp(
     hasPermissions: Boolean
 ) {
     val adaptiveInfo = currentWindowAdaptiveInfoV2()
-    val topLevelRoutes = setOf<Route>(Route.Welcome, Route.Home, Route.Library, Route.Search, Route.Chat)
+    val topLevelRoutes = setOf<Route>(Route.Welcome, Route.Home, Route.Library, Route.Search, Route.Chat, Route.Camera)
     
     val sceneStrategies: List<SceneStrategy<Route>> = listOf(
         BottomSheetSceneStrategy(),
@@ -67,14 +67,14 @@ fun MaveApp(
     val currentPlayingTrack by viewModel.currentPlayingTrack.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     
-    val scaffoldState = rememberBottomSheetScaffoldState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.shouldExpandBottomSheet.collectLatest { expand ->
-            if (expand) scaffoldState.bottomSheetState.expand()
+            if (expand) sheetState.expand()
         }
     }
     
@@ -97,7 +97,7 @@ fun MaveApp(
     }
 
     val currentRoute = navigationState.backStacks[navigationState.topLevelRoute]?.last() ?: navigationState.topLevelRoute
-    val showNavSuite = currentRoute in listOf(Route.Home, Route.Library, Route.Search, Route.Chat) || currentRoute is Route.AlbumView || currentRoute is Route.UserProfile
+    val showNavSuite = currentRoute in listOf(Route.Home, Route.Library, Route.Search, Route.Chat, Route.Camera) || currentRoute is Route.AlbumView || currentRoute is Route.UserProfile
     
     val layoutType = if (showNavSuite) {
         val defaultType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
@@ -115,14 +115,20 @@ fun MaveApp(
         onLikeClick = { id -> viewModel.bookmarkTrack(id) },
         onDownloadClick = { id -> 
             val track = viewModel.tracks.value.find { it.id == id } ?: viewModel.communityTracks.value.find { it.id == id }
-            val url = "https://mave.studio/api/v1/tracks/\${track?.id}/audio"
-            val request = android.app.DownloadManager.Request(url.toUri())
-                .setTitle(track?.name ?: "Unknown Track")
-                .setDescription("Downloading track")
-                .setDestinationInExternalPublicDir(android.os.Environment.DIRECTORY_DOWNLOADS, "${track?.name?.replace(" ", "_") ?: "Track"}.mp3")
-                .setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            val downloadManager = context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
-            downloadManager.enqueue(request)
+            com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.getIdToken(false)?.addOnSuccessListener { result ->
+                val token = result.token
+                val url = "https://mave.studio/api/v1/tracks/\${track?.id}/audio"
+                val request = android.app.DownloadManager.Request(url.toUri())
+                    .setTitle(track?.name ?: "Unknown Track")
+                    .setDescription("Downloading track")
+                    .addRequestHeader("Authorization", "Bearer $token")
+                    .setDestinationInExternalPublicDir(android.os.Environment.DIRECTORY_DOWNLOADS, "${track?.name?.replace(" ", "_") ?: "Track"}.mp3")
+                    .setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                val downloadManager = context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
+                downloadManager.enqueue(request)
+            }?.addOnFailureListener { e ->
+                android.util.Log.e("Download", "Failed to get auth token for download", e)
+            }
         }
     )
 
@@ -181,7 +187,7 @@ fun MaveApp(
         navigator = navigator
     ) {
         AppBottomSheet(
-            scaffoldState = scaffoldState,
+            sheetState = sheetState,
             currentPlayingTrack = currentPlayingTrack,
             isPlaying = isPlaying,
             viewModel = viewModel,

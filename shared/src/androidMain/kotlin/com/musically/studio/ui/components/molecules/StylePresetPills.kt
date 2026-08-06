@@ -14,16 +14,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun StylePresetPills(
+    modifier: Modifier = Modifier,
     presets: List<String>,
     selectedPreset: String,
     onPresetSelected: (String) -> Unit,
     primaryGreen: Color
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
@@ -36,13 +38,13 @@ fun StylePresetPills(
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(presets) { preset ->
+            items(presets, key = { it }) { preset ->
                 val isSelected = selectedPreset == preset
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
                         .background(if (isSelected) primaryGreen else com.musically.studio.ui.theme.MaveSurfaceVariant3)
-                        .clickable { onPresetSelected(preset) }
+                        .debouncedClickable { onPresetSelected(preset) }
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Text(

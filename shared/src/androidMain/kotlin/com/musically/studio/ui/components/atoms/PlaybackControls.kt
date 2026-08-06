@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import android.view.HapticFeedbackConstants
 import androidx.compose.ui.platform.LocalView
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun PlaybackControls(
@@ -52,8 +53,8 @@ fun PlaybackControls(
         Box(
             modifier = Modifier
                 .size(64.dp)
-                .background(Color.White, CircleShape)
-                .clickable {
+                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                .debouncedClickable {
                     view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
                     onPlayPause()
                 },

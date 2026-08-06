@@ -15,7 +15,8 @@ kotlin {
             freeCompilerArgs.addAll(
                 "-opt-in=androidx.compose.foundation.style.ExperimentalFoundationStyleApi",
                 "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
-                "-opt-in=androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi"
+                "-opt-in=androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi",
+                "-opt-in=androidx.compose.foundation.layout.ExperimentalGridApi"
             )
         }
     }
@@ -58,6 +59,8 @@ kotlin {
             implementation(libs.mwdat.core)
             implementation(libs.mwdat.camera)
             implementation(libs.mwdat.display)
+            implementation(libs.mwdat.mockdevice)
+            implementation("com.qmdeve.liquidglass:core:1.0.5")
             implementation(libs.androidx.xr.glimmer)
             implementation(libs.androidx.xr.projected)
             implementation(kotlin("reflect"))

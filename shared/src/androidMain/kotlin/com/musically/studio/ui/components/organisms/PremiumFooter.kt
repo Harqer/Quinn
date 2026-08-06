@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.theme.MaveBrand
 import com.musically.studio.ui.theme.MaveOnSurfaceVariant
 import com.musically.studio.ui.theme.MaveSpacing
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun PremiumFooter(
@@ -45,7 +46,7 @@ fun PremiumFooter(
             style = MaterialTheme.typography.bodySmall,
             color = MaveOnSurfaceVariant,
             textDecoration = TextDecoration.Underline,
-            modifier = Modifier.clickable { onRestorePurchases() }
+            modifier = Modifier.debouncedClickable { onRestorePurchases() }
         )
 
         Spacer(modifier = Modifier.height(4.dp))

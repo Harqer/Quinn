@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import com.musically.studio.ui.theme.MaveGreenLight
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun PremiumSettingItem(
@@ -30,6 +31,6 @@ fun PremiumSettingItem(
                 Text(text = if (isPremium) "Manage" else "View Plans", color = MaveGreenLight)
             }
         },
-        modifier = Modifier.clickable { onNavigateToPremium() }
+        modifier = Modifier.debouncedClickable { onNavigateToPremium() }
     )
 }

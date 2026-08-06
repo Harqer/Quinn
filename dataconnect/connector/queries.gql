@@ -356,3 +356,52 @@ query ListAIPresets @auth(level: PUBLIC) {
     imageUrl
   }
 }
+
+query ListFeatureHighlights @auth(level: PUBLIC) {
+  featureHighlights {
+    id
+    iconName
+    title
+    description
+  }
+}
+
+query ListHomeSections @auth(level: PUBLIC) {
+  homeSections(orderBy: [{ orderIndex: ASC }]) {
+    id
+    title
+    orderIndex
+    route
+  }
+}
+
+query GetUsers @auth(level: PUBLIC) {
+  users {
+    uid
+    username
+  }
+}
+
+query GetTrack($id: String!) @auth(level: PUBLIC) {
+  track(id: $id) {
+    id
+    title
+    album {
+      id
+      title
+      primaryArtist {
+        id
+        name
+        imageUrl
+      }
+      coverUrl
+    }
+    durationMs
+    audioUrl
+    coverUrl
+    playCount
+    prompt
+    isCommunity
+    createdAt
+  }
+}

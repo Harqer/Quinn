@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import com.musically.studio.ui.*
 
@@ -24,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musically.studio.shared.R
+import com.musically.studio.ui.utils.debouncedClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +36,11 @@ fun CategoryViewScreen(
     onPlaylistClick: (String) -> Unit
 ) {
     val allPlaylists by viewModel.playlists.collectAsStateWithLifecycle()
-    val playlists = allPlaylists.filter { it.name.contains(categoryId, ignoreCase = true) }.ifEmpty { allPlaylists }
+    val playlists by remember(categoryId) {
+        derivedStateOf {
+            allPlaylists.filter { it.name.contains(categoryId, ignoreCase = true) }.ifEmpty { allPlaylists }
+        }
+    }
 
     val categories by viewModel.categories.collectAsStateWithLifecycle()
     val categoryName = categories.find { it.id == categoryId }?.name ?: categoryId.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
@@ -73,7 +79,7 @@ fun CategoryViewScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            items(playlists) { playlist ->
+            items(playlists, key = { it.id }) { playlist ->
                 CategoryPlaylistItem(
                     playlist = playlist,
                     onClick = { onPlaylistClick(playlist.id) }
@@ -91,14 +97,14 @@ fun CategoryPlaylistItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .debouncedClickable(onClick = onClick)
     ) {
         Box(
             modifier = Modifier
                 .aspectRatio(1f)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.DarkGray),
+                .clip(MaterialTheme.shapes.small)
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
@@ -116,10 +122,13 @@ fun CategoryPlaylistItem(
             fontWeight = FontWeight.Bold,
             maxLines = 2
         )
-        Text(
-            text = "Playlist",
-            color = Color.White.copy(alpha = 0.7f),
-            style = MaterialTheme.typography.bodySmall,
-        )
+        if (!playlist.description.isNullOrBlank()) {
+            Text(
+                text = playlist.description,
+                color = Color.White.copy(alpha = 0.7f),
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 2
+            )
+        }
     }
 }

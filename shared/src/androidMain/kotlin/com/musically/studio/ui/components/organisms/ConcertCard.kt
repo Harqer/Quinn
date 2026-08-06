@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.organisms
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.data.Concert
 import com.musically.studio.ui.theme.MaveStyles
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun ConcertCard(
@@ -28,9 +30,9 @@ fun ConcertCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .debouncedClickable(onClick = onClick)
             .padding(vertical = 8.dp),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Row(
@@ -44,13 +46,13 @@ fun ConcertCard(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(80.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(MaterialTheme.shapes.small)
                 )
             } else {
                 Box(
                     modifier = Modifier
                         .size(80.dp)
-                        .clip(RoundedCornerShape(8.dp)),
+                        .clip(MaterialTheme.shapes.small),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(

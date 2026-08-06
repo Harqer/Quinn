@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.organisms
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun DeleteAccountDialog(
@@ -59,7 +61,7 @@ fun DeleteAccountDialog(
                     "https://lyria-musically.web.app/delete-account",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable {
+                    modifier = Modifier.debouncedClickable {
                         uriHandler.openUri("https://lyria-musically.web.app/delete-account")
                     }
                 )

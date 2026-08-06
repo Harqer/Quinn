@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun ModeSwitcherToggle(
@@ -38,7 +39,7 @@ fun ModeSwitcherToggle(
                 .weight(1f)
                 .clip(CircleShape)
                 .background(if (coverType == "image") primaryGreen else Color.Transparent)
-                .clickable { onCoverTypeChange("image") }
+                .debouncedClickable { onCoverTypeChange("image") }
                 .padding(vertical = 10.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -66,7 +67,7 @@ fun ModeSwitcherToggle(
                 .weight(1f)
                 .clip(CircleShape)
                 .background(if (coverType == "video") primaryGreen else Color.Transparent)
-                .clickable { onCoverTypeChange("video") }
+                .debouncedClickable { onCoverTypeChange("video") }
                 .padding(vertical = 10.dp),
             contentAlignment = Alignment.Center
         ) {

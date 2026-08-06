@@ -231,6 +231,34 @@ exports.addChatMessage = function addChatMessage(dcOrVars, vars) {
 }
 ;
 
+const seedTrackRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SeedTrack', inputVars);
+}
+seedTrackRef.operationName = 'SeedTrack';
+exports.seedTrackRef = seedTrackRef;
+
+exports.seedTrack = function seedTrack(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(seedTrackRef(dcInstance, inputVars));
+}
+;
+
+const seedUserRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SeedUser', inputVars);
+}
+seedUserRef.operationName = 'SeedUser';
+exports.seedUserRef = seedUserRef;
+
+exports.seedUser = function seedUser(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(seedUserRef(dcInstance, inputVars));
+}
+;
+
 const getUserTracksRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
@@ -543,5 +571,65 @@ exports.listAiPresets = function listAiPresets(dcOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
   return executeQuery(listAiPresetsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const listFeatureHighlightsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListFeatureHighlights');
+}
+listFeatureHighlightsRef.operationName = 'ListFeatureHighlights';
+exports.listFeatureHighlightsRef = listFeatureHighlightsRef;
+
+exports.listFeatureHighlights = function listFeatureHighlights(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listFeatureHighlightsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const listHomeSectionsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListHomeSections');
+}
+listHomeSectionsRef.operationName = 'ListHomeSections';
+exports.listHomeSectionsRef = listHomeSectionsRef;
+
+exports.listHomeSections = function listHomeSections(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listHomeSectionsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getUsersRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetUsers');
+}
+getUsersRef.operationName = 'GetUsers';
+exports.getUsersRef = getUsersRef;
+
+exports.getUsers = function getUsers(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(getUsersRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getTrackRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetTrack', inputVars);
+}
+getTrackRef.operationName = 'GetTrack';
+exports.getTrackRef = getTrackRef;
+
+exports.getTrack = function getTrack(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getTrackRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;

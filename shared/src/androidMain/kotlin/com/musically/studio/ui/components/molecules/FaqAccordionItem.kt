@@ -17,6 +17,7 @@ import com.musically.studio.ui.theme.MaveBrand
 import com.musically.studio.ui.theme.MaveOnSurface
 import com.musically.studio.ui.theme.MaveOnSurfaceVariant
 import com.musically.studio.ui.theme.MaveSurfaceContainer
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun FaqAccordionItem(faq: FaqItem) {
@@ -35,7 +36,7 @@ fun FaqAccordionItem(faq: FaqItem) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { expanded = !expanded }
+                    .debouncedClickable { expanded = !expanded }
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween

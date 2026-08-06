@@ -8,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
@@ -58,8 +59,9 @@ fun maveEntryProvider(
             onNavigateToCamera = { navigator.navigate(Route.Camera) },
             onNavigateToConcerts = { navigator.navigate(Route.Concerts) },
             onNavigateToPodcast = { navigator.navigate(Route.Podcast) },
-            onNavigateToAudiobooks = { }, // TODO: Add audiobooks route
-            onNavigateToMusic = { }, // TODO: Add music route
+            onNavigateToAudiobooks = { navigator.navigate(Route.CategoryView("audiobooks")) },
+            onNavigateToMusic = { navigator.navigate(Route.CategoryView("music")) },
+            onNavigateToJam = { navigator.navigate(Route.JamLobby) },
             onTrackClick = { trackId ->
                 viewModel.tracks.value.find { it.id == trackId }?.let {
                     viewModel.playTrack(it)
@@ -87,7 +89,11 @@ fun maveEntryProvider(
                     viewModel.playTrack(it)
                 }
             },
-            onNavigateToPlaylist = { navigator.navigate(Route.PlaylistView(it)) }
+            onNavigateToPlaylist = { navigator.navigate(Route.PlaylistView(it)) },
+            onNavigateToSearch = { query -> 
+                viewModel.sendTextCommand("Search for $query") 
+                navigator.navigate(Route.Search)
+            }
         )
     }
 
@@ -137,6 +143,84 @@ fun maveEntryProvider(
             onMoreOptionsClick = { 
                 navigator.navigate(Route.LiveSessionOptions)
             }
+        )
+    }
+
+    entry<Route.JamLobby> {
+        val context = androidx.compose.ui.platform.LocalContext.current
+        // Retrieve JamViewModel using Hilt
+        val jamViewModel: JamViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+        JamLobbyScreen(
+            viewModel = jamViewModel,
+            onNavigateBack = { navigator.goBack() },
+            onGameStarted = { mode -> 
+                when (mode) {
+                    com.musically.studio.network.GameMode.REMIX -> navigator.navigate(Route.JamRemix)
+                    com.musically.studio.network.GameMode.TRIVIA_NAME_THAT_TUNE -> navigator.navigate(Route.JamTrivia)
+                    else -> navigator.navigate(Route.JamTrivia)
+                }
+            },
+            onAddTrackClick = { navigator.navigate(Route.JamSongPicker) }
+        )
+    }
+
+    entry<Route.JamRemix> {
+        val jamViewModel: JamViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+        val uiState by jamViewModel.uiState.collectAsStateWithLifecycle()
+        val session = uiState.session
+        val context = androidx.compose.ui.platform.LocalContext.current
+        if (session != null) {
+            JamRemixScreen(
+                session = session,
+                onAddInstrument = { jamViewModel.addLayer("Add $it") },
+                onEndJam = { navigator.goBack() },
+                localUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            )
+        }
+    }
+
+    entry<Route.JamTrivia> {
+        val jamViewModel: JamViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+        val uiState by jamViewModel.uiState.collectAsStateWithLifecycle()
+        val session = uiState.session
+        val context = androidx.compose.ui.platform.LocalContext.current
+        
+        var isRecording by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+        
+        if (session != null) {
+            JamTriviaScreen(
+                session = session,
+                onBid = { jamViewModel.setTriviaTarget(session.currentTriviaTrack, it) },
+                onPass = { jamViewModel.setTriviaTarget(session.currentTriviaTrack, session.lowestBidNotes) },
+                onPlayAudio = { jamViewModel.playTriviaSnippet(session.lowestBidNotes) },
+                onStartRecording = { 
+                    isRecording = true
+                    jamViewModel.recordVoice(context, true)
+                },
+                onStopRecording = {
+                    isRecording = false
+                    jamViewModel.recordVoice(context, false)
+                    // Gemini Live will automatically validate the guess and trigger submitTriviaGuess via a function call
+                },
+                onNextRound = { jamViewModel.nextTriviaRound() },
+                onEndGame = { navigator.goBack() },
+                isRecording = isRecording,
+                isPlaying = session.currentTriviaState == com.musically.studio.network.TriviaState.PLAYING_AUDIO.name,
+                wasCorrect = session.lastGuessCorrect,
+                actualSong = session.lastActualSong,
+                localUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            )
+        }
+    }
+
+    entry<Route.JamSongPicker>(
+        metadata = BottomSheetSceneStrategy.bottomSheet()
+    ) {
+        val jamViewModel: JamViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+        com.musically.studio.ui.screens.JamSongPickerScreen(
+            mainViewModel = viewModel,
+            jamViewModel = jamViewModel,
+            onDismiss = { navigator.goBack() }
         )
     }
 
@@ -243,7 +327,8 @@ fun maveEntryProvider(
             },
             onMoreClick = { navigator.navigate(Route.TrackOptions(it)) },
             onLikeClick = { onLikeClick(key.playlistId) },
-            onDownloadClick = { onDownloadClick(key.playlistId) }
+            onDownloadClick = { onDownloadClick(key.playlistId) },
+            onRemixClick = { navigator.navigate(Route.JamRemix) }
         )
     }
 

@@ -1,4 +1,5 @@
 package com.musically.studio.ui.screens
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -22,6 +23,7 @@ fun AnimatedToggleIcon(enabled: Boolean, modifier: Modifier = Modifier) {
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
         label = "toggleThumb"
     )
+    val iconColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     Canvas(modifier = modifier.size(24.dp)) {
         val scaleX = size.width / 24f
@@ -60,11 +62,11 @@ fun AnimatedToggleIcon(enabled: Boolean, modifier: Modifier = Modifier) {
 
             drawPath(
                 path = trackPath,
-                color = Color(0xFFE3E3E3)
+                color = iconColor
             )
 
             drawCircle(
-                color = Color(0xFFE3E3E3),
+                color = iconColor,
                 radius = 3f,
                 center = Offset(thumbX, 12f)
             )

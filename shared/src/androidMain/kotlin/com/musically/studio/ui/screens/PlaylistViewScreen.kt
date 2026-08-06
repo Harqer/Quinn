@@ -44,15 +44,18 @@ fun PlaylistViewScreen(
     onTrackClick: (String) -> Unit,
     onMoreClick: (String) -> Unit,
     onLikeClick: () -> Unit = {},
-    onDownloadClick: () -> Unit = {}
+    onDownloadClick: () -> Unit = {},
+    onRemixClick: () -> Unit = {}
 ) {
     val tracks by viewModel.tracks.collectAsState()
     val playlists by viewModel.playlists.collectAsState()
+    val likedTracks by viewModel.likedTracks.collectAsState()
     val context = LocalContext.current
     
     // Get tracks from playlist or fallback to empty
     val playlistInfo = playlists.firstOrNull { it.id == playlistId }
     val playlistTracks = playlistInfo?.tracks ?: emptyList()
+    val isLiked = playlistTracks.isNotEmpty() && playlistTracks.all { t -> likedTracks.any { it.id == t.id } }
 
     val bgColor = remember(playlistId) {
         val hash = abs(playlistId.hashCode())
@@ -108,13 +111,17 @@ fun PlaylistViewScreen(
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     PlaylistHeader(
                         title = playlistInfo?.name ?: "Playlist",
-                        subtitle = playlistInfo?.description ?: "Mave Community",
+                        subtitle = "Mave Community",
+                        description = playlistInfo?.description,
                         imageUrl = playlistInfo?.coverUrl ?: playlistTracks.firstOrNull()?.album?.images?.firstOrNull()?.url,
                         playlistId = playlistId,
                         context = context,
+                        isLiked = isLiked,
                         onLikeClick = onLikeClick,
+                        onDownloadClick = onDownloadClick,
                         onMoreClick = { playlistTracks.firstOrNull()?.let { onMoreClick(it.id) } },
-                        onPlayClick = { playlistTracks.firstOrNull()?.let { onTrackClick(it.id) } }
+                        onPlayClick = { playlistTracks.firstOrNull()?.let { onTrackClick(it.id) } },
+                        onRemixClick = onRemixClick
                     )
                 }
 

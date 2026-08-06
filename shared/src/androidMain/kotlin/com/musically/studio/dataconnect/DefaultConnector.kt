@@ -59,6 +59,8 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val getPodcasts: GetPodcastsQuery
   
+    public val getTrack: GetTrackQuery
+  
     public val getUserCameraCaptures: GetUserCameraCapturesQuery
   
     public val getUserSettings: GetUserSettingsQuery
@@ -67,6 +69,8 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val getUserVideoDigestions: GetUserVideoDigestionsQuery
   
+    public val getUsers: GetUsersQuery
+  
     public val likeTrack: LikeTrackMutation
   
     public val listAiPresets: ListAiPresetsQuery
@@ -74,6 +78,10 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
     public val listChatMessages: ListChatMessagesQuery
   
     public val listFaqItems: ListFaqItemsQuery
+  
+    public val listFeatureHighlights: ListFeatureHighlightsQuery
+  
+    public val listHomeSections: ListHomeSectionsQuery
   
     public val listSubscriptionPlans: ListSubscriptionPlansQuery
   
@@ -84,6 +92,10 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
     public val removeLikedTrack: RemoveLikedTrackMutation
   
     public val searchTracks: SearchTracksQuery
+  
+    public val seedTrack: SeedTrackMutation
+  
+    public val seedUser: SeedUserMutation
   
     public val updateUserPreferences: UpdateUserPreferencesMutation
   
@@ -214,6 +226,10 @@ private class DefaultConnectorImpl(
       GetPodcastsQueryImpl(this)
     }
   
+    override val getTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetTrackQueryImpl(this)
+    }
+  
     override val getUserCameraCaptures by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetUserCameraCapturesQueryImpl(this)
     }
@@ -230,6 +246,10 @@ private class DefaultConnectorImpl(
       GetUserVideoDigestionsQueryImpl(this)
     }
   
+    override val getUsers by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetUsersQueryImpl(this)
+    }
+  
     override val likeTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
       LikeTrackMutationImpl(this)
     }
@@ -244,6 +264,14 @@ private class DefaultConnectorImpl(
   
     override val listFaqItems by lazy(LazyThreadSafetyMode.PUBLICATION) {
       ListFaqItemsQueryImpl(this)
+    }
+  
+    override val listFeatureHighlights by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      ListFeatureHighlightsQueryImpl(this)
+    }
+  
+    override val listHomeSections by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      ListHomeSectionsQueryImpl(this)
     }
   
     override val listSubscriptionPlans by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -264,6 +292,14 @@ private class DefaultConnectorImpl(
   
     override val searchTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
       SearchTracksQueryImpl(this)
+    }
+  
+    override val seedTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      SeedTrackMutationImpl(this)
+    }
+  
+    override val seedUser by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      SeedUserMutationImpl(this)
     }
   
     override val updateUserPreferences by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -298,6 +334,8 @@ private class DefaultConnectorImpl(
         recordPayment,
         removeBookmarkedTrack,
         removeLikedTrack,
+        seedTrack,
+        seedUser,
         updateUserPreferences,
         upsertUser,
         upsertUserSettings,
@@ -319,13 +357,17 @@ private class DefaultConnectorImpl(
         getPlaylistTracks,
         getPlaylists,
         getPodcasts,
+        getTrack,
         getUserCameraCaptures,
         getUserSettings,
         getUserTracks,
         getUserVideoDigestions,
+        getUsers,
         listAiPresets,
         listChatMessages,
         listFaqItems,
+        listFeatureHighlights,
+        listHomeSections,
         listSubscriptionPlans,
         searchTracks,
         
@@ -763,6 +805,21 @@ private class GetPodcastsQueryImpl(
   )
 
 
+private class GetTrackQueryImpl(
+  connector: DefaultConnector
+):
+  GetTrackQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetTrackQuery.Data,
+      GetTrackQuery.Variables
+  >(
+    connector,
+    GetTrackQuery.Companion.operationName,
+    GetTrackQuery.Companion.dataDeserializer,
+    GetTrackQuery.Companion.variablesSerializer,
+  )
+
+
 private class GetUserCameraCapturesQueryImpl(
   connector: DefaultConnector
 ):
@@ -823,6 +880,21 @@ private class GetUserVideoDigestionsQueryImpl(
   )
 
 
+private class GetUsersQueryImpl(
+  connector: DefaultConnector
+):
+  GetUsersQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetUsersQuery.Data,
+      Unit
+  >(
+    connector,
+    GetUsersQuery.Companion.operationName,
+    GetUsersQuery.Companion.dataDeserializer,
+    GetUsersQuery.Companion.variablesSerializer,
+  )
+
+
 private class LikeTrackMutationImpl(
   connector: DefaultConnector
 ):
@@ -880,6 +952,36 @@ private class ListFaqItemsQueryImpl(
     ListFaqItemsQuery.Companion.operationName,
     ListFaqItemsQuery.Companion.dataDeserializer,
     ListFaqItemsQuery.Companion.variablesSerializer,
+  )
+
+
+private class ListFeatureHighlightsQueryImpl(
+  connector: DefaultConnector
+):
+  ListFeatureHighlightsQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      ListFeatureHighlightsQuery.Data,
+      Unit
+  >(
+    connector,
+    ListFeatureHighlightsQuery.Companion.operationName,
+    ListFeatureHighlightsQuery.Companion.dataDeserializer,
+    ListFeatureHighlightsQuery.Companion.variablesSerializer,
+  )
+
+
+private class ListHomeSectionsQueryImpl(
+  connector: DefaultConnector
+):
+  ListHomeSectionsQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      ListHomeSectionsQuery.Data,
+      Unit
+  >(
+    connector,
+    ListHomeSectionsQuery.Companion.operationName,
+    ListHomeSectionsQuery.Companion.dataDeserializer,
+    ListHomeSectionsQuery.Companion.variablesSerializer,
   )
 
 
@@ -955,6 +1057,36 @@ private class SearchTracksQueryImpl(
     SearchTracksQuery.Companion.operationName,
     SearchTracksQuery.Companion.dataDeserializer,
     SearchTracksQuery.Companion.variablesSerializer,
+  )
+
+
+private class SeedTrackMutationImpl(
+  connector: DefaultConnector
+):
+  SeedTrackMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      SeedTrackMutation.Data,
+      SeedTrackMutation.Variables
+  >(
+    connector,
+    SeedTrackMutation.Companion.operationName,
+    SeedTrackMutation.Companion.dataDeserializer,
+    SeedTrackMutation.Companion.variablesSerializer,
+  )
+
+
+private class SeedUserMutationImpl(
+  connector: DefaultConnector
+):
+  SeedUserMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      SeedUserMutation.Data,
+      SeedUserMutation.Variables
+  >(
+    connector,
+    SeedUserMutation.Companion.operationName,
+    SeedUserMutation.Companion.dataDeserializer,
+    SeedUserMutation.Companion.variablesSerializer,
   )
 
 

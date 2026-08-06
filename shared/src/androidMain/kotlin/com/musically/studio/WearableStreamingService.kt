@@ -289,7 +289,7 @@ class WearableStreamingService : Service() {
     fun updateWearableUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false, isPlaying: Boolean = false) {
         when {
             isThinking -> showThinkingNotice()
-            songTitle.isNotEmpty() -> showMusicPlayerCard(songTitle, geminiResponse, isPlaying)
+            songTitle.isNotEmpty() -> showMusicPlayerCard(songTitle, geminiResponse, coverArtUrl, isPlaying)
             else -> clearDisplay()
         }
     }
@@ -299,6 +299,7 @@ class WearableStreamingService : Service() {
     fun showMusicPlayerCard(
         title: String,
         subtitle: String? = null,
+        coverArtUrl: String? = null,
         isPlaying: Boolean
     ) {
         autoDismissJob?.cancel()
@@ -318,20 +319,17 @@ class WearableStreamingService : Service() {
                     icon(name = IconName.MUSIC_NOTE)
                     text(content = title, style = TextStyle.HEADING)
                     if (!subtitle.isNullOrEmpty()) {
-                        text(content = subtitle, style = TextStyle.BODY)
-                    }
-                    flexBox(
-                        direction = Direction.ROW,
-                        gap = 16,
-                        alignment = Alignment.CENTER
-                    ) {
-                        button(label = "Prev", iconName = IconName.TRIANGLE_LEFT_VERTICAL_LINE, onClick = { emitInteraction("previous") })
-                        button(label = if (isPlaying) "Pause" else "Play", iconName = if (isPlaying) IconName.TWO_LINES_PARALLEL else IconName.TRIANGLE_RIGHT, onClick = { emitInteraction("play_pause") })
-                        button(label = "Next", iconName = IconName.TRIANGLE_RIGHT_VERTICAL_LINE, onClick = { emitInteraction("next") })
+                        text(content = subtitle, style = TextStyle.BODY, color = TextColor.SECONDARY)
                     }
                 }
             }?.onFailure { error, _ ->
                 Timber.e("Failed to send display content: ${error.description}")
+            }
+
+            // Auto-dismiss after 4 seconds per Meta Wearables minimal audio UI guidelines
+            autoDismissJob = scope.launch {
+                delay(4000L)
+                clearDisplay()
             }
         }
     }

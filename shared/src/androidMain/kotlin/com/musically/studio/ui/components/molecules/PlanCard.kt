@@ -1,4 +1,5 @@
 package com.musically.studio.ui.components.molecules
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -69,7 +70,7 @@ fun PlanCard(
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaveBackground,
-                    modifier = Modifier.clip(RoundedCornerShape(4.dp)).background(MaveBrand).padding(horizontal = 8.dp, vertical = 3.dp)
+                    modifier = Modifier.clip(MaterialTheme.shapes.extraSmall).background(MaveBrand).padding(horizontal = 8.dp, vertical = 3.dp)
                 )
                 Spacer(modifier = Modifier.height(4.dp))
             }

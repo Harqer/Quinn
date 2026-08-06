@@ -172,6 +172,11 @@ export interface FaqItem_Key {
   __typename?: 'FaqItem_Key';
 }
 
+export interface FeatureHighlight_Key {
+  id: string;
+  __typename?: 'FeatureHighlight_Key';
+}
+
 export interface GetAlbumTracksData {
   tracks: ({
     id: string;
@@ -388,6 +393,34 @@ export interface GetPodcastsData {
   } & Show_Key)[];
 }
 
+export interface GetTrackData {
+  track?: {
+    id: string;
+    title: string;
+    album?: {
+      id: string;
+      title: string;
+      primaryArtist: {
+        id: string;
+        name: string;
+        imageUrl?: string | null;
+      } & Artist_Key;
+      coverUrl?: string | null;
+    } & Album_Key;
+    durationMs: number;
+    audioUrl: string;
+    coverUrl?: string | null;
+    playCount: Int64String;
+    prompt?: string | null;
+    isCommunity: boolean;
+    createdAt: TimestampString;
+  } & Track_Key;
+}
+
+export interface GetTrackVariables {
+  id: string;
+}
+
 export interface GetUserCameraCapturesData {
   cameraCaptures: ({
     id: string;
@@ -455,6 +488,18 @@ export interface GetUserVideoDigestionsData {
   } & VideoDigestion_Key)[];
 }
 
+export interface GetUsersData {
+  users: ({
+    uid: string;
+    username: string;
+  } & User_Key)[];
+}
+
+export interface HomeSection_Key {
+  id: string;
+  __typename?: 'HomeSection_Key';
+}
+
 export interface LikeTrackData {
   likedTrack_upsert: LikedTrack_Key;
 }
@@ -497,6 +542,24 @@ export interface ListFaqItemsData {
     question: string;
     answer: string;
   } & FaqItem_Key)[];
+}
+
+export interface ListFeatureHighlightsData {
+  featureHighlights: ({
+    id: string;
+    iconName: string;
+    title: string;
+    description: string;
+  } & FeatureHighlight_Key)[];
+}
+
+export interface ListHomeSectionsData {
+  homeSections: ({
+    id: string;
+    title: string;
+    orderIndex: number;
+    route: string;
+  } & HomeSection_Key)[];
 }
 
 export interface ListSubscriptionPlansData {
@@ -592,6 +655,29 @@ export interface SearchTracksData {
 
 export interface SearchTracksVariables {
   query: string;
+}
+
+export interface SeedTrackData {
+  track_insert: Track_Key;
+}
+
+export interface SeedTrackVariables {
+  title: string;
+  audioUrl: string;
+  durationMs?: number | null;
+  prompt?: string | null;
+  isCommunity: boolean;
+  ownerUid: string;
+}
+
+export interface SeedUserData {
+  user_upsert: User_Key;
+}
+
+export interface SeedUserVariables {
+  uid: string;
+  username: string;
+  email: string;
 }
 
 export interface Show_Key {
@@ -851,6 +937,30 @@ export const addChatMessageRef: AddChatMessageRef;
 export function addChatMessage(vars: AddChatMessageVariables): MutationPromise<AddChatMessageData, AddChatMessageVariables>;
 export function addChatMessage(dc: DataConnect, vars: AddChatMessageVariables): MutationPromise<AddChatMessageData, AddChatMessageVariables>;
 
+interface SeedTrackRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedTrackVariables): MutationRef<SeedTrackData, SeedTrackVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SeedTrackVariables): MutationRef<SeedTrackData, SeedTrackVariables>;
+  operationName: string;
+}
+export const seedTrackRef: SeedTrackRef;
+
+export function seedTrack(vars: SeedTrackVariables): MutationPromise<SeedTrackData, SeedTrackVariables>;
+export function seedTrack(dc: DataConnect, vars: SeedTrackVariables): MutationPromise<SeedTrackData, SeedTrackVariables>;
+
+interface SeedUserRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedUserVariables): MutationRef<SeedUserData, SeedUserVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SeedUserVariables): MutationRef<SeedUserData, SeedUserVariables>;
+  operationName: string;
+}
+export const seedUserRef: SeedUserRef;
+
+export function seedUser(vars: SeedUserVariables): MutationPromise<SeedUserData, SeedUserVariables>;
+export function seedUser(dc: DataConnect, vars: SeedUserVariables): MutationPromise<SeedUserData, SeedUserVariables>;
+
 interface GetUserTracksRef {
   /* Allow users to create refs without passing in DataConnect */
   (): QueryRef<GetUserTracksData, undefined>;
@@ -1102,4 +1212,52 @@ export const listAiPresetsRef: ListAiPresetsRef;
 
 export function listAiPresets(options?: ExecuteQueryOptions): QueryPromise<ListAiPresetsData, undefined>;
 export function listAiPresets(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListAiPresetsData, undefined>;
+
+interface ListFeatureHighlightsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListFeatureHighlightsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListFeatureHighlightsData, undefined>;
+  operationName: string;
+}
+export const listFeatureHighlightsRef: ListFeatureHighlightsRef;
+
+export function listFeatureHighlights(options?: ExecuteQueryOptions): QueryPromise<ListFeatureHighlightsData, undefined>;
+export function listFeatureHighlights(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListFeatureHighlightsData, undefined>;
+
+interface ListHomeSectionsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListHomeSectionsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListHomeSectionsData, undefined>;
+  operationName: string;
+}
+export const listHomeSectionsRef: ListHomeSectionsRef;
+
+export function listHomeSections(options?: ExecuteQueryOptions): QueryPromise<ListHomeSectionsData, undefined>;
+export function listHomeSections(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListHomeSectionsData, undefined>;
+
+interface GetUsersRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetUsersData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<GetUsersData, undefined>;
+  operationName: string;
+}
+export const getUsersRef: GetUsersRef;
+
+export function getUsers(options?: ExecuteQueryOptions): QueryPromise<GetUsersData, undefined>;
+export function getUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetUsersData, undefined>;
+
+interface GetTrackRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetTrackVariables): QueryRef<GetTrackData, GetTrackVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetTrackVariables): QueryRef<GetTrackData, GetTrackVariables>;
+  operationName: string;
+}
+export const getTrackRef: GetTrackRef;
+
+export function getTrack(vars: GetTrackVariables, options?: ExecuteQueryOptions): QueryPromise<GetTrackData, GetTrackVariables>;
+export function getTrack(dc: DataConnect, vars: GetTrackVariables, options?: ExecuteQueryOptions): QueryPromise<GetTrackData, GetTrackVariables>;
 

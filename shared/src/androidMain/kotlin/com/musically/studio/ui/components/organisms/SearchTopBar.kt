@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.musically.studio.ui.utils.debouncedClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,7 +28,7 @@ fun SearchTopBar(
                         .size(32.dp)
                         .clip(CircleShape)
                         .background(com.musically.studio.ui.theme.MaveBrand)
-                        .clickable { onNavigateToSettings() },
+                        .debouncedClickable { onNavigateToSettings() },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

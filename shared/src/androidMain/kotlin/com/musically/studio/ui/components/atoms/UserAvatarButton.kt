@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.musically.studio.ui.utils.debouncedClickable
 
 @Composable
 fun UserAvatarButton(
@@ -38,7 +39,7 @@ fun UserAvatarButton(
             .border(2.dp, rainbowBrush, CircleShape)
             .padding(2.dp)
             .clip(CircleShape)
-            .clickable { onClick() },
+            .debouncedClickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         if (photoUrl != null) {
