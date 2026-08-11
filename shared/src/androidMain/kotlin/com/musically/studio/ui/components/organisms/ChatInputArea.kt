@@ -15,7 +15,7 @@ import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.PhotoLibrary
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Podcasts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -102,7 +102,7 @@ fun ChatInputArea(
                         onGeneratePodcast()
                         showAttachmentMenu = false
                     })
-                    AttachmentOption(icon = Icons.Default.MenuBook, label = "Audiobook", onClick = {
+                    AttachmentOption(icon = Icons.AutoMirrored.Filled.MenuBook, label = "Audiobook", onClick = {
                         onGenerateAudiobook()
                         showAttachmentMenu = false
                     })

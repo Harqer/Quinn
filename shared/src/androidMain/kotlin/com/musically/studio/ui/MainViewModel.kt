@@ -197,9 +197,21 @@ class MainViewModel @Inject constructor(
         _isOfflineMode.value = enabled
     }
 
-    fun toggleNotifications(enabled: Boolean) {
+    fun toggleNotifications(context: Context, enabled: Boolean) {
         prefs.edit { putBoolean("notifications_enabled", enabled) }
         _notificationsEnabled.value = enabled
+        val reminderManager = com.musically.studio.notifications.NotificationReminderManager(context)
+        if (enabled) {
+            reminderManager.scheduleDailyReminder()
+            if (reminderManager.hasNotificationPermission()) {
+                reminderManager.showReminderNotification(
+                    title = "Notifications & Reminders Enabled",
+                    message = "You will receive daily reminders for new AI music tracks and podcasts!"
+                )
+            }
+        } else {
+            reminderManager.cancelDailyReminder()
+        }
     }
 
     fun toggleAppsDevices(enabled: Boolean) {

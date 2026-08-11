@@ -52,8 +52,10 @@ class MyApplication : Application(), AppFunctionConfiguration.Provider {
             firebaseAppCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
         }
         
+        // Always plant CrashlyticsTree for non-fatal reporting and Crashlytics logs
+        Timber.plant(CrashlyticsTree())
+
         if (hasAcceptedPrivacy) {
-            Timber.plant(CrashlyticsTree())
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
             FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
         } else {

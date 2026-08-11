@@ -289,6 +289,17 @@ fun PodcastDetailsDescription(podcast: PodcastInfo, modifier: Modifier) {
 @Composable
 fun PodcastDetailsHeaderItemButtons(isSubscribed: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     var isNotificationOn by remember { mutableStateOf(false) }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val reminderManager = remember { com.musically.studio.notifications.NotificationReminderManager(context) }
+    val notificationPermissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        isNotificationOn = isGranted
+        if (isGranted) {
+            reminderManager.scheduleDailyReminder()
+            reminderManager.showReminderNotification("Podcast Alerts Enabled", "You will be notified when new episodes drop!")
+        }
+    }
 
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         androidx.compose.material3.IconToggleButton(
@@ -303,7 +314,19 @@ fun PodcastDetailsHeaderItemButtons(isSubscribed: Boolean, onClick: () -> Unit, 
 
         androidx.compose.material3.IconToggleButton(
             checked = isNotificationOn,
-            onCheckedChange = { isNotificationOn = !isNotificationOn },
+            onCheckedChange = { enabled -> 
+                if (enabled) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU && !reminderManager.hasNotificationPermission()) {
+                        notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    } else {
+                        isNotificationOn = true
+                        reminderManager.scheduleDailyReminder()
+                        reminderManager.showReminderNotification("Podcast Alerts Enabled", "You will be notified when new episodes drop!")
+                    }
+                } else {
+                    isNotificationOn = false
+                }
+            },
         ) {
             Icon(
                 imageVector = if (isNotificationOn) Icons.Default.Notifications else Icons.Outlined.Notifications,

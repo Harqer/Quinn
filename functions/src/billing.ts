@@ -1,5 +1,6 @@
 import { onRequest } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
+import { logger } from "firebase-functions";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import Stripe from "stripe";
@@ -27,12 +28,12 @@ export const stripeWebhook = onRequest(
       try {
         event = stripe.webhooks.constructEvent(req.rawBody, sig, STRIPE_WEBHOOK_SECRET.value());
       } catch (err: any) {
-        console.error("Webhook Error:", err.message);
+        logger.error("Webhook Error:", err.message);
         res.status(400).send(`Webhook Error: ${err.message}`);
         return;
       }
       
-      console.log("Received Stripe Webhook Event:", event.type);
+      logger.info("Received Stripe Webhook Event:", event.type);
       
       if (
         event.type === "payment_intent.succeeded" ||
@@ -66,7 +67,7 @@ export const stripeWebhook = onRequest(
           await getAuth().setCustomUserClaims(userUid, { subscriptionTier: 'premium' });
           await db.collection('users').doc(userUid).update({ subscriptionTier: 'premium' });
         } else {
-          console.warn("Could not determine userUid from payment object", paymentObj.id);
+          logger.warn("Could not determine userUid from payment object", paymentObj.id);
         }
       } else if (event.type === "customer.subscription.updated") {
         const sub = event.data.object as any;
@@ -95,7 +96,7 @@ export const stripeWebhook = onRequest(
       
       res.status(200).json({ received: true });
     } catch (error) {
-      console.error(error);
+      logger.error("[Stripe Webhook] Error:", error);
       const errorMessage = error instanceof Error ? error.message : String(error);
       res.status(500).json({ error: errorMessage });
     }

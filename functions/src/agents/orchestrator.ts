@@ -1,5 +1,6 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
+import { logger } from "firebase-functions";
 import { lyriaProAgent } from "./lyriaProAgent";
 import { lyriaRealTimeAgent } from "./lyriaRealTimeAgent";
 import { imageGenAgent } from "./imageGenAgent";
@@ -66,7 +67,7 @@ export const executeTool = onCall(
         }
       }
     } catch (error) {
-      console.error(error);
+      logger.error("[Orchestrator] Execution failed:", error);
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new HttpsError("internal", errorMessage);
     }

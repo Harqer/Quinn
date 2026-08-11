@@ -33,6 +33,29 @@ fun LiveSessionBottomBar(
     onNavigateToCamera: () -> Unit,
     onNavigateToGallery: () -> Unit
 ) {
+    val micPermissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            if (!isLiveSessionActive) viewModel.startLiveSession()
+            viewModel.recordVoice(context)
+        }
+    }
+
+    val onMicClick: () -> Unit = {
+        val hasMicPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.RECORD_AUDIO
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+        if (hasMicPermission) {
+            if (!isLiveSessionActive) viewModel.startLiveSession()
+            viewModel.recordVoice(context)
+        } else {
+            micPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = com.musically.studio.ui.theme.MaveBackgroundVariant2,
@@ -85,10 +108,7 @@ fun LiveSessionBottomBar(
                     }
                 )
                 FloatingActionButton(
-                    onClick = {
-                        if (!isLiveSessionActive) viewModel.startLiveSession()
-                        viewModel.recordVoice(context)
-                    },
+                    onClick = onMicClick,
                     modifier = Modifier.size(52.dp),
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = Color.White,

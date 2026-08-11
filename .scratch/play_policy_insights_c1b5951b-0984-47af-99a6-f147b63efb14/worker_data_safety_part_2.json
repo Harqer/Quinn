@@ -1,0 +1,42 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "OTHER_AUDIO",
+      "policy_id": "data_safety_section",
+      "issue_summary": "User-Initiated Collection",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/appfunctions/MaveAppFunctionService.kt",
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt",
+        "/home/shaolin/lyria/app/src/main/res/xml/app_metadata.xml"
+      ],
+      "evidence": "Audio podcast search, playback, and AI song generation operations in MaveAppFunctionService and MaveFunctions are user-initiated via AppFunctions and communicate with first-party Firebase/DataConnect backends.",
+      "recommendation": "Declare user-initiated audio playback and generation collection under App Functionality in the Google Play Data Safety form.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "USER_ACCOUNT",
+      "policy_id": "data_safety_section",
+      "issue_summary": "User-Initiated Collection",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+        "/home/shaolin/lyria/app/src/main/res/values/themes.xml"
+      ],
+      "evidence": "User authentication credentials and identifiers (UID, tokens) are managed via FirebaseAuth and CredentialManager upon user-initiated login and registration.",
+      "recommendation": "Declare user account collection for Account Management and Authentication in the Google Play Data Safety form.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Account management",
+      "linked_to_user": true
+    }
+  ]
+}

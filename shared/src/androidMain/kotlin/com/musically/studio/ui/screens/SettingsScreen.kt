@@ -117,16 +117,34 @@ fun SettingsScreen(
 
             item {
                 val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
+                val notificationPermissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+                    contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+                ) { isGranted ->
+                    viewModel.toggleNotifications(context, isGranted)
+                }
+
                 ListItem(
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    headlineContent = { Text("Notifications", color = Color.White) },
-                    supportingContent = { Text("Receive push notifications", color = Color.LightGray) },
+                    headlineContent = { Text("Notifications & Reminders", color = Color.White) },
+                    supportingContent = { Text("Receive daily AI music mix & podcast reminders", color = Color.LightGray) },
                     trailingContent = {
                         Switch(
                             checked = notificationsEnabled,
-                            onCheckedChange = { 
+                            onCheckedChange = { enabled -> 
                                 view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                                viewModel.toggleNotifications(it) 
+                                if (enabled && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                                    val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+                                        context,
+                                        android.Manifest.permission.POST_NOTIFICATIONS
+                                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                                    if (hasPermission) {
+                                        viewModel.toggleNotifications(context, true)
+                                    } else {
+                                        notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                                    }
+                                } else {
+                                    viewModel.toggleNotifications(context, enabled)
+                                }
                             },
                             colors = SwitchDefaults.colors(checkedThumbColor = com.musically.studio.ui.theme.MaveGreenLight, checkedTrackColor = com.musically.studio.ui.theme.MaveGreenLight.copy(alpha = 0.5f))
                         )

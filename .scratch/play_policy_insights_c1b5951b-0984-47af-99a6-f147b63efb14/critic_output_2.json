@@ -1,0 +1,17 @@
+{
+  "9": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "Confirmed FirebaseCrashlytics is enabled in MyApplication.kt line 57 when hasAcceptedPrivacy is true. Prominent disclosure in WelcomeScreen.kt lines 38-70 properly discloses crash log collection and acts as a strict gatekeeper, keeping collection disabled until user consents."
+  },
+  "10": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "Confirmed FirebaseCrashlytics and FirebaseAnalytics performance diagnostics are initialized in MyApplication.kt lines 55-62 and gated by prominent disclosure/consent in WelcomeScreen.kt lines 38-70."
+  },
+  "12": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "Confirmed FirebaseAnalytics collection of app interactions is initialized in MyApplication.kt line 58 and gated by prominent disclosure/consent in WelcomeScreen.kt lines 38-70."
+  }
+}

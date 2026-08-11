@@ -1,10 +1,9 @@
 package com.musically.studio.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,8 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.musically.studio.ui.MainViewModel
-import com.musically.studio.ui.getUserPhotoUrl
-import com.musically.studio.ui.getUserDisplayName
 import com.musically.studio.ui.*
 import com.musically.studio.ui.components.molecules.AIMessageBubble
 import com.musically.studio.ui.components.molecules.UserMessageBubble
@@ -30,6 +27,8 @@ fun PodcastGeneratorScreen(
     onNavigateToSettings: () -> Unit = {}
 ) {
     var promptText by remember { mutableStateOf("") }
+    val isRecording by viewModel.isRecording.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     
     // Lumina Synth Design System Colors
     val surfaceColor = com.musically.studio.ui.theme.LocalMaveColorScheme.current.surfaceContainerHigh
@@ -69,14 +68,32 @@ fun PodcastGeneratorScreen(
             )
         },
         bottomBar = {
-            val isRecording by viewModel.isRecording.collectAsStateWithLifecycle()
-            val context = LocalContext.current
-            
+            val micPermissionLauncher = rememberLauncherForActivityResult(
+                contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+            ) { isGranted ->
+                if (isGranted) {
+                    viewModel.recordVoice(context)
+                }
+            }
+
+            val onMicClick: () -> Unit = {
+                val hasMicPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+                    context,
+                    android.Manifest.permission.RECORD_AUDIO
+                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+                if (hasMicPermission) {
+                    viewModel.recordVoice(context)
+                } else {
+                    micPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+                }
+            }
+
             PodcastInputBar(
                 promptText = promptText,
                 onPromptTextChange = { promptText = it },
                 isRecording = isRecording,
-                onRecordToggle = { viewModel.recordVoice(context) },
+                onRecordToggle = onMicClick,
                 onSend = {
                     viewModel.generatePodcast(promptText)
                     promptText = ""
@@ -98,27 +115,27 @@ fun PodcastGeneratorScreen(
                     .widthIn(max = 840.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(
-                top = innerPadding.calculateTopPadding() + 16.dp,
-                bottom = innerPadding.calculateBottomPadding() + 16.dp
-            ),
-            reverseLayout = true
-        ) {
-            val messages = viewModel.messages
-            items(messages) { msg ->
-                if (msg.isUser) {
-                    UserMessageBubble(msg.text)
-                } else {
-                    AIMessageBubble(
-                        msg = msg,
-                        viewModel = viewModel,
-                        primaryColor = primaryElectricViolet,
-                        secondaryColor = secondaryNeonCyan
-                    )
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(
+                    top = innerPadding.calculateTopPadding() + 16.dp,
+                    bottom = innerPadding.calculateBottomPadding() + 16.dp
+                ),
+                reverseLayout = true
+            ) {
+                val messages = viewModel.messages
+                items(messages) { msg ->
+                    if (msg.isUser) {
+                        UserMessageBubble(msg.text)
+                    } else {
+                        AIMessageBubble(
+                            msg = msg,
+                            viewModel = viewModel,
+                            primaryColor = primaryElectricViolet,
+                            secondaryColor = secondaryNeonCyan
+                        )
+                    }
                 }
             }
         }
     }
-}
 }

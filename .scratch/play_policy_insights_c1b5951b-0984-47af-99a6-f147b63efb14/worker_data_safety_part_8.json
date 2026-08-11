@@ -1,0 +1,43 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "EMAIL",
+      "policy_id": "data_safety_section",
+      "issue_summary": "User-Initiated Collection: Disclosure exempt, but must be declared in Play Store form.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "components/organisms/splash-screen.ts",
+        "dist/assets/ProfileScreen-Nt5UKxcN.js",
+        "dist/assets/SettingsScreen-BvJNq5cQ.js"
+      ],
+      "evidence": "In splash-screen.ts, ProfileScreen-Nt5UKxcN.js, and SettingsScreen-BvJNq5cQ.js, user email (currentUser.email) is displayed in UI and synced to backend services upon user-initiated authentication and profile updates.",
+      "recommendation": "Declare EMAIL collection under the Personal Info / Email address category in the Play Store Data Safety form.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "PURCHASE_HISTORY",
+      "policy_id": "data_safety_section",
+      "issue_summary": "User-Initiated Collection: Disclosure exempt, but must be declared in Play Store form.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "functions/lib/billing.js",
+        "functions/src/agents/kitesurfPaymentAgent.ts",
+        "functions/src/billing.ts"
+      ],
+      "evidence": "In billing.ts, lib/billing.js, and kitesurfPaymentAgent.ts, transaction records and invoice receipts are saved to Firestore under users/{uid}/payments during user-initiated subscription and billing flows.",
+      "recommendation": "Declare PURCHASE_HISTORY collection under the Financial Info / Purchase History category in the Play Store Data Safety form.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    }
+  ]
+}

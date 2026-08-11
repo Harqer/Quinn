@@ -1,0 +1,17 @@
+{
+  "19": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "Confirmed in functions/src/billing.ts (lines 54-60). Transaction records (amount, currency, status, timestamp) are saved to Firestore under users/{uid}/payments during Stripe billing webhook processing. As purchase history is stored off-device, it must be declared in the Play Store Data Safety section under Financial Info / Purchase History."
+  },
+  "21": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "Confirmed in LocationManager.kt (line 19) and MainViewModel+Concerts.kt (lines 31-41). When ConcertsScreen loads, fetchConcertsNearMe automatically fetches precise location using FusedLocationProviderClient with Priority.PRIORITY_HIGH_ACCURACY and transmits lat/lon off-device to the searchConcerts Firebase Cloud Function without prior prominent disclosure or explicit user consent."
+  },
+  "22": {
+    "action": "PRUNED",
+    "confidence": "High",
+    "critic_justification": "Pruned as a duplicate and unsupported finding. LocationManager.kt (line 19) specifically requests precise location via Priority.PRIORITY_HIGH_ACCURACY (which is already verified in Finding 21). There is no separate API call or logic retrieving approximate location."
+  }
+}

@@ -292,11 +292,15 @@ For URL video, create `VideoPlayer(source = VideoSource.Url(...), codec = VideoC
 
 ---
 
-# Mandatory Verification Standards (Global Rule)
+301. **Button & Event Wiring Integrity**: Every UI button, clickable card, or interactive component must be verified end-to-end to confirm it triggers its intended ViewModel method, dispatches API requests, updates UI state, and navigates without crashing or exiting the app.
 
-All AI agents working on code implementations, feature wiring, button click handlers, or API integrations MUST adhere to this strict Verification Standard:
+---
 
-1. **Real Execution Over Test Doubles**: Verification plans MUST include the actual execution of wired UI buttons, event handlers, and API network calls. Relying solely on mock double objects or code inspections is strictly prohibited.
-2. **End-to-End API Backend Verification**: Every API integration (Firebase Callable Functions, Gemini AI, Spotify, Stripe, Data Connect, etc.) must be verified via actual HTTP/socket invocations using real credentials or local emulator suites (e.g., Firebase Emulator / MockWebServer) to prove that payloads reach the real backend services and produce expected outputs.
-3. **Button & Event Wiring Integrity**: Every UI button, clickable card, or interactive component must be verified end-to-end to confirm it triggers its intended ViewModel method, dispatches API requests, updates UI state, and navigates without crashing or exiting the app.
+# Production Fallback & User Trust Standard (NEVER "Smile & Lie")
+
+1. **Zero Silent Fallback Mocks**: If an API integration (payment processing, music generation, audio stream, database lookup, or AI tool execution) fails, the application MUST NEVER silently substitute fake mock data, fake transaction confirmations, fake credit balances, or hallucinated outputs.
+2. **Transparent Error Signaling**: When a network, API, or service error occurs, surface explicit, user-understandable failure messaging with typed error states (`catalogErrorMessage`, `paymentError`, etc.).
+3. **Actionable Recovery Paths**: Always provide actionable recovery options for the user (e.g. Retry, Edit Prompt, Re-authenticate, Choose Plan) instead of dead ends or silent mock defaults.
+4. **Observable Error Telemetry**: Log every failure and fallback attempt with structured telemetry (`Timber.e(...)`, `console.error(...)`) to ensure real-time alerting on backend degradation.
+
 

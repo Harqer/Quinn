@@ -11,7 +11,7 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Podcasts
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,13 +63,6 @@ fun VoiceInputButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun VoiceRecordButton(onClick: () -> Unit) {
-    IconButton(onClick = onClick) {
-        Icon(Icons.Default.Mic, contentDescription = "Mic")
-    }
-}
-
-@Composable
 fun GenerateCoverArtButton(onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Icon(Icons.Default.Palette, contentDescription = "Generate Cover Art", modifier = Modifier.size(20.dp))
@@ -93,6 +86,6 @@ fun GeneratePodcastButton(onClick: () -> Unit) {
 @Composable
 fun GenerateAudiobookButton(onClick: () -> Unit) {
     IconButton(onClick = onClick) {
-        Icon(Icons.Default.MenuBook, contentDescription = "Generate Audiobook", modifier = Modifier.size(20.dp))
+        Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = "Generate Audiobook", modifier = Modifier.size(20.dp))
     }
 }

@@ -1,35 +1,26 @@
 package com.musically.studio.ui.screens
 
-import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Base64
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.musically.studio.shared.R
 import com.musically.studio.ui.components.organisms.ChatInputArea
 import com.musically.studio.ui.components.organisms.ChatMessageList
 import com.musically.studio.ui.theme.LocalMaveColorScheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,8 +54,28 @@ fun ChatScreen(
             }
         }
     }
+
+    val micPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            viewModel.recordVoice(context)
+        }
+    }
+
+    val onMicClick: () -> Unit = {
+        val hasMicPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.RECORD_AUDIO
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+        if (hasMicPermission) {
+            viewModel.recordVoice(context)
+        } else {
+            micPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+        }
+    }
     
-    // Adaptive & Edge-to-edge
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -76,7 +87,7 @@ fun ChatScreen(
             contentWindowInsets = WindowInsets.safeDrawing,
             topBar = {
                 TopAppBar(
-                    title = { Text("Mave", fontWeight = FontWeight.Bold) },
+                    title = { Text("Mave Studio", fontWeight = FontWeight.Bold) },
                     navigationIcon = {
                         Box(modifier = Modifier.padding(start = 16.dp)) {
                             com.musically.studio.ui.components.atoms.UserAvatarButton(
@@ -100,7 +111,7 @@ fun ChatScreen(
                         inputValue = ""
                     },
                     onAttachImage = { imagePickerLauncher.launch("image/*") },
-                    onVoiceRecord = { viewModel.recordVoice(context) },
+                    onVoiceRecord = onMicClick,
                     onGenerateCoverArt = {
                         coroutineScope.launch {
                             inputValue = "Generate cover art for: "

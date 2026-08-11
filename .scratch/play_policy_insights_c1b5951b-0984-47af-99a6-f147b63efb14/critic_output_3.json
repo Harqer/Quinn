@@ -1,0 +1,17 @@
+{
+  "13": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "Camera vision frames are processed and transmitted off-device to Gemini API for real-time AI music generation. WelcomeScreen.kt acts as a strict gatekeeper dialog requiring explicit user consent before enabling sign-in and main app access."
+  },
+  "15": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "Audio recording is explicitly user-initiated via microphone button interaction in ChatInterface, transmitting PCM audio off-device to Gemini Live endpoint for voice commands. It is exempt from prominent disclosure but must be declared in Data Safety."
+  },
+  "18": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "User email address is collected during user-initiated Firebase/Google authentication and displayed in profile UI. This collection is exempt from prominent disclosure but must be declared under Personal Info in the Play Store Data Safety section."
+  }
+}

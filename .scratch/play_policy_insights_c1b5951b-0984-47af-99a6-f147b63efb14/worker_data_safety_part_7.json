@@ -1,0 +1,41 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "OTHER_APP_PERFORMANCE",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "components/organisms/android-library.ts",
+        "components/organisms/security-hub.ts"
+      ],
+      "evidence": "Telemetry references in android-library.ts and security-hub.ts pertain to device battery levels, wear proximity, and security advisory text. No performance data of other apps is collected or transferred.",
+      "recommendation": "No action required. If other app performance metrics are collected in the future, declare them in the Play Store Data Safety form.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "NAME",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "tmp/compose-samples/Jetchat/app/src/main/java/com/example/compose/jetchat/profile/Profile.kt",
+        "components/organisms/android-library.ts"
+      ],
+      "evidence": "User display names in Profile.kt and Spotify playlist owner display names in android-library.ts are used solely for UI rendering and are not transferred off-device.",
+      "recommendation": "No action required for local display. Ensure any future off-device transmission of user name data is declared in the Play Console Data Safety section.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+    "23": {
+        "policy_id": "location_access_policy",
+        "issue_summary": "App requests precise location (ACCESS_FINE_LOCATION) for concert search when features only require approximate location (coarse city-level access).",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "app/src/main/AndroidManifest.xml",
+            "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+        ],
+        "evidence": "AndroidManifest.xml Line 15 requests ACCESS_FINE_LOCATION and LocationManager.kt Line 19 uses Priority.PRIORITY_HIGH_ACCURACY, despite MainViewModel+Concerts.kt Line 37 using location solely to search concerts within a 50-mile radius (range=50mi).",
+        "recommendation": "Downgrade Manifest to ACCESS_COARSE_LOCATION to respect the minimum scope mandate.",
+        "worker_file": "worker_permissions_and_apis.json",
+        "finding_id": "23"
+    },
+    "24": {
+        "policy_id": "location_access_policy",
+        "issue_summary": "App purpose (Mave) does not inherently imply location tracking, yet foreground location access is performed without a prominent disclosure.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "app/src/main/AndroidManifest.xml",
+            "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+        ],
+        "evidence": "LocationManager.kt Line 18 retrieves device location via FusedLocationProviderClient for concert discovery without executing an in-app prominent disclosure dialog explaining location data collection.",
+        "recommendation": "Implement a Prominent In-App Disclosure dialog explaining what location data is collected before requesting foreground permission.",
+        "worker_file": "worker_permissions_and_apis.json",
+        "finding_id": "24"
+    },
+    "27": {
+        "policy_id": "audio_recording_policy",
+        "issue_summary": "App requests broad RECORD_AUDIO permission on Target SDK 37 for user-initiated vocal input and recording.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "app/src/main/AndroidManifest.xml",
+            "app/src/main/java/com/musically/studio/MainActivity.kt",
+            "components/organisms/chat-interface.ts"
+        ],
+        "evidence": "AndroidManifest.xml Line 13 declares RECORD_AUDIO and MainActivity.kt Line 278 requests RECORD_AUDIO runtime permission for occasional user-initiated voice commands triggered via chat-interface.ts Line 38 on Target SDK 37.",
+        "recommendation": "Migrate to the Android Microphone Button API to process temporary audio securely.",
+        "worker_file": "worker_permissions_and_apis.json",
+        "finding_id": "27"
+    }
+}

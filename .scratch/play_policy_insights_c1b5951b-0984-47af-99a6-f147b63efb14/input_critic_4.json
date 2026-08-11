@@ -1,0 +1,64 @@
+{
+    "19": {
+        "psl_constant": "PURCHASE_HISTORY",
+        "policy_id": "data_safety_section",
+        "issue_summary": "User-Initiated Collection: Disclosure exempt, but must be declared in Play Store form.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "functions/lib/billing.js",
+            "functions/src/agents/kitesurfPaymentAgent.ts",
+            "functions/src/billing.ts"
+        ],
+        "evidence": "In billing.ts, lib/billing.js, and kitesurfPaymentAgent.ts, transaction records and invoice receipts are saved to Firestore under users/{uid}/payments during user-initiated subscription and billing flows.",
+        "recommendation": "Declare PURCHASE_HISTORY collection under the Financial Info / Purchase History category in the Play Store Data Safety form.",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_8.json",
+        "finding_id": "19"
+    },
+    "21": {
+        "psl_constant": "PRECISE_LOCATION",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "Silent Background Transfer",
+        "severity": "CRITICAL",
+        "files_involved": [
+            "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt",
+            "dist/assets/index-BjcG2aKc.js"
+        ],
+        "evidence": "In LocationManager.kt (line 19) and MainViewModel+Concerts.kt (lines 31-41), fine location (latitude/longitude) is retrieved via FusedLocationProviderClient and automatically sent off-device to the 'searchConcerts' Firebase Cloud Function on screen load without prior prominent disclosure or user consent.",
+        "recommendation": "Add an in-app prominent disclosure dialog explaining precise location data collection and obtain explicit user consent prior to fetching location and transmitting it off-device.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "MISSING",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_9.json",
+        "finding_id": "21"
+    },
+    "22": {
+        "psl_constant": "APPROX_LOCATION",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "Silent Background Transfer",
+        "severity": "CRITICAL",
+        "files_involved": [
+            "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+        ],
+        "evidence": "In LocationManager.kt (lines 12-26) and MainViewModel+Concerts.kt (lines 30-41), approximate location coordinates are retrieved and automatically transmitted off-device to the 'searchConcerts' Firebase Cloud Function when loading concert data without prior prominent disclosure.",
+        "recommendation": "Implement a prominent disclosure and obtain explicit user consent before accessing and transmitting location data off-device.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "MISSING",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_9.json",
+        "finding_id": "22"
+    }
+}

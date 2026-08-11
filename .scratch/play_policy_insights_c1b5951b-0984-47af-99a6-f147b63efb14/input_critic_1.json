@@ -1,0 +1,63 @@
+{
+    "3": {
+        "psl_constant": "APPROX_LOCATION",
+        "policy_id": "data_safety_section",
+        "issue_summary": "User-Initiated Collection",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+            "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+        ],
+        "evidence": "MainViewModel+Concerts.kt:30-41: LocationManager obtains current device location (latitude, longitude) via FusedLocationProviderClient when user initiates concert search or navigates to Concerts screen, and passes lat/lon to Firebase Cloud Function searchConcerts.",
+        "recommendation": "Declare approximate location collection in the Play Store Data Safety form under App Functionality.",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "purpose": "App functionality",
+        "linked_to_user": false,
+        "worker_file": "worker_data_safety_part_10.json",
+        "finding_id": "3"
+    },
+    "6": {
+        "psl_constant": "OTHER_AUDIO",
+        "policy_id": "data_safety_section",
+        "issue_summary": "User-Initiated Collection",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/appfunctions/MaveAppFunctionService.kt",
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt",
+            "/home/shaolin/lyria/app/src/main/res/xml/app_metadata.xml"
+        ],
+        "evidence": "Audio podcast search, playback, and AI song generation operations in MaveAppFunctionService and MaveFunctions are user-initiated via AppFunctions and communicate with first-party Firebase/DataConnect backends.",
+        "recommendation": "Declare user-initiated audio playback and generation collection under App Functionality in the Google Play Data Safety form.",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_2.json",
+        "finding_id": "6"
+    },
+    "7": {
+        "psl_constant": "USER_ACCOUNT",
+        "policy_id": "data_safety_section",
+        "issue_summary": "User-Initiated Collection",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+            "/home/shaolin/lyria/app/src/main/res/values/themes.xml"
+        ],
+        "evidence": "User authentication credentials and identifiers (UID, tokens) are managed via FirebaseAuth and CredentialManager upon user-initiated login and registration.",
+        "recommendation": "Declare user account collection for Account Management and Authentication in the Google Play Data Safety form.",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "purpose": "Account management",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_2.json",
+        "finding_id": "7"
+    }
+}

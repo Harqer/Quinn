@@ -1,0 +1,543 @@
+{
+    "findings": [
+        {
+            "psl_constant": "FILES_AND_DOCS",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                ".agents/skills/brainstorming/scripts/helper.js",
+                "dist/assets/LiveChatMessage--SXZ4IsC.js",
+                "dist/assets/index-BjcG2aKc.js"
+            ],
+            "evidence": "Analysis of the specified files indicates that sessionStorage and state flags are used locally for app and helper navigation state. No user files, documents, or file names are accessed or transferred off-device.",
+            "recommendation": "No action required. Local usage of session storage for UI and navigation state is compliant and exempt from off-device data safety disclosures.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_1.json",
+            "finding_id": "1"
+        },
+        {
+            "psl_constant": "MUSIC",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "app/src/main/java/com/musically/studio/MainActivity.kt",
+                "app/src/main/java/com/musically/studio/MyApplication.kt",
+                "app/src/main/java/com/musically/studio/appfunctions/MaveAppFunctionService.kt"
+            ],
+            "evidence": "MediaController, MediaSession, and AppFunction integrations in MainActivity, MyApplication, and MaveAppFunctionService manage local audio playback and AI audio stream presentation. User music files from device storage are neither collected nor transferred off-device.",
+            "recommendation": "No action required. On-device media playback control and local audio session management are exempt from data collection disclosures.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_1.json",
+            "finding_id": "2"
+        },
+        {
+            "psl_constant": "APPROX_LOCATION",
+            "policy_id": "data_safety_section",
+            "issue_summary": "User-Initiated Collection",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+            ],
+            "evidence": "MainViewModel+Concerts.kt:30-41: LocationManager obtains current device location (latitude, longitude) via FusedLocationProviderClient when user initiates concert search or navigates to Concerts screen, and passes lat/lon to Firebase Cloud Function searchConcerts.",
+            "recommendation": "Declare approximate location collection in the Play Store Data Safety form under App Functionality.",
+            "is_transferred": true,
+            "user_initiated": true,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "App functionality",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_10.json",
+            "finding_id": "3"
+        },
+        {
+            "psl_constant": "DEVICE_ID",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "dist/assets/index-BjcG2aKc.js",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+            ],
+            "evidence": "MainViewModel.kt:974-1008: AudioDeviceInfo is inspected locally via AudioManager.getDevices to determine audio output types (speaker, bluetooth headset) for on-device UI rendering. No device hardware identifiers are collected or transmitted off-device.",
+            "recommendation": "No action required as device audio output info is processed locally on-device.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_10.json",
+            "finding_id": "4"
+        },
+        {
+            "psl_constant": "FITNESS",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "tmp/compose-samples/JetLagged/app/src/main/java/com/example/jetlagged/JetLaggedScreen.kt",
+                "tmp/compose-samples/JetLagged/app/src/main/java/com/example/jetlagged/data/FakeHeartRateData.kt",
+                "tmp/compose-samples/JetLagged/app/src/main/java/com/example/jetlagged/data/JetLaggedHomeScreenState.kt"
+            ],
+            "evidence": "FakeHeartRateData.kt:21-199: Hardcoded mock heart rate data heartRateGraphData is used exclusively for Jetpack Compose UI sample previews. No actual fitness or health data is collected or transmitted off-device.",
+            "recommendation": "No action required as heart rate data consists of hardcoded mock samples used strictly for local UI layout previews.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_10.json",
+            "finding_id": "5"
+        },
+        {
+            "psl_constant": "OTHER_AUDIO",
+            "policy_id": "data_safety_section",
+            "issue_summary": "User-Initiated Collection",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/appfunctions/MaveAppFunctionService.kt",
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/appfunctions/MaveFunctions.kt",
+                "/home/shaolin/lyria/app/src/main/res/xml/app_metadata.xml"
+            ],
+            "evidence": "Audio podcast search, playback, and AI song generation operations in MaveAppFunctionService and MaveFunctions are user-initiated via AppFunctions and communicate with first-party Firebase/DataConnect backends.",
+            "recommendation": "Declare user-initiated audio playback and generation collection under App Functionality in the Google Play Data Safety form.",
+            "is_transferred": true,
+            "user_initiated": true,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "App functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_2.json",
+            "finding_id": "6"
+        },
+        {
+            "psl_constant": "USER_ACCOUNT",
+            "policy_id": "data_safety_section",
+            "issue_summary": "User-Initiated Collection",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+                "/home/shaolin/lyria/app/src/main/res/values/themes.xml"
+            ],
+            "evidence": "User authentication credentials and identifiers (UID, tokens) are managed via FirebaseAuth and CredentialManager upon user-initiated login and registration.",
+            "recommendation": "Declare user account collection for Account Management and Authentication in the Google Play Data Safety form.",
+            "is_transferred": true,
+            "user_initiated": true,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Account management",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_2.json",
+            "finding_id": "7"
+        },
+        {
+            "psl_constant": "RACE_ETHNICITY",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "app/src/main/java/com/musically/studio/appfunctions/MaveAppFunctionService.kt",
+                "dist/assets/index-BjcG2aKc.js",
+                "dist/assets/logger-suwgBkNw.js"
+            ],
+            "evidence": "Audited MaveAppFunctionService.kt, index-BjcG2aKc.js, and logger-suwgBkNw.js for pattern 'race'. All matches are false positives (e.g., e.printStackTrace(), Promise.race(), stacktrace, traceId). No race or ethnicity data is collected or transferred.",
+            "recommendation": "No action required. Race or ethnicity data is not collected or transmitted by the application.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_3.json",
+            "finding_id": "8"
+        },
+        {
+            "psl_constant": "CRASH_LOGS",
+            "policy_id": "prominent_disclosure_policy",
+            "issue_summary": "Background Transfer (Disclosure Claimed)",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "app/src/main/java/com/musically/studio/MyApplication.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/logging/CrashlyticsTree.kt",
+                "dist/assets/index-BjcG2aKc.js",
+                "dist/assets/jsx-runtime-B-hcVAMW.js"
+            ],
+            "evidence": "FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true) in MyApplication.kt transfers crash logs off-device. Prominent disclosure AlertDialog in WelcomeScreen.kt explicitly discloses crash log collection and gates collection on affirmative user consent.",
+            "recommendation": "Ensure crash log data collection is declared in the Play Store Data Safety form.",
+            "is_transferred": true,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "DISCLOSED",
+            "purpose": "Analytics",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_3.json",
+            "finding_id": "9"
+        },
+        {
+            "psl_constant": "PERFORMANCE_DIAGNOSTICS",
+            "policy_id": "prominent_disclosure_policy",
+            "issue_summary": "Background Transfer (Disclosure Claimed)",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt",
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+            ],
+            "evidence": "MyApplication.kt enables FirebaseCrashlytics and FirebaseAnalytics performance diagnostics and crash collection gated by hasAcceptedPrivacy preference, which is disclosed and opted-into via WelcomeScreen.kt AlertDialog ('Mave also collects app interactions and analytics data, as well as crash logs').",
+            "recommendation": "Ensure that the Play Store Data Safety form declares collection of Performance Diagnostics (crash logs and app performance data) for Analytics and App Functionality purposes.",
+            "is_transferred": true,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "DISCLOSED",
+            "purpose": "Analytics and App Functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_4.json",
+            "finding_id": "10"
+        },
+        {
+            "psl_constant": "CREDIT_DEBIT_BANK_ACCOUNT_NUMBER",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "/home/shaolin/lyria/functions/src/billing.ts",
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/PremiumPlansScreen.kt"
+            ],
+            "evidence": "No raw credit, debit, or bank account numbers are collected, stored, or transmitted by the app codebase or Firebase backend. Subscriptions and payments are handled out-of-band via Google Play Billing API or Stripe web checkout.",
+            "recommendation": "No declaration required in Play Store Data Safety form for credit/debit bank account numbers as the app does not collect or process raw financial account numbers directly.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_4.json",
+            "finding_id": "11"
+        },
+        {
+            "psl_constant": "APP_INTERACTIONS",
+            "policy_id": "prominent_disclosure_policy",
+            "issue_summary": "Background Transfer (Disclosure Claimed)",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt",
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+            ],
+            "evidence": "MyApplication.kt initializes FirebaseAnalytics to log app interactions and usage telemetry off-device. Analytics collection is gated by the hasAcceptedPrivacy preference, which is disclosed and opted into via the WelcomeScreen.kt AlertDialog ('Mave also collects app interactions and analytics data').",
+            "recommendation": "Declare collection of App Interactions in the Google Play Data Safety form for Analytics and App Functionality purposes.",
+            "is_transferred": true,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "DISCLOSED",
+            "purpose": "Analytics and App Functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_5.json",
+            "finding_id": "12"
+        },
+        {
+            "psl_constant": "PHOTOS",
+            "policy_id": "prominent_disclosure_policy",
+            "issue_summary": "Background Transfer (Disclosure Claimed)",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+                "/home/shaolin/lyria/components/organisms/player-controls.ts",
+                "/home/shaolin/lyria/dist/assets/ChatScreen-D4g5_Ezi.js",
+                "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+            ],
+            "evidence": "Camera permissions and image/vision frame processing in MainActivity.kt, player-controls.ts, and ChatScreen-D4g5_Ezi.js send photo and camera data off-device to Gemini Live API for AI music generation. This collection is disclosed and consented to via WelcomeScreen.kt AlertDialog ('Mave collects and transmits camera and microphone data to enable real-time AI music generation').",
+            "recommendation": "Declare collection and off-device transmission of Photos and Videos in the Google Play Data Safety form under App Functionality.",
+            "is_transferred": true,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "DISCLOSED",
+            "purpose": "App Functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_5.json",
+            "finding_id": "13"
+        },
+        {
+            "psl_constant": "VIDEOS",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "app/src/main/java/com/musically/studio/MainActivity.kt",
+                "dist/assets/ChatScreen-D4g5_Ezi.js",
+                "dist/assets/LiveChatMessage--SXZ4IsC.js"
+            ],
+            "evidence": "MediaController in MainActivity.kt and video elements in ChatScreen-D4g5_Ezi.js are used strictly for local media playback and UI rendering. No off-device transmission of user video files occurs.",
+            "recommendation": "No action required. User video data remains local to the device.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_6.json",
+            "finding_id": "14"
+        },
+        {
+            "psl_constant": "AUDIO",
+            "policy_id": "data_safety_section",
+            "issue_summary": "User-Initiated Collection: Disclosure exempt, but must be declared in Play Store form.",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "app/src/main/java/com/musically/studio/MainActivity.kt",
+                "components/organisms/chat-interface.styles.ts",
+                "components/organisms/chat-interface.ts"
+            ],
+            "evidence": "User explicitly initiates audio recording by clicking the microphone button in chat-interface.ts / ChatViewModel.kt. The recorded PCM audio stream is transmitted off-device via WebSocket to the Gemini Live service provider endpoint (wss://generativelanguage.googleapis.com) for real-time voice processing.",
+            "recommendation": "Declare AUDIO collection and transmission under the Data Safety section in Google Play Console. Prominent disclosure is exempt because collection is user-initiated.",
+            "is_transferred": true,
+            "user_initiated": true,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "App functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_6.json",
+            "finding_id": "15"
+        },
+        {
+            "psl_constant": "OTHER_APP_PERFORMANCE",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "components/organisms/android-library.ts",
+                "components/organisms/security-hub.ts"
+            ],
+            "evidence": "Telemetry references in android-library.ts and security-hub.ts pertain to device battery levels, wear proximity, and security advisory text. No performance data of other apps is collected or transferred.",
+            "recommendation": "No action required. If other app performance metrics are collected in the future, declare them in the Play Store Data Safety form.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_7.json",
+            "finding_id": "16"
+        },
+        {
+            "psl_constant": "NAME",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "tmp/compose-samples/Jetchat/app/src/main/java/com/example/compose/jetchat/profile/Profile.kt",
+                "components/organisms/android-library.ts"
+            ],
+            "evidence": "User display names in Profile.kt and Spotify playlist owner display names in android-library.ts are used solely for UI rendering and are not transferred off-device.",
+            "recommendation": "No action required for local display. Ensure any future off-device transmission of user name data is declared in the Play Console Data Safety section.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_7.json",
+            "finding_id": "17"
+        },
+        {
+            "psl_constant": "EMAIL",
+            "policy_id": "data_safety_section",
+            "issue_summary": "User-Initiated Collection: Disclosure exempt, but must be declared in Play Store form.",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "components/organisms/splash-screen.ts",
+                "dist/assets/ProfileScreen-Nt5UKxcN.js",
+                "dist/assets/SettingsScreen-BvJNq5cQ.js"
+            ],
+            "evidence": "In splash-screen.ts, ProfileScreen-Nt5UKxcN.js, and SettingsScreen-BvJNq5cQ.js, user email (currentUser.email) is displayed in UI and synced to backend services upon user-initiated authentication and profile updates.",
+            "recommendation": "Declare EMAIL collection under the Personal Info / Email address category in the Play Store Data Safety form.",
+            "is_transferred": true,
+            "user_initiated": true,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "App functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_8.json",
+            "finding_id": "18"
+        },
+        {
+            "psl_constant": "PURCHASE_HISTORY",
+            "policy_id": "data_safety_section",
+            "issue_summary": "User-Initiated Collection: Disclosure exempt, but must be declared in Play Store form.",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "functions/lib/billing.js",
+                "functions/src/agents/kitesurfPaymentAgent.ts",
+                "functions/src/billing.ts"
+            ],
+            "evidence": "In billing.ts, lib/billing.js, and kitesurfPaymentAgent.ts, transaction records and invoice receipts are saved to Firestore under users/{uid}/payments during user-initiated subscription and billing flows.",
+            "recommendation": "Declare PURCHASE_HISTORY collection under the Financial Info / Purchase History category in the Play Store Data Safety form.",
+            "is_transferred": true,
+            "user_initiated": true,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "App functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_8.json",
+            "finding_id": "19"
+        },
+        {
+            "psl_constant": "WEB_BROWSING_HISTORY",
+            "policy_id": "data_safety_section",
+            "issue_summary": "Data Safety Compliant (Local-Only)",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "dist/assets/LiveChatMessage--SXZ4IsC.js"
+            ],
+            "evidence": "Web browsing data in LiveChatMessage asset is handled locally and is not transmitted off-device.",
+            "recommendation": "Ensure web view browsing history remains local and is not collected or sent to external servers.",
+            "is_transferred": false,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "EXEMPT",
+            "purpose": "Local functionality only",
+            "linked_to_user": false,
+            "worker_file": "worker_data_safety_part_9.json",
+            "finding_id": "20"
+        },
+        {
+            "psl_constant": "PRECISE_LOCATION",
+            "policy_id": "prominent_disclosure_policy",
+            "issue_summary": "Silent Background Transfer",
+            "severity": "CRITICAL",
+            "files_involved": [
+                "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt",
+                "dist/assets/index-BjcG2aKc.js"
+            ],
+            "evidence": "In LocationManager.kt (line 19) and MainViewModel+Concerts.kt (lines 31-41), fine location (latitude/longitude) is retrieved via FusedLocationProviderClient and automatically sent off-device to the 'searchConcerts' Firebase Cloud Function on screen load without prior prominent disclosure or user consent.",
+            "recommendation": "Add an in-app prominent disclosure dialog explaining precise location data collection and obtain explicit user consent prior to fetching location and transmitting it off-device.",
+            "is_transferred": true,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "MISSING",
+            "purpose": "App functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_9.json",
+            "finding_id": "21"
+        },
+        {
+            "psl_constant": "APPROX_LOCATION",
+            "policy_id": "prominent_disclosure_policy",
+            "issue_summary": "Silent Background Transfer",
+            "severity": "CRITICAL",
+            "files_involved": [
+                "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+            ],
+            "evidence": "In LocationManager.kt (lines 12-26) and MainViewModel+Concerts.kt (lines 30-41), approximate location coordinates are retrieved and automatically transmitted off-device to the 'searchConcerts' Firebase Cloud Function when loading concert data without prior prominent disclosure.",
+            "recommendation": "Implement a prominent disclosure and obtain explicit user consent before accessing and transmitting location data off-device.",
+            "is_transferred": true,
+            "user_initiated": false,
+            "is_third_party": false,
+            "prominent_disclosure_status": "MISSING",
+            "purpose": "App functionality",
+            "linked_to_user": true,
+            "worker_file": "worker_data_safety_part_9.json",
+            "finding_id": "22"
+        },
+        {
+            "policy_id": "location_access_policy",
+            "issue_summary": "App requests precise location (ACCESS_FINE_LOCATION) for concert search when features only require approximate location (coarse city-level access).",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "app/src/main/AndroidManifest.xml",
+                "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+            ],
+            "evidence": "AndroidManifest.xml Line 15 requests ACCESS_FINE_LOCATION and LocationManager.kt Line 19 uses Priority.PRIORITY_HIGH_ACCURACY, despite MainViewModel+Concerts.kt Line 37 using location solely to search concerts within a 50-mile radius (range=50mi).",
+            "recommendation": "Downgrade Manifest to ACCESS_COARSE_LOCATION to respect the minimum scope mandate.",
+            "worker_file": "worker_permissions_and_apis.json",
+            "finding_id": "23"
+        },
+        {
+            "policy_id": "location_access_policy",
+            "issue_summary": "App purpose (Mave) does not inherently imply location tracking, yet foreground location access is performed without a prominent disclosure.",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "app/src/main/AndroidManifest.xml",
+                "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+            ],
+            "evidence": "LocationManager.kt Line 18 retrieves device location via FusedLocationProviderClient for concert discovery without executing an in-app prominent disclosure dialog explaining location data collection.",
+            "recommendation": "Implement a Prominent In-App Disclosure dialog explaining what location data is collected before requesting foreground permission.",
+            "worker_file": "worker_permissions_and_apis.json",
+            "finding_id": "24"
+        },
+        {
+            "policy_id": "location_access_policy",
+            "issue_summary": "Precise location (ACCESS_FINE_LOCATION) is requested on Android 14+ (Target SDK 37).",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "app/src/main/AndroidManifest.xml",
+                "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt"
+            ],
+            "evidence": "AndroidManifest.xml Line 15 and LocationManager.kt Line 19 request precise location access on Target SDK 37.",
+            "recommendation": "Migrate to the Location Button API as the minimum scope mechanism for precise foreground location.",
+            "worker_file": "worker_permissions_and_apis.json",
+            "finding_id": "25"
+        },
+        {
+            "policy_id": "foreground_services_policy",
+            "issue_summary": "Foreground services are declared targeting SDK 37, requiring a Play Console Foreground Service declaration.",
+            "severity": "SUGGESTION",
+            "files_involved": [
+                "app/src/main/AndroidManifest.xml",
+                "shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/audio/PlaybackService.kt"
+            ],
+            "evidence": "AndroidManifest.xml Lines 40-52 declare foreground services WearableStreamingService (types camera|microphone|mediaPlayback) and PlaybackService (type mediaPlayback) targeting SDK 37.",
+            "recommendation": "For apps targeting Android 14+, you must complete a Foreground Service declaration in the Play Console (App content section) for each type used, providing a functional description, user impact video, and a specific use case selection.",
+            "worker_file": "worker_permissions_and_apis.json",
+            "finding_id": "26"
+        },
+        {
+            "policy_id": "audio_recording_policy",
+            "issue_summary": "App requests broad RECORD_AUDIO permission on Target SDK 37 for user-initiated vocal input and recording.",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "app/src/main/AndroidManifest.xml",
+                "app/src/main/java/com/musically/studio/MainActivity.kt",
+                "components/organisms/chat-interface.ts"
+            ],
+            "evidence": "AndroidManifest.xml Line 13 declares RECORD_AUDIO and MainActivity.kt Line 278 requests RECORD_AUDIO runtime permission for occasional user-initiated voice commands triggered via chat-interface.ts Line 38 on Target SDK 37.",
+            "recommendation": "Migrate to the Android Microphone Button API to process temporary audio securely.",
+            "worker_file": "worker_permissions_and_apis.json",
+            "finding_id": "27"
+        },
+        {
+            "policy_id": "login_credentials",
+            "issue_summary": "App displays or contains a login screen, registration wall, or authentication interface.",
+            "severity": "IMPORTANT",
+            "files_involved": [
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Auth.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/UserProfileScreen.kt",
+                "app/src/main/java/com/musically/studio/MainActivity.kt"
+            ],
+            "evidence": "App implements authentication flows (loginWithEmail, loginWithGoogle, loginWithApple, completeRegistration) in MainViewModel+Auth.kt and manages sign-in state in MainActivity.kt.",
+            "recommendation": "**Administrative Console Requirements**: Because your app implements a login flow, you MUST complete two manual setup steps in the Play Console dashboard to pass review:<br>1. **Reviewer Demo Credentials**: Submit active, non-expiring test credentials so Google Play reviewers can access your gated features.<br>2. **Account Deletion Link**: Submit a public-facing web link for account deletion to satisfy Google Play's data deletion policies.",
+            "worker_file": "worker_user_account.json",
+            "finding_id": "28"
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+  "3": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "MainViewModel+Concerts.kt and MainViewModel.kt confirm that device location coordinates (latitude and longitude) are retrieved via FusedLocationProviderClient and sent off-device to the 'searchConcerts' Firebase Cloud Function when searching for concerts."
+  },
+  "6": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "MaveAppFunctionService.kt, MaveFunctions.kt, and app_metadata.xml confirm that user-initiated audio queries, podcast playback, and AI song generation requests process and transfer audio data to first-party Firebase/DataConnect backends."
+  },
+  "7": {
+    "action": "VERIFIED",
+    "confidence": "High",
+    "critic_justification": "MainActivity.kt and MainViewModel.kt confirm that user authentication credentials and account identifiers (UID, tokens) are processed via FirebaseAuth and CredentialManager for account sign-in and management."
+  }
+}

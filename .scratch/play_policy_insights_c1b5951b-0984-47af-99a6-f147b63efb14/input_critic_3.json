@@ -1,0 +1,66 @@
+{
+    "13": {
+        "psl_constant": "PHOTOS",
+        "policy_id": "prominent_disclosure_policy",
+        "issue_summary": "Background Transfer (Disclosure Claimed)",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+            "/home/shaolin/lyria/components/organisms/player-controls.ts",
+            "/home/shaolin/lyria/dist/assets/ChatScreen-D4g5_Ezi.js",
+            "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+        ],
+        "evidence": "Camera permissions and image/vision frame processing in MainActivity.kt, player-controls.ts, and ChatScreen-D4g5_Ezi.js send photo and camera data off-device to Gemini Live API for AI music generation. This collection is disclosed and consented to via WelcomeScreen.kt AlertDialog ('Mave collects and transmits camera and microphone data to enable real-time AI music generation').",
+        "recommendation": "Declare collection and off-device transmission of Photos and Videos in the Google Play Data Safety form under App Functionality.",
+        "is_transferred": true,
+        "user_initiated": false,
+        "is_third_party": false,
+        "prominent_disclosure_status": "DISCLOSED",
+        "purpose": "App Functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_5.json",
+        "finding_id": "13"
+    },
+    "15": {
+        "psl_constant": "AUDIO",
+        "policy_id": "data_safety_section",
+        "issue_summary": "User-Initiated Collection: Disclosure exempt, but must be declared in Play Store form.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "app/src/main/java/com/musically/studio/MainActivity.kt",
+            "components/organisms/chat-interface.styles.ts",
+            "components/organisms/chat-interface.ts"
+        ],
+        "evidence": "User explicitly initiates audio recording by clicking the microphone button in chat-interface.ts / ChatViewModel.kt. The recorded PCM audio stream is transmitted off-device via WebSocket to the Gemini Live service provider endpoint (wss://generativelanguage.googleapis.com) for real-time voice processing.",
+        "recommendation": "Declare AUDIO collection and transmission under the Data Safety section in Google Play Console. Prominent disclosure is exempt because collection is user-initiated.",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_6.json",
+        "finding_id": "15"
+    },
+    "18": {
+        "psl_constant": "EMAIL",
+        "policy_id": "data_safety_section",
+        "issue_summary": "User-Initiated Collection: Disclosure exempt, but must be declared in Play Store form.",
+        "severity": "IMPORTANT",
+        "files_involved": [
+            "components/organisms/splash-screen.ts",
+            "dist/assets/ProfileScreen-Nt5UKxcN.js",
+            "dist/assets/SettingsScreen-BvJNq5cQ.js"
+        ],
+        "evidence": "In splash-screen.ts, ProfileScreen-Nt5UKxcN.js, and SettingsScreen-BvJNq5cQ.js, user email (currentUser.email) is displayed in UI and synced to backend services upon user-initiated authentication and profile updates.",
+        "recommendation": "Declare EMAIL collection under the Personal Info / Email address category in the Play Store Data Safety form.",
+        "is_transferred": true,
+        "user_initiated": true,
+        "is_third_party": false,
+        "prominent_disclosure_status": "EXEMPT",
+        "purpose": "App functionality",
+        "linked_to_user": true,
+        "worker_file": "worker_data_safety_part_8.json",
+        "finding_id": "18"
+    }
+}

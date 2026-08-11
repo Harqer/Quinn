@@ -1,0 +1,17 @@
+{
+  "domain": "User Account and Identity",
+  "findings": [
+    {
+      "policy_id": "login_credentials",
+      "issue_summary": "App displays or contains a login screen, registration wall, or authentication interface.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Auth.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/UserProfileScreen.kt",
+        "app/src/main/java/com/musically/studio/MainActivity.kt"
+      ],
+      "evidence": "App implements authentication flows (loginWithEmail, loginWithGoogle, loginWithApple, completeRegistration) in MainViewModel+Auth.kt and manages sign-in state in MainActivity.kt.",
+      "recommendation": "**Administrative Console Requirements**: Because your app implements a login flow, you MUST complete two manual setup steps in the Play Console dashboard to pass review:<br>1. **Reviewer Demo Credentials**: Submit active, non-expiring test credentials so Google Play reviewers can access your gated features.<br>2. **Account Deletion Link**: Submit a public-facing web link for account deletion to satisfy Google Play's data deletion policies."
+    }
+  ]
+}

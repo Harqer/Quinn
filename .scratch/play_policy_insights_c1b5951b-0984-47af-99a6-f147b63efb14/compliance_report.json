@@ -1,0 +1,147 @@
+{
+    "data_safety_mismatches": [],
+    "findings": [
+        {
+            "evidence": "AndroidManifest.xml Lines 40-52 declare foreground services WearableStreamingService (types camera|microphone|mediaPlayback) and PlaybackService (type mediaPlayback) targeting SDK 37.\n\n**Critic Verification**: Automatically verified (bypassed critic review). (Confidence: High)",
+            "files_involved": [
+                "app/src/main/AndroidManifest.xml",
+                "shared/src/androidMain/kotlin/com/musically/studio/WearableStreamingService.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/audio/PlaybackService.kt"
+            ],
+            "finding_id": "26",
+            "issue_summary": "Foreground services are declared targeting SDK 37, requiring a Play Console Foreground Service declaration.",
+            "policy_id": "foreground_services_policy",
+            "recommendation": "For apps targeting Android 14+, you must complete a Foreground Service declaration in the Play Console (App content section) for each type used, providing a functional description, user impact video, and a specific use case selection.",
+            "severity": "SUGGESTION"
+        },
+        {
+            "evidence": "AndroidManifest.xml Line 15 requests ACCESS_FINE_LOCATION and LocationManager.kt Line 19 uses Priority.PRIORITY_HIGH_ACCURACY, despite MainViewModel+Concerts.kt Line 37 using location solely to search concerts within a 50-mile radius (range=50mi).\n\n**Critic Verification**: Codebase confirms AndroidManifest.xml requests ACCESS_FINE_LOCATION and LocationManager uses Priority.PRIORITY_HIGH_ACCURACY, despite MainViewModel+Concerts using location solely for a 50-mile radius concert search. (Confidence: High)",
+            "files_involved": [
+                "app/src/main/AndroidManifest.xml",
+                "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+            ],
+            "finding_id": "23",
+            "issue_summary": "App requests precise location (ACCESS_FINE_LOCATION) for concert search when features only require approximate location (coarse city-level access).",
+            "policy_id": "location_access_policy",
+            "recommendation": "Downgrade Manifest to ACCESS_COARSE_LOCATION to respect the minimum scope mandate.",
+            "severity": "IMPORTANT"
+        },
+        {
+            "evidence": "LocationManager.kt Line 18 retrieves device location via FusedLocationProviderClient for concert discovery without executing an in-app prominent disclosure dialog explaining location data collection.\n\n**Critic Verification**: Codebase confirms LocationManager retrieves location and MainViewModel+Concerts transmits lat/lon off-device to Firebase without any in-app prominent disclosure dialog explaining location data collection. (Confidence: High)",
+            "files_involved": [
+                "app/src/main/AndroidManifest.xml",
+                "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+            ],
+            "finding_id": "24",
+            "issue_summary": "App purpose (Mave) does not inherently imply location tracking, yet foreground location access is performed without a prominent disclosure.",
+            "policy_id": "location_access_policy",
+            "recommendation": "Implement a Prominent In-App Disclosure dialog explaining what location data is collected before requesting foreground permission.",
+            "severity": "IMPORTANT"
+        },
+        {
+            "evidence": "AndroidManifest.xml Line 15 and LocationManager.kt Line 19 request precise location access on Target SDK 37.\n\n**Critic Verification**: Automatically verified (bypassed critic review). (Confidence: High)",
+            "files_involved": [
+                "app/src/main/AndroidManifest.xml",
+                "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt"
+            ],
+            "finding_id": "25",
+            "issue_summary": "Precise location (ACCESS_FINE_LOCATION) is requested on Android 14+ (Target SDK 37).",
+            "policy_id": "location_access_policy",
+            "recommendation": "Migrate to the Location Button API as the minimum scope mechanism for precise foreground location.",
+            "severity": "SUGGESTION"
+        },
+        {
+            "evidence": "App implements authentication flows (loginWithEmail, loginWithGoogle, loginWithApple, completeRegistration) in MainViewModel+Auth.kt and manages sign-in state in MainActivity.kt.\n\n**Critic Verification**: The codebase explicitly implements authentication flows including email/password login, Google sign-in, and registration in MainViewModel+Auth.kt and UI components (SignInForm.kt, MainActivity.kt). App features are gated behind user authentication, verifying the need for reviewer demo credentials and account deletion setup in Play Console. (Confidence: High)",
+            "files_involved": [
+                "app/src/main/java/com/musically/studio/MainActivity.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Auth.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/UserProfileScreen.kt"
+            ],
+            "finding_id": "28",
+            "issue_summary": "App displays or contains a login screen, registration wall, or authentication interface.",
+            "policy_id": "login_credentials",
+            "recommendation": "**Administrative Console Requirements**: Because your app implements a login flow, you MUST complete two manual setup steps in the Play Console dashboard to pass review:<br>1. **Reviewer Demo Credentials**: Submit active, non-expiring test credentials so Google Play reviewers can access your gated features.<br>2. **Account Deletion Link**: Submit a public-facing web link for account deletion to satisfy Google Play's data deletion policies.",
+            "severity": "IMPORTANT"
+        },
+        {
+            "evidence": "In LocationManager.kt (line 19) and MainViewModel+Concerts.kt (lines 31-41), fine location (latitude/longitude) is retrieved via FusedLocationProviderClient and automatically sent off-device to the 'searchConcerts' Firebase Cloud Function on screen load without prior prominent disclosure or user consent.\n\n**Critic Verification**: Confirmed in LocationManager.kt (line 19) and MainViewModel+Concerts.kt (lines 31-41). When ConcertsScreen loads, fetchConcertsNearMe automatically fetches precise location using FusedLocationProviderClient with Priority.PRIORITY_HIGH_ACCURACY and transmits lat/lon off-device to the searchConcerts Firebase Cloud Function without prior prominent disclosure or explicit user consent. (Confidence: High)",
+            "files_involved": [
+                "dist/assets/index-BjcG2aKc.js",
+                "shared/src/androidMain/kotlin/com/musically/studio/location/LocationManager.kt",
+                "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+            ],
+            "finding_id": "21",
+            "issue_summary": "Silent Background Transfer",
+            "policy_id": "prominent_disclosure_policy",
+            "recommendation": "Add an in-app prominent disclosure dialog explaining precise location data collection and obtain explicit user consent prior to fetching location and transmitting it off-device.",
+            "severity": "CRITICAL"
+        }
+    ],
+    "manual_review": [],
+    "metadata": {
+        "app_id": "com.example.jetcaster.tv",
+        "overall_compliance": "Non-compliant",
+        "scan_date": "2026-08-11T03:04:32.242187"
+    },
+    "suggested_declaration": {
+        "collected_data": [
+            {
+                "data_type": "Approximate location",
+                "linked_to_user": true,
+                "purpose": "App functionality, Local functionality only"
+            },
+            {
+                "data_type": "App interactions",
+                "linked_to_user": true,
+                "purpose": "Analytics and App Functionality"
+            },
+            {
+                "data_type": "Voice or sound recordings",
+                "linked_to_user": true,
+                "purpose": "App functionality"
+            },
+            {
+                "data_type": "Crash logs",
+                "linked_to_user": false,
+                "purpose": "Analytics"
+            },
+            {
+                "data_type": "Email address",
+                "linked_to_user": true,
+                "purpose": "App functionality"
+            },
+            {
+                "data_type": "Other audio files",
+                "linked_to_user": true,
+                "purpose": "App functionality"
+            },
+            {
+                "data_type": "Diagnostics",
+                "linked_to_user": true,
+                "purpose": "Analytics and App Functionality"
+            },
+            {
+                "data_type": "Photos",
+                "linked_to_user": true,
+                "purpose": "App Functionality"
+            },
+            {
+                "data_type": "Precise location",
+                "linked_to_user": true,
+                "purpose": "App functionality"
+            },
+            {
+                "data_type": "Purchase history",
+                "linked_to_user": true,
+                "purpose": "App functionality"
+            },
+            {
+                "data_type": "User IDs",
+                "linked_to_user": true,
+                "purpose": "Account management"
+            }
+        ]
+    }
+}

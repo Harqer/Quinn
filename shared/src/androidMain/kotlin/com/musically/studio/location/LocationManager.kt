@@ -16,7 +16,7 @@ class LocationManager(private val context: Context) {
     @SuppressLint("MissingPermission")
     suspend fun getCurrentLocation(): Location? {
         return try {
-            val location = fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).await()
+            val location = fusedLocationClient.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, null).await()
             location
         } catch (e: Exception) {
             Timber.e(e, "Failed to get current location")

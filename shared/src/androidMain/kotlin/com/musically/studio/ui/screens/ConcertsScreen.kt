@@ -17,8 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.musically.studio.ui.MainViewModel
-import com.musically.studio.ui.getUserPhotoUrl
-import com.musically.studio.ui.getUserDisplayName
 import com.musically.studio.ui.components.organisms.ConcertCard
 import com.musically.studio.ui.concerts
 import com.musically.studio.ui.concertSearchError
@@ -38,10 +36,54 @@ fun ConcertsScreen(
     var searchQuery by remember { mutableStateOf("") }
     val context = LocalContext.current
 
+    var showLocationDisclosure by remember { mutableStateOf(false) }
+
+    val locationPermissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        viewModel.fetchConcertsNearMe(searchQuery)
+    }
+
     LaunchedEffect(Unit) {
-        if (concerts.isEmpty() && !isSearching) {
-            viewModel.fetchConcertsNearMe("")
+        val hasCoarsePermission = androidx.core.content.ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+        if (hasCoarsePermission) {
+            if (concerts.isEmpty() && !isSearching) {
+                viewModel.fetchConcertsNearMe("")
+            }
+        } else {
+            showLocationDisclosure = true
         }
+    }
+
+    if (showLocationDisclosure) {
+        AlertDialog(
+            onDismissRequest = {
+                showLocationDisclosure = false
+                viewModel.fetchConcertsNearMe("")
+            },
+            title = { Text("Location Access for Concerts") },
+            text = { Text("Mave collects approximate (coarse) location data to show upcoming concerts and musical events near you. Location data is only used for concert search and is never sold or shared for advertising.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showLocationDisclosure = false
+                    locationPermissionLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                }) {
+                    Text("Continue")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showLocationDisclosure = false
+                    viewModel.fetchConcertsNearMe("")
+                }) {
+                    Text("Skip")
+                }
+            }
+        )
     }
 
     Scaffold(

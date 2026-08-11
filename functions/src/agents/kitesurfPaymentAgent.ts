@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import { logger } from "firebase-functions";
 
 export interface KitesurfPaymentRequest {
   userId: string;
@@ -28,13 +29,23 @@ export async function processAutomatedPaymentKitesurf(
     const timestamp = new Date().toISOString();
     const transactionId = `kts_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
-    // Cloudflare Browser Run endpoint with browser=kitesurf query param
-    const cfAccountId = process.env.CLOUDFLARE_ACCOUNT_ID || "demo_account";
-    const cfApiToken = process.env.CLOUDFLARE_API_TOKEN || "";
-    const kitesurfCdpUrl = `wss://api.cloudflare.com/client/v4/accounts/${cfAccountId}/browser-run/devtools/browser?browser=kitesurf${cfApiToken ? `&token=${cfApiToken}` : ""}`;
+    const cfAccountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+    const cfApiToken = process.env.CLOUDFLARE_API_TOKEN;
 
-    console.log(`[Cloudflare Kitesurf] Initiating automated payment transaction ${transactionId} for user ${request.userId}`);
-    console.log(`[Cloudflare Kitesurf] CDP Endpoint: ${kitesurfCdpUrl}`);
+    if (!cfAccountId || !cfApiToken) {
+      logger.error("[Cloudflare Kitesurf] Missing required Cloudflare credentials (CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN)");
+      return {
+        success: false,
+        transactionId: "",
+        timestamp,
+        error: "Automated payment service unavailable: Cloudflare credentials not configured.",
+      };
+    }
+
+    const kitesurfCdpUrl = `wss://api.cloudflare.com/client/v4/accounts/${cfAccountId}/browser-run/devtools/browser?browser=kitesurf&token=${cfApiToken}`;
+
+    logger.info(`[Cloudflare Kitesurf] Initiating automated payment transaction ${transactionId} for user ${request.userId}`);
+    logger.info(`[Cloudflare Kitesurf] CDP Endpoint: ${kitesurfCdpUrl}`);
 
     // Persist payment transaction record to Firestore /users/{uid}/payments
     const paymentRecord = {
@@ -76,7 +87,7 @@ export async function processAutomatedPaymentKitesurf(
       timestamp,
     };
   } catch (error) {
-    console.error("[Cloudflare Kitesurf] Automated payment processing error:", error);
+    logger.error("[Cloudflare Kitesurf] Automated payment processing error:", error);
     return {
       success: false,
       transactionId: "",

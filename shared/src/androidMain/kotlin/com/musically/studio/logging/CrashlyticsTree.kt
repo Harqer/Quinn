@@ -11,14 +11,36 @@ class CrashlyticsTree : Timber.Tree() {
         }
 
         val crashlytics = FirebaseCrashlytics.getInstance()
-        crashlytics.setCustomKey("priority", priority)
-        tag?.let { crashlytics.setCustomKey("tag", it) }
-        crashlytics.log(message)
+        val priorityStr = when (priority) {
+            Log.INFO -> "INFO"
+            Log.WARN -> "WARN"
+            Log.ERROR -> "ERROR"
+            Log.ASSERT -> "ASSERT"
+            else -> "UNKNOWN"
+        }
 
-        if (priority == Log.ERROR && t == null) {
-            crashlytics.recordException(Exception(message))
-        } else if (t != null) {
-            crashlytics.recordException(t)
+        crashlytics.setCustomKey("log_level", priorityStr)
+        tag?.let { crashlytics.setCustomKey("tag", it) }
+        crashlytics.setCustomKey("thread_name", Thread.currentThread().name)
+        crashlytics.log("[$priorityStr] ${tag?.let { "[$it] " } ?: ""}$message")
+
+        if (priority == Log.ERROR || priority == Log.ASSERT) {
+            if (t != null) {
+                crashlytics.recordException(t)
+            } else {
+                crashlytics.recordException(Exception(message))
+            }
+        }
+    }
+
+    companion object {
+        fun setUserId(userId: String) {
+            FirebaseCrashlytics.getInstance().setUserId(userId)
+        }
+
+        fun setCustomKey(key: String, value: String) {
+            FirebaseCrashlytics.getInstance().setCustomKey(key, value)
         }
     }
 }
+

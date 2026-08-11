@@ -1,0 +1,42 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "PERFORMANCE_DIAGNOSTICS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "Background Transfer (Disclosure Claimed)",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+      ],
+      "evidence": "MyApplication.kt enables FirebaseCrashlytics and FirebaseAnalytics performance diagnostics and crash collection gated by hasAcceptedPrivacy preference, which is disclosed and opted-into via WelcomeScreen.kt AlertDialog ('Mave also collects app interactions and analytics data, as well as crash logs').",
+      "recommendation": "Ensure that the Play Store Data Safety form declares collection of Performance Diagnostics (crash logs and app performance data) for Analytics and App Functionality purposes.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "DISCLOSED",
+      "purpose": "Analytics and App Functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "CREDIT_DEBIT_BANK_ACCOUNT_NUMBER",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "/home/shaolin/lyria/functions/src/billing.ts",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/PremiumPlansScreen.kt"
+      ],
+      "evidence": "No raw credit, debit, or bank account numbers are collected, stored, or transmitted by the app codebase or Firebase backend. Subscriptions and payments are handled out-of-band via Google Play Billing API or Stripe web checkout.",
+      "recommendation": "No declaration required in Play Store Data Safety form for credit/debit bank account numbers as the app does not collect or process raw financial account numbers directly.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    }
+  ]
+}

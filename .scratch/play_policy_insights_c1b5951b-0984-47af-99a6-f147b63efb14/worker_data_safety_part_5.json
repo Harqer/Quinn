@@ -1,0 +1,44 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "APP_INTERACTIONS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "Background Transfer (Disclosure Claimed)",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MyApplication.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+      ],
+      "evidence": "MyApplication.kt initializes FirebaseAnalytics to log app interactions and usage telemetry off-device. Analytics collection is gated by the hasAcceptedPrivacy preference, which is disclosed and opted into via the WelcomeScreen.kt AlertDialog ('Mave also collects app interactions and analytics data').",
+      "recommendation": "Declare collection of App Interactions in the Google Play Data Safety form for Analytics and App Functionality purposes.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "DISCLOSED",
+      "purpose": "Analytics and App Functionality",
+      "linked_to_user": true
+    },
+    {
+      "psl_constant": "PHOTOS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "Background Transfer (Disclosure Claimed)",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "/home/shaolin/lyria/app/src/main/java/com/musically/studio/MainActivity.kt",
+        "/home/shaolin/lyria/components/organisms/player-controls.ts",
+        "/home/shaolin/lyria/dist/assets/ChatScreen-D4g5_Ezi.js",
+        "/home/shaolin/lyria/shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt"
+      ],
+      "evidence": "Camera permissions and image/vision frame processing in MainActivity.kt, player-controls.ts, and ChatScreen-D4g5_Ezi.js send photo and camera data off-device to Gemini Live API for AI music generation. This collection is disclosed and consented to via WelcomeScreen.kt AlertDialog ('Mave collects and transmits camera and microphone data to enable real-time AI music generation').",
+      "recommendation": "Declare collection and off-device transmission of Photos and Videos in the Google Play Data Safety form under App Functionality.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "DISCLOSED",
+      "purpose": "App Functionality",
+      "linked_to_user": true
+    }
+  ]
+}

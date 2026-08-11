@@ -1,0 +1,43 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "VIDEOS",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "app/src/main/java/com/musically/studio/MainActivity.kt",
+        "dist/assets/ChatScreen-D4g5_Ezi.js",
+        "dist/assets/LiveChatMessage--SXZ4IsC.js"
+      ],
+      "evidence": "MediaController in MainActivity.kt and video elements in ChatScreen-D4g5_Ezi.js are used strictly for local media playback and UI rendering. No off-device transmission of user video files occurs.",
+      "recommendation": "No action required. User video data remains local to the device.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "AUDIO",
+      "policy_id": "data_safety_section",
+      "issue_summary": "User-Initiated Collection: Disclosure exempt, but must be declared in Play Store form.",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "app/src/main/java/com/musically/studio/MainActivity.kt",
+        "components/organisms/chat-interface.styles.ts",
+        "components/organisms/chat-interface.ts"
+      ],
+      "evidence": "User explicitly initiates audio recording by clicking the microphone button in chat-interface.ts / ChatViewModel.kt. The recorded PCM audio stream is transmitted off-device via WebSocket to the Gemini Live service provider endpoint (wss://generativelanguage.googleapis.com) for real-time voice processing.",
+      "recommendation": "Declare AUDIO collection and transmission under the Data Safety section in Google Play Console. Prominent disclosure is exempt because collection is user-initiated.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": true
+    }
+  ]
+}

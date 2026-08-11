@@ -1,0 +1,60 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "APPROX_LOCATION",
+      "policy_id": "data_safety_section",
+      "issue_summary": "User-Initiated Collection",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel+Concerts.kt"
+      ],
+      "evidence": "MainViewModel+Concerts.kt:30-41: LocationManager obtains current device location (latitude, longitude) via FusedLocationProviderClient when user initiates concert search or navigates to Concerts screen, and passes lat/lon to Firebase Cloud Function searchConcerts.",
+      "recommendation": "Declare approximate location collection in the Play Store Data Safety form under App Functionality.",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "DEVICE_ID",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "dist/assets/index-BjcG2aKc.js",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/MainViewModel.kt"
+      ],
+      "evidence": "MainViewModel.kt:974-1008: AudioDeviceInfo is inspected locally via AudioManager.getDevices to determine audio output types (speaker, bluetooth headset) for on-device UI rendering. No device hardware identifiers are collected or transmitted off-device.",
+      "recommendation": "No action required as device audio output info is processed locally on-device.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "FITNESS",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "tmp/compose-samples/JetLagged/app/src/main/java/com/example/jetlagged/JetLaggedScreen.kt",
+        "tmp/compose-samples/JetLagged/app/src/main/java/com/example/jetlagged/data/FakeHeartRateData.kt",
+        "tmp/compose-samples/JetLagged/app/src/main/java/com/example/jetlagged/data/JetLaggedHomeScreenState.kt"
+      ],
+      "evidence": "FakeHeartRateData.kt:21-199: Hardcoded mock heart rate data heartRateGraphData is used exclusively for Jetpack Compose UI sample previews. No actual fitness or health data is collected or transmitted off-device.",
+      "recommendation": "No action required as heart rate data consists of hardcoded mock samples used strictly for local UI layout previews.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    }
+  ]
+}

@@ -27,10 +27,6 @@ import android.util.Base64
 
     fun MainViewModel.getUserId(): String = auth.currentUser?.uid ?: ""
 
-    fun MainViewModel.getUserPhotoUrl(): String? = auth.currentUser?.photoUrl?.toString()
-
-    fun MainViewModel.getUserDisplayName(): String? = auth.currentUser?.displayName
-
     fun MainViewModel.loginWithEmail(email: String, pass: String, callback: (Boolean, String?) -> Unit) {
         if (email.isBlank() || pass.isBlank()) {
             callback(false, "Email and password must not be empty.")
@@ -55,6 +51,10 @@ import android.util.Base64
                     .addOnCompleteListener { task ->
                         _isLoading.value = false
                         if (task.isSuccessful) {
+                            val uid = auth.currentUser?.uid
+                            if (uid != null) {
+                                com.musically.studio.logging.CrashlyticsTree.setUserId(uid)
+                            }
                             startRtdbSync()
                             callback(true, null)
                         } else {
@@ -262,6 +262,7 @@ import android.util.Base64
         rtdbSyncJob?.cancel()
         rtdbSyncJob = null
         currentRtdbUid = null
+        com.musically.studio.logging.CrashlyticsTree.setUserId("")
         auth.signOut()
         Timber.i("User signed out")
         viewModelScope.launch {

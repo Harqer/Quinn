@@ -1,0 +1,45 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "RACE_ETHNICITY",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only)",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "app/src/main/java/com/musically/studio/appfunctions/MaveAppFunctionService.kt",
+        "dist/assets/index-BjcG2aKc.js",
+        "dist/assets/logger-suwgBkNw.js"
+      ],
+      "evidence": "Audited MaveAppFunctionService.kt, index-BjcG2aKc.js, and logger-suwgBkNw.js for pattern 'race'. All matches are false positives (e.g., e.printStackTrace(), Promise.race(), stacktrace, traceId). No race or ethnicity data is collected or transferred.",
+      "recommendation": "No action required. Race or ethnicity data is not collected or transmitted by the application.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "CRASH_LOGS",
+      "policy_id": "prominent_disclosure_policy",
+      "issue_summary": "Background Transfer (Disclosure Claimed)",
+      "severity": "IMPORTANT",
+      "files_involved": [
+        "app/src/main/java/com/musically/studio/MyApplication.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/ui/screens/onboarding/WelcomeScreen.kt",
+        "shared/src/androidMain/kotlin/com/musically/studio/logging/CrashlyticsTree.kt",
+        "dist/assets/index-BjcG2aKc.js",
+        "dist/assets/jsx-runtime-B-hcVAMW.js"
+      ],
+      "evidence": "FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true) in MyApplication.kt transfers crash logs off-device. Prominent disclosure AlertDialog in WelcomeScreen.kt explicitly discloses crash log collection and gates collection on affirmative user consent.",
+      "recommendation": "Ensure crash log data collection is declared in the Play Store Data Safety form.",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "DISCLOSED",
+      "purpose": "Analytics",
+      "linked_to_user": false
+    }
+  ]
+}
