@@ -6,12 +6,12 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.musically.studio.ui.components.molecules.HomeSectionTitle
+import com.musically.studio.ui.components.molecules.HomeSegmentedNavRow
 import com.musically.studio.ui.components.molecules.MaveCard
 import com.musically.studio.ui.components.molecules.MediaCard
 
@@ -31,6 +31,7 @@ fun HomeSuccessOrganism(
     onNavigateToAudiobooks: () -> Unit,
     onNavigateToConcerts: () -> Unit,
     onNavigateToJam: () -> Unit,
+    onNavigateToTrivia: () -> Unit = {},
     onCategoryClick: (String) -> Unit,
     onTrackClick: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -41,26 +42,19 @@ fun HomeSuccessOrganism(
         modifier = modifier.fillMaxSize()
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 160.dp),
+            columns = GridCells.Adaptive(362.dp),
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 120.dp, start = 16.dp, end = 16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp, start = 16.dp, end = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item(span = { GridItemSpan(maxLineSpan) }) {
-                val chips = homeSections.map { section ->
-                    val onClickAction = when (section.route.lowercase()) {
-                        "music" -> onNavigateToMusic
-                        "podcasts" -> onNavigateToPodcast
-                        "audiobooks" -> onNavigateToAudiobooks
-                        "concerts" -> onNavigateToConcerts
-                        else -> onNavigateToMusic
-                    }
-                    com.musically.studio.ui.components.molecules.SectionChip(section.title, onClick = onClickAction)
-                }.toMutableList().apply {
-                    add(0, com.musically.studio.ui.components.molecules.SectionChip("Jam Mode", onClick = onNavigateToJam))
-                }
-                com.musically.studio.ui.components.molecules.SectionChipsRow(chips = chips)
+                HomeSegmentedNavRow(
+                    onNavigateToMusic = onNavigateToMusic,
+                    onNavigateToPodcast = onNavigateToPodcast,
+                    onNavigateToAudiobooks = onNavigateToAudiobooks,
+                    onNavigateToTrivia = onNavigateToTrivia
+                )
             }
 
             item(span = { GridItemSpan(maxLineSpan) }) {
@@ -72,51 +66,52 @@ fun HomeSuccessOrganism(
 
             if (audiobooks.isNotEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Text(
-                        text = "Audiobooks",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
-                }
-                items(audiobooks, key = { it.hashCode() }) { audiobook ->
-                    MediaCard(
-                        title = audiobook.title,
-                        subtitle = audiobook.author,
-                        imageUrl = audiobook.imageUrl,
-                        onClick = onNavigateToAudiobooks
-                    )
+                    Column {
+                        HomeSectionTitle(title = "Audiobooks")
+                        androidx.compose.foundation.lazy.LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            items(audiobooks.size) { index ->
+                                val audiobook = audiobooks[index]
+                                MediaCard(
+                                    title = audiobook.title,
+                                    subtitle = audiobook.author,
+                                    imageUrl = audiobook.imageUrl,
+                                    onClick = onNavigateToAudiobooks
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
             if (podcasts.isNotEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Text(
-                        text = "Podcasts",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
-                }
-                items(podcasts, key = { it.hashCode() }) { podcast ->
-                    MediaCard(
-                        title = podcast.name,
-                        subtitle = podcast.publisher,
-                        imageUrl = podcast.imageUrl,
-                        onClick = onNavigateToPodcast
-                    )
+                    Column {
+                        HomeSectionTitle(title = "Podcasts")
+                        androidx.compose.foundation.lazy.LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            items(podcasts.size) { index ->
+                                val podcast = podcasts[index]
+                                MediaCard(
+                                    title = podcast.name,
+                                    subtitle = podcast.publisher,
+                                    imageUrl = podcast.imageUrl,
+                                    onClick = onNavigateToPodcast
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
             val recentTracks = (if (tracks.isNotEmpty()) tracks else communityTracks).take(6)
             if (recentTracks.isNotEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Text(
-                        text = "Recent Tracks",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
+                    HomeSectionTitle(title = "Recent Tracks")
                 }
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     RecentTracksGrid(
@@ -129,12 +124,7 @@ fun HomeSuccessOrganism(
             val madeForYouTracks = if (tracks.isNotEmpty()) tracks.take(5) else communityTracks.take(5)
             if (madeForYouTracks.isNotEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Text(
-                        text = "Made for you",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
+                    HomeSectionTitle(title = "Made for you")
                 }
                 items(madeForYouTracks, key = { it.id }) { track ->
                     MaveCard(
@@ -146,12 +136,7 @@ fun HomeSuccessOrganism(
 
             if (communityTracks.isNotEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Text(
-                        text = "Community Songs",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
+                    HomeSectionTitle(title = "Community Songs")
                 }
                 items(communityTracks, key = { it.id }) { track ->
                     MaveCard(
@@ -163,12 +148,7 @@ fun HomeSuccessOrganism(
 
             if (tracks.isNotEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Text(
-                        text = "Recently played",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
+                    HomeSectionTitle(title = "Recently played")
                 }
                 items(tracks, key = { it.id }) { track ->
                     MaveCard(

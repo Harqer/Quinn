@@ -44,6 +44,8 @@ sealed interface Route : NavKey {
     @Serializable data object LiveSessionOptions : Route
     @Serializable data class UsageLimitSheet(val reasonName: String) : Route
     @Serializable data class GeneratingSong(val imageBase64: String) : Route
+    @Serializable data object PodcastOnboarding : Route
+    @Serializable data class PodcastGenerator(val prompt: String, val isAudiobook: Boolean = false) : Route
     @Serializable data object NotFound : Route
 }
 

@@ -23,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import java.util.Calendar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,12 +41,22 @@ fun MaveHomeTopBar(
     }
 
     TopAppBar(
+        navigationIcon = {
+            androidx.compose.material3.IconButton(onClick = onNavigateToProfile) {
+                androidx.compose.material3.Icon(
+                    imageVector = androidx.compose.material.icons.Icons.Default.Menu,
+                    contentDescription = "Menu",
+                    tint = Color.White
+                )
+            }
+        },
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(modifier = Modifier.width(4.dp))
                 com.musically.studio.ui.components.atoms.UserAvatarButton(
                     photoUrl = photoUrl,
                     displayName = displayName,
-                    onClick = onNavigateToProfile
+                    onClick = onNavigateToProfile // or could navigate to profile later
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(

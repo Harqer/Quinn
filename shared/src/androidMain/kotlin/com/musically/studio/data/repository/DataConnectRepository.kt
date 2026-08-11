@@ -5,6 +5,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 @Singleton
@@ -17,6 +18,16 @@ class DataConnectRepository @Inject constructor(
             emit(response.data.playlists)
         } catch (e: Exception) {
             Timber.e(e, "Failed to fetch playlists from Data Connect")
+            emit(emptyList())
+        }
+    }
+
+    fun listInstruments(): Flow<List<ListInstrumentsQuery.Data.InstrumentsItem>> = flow {
+        try {
+            val response = connector.listInstruments.execute()
+            emit(response.data.instruments)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to list instruments from Data Connect")
             emit(emptyList())
         }
     }
@@ -172,6 +183,69 @@ class DataConnectRepository @Inject constructor(
         } catch (e: Exception) {
             Timber.e(e, "Failed to fetch track")
             null
+        }
+    }
+
+    fun getEpisodesForShow(showId: String): Flow<List<GetEpisodesForShowQuery.Data.EpisodesItem>> = flow {
+        try {
+            val response = connector.getEpisodesForShow.execute(showId = showId)
+            emit(response.data.episodes)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to fetch episodes for show")
+            emit(emptyList())
+        }
+    }
+
+    suspend fun getEpisode(episodeId: String): GetEpisodeQuery.Data.Episode? {
+        return try {
+            val response = connector.getEpisode.execute(id = episodeId)
+            response.data.episode
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to fetch episode")
+            null
+        }
+    }
+
+    suspend fun createJamSessionHistory(roomId: String, gameMode: String, participantCount: Int): Boolean {
+        return try {
+            val uid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                .collection("jam_session_history")
+                .add(
+                    mapOf(
+                        "roomId" to roomId,
+                        "gameMode" to gameMode,
+                        "hostId" to uid,
+                        "participantCount" to participantCount,
+                        "timestamp" to com.google.firebase.Timestamp.now()
+                    )
+                ).await()
+            true
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to create Jam session history")
+            false
+        }
+    }
+
+    suspend fun saveEpisodeProgress(episodeId: String, progressMs: Int): Boolean {
+        return try {
+            val uid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: return false
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .collection("episode_progress")
+                .document(episodeId)
+                .set(
+                    mapOf(
+                        "episodeId" to episodeId,
+                        "progressMs" to progressMs,
+                        "lastPlayedAt" to com.google.firebase.Timestamp.now()
+                    )
+                ).await()
+            true
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to save episode progress")
+            false
         }
     }
 }

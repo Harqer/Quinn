@@ -50,7 +50,7 @@ fun GenerateCoverScreen(
                 dynamicPresets = result.data.aIPresets.map { it.name }
             }
         } catch (e: Exception) {
-            android.util.Log.e("GenerateCoverScreen", "Failed to load AI presets from DataConnect", e)
+            timber.log.Timber.e(e, "Failed to load AI presets from DataConnect")
         }
     }
 

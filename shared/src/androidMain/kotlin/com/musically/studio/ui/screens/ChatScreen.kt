@@ -110,6 +110,14 @@ fun ChatScreen(
                         coroutineScope.launch {
                             inputValue = "Generate a music video for: "
                         }
+                    },
+                    onGeneratePodcast = {
+                        viewModel.generateNarrativeSeries(topic = inputValue.takeIf { it.isNotBlank() } ?: "a random topic", type = "podcast")
+                        inputValue = ""
+                    },
+                    onGenerateAudiobook = {
+                        viewModel.generateNarrativeSeries(topic = inputValue.takeIf { it.isNotBlank() } ?: "a random story", type = "audiobook")
+                        inputValue = ""
                     }
                 )
             },

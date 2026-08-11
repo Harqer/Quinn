@@ -40,3 +40,5 @@ dependencyResolutionManagement {
 rootProject.name = "Mave"
 include(":app")
 include(":shared")
+include(":wear")
+include(":tv")

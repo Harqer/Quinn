@@ -39,7 +39,7 @@ fun AlbumHeader(
             onShareClick = { 
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_TEXT, "Check out this album on Mave: https://mave.studio/album/$albumId")
+                    putExtra(Intent.EXTRA_TEXT, "Check out this album on Lyria: https://lyria.studio/album/$albumId")
                 }
                 context.startActivity(Intent.createChooser(shareIntent, "Share Album"))
             },

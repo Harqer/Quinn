@@ -1,5 +1,5 @@
 {
-  "firestore": {
+  "emulators": { "firestore": { "port": 8082 } }, "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
@@ -41,6 +41,10 @@
       "**/node_modules/**"
     ],
     "rewrites": [
+      {
+        "source": "/api/music/execute-tool",
+        "function": "executeTool"
+      },
       {
         "source": "**",
         "destination": "/index.html"

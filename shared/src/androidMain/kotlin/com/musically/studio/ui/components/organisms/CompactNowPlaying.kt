@@ -1,8 +1,6 @@
 package com.musically.studio.ui.components.organisms
-import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,18 +12,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.musically.studio.network.MaveTrack
 import com.musically.studio.ui.models.AudioDevice
 import com.musically.studio.ui.theme.MaveBrand
 import com.musically.studio.ui.components.atoms.PlaybackControls
 import com.musically.studio.ui.components.atoms.PlaybackSlider
 import com.musically.studio.ui.components.atoms.VolumeSlider
-import com.musically.studio.ui.components.molecules.SeamlessVideoPlayer
+import com.musically.studio.ui.components.molecules.CompactArtDisplay
+import com.musically.studio.ui.components.molecules.CompactTrackHeader
+import com.musically.studio.ui.components.molecules.MediaFooterDeviceRow
+import com.musically.studio.ui.components.molecules.MediaVisualActionsRow
 import kotlin.math.abs
 import com.musically.studio.ui.utils.debouncedClickable
 
@@ -59,7 +58,6 @@ fun CompactNowPlaying(
     volume: Float,
     onVolumeChange: (Float) -> Unit
 ) {
-    val localCtx = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,82 +89,27 @@ fun CompactNowPlaying(
         
         Spacer(modifier = Modifier.height(32.dp))
         
-        // Album Art / Video
-        Box(modifier = Modifier.fillMaxWidth().aspectRatio(1f)) {
-            if (currentVideoUrl != null) {
-                SeamlessVideoPlayer(
-                    videoUrl = currentVideoUrl,
-                    modifier = Modifier.fillMaxSize().clip(MaterialTheme.shapes.small)
-                )
-            } else {
-                AsyncImage(
-                    model = currentCoverUrl ?: track.album.images.firstOrNull()?.url,
-                    contentDescription = "Album Art",
-                    contentScale = ContentScale.Crop,
-                    placeholder = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
-                    error = androidx.compose.ui.graphics.painter.ColorPainter(Color.DarkGray),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(MaterialTheme.shapes.small)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                )
-            }
-        }
+        CompactArtDisplay(
+            currentCoverUrl = currentCoverUrl,
+            currentVideoUrl = currentVideoUrl,
+            fallbackCoverUrl = track.album.images.firstOrNull()?.url
+        )
         
         Spacer(modifier = Modifier.height(32.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            AssistChip(
-                onClick = onRequestCover,
-                label = { Text("Regenerate Cover") },
-                leadingIcon = { Icon(Icons.Default.Palette, contentDescription = "Remix Theme", modifier = Modifier.size(18.dp)) }
-            )
-            AssistChip(
-                onClick = onRequestVideo,
-                label = { Text("Generate Video") },
-                leadingIcon = { Icon(Icons.Default.VideoLibrary, contentDescription = "Generate Music Video", modifier = Modifier.size(18.dp)) }
-            )
-        }
+        MediaVisualActionsRow(
+            onRequestCover = onRequestCover,
+            onRequestVideo = onRequestVideo
+        )
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        // Track Info & Like Button
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = track.name,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    maxLines = 1
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = track.artists.joinToString { it.name },
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1
-                )
-            }
-            Row {
-                IconButton(onClick = onLike) {
-                    Icon(Icons.Default.FavoriteBorder, contentDescription = "Like", tint = MaterialTheme.colorScheme.onBackground)
-                }
-                IconButton(onClick = onBookmark) {
-                    Icon(Icons.Default.BookmarkBorder, contentDescription = "Bookmark", tint = MaterialTheme.colorScheme.onBackground)
-                }
-                IconButton(onClick = onMore) {
-                    Icon(Icons.Default.MoreHoriz, contentDescription = "More", tint = MaterialTheme.colorScheme.onBackground)
-                }
-            }
-        }
+        CompactTrackHeader(
+            track = track,
+            onLike = onLike,
+            onBookmark = onBookmark,
+            onMore = onMore
+        )
         
         Spacer(modifier = Modifier.height(32.dp))
         
@@ -189,31 +132,13 @@ fun CompactNowPlaying(
         VolumeSlider(volume = volume, onVolumeChange = onVolumeChange)
         Spacer(modifier = Modifier.height(16.dp))
         
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.small)
-                    .debouncedClickable { onDeviceClick() }
-                    .padding(8.dp)
-            ) {
-                Icon(Icons.Default.Bluetooth, contentDescription = "Device", tint = MaveBrand, modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(devices.firstOrNull()?.name ?: "Phone Speaker", color = MaveBrand, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                IconButton(onClick = onShare, modifier = Modifier.size(24.dp)) {
-                    Icon(Icons.Default.Share, contentDescription = "Share", tint = Color.White)
-                }
-                IconButton(onClick = onQueueClick, modifier = Modifier.size(24.dp)) {
-                    Icon(Icons.Default.Menu, contentDescription = "Queue", tint = Color.White)
-                }
-            }
-        }
+        MediaFooterDeviceRow(
+            devices = devices,
+            onDeviceClick = onDeviceClick,
+            onShare = onShare,
+            onQueueClick = onQueueClick
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
         val lyricsColor = remember(track.id) {
             val hash = abs(track.id.hashCode() * 31)
@@ -230,6 +155,7 @@ fun CompactNowPlaying(
                 .weight(1f)
                 .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                 .background(lyricsColor)
+                .semantics(mergeDescendants = true) {}
                 .debouncedClickable { onLyricsClick() }
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 0.dp),
         ) {

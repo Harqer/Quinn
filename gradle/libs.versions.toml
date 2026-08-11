@@ -45,9 +45,19 @@ androidxPalette = "1.0.0"
 firebaseDataconnect = "17.3.3"
 mockito = "5.3.1"
 mockito-kotlin = "5.0.0"
+
+
 billing = "9.1.0"
 recaptcha = "18.9.2"
 play-services-location = "21.3.0"
+wearCompose = "1.4.0"
+horologist = "0.7.15"
+tvCompose = "1.0.0"
+navigationCompose = "2.8.0"
+hiltNavigationCompose = "1.2.0"
+appcompat = "1.7.0"
+coreJdkDesugaring = "2.1.4"
+kotlinxCollectionsImmutable = "0.3.8"
 
 [libraries]
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -133,10 +143,40 @@ roborazzi-junit = { group = "io.github.takahirom.roborazzi", name = "roborazzi-j
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version = "4.12.0" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
+
+
 androidx-palette-ktx = { group = "androidx.palette", name = "palette-ktx", version.ref = "androidxPalette" }
 firebase-dataconnect = { group = "com.google.firebase", name = "firebase-dataconnect", version.ref = "firebaseDataconnect" }
 engage-core = { group = "com.google.android.engage", name = "engage-core", version.ref = "engage-core" }
+
+# TV & Wear specific additions
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-tv-material = { group = "androidx.tv", name = "tv-material", version.ref = "tvCompose" }
+androidx-tv-foundation = { group = "androidx.tv", name = "tv-foundation", version.ref = "tvCompose" }
+androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime", version.ref = "androidxLifecycle" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+core-jdk-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "coreJdkDesugaring" }
+
+androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "wearCompose" }
+androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wearCompose" }
+androidx-wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "wearCompose" }
+androidx-wear-compose-ui-tooling = { group = "androidx.wear.compose", name = "compose-ui-tooling", version.ref = "wearCompose" }
+
+kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
+coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+
+horologist-media-ui = { group = "com.google.android.horologist", name = "horologist-media-ui", version.ref = "horologist" }
+horologist-media-uimaterial3 = { group = "com.google.android.horologist", name = "horologist-media-ui-material3", version.ref = "horologist" }
+horologist-media-ui-model = { group = "com.google.android.horologist", name = "horologist-media-ui-model", version.ref = "horologist" }
+horologist-audio-ui = { group = "com.google.android.horologist", name = "horologist-audio-ui", version.ref = "horologist" }
+horologist-audio-uimaterial3 = { group = "com.google.android.horologist", name = "horologist-audio-ui-material3", version.ref = "horologist" }
+horologist-audio-ui-model = { group = "com.google.android.horologist", name = "horologist-audio-ui-model", version.ref = "horologist" }
+horologist-media-data = { group = "com.google.android.horologist", name = "horologist-media-data", version.ref = "horologist" }
+horologist-images-coil = { group = "com.google.android.horologist", name = "horologist-images-coil", version.ref = "horologist" }
 
 # Compose Multiplatform — shared UI (commonMain)
 [plugins]

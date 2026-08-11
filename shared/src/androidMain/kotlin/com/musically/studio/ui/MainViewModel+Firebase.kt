@@ -338,8 +338,10 @@ fun MainViewModel.fetchCatalog() {
         fetchCategories()
         fetchAudiobooks()
         fetchPodcasts()
+        fetchCommunityTracks()
     }
 }
+
 
 fun MainViewModel.stopRecording() {
     Timber.d("[MAIN_VM] Stopping voice recording session")
@@ -368,7 +370,17 @@ fun MainViewModel.sendVisionFrame(base64: String, mimeType: String = "image/jpeg
 fun MainViewModel.fetchVibesByUserId(userId: String) {
     Timber.d("[MAIN_VM] Fetching vibes for user: %s", userId)
     viewModelScope.launch {
-        // Without a specific query, we just refresh community tracks as "vibes"
-        fetchCommunityTracks()
+        try {
+            _isLoading.value = true
+            com.google.firebase.Firebase.functions.getHttpsCallable("fetchPersonalizedSpotifyVibe")
+                .call(mapOf("vibeQuery" to "chill", "playlistId" to "37i9dQZEVXbMDoHDwVN2tF")).await()
+            fetchCommunityTracks()
+            fetchUserTracks()
+        } catch (e: Exception) {
+            Timber.e(e, "[MAIN_VM] Failed to fetch personalized Spotify vibe")
+            fetchCommunityTracks()
+        } finally {
+            _isLoading.value = false
+        }
     }
 }

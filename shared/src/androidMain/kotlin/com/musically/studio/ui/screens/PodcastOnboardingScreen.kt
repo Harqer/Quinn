@@ -28,7 +28,7 @@ import com.musically.studio.ui.utils.debouncedClickable
 @Composable
 fun PodcastOnboardingScreen(
     viewModel: MainViewModel,
-    onDone: () -> Unit
+    onDone: (String) -> Unit
 ) {
     val tracks by viewModel.tracks.collectAsStateWithLifecycle()
     val errorMessage by viewModel.catalogErrorMessage.collectAsStateWithLifecycle()
@@ -74,7 +74,7 @@ fun PodcastOnboardingScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    onClick = onDone,
+                    onClick = { onDone("Generate podcast using: " + selectedPodcasts.joinToString(",")) },
                     modifier = Modifier.fillMaxWidth().height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color.Black)
                 ) {

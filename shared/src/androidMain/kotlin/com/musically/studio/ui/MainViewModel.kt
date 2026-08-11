@@ -16,6 +16,11 @@ import android.media.AudioManager
 import android.util.Base64
 import androidx.compose.runtime.mutableStateListOf
 import androidx.core.content.ContextCompat
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
+import android.content.ComponentName
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
@@ -78,7 +83,7 @@ class MainViewModel @Inject constructor(
 
     internal val playBillingManager = PlayBillingManager(
         context = context,
-        onPurchaseAcknowledged = { productId ->
+        onPurchaseAcknowledged = { _ ->
             // Optimistic update: re-sync settings so isPremium reflects the new state.
             // The authoritative DB update happens via the Play Developer Notification webhook
             // (server-side, not implemented in this client PR — see implementation_plan.md).
@@ -100,6 +105,35 @@ class MainViewModel @Inject constructor(
 
     fun restorePurchases() {
         playBillingManager.restorePurchases()
+    }
+
+    fun executeCloudflareKitesurfAutomatedPayment(
+        planId: String = "premium_monthly",
+        onResult: (Boolean, String?) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val functions = com.google.firebase.functions.FirebaseFunctions.getInstance()
+                val data = mapOf(
+                    "planId" to planId,
+                    "amountCents" to 999,
+                    "currency" to "USD"
+                )
+                val result = functions.getHttpsCallable("executeAutomatedPaymentKitesurf").call(data).await()
+                val resMap = result.data as? Map<*, *>
+                val success = resMap?.get("success") as? Boolean ?: false
+                val transactionId = resMap?.get("transactionId") as? String
+                if (success) {
+                    onResult(true, transactionId)
+                } else {
+                    val error = resMap?.get("error") as? String ?: "Automated payment failed"
+                    onResult(false, error)
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Cloudflare Kitesurf automated payment failed")
+                onResult(false, e.message ?: "Automated payment failed")
+            }
+        }
     }
 
     internal val prefs = context.getSharedPreferences("mave_prefs", Context.MODE_PRIVATE)
@@ -357,6 +391,9 @@ class MainViewModel @Inject constructor(
     internal var rtdbSyncJob: Job? = null
     internal var currentRtdbUid: String? = null
     internal var mfaResolver: com.google.firebase.auth.MultiFactorResolver? = null
+    
+    internal var mediaController: MediaController? = null
+    internal var controllerFuture: ListenableFuture<MediaController>? = null
 
     // Registration State Accumulator
     var regEmail = ""
@@ -465,6 +502,13 @@ class MainViewModel @Inject constructor(
         if (isUserLoggedIn()) {
             startRtdbSync()
         }
+        
+        val sessionToken = SessionToken(context, ComponentName(context, com.musically.studio.audio.PlaybackService::class.java))
+        controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+        controllerFuture?.addListener({
+            mediaController = controllerFuture?.get()
+        }, MoreExecutors.directExecutor())
+        
         fetchCatalog()
     }
 
@@ -577,7 +621,9 @@ class MainViewModel @Inject constructor(
                             val result = task.result?.data as? Map<*, *>
                             val url = result?.get("url") as? String
                             if (url != null) {
-                                // Navigate to url, e.g. using Intent
+                                viewModelScope.launch {
+                                    _stripeUrl.emit(url)
+                                }
                             }
                         }
                         _isLoading.value = false
@@ -744,6 +790,27 @@ class MainViewModel @Inject constructor(
                                 })
                             }
                         }
+                    } else {
+                        viewModelScope.launch {
+                            try {
+                                val functions = com.google.firebase.Firebase.functions
+                                val argsMap = mutableMapOf<String, Any>()
+                                args?.keys()?.forEach { key ->
+                                    argsMap[key] = args.get(key)
+                                }
+                                val result = functions.getHttpsCallable("executeTool").call(
+                                    mapOf("name" to name, "args" to argsMap)
+                                ).await()
+                                val data = result.data as? Map<String, Any>
+                                val jsonResponse = JSONObject(data ?: emptyMap<String, Any>())
+                                geminiLiveManager.sendResponse(call.optString("id", "0"), name, jsonResponse)
+                            } catch (e: Exception) {
+                                Timber.e(e, "Failed to execute tool on backend")
+                                geminiLiveManager.sendResponse(call.optString("id", "0"), name, JSONObject().apply {
+                                    put("error", e.message)
+                                })
+                            }
+                        }
                     }
                 } catch (e: Exception) {
                     Timber.e(e, "Failed to handle tool call")
@@ -782,7 +849,46 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    // Collect wearable POV camera frames and forward to backend when streaming is enabled
+    fun generateMusicFromCameraImage(imageBase64: String) {
+        viewModelScope.launch {
+            try {
+                _thinkingText.value = "Analyzing visual atmosphere & vibe from camera capture..."
+                val functions = com.google.firebase.Firebase.functions
+                val payload = mapOf(
+                    "name" to "generate_full_track",
+                    "args" to mapOf(
+                        "prompt" to "A cinematic song inspired by the visual vibe and atmosphere of the captured scene",
+                        "image" to imageBase64
+                    )
+                )
+                val result = functions.getHttpsCallable("executeTool").call(payload).await()
+                val data = result.data as? Map<String, Any>
+                val audioUrl = data?.get("audioUrl") as? String ?: (data?.get("result") as? Map<String, Any>)?.get("audioUrl") as? String
+                
+                if (audioUrl != null) {
+                    val cover = _currentCoverUrl.value?.ifEmpty { "https://picsum.photos/400/400" } ?: "https://picsum.photos/400/400"
+                    val newTrack = MaveTrack(
+                        id = "cam_${System.currentTimeMillis()}",
+                        name = "Camera Capture Vibe Track",
+                        artists = listOf(com.musically.studio.network.MaveArtist(id = "lyria_ai", name = "Lyria AI")),
+                        album = com.musically.studio.network.MaveAlbum(
+                            id = "cam_album_${System.currentTimeMillis()}",
+                            name = "Camera Capture Vibe",
+                            images = listOf(com.musically.studio.network.MaveImage(url = cover))
+                        ),
+                        audioUrl = audioUrl,
+                        durationMs = 180000L
+                    )
+                    _tracks.value = _tracks.value + newTrack
+                    playTrack(newTrack)
+                }
+                _thinkingText.value = ""
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to generate music from camera image")
+                _thinkingText.value = ""
+            }
+        }
+    }
 
 
 

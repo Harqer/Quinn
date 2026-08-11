@@ -40,7 +40,7 @@ fun PlaylistHeader(
             onShareClick = { 
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_TEXT, "Check out this playlist on Mave: https://mave.studio/playlist/$playlistId")
+                    putExtra(Intent.EXTRA_TEXT, "Check out this playlist on Lyria: https://lyria.studio/playlist/$playlistId")
                 }
                 context.startActivity(Intent.createChooser(shareIntent, "Share Playlist"))
             },

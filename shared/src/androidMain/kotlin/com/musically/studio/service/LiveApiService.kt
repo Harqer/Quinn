@@ -1,6 +1,7 @@
 package com.musically.studio.service
 
 import android.util.Log
+import timber.log.Timber
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.Firebase
 import com.google.firebase.ai.ai
@@ -12,8 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.tasks.await
 import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
+import com.google.firebase.functions.functions
 import javax.inject.Inject
 import javax.inject.Singleton
 @Singleton
@@ -41,6 +41,19 @@ class LiveApiService @Inject constructor(
                     "jam_live",
                     "Enter live jamming mode using a MIDI controller or live instrument input (MRT2).",
                     mapOf("intent" to com.google.firebase.ai.type.Schema.string("The user intent for jamming"))
+                ),
+                com.google.firebase.ai.type.FunctionDeclaration(
+                    "generate_cover_image",
+                    "Generate album/cover art for the track.",
+                    mapOf("prompt" to com.google.firebase.ai.type.Schema.string("The coverArtPrompt to generate the image for."))
+                ),
+                com.google.firebase.ai.type.FunctionDeclaration(
+                    "generate_music_video",
+                    "Generate a music video synchronized with the generated music track.",
+                    mapOf(
+                        "prompt" to com.google.firebase.ai.type.Schema.string("The visual prompt for the music video."),
+                        "audioUrl" to com.google.firebase.ai.type.Schema.string("The URL of the generated audio to synchronize the video with.")
+                    )
                 )
             )
         )
@@ -57,34 +70,21 @@ class LiveApiService @Inject constructor(
      * Proxies the function call from the Gemini Live stream to our Genkit backend harness.
      */
     suspend fun executeTool(name: String, args: Map<String, Any?>): JSONObject = withContext(Dispatchers.IO) {
-        val token = auth.currentUser?.getIdToken(false)?.await()?.token
-        
-        val url = URL("$baseUrl/api/music/execute-tool")
-        val connection = url.openConnection() as HttpURLConnection
-        connection.requestMethod = "POST"
-        connection.setRequestProperty("Content-Type", "application/json")
-        if (token != null) {
-            connection.setRequestProperty("Authorization", "Bearer $token")
-        }
-        connection.doOutput = true
-        
-        val body = JSONObject().apply {
-            put("name", name)
-            put("args", JSONObject(args))
-        }
-        
-        connection.outputStream.use { os ->
-            os.write(body.toString().toByteArray())
-        }
-        
-        val responseCode = connection.responseCode
-        if (responseCode in 200..299) {
-            val responseString = connection.inputStream.bufferedReader().readText()
-            JSONObject(responseString)
-        } else {
-            val errorString = connection.errorStream?.bufferedReader()?.readText() ?: "{}"
-            Log.e("LiveApiService", "Tool execution failed: $errorString")
-            JSONObject().apply { put("error", errorString) }
+        val payload = mapOf(
+            "name" to name,
+            "args" to args
+        )
+        try {
+            val result = Firebase.functions.getHttpsCallable("executeTool").call(payload).await()
+            val data = result.data as? Map<*, *>
+            if (data != null) {
+                JSONObject(data)
+            } else {
+                JSONObject().apply { put("result", result.data.toString()) }
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Tool execution failed: ${e.message}")
+            JSONObject().apply { put("error", e.message) }
         }
     }
 }

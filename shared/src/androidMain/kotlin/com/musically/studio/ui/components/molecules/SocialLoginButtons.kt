@@ -23,7 +23,6 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.components.atoms.MaveButton
-import com.musically.studio.ui.loginWithApple
 import com.musically.studio.ui.loginWithGoogle
 import com.musically.studio.ui.theme.MaveStyles
 import kotlinx.coroutines.launch
@@ -80,7 +79,6 @@ fun SocialLoginButtons(viewModel: MainViewModel) {
                         viewModel.loginWithGoogle(idToken, null) { success, error ->
                             if (success) {
                                 viewModel.clearNavigation()
-                                viewModel.navigateTo(com.musically.studio.ui.navigation.Route.Home)
                             } else {
                                 errorMessage = error ?: "Unknown error"
                             }
@@ -94,25 +92,6 @@ fun SocialLoginButtons(viewModel: MainViewModel) {
                 } catch (e: Exception) {
                     Timber.e(e, "Google Sign-In failed")
                     errorMessage = e.message ?: "Google Sign-In failed"
-                }
-            }
-        },
-        modifier = Modifier.fillMaxWidth(),
-        style = MaveStyles.outlinedButton
-    )
-    
-    Spacer(modifier = Modifier.height(16.dp))
-    
-    MaveButton(
-        text = "Sign in with Apple",
-        enabled = !isLoading,
-        onClick = {
-            viewModel.loginWithApple(context as Activity) { success, error ->
-                if (success) {
-                    viewModel.clearNavigation()
-                    viewModel.navigateTo(com.musically.studio.ui.navigation.Route.Home)
-                } else {
-                    errorMessage = error ?: "Unknown error"
                 }
             }
         },

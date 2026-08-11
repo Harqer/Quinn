@@ -1,73 +1,85 @@
 package com.musically.studio.data.repository
 
+import com.musically.studio.dataconnect.DefaultConnector
+import com.musically.studio.dataconnect.*
 import com.musically.studio.shared.BuildConfig
 import com.musically.studio.network.TokenManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
+import org.json.JSONArray
+import com.google.firebase.functions.functions
+import com.google.firebase.Firebase
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ChatRepository @Inject constructor() {
+class ChatRepository @Inject constructor(
+    private val connector: DefaultConnector
+) {
 
     suspend fun loadChatHistory(): JSONObject = withContext(Dispatchers.IO) {
-        val token = try { TokenManager.getValidToken() } catch (e: Exception) { null }
-        val url = URL("${BuildConfig.API_BASE_URL}/chat/history")
-        val connection = url.openConnection() as HttpURLConnection
-        connection.requestMethod = "GET"
-        connection.setRequestProperty("Content-Type", "application/json")
-        if (token != null) connection.setRequestProperty("Authorization", "Bearer $token")
-        
-        val code = connection.responseCode
-        val text = if (code in 200..299) connection.inputStream.bufferedReader().readText()
-                   else connection.errorStream?.bufferedReader()?.readText() ?: "{\"error\":\"HTTP $code\"}"
-        JSONObject(text)
+        try {
+            val response = connector.listChatMessages.execute(userId = "current_user")
+            val array = JSONArray()
+            response.data.chatMessages.forEach { msg ->
+                val obj = JSONObject()
+                obj.put("role", msg.sender)
+                obj.put("content", msg.text)
+                array.put(obj)
+            }
+            JSONObject().apply { put("messages", array) }
+        } catch (e: Exception) {
+            JSONObject().apply { put("error", e.message) }
+        }
     }
 
     suspend fun saveChatHistory(body: JSONObject): JSONObject = withContext(Dispatchers.IO) {
-        httpPost("/chat/history", body)
+        try {
+            val role = body.optString("role", "user")
+            val content = body.optString("content", "")
+            connector.addChatMessage.execute(
+                userId = "current_user",
+                sender = role,
+                text = content
+            )
+            JSONObject().apply { put("success", true) }
+        } catch (e: Exception) {
+            JSONObject().apply { put("error", e.message) }
+        }
     }
 
     suspend fun executeTool(name: String, args: Map<String, Any?>): JSONObject = withContext(Dispatchers.IO) {
-        val body = JSONObject().apply {
-            put("name", name)
-            put("args", JSONObject(args))
+        val payload = mapOf("name" to name, "args" to args)
+        try {
+            val result = Firebase.functions.getHttpsCallable("executeTool").call(payload).await()
+            val data = result.data as? Map<*, *>
+            if (data != null) JSONObject(data) else JSONObject().apply { put("result", result.data.toString()) }
+        } catch (e: Exception) {
+            JSONObject().apply { put("error", e.message) }
         }
-        httpPost("/music/execute-tool", body)
     }
 
     suspend fun generateCover(prompt: String, hq: Boolean): JSONObject = withContext(Dispatchers.IO) {
-        val body = JSONObject().apply {
-            put("prompt", prompt)
-            put("hq", hq)
+        val payload = mapOf("prompt" to prompt, "hq" to hq)
+        try {
+            val result = Firebase.functions.getHttpsCallable("generateVisualMedia").call(payload).await()
+            val data = result.data as? Map<*, *>
+            if (data != null) JSONObject(data) else JSONObject().apply { put("result", result.data.toString()) }
+        } catch (e: Exception) {
+            JSONObject().apply { put("error", e.message) }
         }
-        httpPost("/music/cover", body)
     }
     
     suspend fun generateVideo(prompt: String): JSONObject = withContext(Dispatchers.IO) {
-        val body = JSONObject().apply { put("prompt", prompt) }
-        httpPost("/music/video", body)
-    }
-
-    private suspend fun httpPost(path: String, body: JSONObject): JSONObject = withContext(Dispatchers.IO) {
-        val token = try { TokenManager.getValidToken() } catch (e: Exception) { null }
-        val url = URL("${BuildConfig.API_BASE_URL}$path")
-        val connection = url.openConnection() as HttpURLConnection
-        connection.requestMethod = "POST"
-        connection.setRequestProperty("Content-Type", "application/json")
-        if (token != null) connection.setRequestProperty("Authorization", "Bearer $token")
-        connection.doOutput = true
-        connection.outputStream.use { it.write(body.toString().toByteArray()) }
-        
-        val code = connection.responseCode
-        if (code in 200..299) {
-            val responseString = connection.inputStream.bufferedReader().use { it.readText() }
-            if (responseString.isEmpty()) JSONObject() else JSONObject(responseString)
-        } else {
-            throw Exception("HTTP $code")
+        val payload = mapOf("prompt" to prompt)
+        try {
+            val result = Firebase.functions.getHttpsCallable("executeTool").call(mapOf("name" to "generate_music_video", "args" to payload)).await()
+            val data = result.data as? Map<*, *>
+            if (data != null) JSONObject(data) else JSONObject().apply { put("result", result.data.toString()) }
+        } catch (e: Exception) {
+            JSONObject().apply { put("error", e.message) }
         }
     }
 }

@@ -91,7 +91,6 @@ fun SignInForm(viewModel: MainViewModel) {
                 viewModel.completeRegistration { success, error ->
                     if (success) {
                         viewModel.clearNavigation()
-                        viewModel.navigateTo(com.musically.studio.ui.navigation.Route.Home)
                     } else {
                         errorMessage = error
                     }
@@ -100,7 +99,6 @@ fun SignInForm(viewModel: MainViewModel) {
                 viewModel.loginWithEmail(email, password) { success, error ->
                     if (success) {
                         viewModel.clearNavigation()
-                        viewModel.navigateTo(com.musically.studio.ui.navigation.Route.Home)
                     } else {
                         errorMessage = error
                     }

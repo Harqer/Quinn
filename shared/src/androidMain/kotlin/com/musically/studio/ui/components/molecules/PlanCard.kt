@@ -37,6 +37,7 @@ fun PlanCard(
     isCurrentPlan: Boolean = false,
     isLoading: Boolean = false,
     onSelectClick: () -> Unit = {},
+    onAutomatedKitesurfClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     style: Style = Style,
 ) {
@@ -100,6 +101,24 @@ fun PlanCard(
                 isLoading = isLoading,
                 onSelectClick = onSelectClick
             )
+
+            if (!isCurrentPlan) {
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedButton(
+                    onClick = onAutomatedKitesurfClick,
+                    enabled = !isLoading,
+                    modifier = Modifier.fillMaxWidth().height(40.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaveBrand.copy(alpha = 0.6f))
+                ) {
+                    Text(
+                        text = "Instant Kitesurf Pay",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaveBrand
+                    )
+                }
+            }
         }
     }
 }

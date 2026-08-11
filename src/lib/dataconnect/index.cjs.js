@@ -259,6 +259,146 @@ exports.seedUser = function seedUser(dcOrVars, vars) {
 }
 ;
 
+const seedAiPresetRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SeedAIPreset', inputVars);
+}
+seedAiPresetRef.operationName = 'SeedAIPreset';
+exports.seedAiPresetRef = seedAiPresetRef;
+
+exports.seedAiPreset = function seedAiPreset(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(seedAiPresetRef(dcInstance, inputVars));
+}
+;
+
+const updateShowContextRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateShowContext', inputVars);
+}
+updateShowContextRef.operationName = 'UpdateShowContext';
+exports.updateShowContextRef = updateShowContextRef;
+
+exports.updateShowContext = function updateShowContext(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateShowContextRef(dcInstance, inputVars));
+}
+;
+
+const updateAudiobookContextRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateAudiobookContext', inputVars);
+}
+updateAudiobookContextRef.operationName = 'UpdateAudiobookContext';
+exports.updateAudiobookContextRef = updateAudiobookContextRef;
+
+exports.updateAudiobookContext = function updateAudiobookContext(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateAudiobookContextRef(dcInstance, inputVars));
+}
+;
+
+const seedAuthorRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SeedAuthor', inputVars);
+}
+seedAuthorRef.operationName = 'SeedAuthor';
+exports.seedAuthorRef = seedAuthorRef;
+
+exports.seedAuthor = function seedAuthor(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(seedAuthorRef(dcInstance, inputVars));
+}
+;
+
+const createAudiobookRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateAudiobook', inputVars);
+}
+createAudiobookRef.operationName = 'CreateAudiobook';
+exports.createAudiobookRef = createAudiobookRef;
+
+exports.createAudiobook = function createAudiobook(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createAudiobookRef(dcInstance, inputVars));
+}
+;
+
+const seedEpisodeRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SeedEpisode', inputVars);
+}
+seedEpisodeRef.operationName = 'SeedEpisode';
+exports.seedEpisodeRef = seedEpisodeRef;
+
+exports.seedEpisode = function seedEpisode(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(seedEpisodeRef(dcInstance, inputVars));
+}
+;
+
+const seedChapterRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SeedChapter', inputVars);
+}
+seedChapterRef.operationName = 'SeedChapter';
+exports.seedChapterRef = seedChapterRef;
+
+exports.seedChapter = function seedChapter(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(seedChapterRef(dcInstance, inputVars));
+}
+;
+
+const updateTrackVideoRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateTrackVideo', inputVars);
+}
+updateTrackVideoRef.operationName = 'UpdateTrackVideo';
+exports.updateTrackVideoRef = updateTrackVideoRef;
+
+exports.updateTrackVideo = function updateTrackVideo(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateTrackVideoRef(dcInstance, inputVars));
+}
+;
+
+const updateEpisodeAudioRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateEpisodeAudio', inputVars);
+}
+updateEpisodeAudioRef.operationName = 'UpdateEpisodeAudio';
+exports.updateEpisodeAudioRef = updateEpisodeAudioRef;
+
+exports.updateEpisodeAudio = function updateEpisodeAudio(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateEpisodeAudioRef(dcInstance, inputVars));
+}
+;
+
+const seedInstrumentRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SeedInstrument', inputVars);
+}
+seedInstrumentRef.operationName = 'SeedInstrument';
+exports.seedInstrumentRef = seedInstrumentRef;
+
+exports.seedInstrument = function seedInstrument(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(seedInstrumentRef(dcInstance, inputVars));
+}
+;
+
 const getUserTracksRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
@@ -631,5 +771,50 @@ exports.getTrack = function getTrack(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(getTrackRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getEpisodesForShowRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetEpisodesForShow', inputVars);
+}
+getEpisodesForShowRef.operationName = 'GetEpisodesForShow';
+exports.getEpisodesForShowRef = getEpisodesForShowRef;
+
+exports.getEpisodesForShow = function getEpisodesForShow(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getEpisodesForShowRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getEpisodeRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetEpisode', inputVars);
+}
+getEpisodeRef.operationName = 'GetEpisode';
+exports.getEpisodeRef = getEpisodeRef;
+
+exports.getEpisode = function getEpisode(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getEpisodeRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const listInstrumentsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListInstruments');
+}
+listInstrumentsRef.operationName = 'ListInstruments';
+exports.listInstrumentsRef = listInstrumentsRef;
+
+exports.listInstruments = function listInstruments(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listInstrumentsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;

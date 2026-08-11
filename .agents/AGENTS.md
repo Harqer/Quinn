@@ -289,3 +289,14 @@ Run through this the day before submission:
 Build exactly one root view per `sendContent` call: use a root `flexBox { ... }` for UI, or a root `video(player = player)` for video. Do not put `video(...)` inside a `flexBox`. Button and clickable `flexBox` callbacks are routed back to the phone app; keep callbacks fast and delegate to app state or ViewModel methods. Use `IconName` enum values such as `IconName.GEAR`, not raw strings.
 
 For URL video, create `VideoPlayer(source = VideoSource.Url(...), codec = VideoCodec.MP4)`, send it with `display.sendContent { video(player = player) }`, and call `player.play()` after send success. Collect `player.state` and `player.error`; on `VideoPlayerState.ENDED`, cancel the video observer and send the next display screen. On cleanup, cancel state/error collection jobs, close or replace active video players, call `session.removeDisplay()`, then stop the session.
+
+---
+
+# Mandatory Verification Standards (Global Rule)
+
+All AI agents working on code implementations, feature wiring, button click handlers, or API integrations MUST adhere to this strict Verification Standard:
+
+1. **Real Execution Over Test Doubles**: Verification plans MUST include the actual execution of wired UI buttons, event handlers, and API network calls. Relying solely on mock double objects or code inspections is strictly prohibited.
+2. **End-to-End API Backend Verification**: Every API integration (Firebase Callable Functions, Gemini AI, Spotify, Stripe, Data Connect, etc.) must be verified via actual HTTP/socket invocations using real credentials or local emulator suites (e.g., Firebase Emulator / MockWebServer) to prove that payloads reach the real backend services and produce expected outputs.
+3. **Button & Event Wiring Integrity**: Every UI button, clickable card, or interactive component must be verified end-to-end to confirm it triggers its intended ViewModel method, dispatches API requests, updates UI state, and navigates without crashing or exiting the app.
+

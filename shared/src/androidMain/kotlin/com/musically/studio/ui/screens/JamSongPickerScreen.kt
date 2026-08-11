@@ -91,7 +91,10 @@ fun JamSongPickerScreen(
                                     jamViewModel.enqueueTrack(track)
                                     onDismiss()
                                 },
-                                onMoreClick = {}
+                                onMoreClick = {
+                                    jamViewModel.enqueueTrack(track)
+                                    onDismiss()
+                                }
                             )
                         }
                         IconButton(onClick = {

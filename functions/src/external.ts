@@ -3,6 +3,25 @@ import { defineSecret } from "firebase-functions/params";
 
 const RAPID_API_KEY = defineSecret("RAPID_API_KEY");
 
+export async function fetchConcerts(queryParams: URLSearchParams, apiKey: string): Promise<any> {
+  const url = `https://seatgeek-com-scraper.p.rapidapi.com/events/search?${queryParams.toString()}`;
+  
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "x-rapidapi-host": "seatgeek-com-scraper.p.rapidapi.com",
+      "x-rapidapi-key": apiKey
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`RapidAPI Error: ${response.status} ${response.statusText}`);
+  }
+
+  return await response.json();
+}
+
 export const searchConcerts = onCall(
   {
     secrets: [RAPID_API_KEY],
@@ -26,22 +45,7 @@ export const searchConcerts = onCall(
       if (page !== undefined) queryParams.append("page", page.toString());
       if (perPage !== undefined) queryParams.append("perPage", perPage.toString());
 
-      const url = `https://seatgeek-com-scraper.p.rapidapi.com/events/search?${queryParams.toString()}`;
-      
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "x-rapidapi-host": "seatgeek-com-scraper.p.rapidapi.com",
-          "x-rapidapi-key": rapidApiKey
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`RapidAPI Error: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = await fetchConcerts(queryParams, rapidApiKey);
       return data;
     } catch (err: any) {
       throw new HttpsError("internal", `Failed to search concerts: ${err.message || err}`);

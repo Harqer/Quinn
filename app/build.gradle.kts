@@ -106,6 +106,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     }
 }
 
+ksp {
+    arg("appfunctions:aggregateAppFunctions", "true")
+}
+
 dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.11.1")
@@ -142,6 +146,7 @@ dependencies {
     implementation(libs.androidx.identity.play)
     implementation(libs.androidx.appfunctions)
     implementation(libs.androidx.appfunctions.service)
+    ksp(libs.androidx.appfunctions.compiler)
     implementation(libs.androidx.core.splashscreen)
     
     // UI dependencies (Compose, Material, Navigation)

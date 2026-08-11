@@ -45,6 +45,7 @@ fun ConcertsScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             TopAppBar(
                 title = { Text("Concerts Near You") },
@@ -104,14 +105,7 @@ fun ConcertsScreen(
                         ConcertCard(
                             concert = concert,
                             onClick = { com.musically.studio.ui.utils.executeDebounced {
-                                if (concert.url.isNotEmpty()) {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(concert.url))
-                                    try {
-                                        context.startActivity(intent)
-                                    } catch (e: Exception) {
-                                        // Ignore
-                                    }
-                                }
+                                com.musically.studio.ui.utils.SecurityUtils.safeLaunchUrl(context, concert.url)
                             } }
                         )
                     }

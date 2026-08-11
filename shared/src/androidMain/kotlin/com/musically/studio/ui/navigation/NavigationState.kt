@@ -38,17 +38,20 @@ fun rememberNavigationState(
 
     val backStacks: Map<Route, NavBackStack<NavKey>> = topLevelRoutes.associateWith { key: Route -> rememberNavBackStack(key) }
 
-    return remember(startRoute, topLevelRoutes) {
+    val state = remember(topLevelRoutes) {
         NavigationState(
             startRoute = startRoute,
             topLevelRoute = topLevelRoute,
             backStacks = backStacks
         )
     }
+    
+    state.startRoute = startRoute
+    return state
 }
 
 class NavigationState(
-    val startRoute: Route,
+    var startRoute: Route,
     topLevelRoute: MutableState<Route>,
     val backStacks: Map<Route, NavBackStack<NavKey>>
 ) {

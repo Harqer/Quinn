@@ -108,7 +108,7 @@ class GeminiLiveManager(
         try {
             val json = JSONObject()
             val setup = JSONObject()
-            setup.put("model", "models/gemini-2.0-flash-exp") // Use latest live capable model
+            setup.put("model", "models/gemini-3.1-flash-live-preview") // Match backend token constraint
             
             systemInstruction?.let { instruction ->
                 val sysInstObj = JSONObject()
@@ -241,6 +241,64 @@ class GeminiLiveManager(
                         })
                     })
                     put("required", org.json.JSONArray().apply { put("was_correct"); put("actual_song") })
+                })
+            })
+            
+            // Added Lyria Tools
+            functionDeclarations.put(JSONObject().apply {
+                put("name", "generate_full_track")
+                put("description", "Generate a new, complete professional music track or song using Lyria 3. Use when the user wants a full song created from scratch.")
+                put("parameters", JSONObject().apply {
+                    put("type", "OBJECT")
+                    put("properties", JSONObject().apply {
+                        put("prompt", JSONObject().apply {
+                            put("type", "STRING")
+                            put("description", "Musical style, genre, and description of the full song to create")
+                        })
+                    })
+                    put("required", org.json.JSONArray().apply { put("prompt") })
+                })
+            })
+            functionDeclarations.put(JSONObject().apply {
+                put("name", "tweak_instrumentation")
+                put("description", "Modify or tweak the instruments, density, BPM, brightness, or style of the currently playing track in real-time using Lyria RealTime. Use when the user wants to change how the song sounds without regenerating from scratch.")
+                put("parameters", JSONObject().apply {
+                    put("type", "OBJECT")
+                    put("properties", JSONObject().apply {
+                        put("prompt", JSONObject().apply {
+                            put("type", "STRING")
+                            put("description", "What to tweak (e.g. add more bass, make it faster, add jazz piano)")
+                        })
+                    })
+                    put("required", org.json.JSONArray().apply { put("prompt") })
+                })
+            })
+            functionDeclarations.put(JSONObject().apply {
+                put("name", "generate_cover_image")
+                put("description", "Generate or update the album cover art for the current track.")
+                put("parameters", JSONObject().apply {
+                    put("type", "OBJECT")
+                    put("properties", JSONObject().apply {
+                        put("prompt", JSONObject().apply {
+                            put("type", "STRING")
+                            put("description", "Visual description for the cover art")
+                        })
+                    })
+                    put("required", org.json.JSONArray().apply { put("prompt") })
+                })
+            })
+            functionDeclarations.put(JSONObject().apply {
+                put("name", "generate_music_video")
+                put("description", "Generate a music video for the current track. Only use when the user explicitly asks for a video.")
+                put("parameters", JSONObject().apply {
+                    put("type", "OBJECT")
+                    put("properties", JSONObject().apply {
+                        put("prompt", JSONObject().apply {
+                            put("type", "STRING")
+                            put("description", "Visual and cinematic description for the music video")
+                        })
+                    })
+                    put("required", org.json.JSONArray().apply { put("prompt") })
                 })
             })
             tool.put("function_declarations", functionDeclarations)

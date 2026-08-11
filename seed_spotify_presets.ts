@@ -84,26 +84,38 @@ async function runSeeder() {
 
                 console.log("Analysis Output:", analysis);
 
-                // Insert into Database
-                const durationMs = 30000;
+                // Insert into Database (Removed raw preview insertion)
+                // We will now call our Music API to generate an original track from the prompt.
+                const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:8080';
+                const promptToUse = analysis.replicatedSong.generationPrompt || `A new song inspired by ${track.name}`;
+
+                console.log(`Calling music generation API at ${apiBaseUrl} to create the preset...`);
                 
-                // Note: we can use the original Spotify preview URL or a generated one.
-                const mutationVars = {
-                    title: analysis.replicatedSong.trackName || track.name,
-                    audioUrl: track.preview_url,
-                    durationMs: durationMs,
-                    prompt: analysis.replicatedSong.generationPrompt,
-                    isCommunity: true
+                const generationPayload = {
+                    name: "generate_full_track",
+                    args: {
+                        prompt: promptToUse
+                    }
                 };
 
-                console.log("Executing Data Connect mutation...");
-                const execResult = execSync(`npx -y firebase-tools@latest dataconnect:execute dataconnect/connector/mutations.gql SeedTrack --variables '${JSON.stringify(mutationVars)}'`, { encoding: 'utf-8' });
-                console.log("Success");
+                const generationResponse = await fetch(`${apiBaseUrl}/api/music/execute-tool`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(generationPayload)
+                });
+
+                if (!generationResponse.ok) {
+                    const text = await generationResponse.text();
+                    throw new Error(`Generation API error: ${generationResponse.status} ${text}`);
+                }
+
+                const genResult = await generationResponse.json();
+                console.log("Success! Backend responded with:", genResult);
 
                 count++;
                 if (count >= 3) break; // Do 3 for now to test
             } catch (err) {
-                console.error("Failed to dissect or insert track:", err);
+                console.error("Failed to dissect or generate track:", err);
             }
         }
         

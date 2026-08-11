@@ -16,6 +16,11 @@ import android.util.Base64
 
     fun MainViewModel.togglePlayPause() {
         _isPlaying.value = !_isPlaying.value
+        if (_isPlaying.value) {
+            mediaController?.play()
+        } else {
+            mediaController?.pause()
+        }
         // Player state is strictly local, but we can notify Gemini of user action if live.
         if (_isLiveSessionActive.value) {
             val state = if (_isPlaying.value) "playing" else "paused"
@@ -44,6 +49,7 @@ import android.util.Base64
 
     fun MainViewModel.stopPlayback() {
         _isPlaying.value = false
+        mediaController?.stop()
         if (_isLiveSessionActive.value) {
             geminiLiveManager.sendText("User stopped the playback.")
         }
@@ -156,7 +162,24 @@ import android.util.Base64
     fun MainViewModel.playTrack(track: MaveTrack) {
         addRecentTrack(track)
         _currentPlayingTrack.value = track
+        
+        val mediaItem = androidx.media3.common.MediaItem.Builder()
+            .setUri(track.audioUrl?.ifEmpty { "mave://stream" } ?: "mave://stream")
+            .setMediaMetadata(
+                androidx.media3.common.MediaMetadata.Builder()
+                    .setTitle(track.name)
+                    .setArtist(track.artists.firstOrNull()?.name ?: "Unknown")
+                    .setArtworkUri(track.album.images.firstOrNull()?.url?.let { android.net.Uri.parse(it) })
+                    .build()
+            )
+            .build()
+            
+        mediaController?.setMediaItem(mediaItem)
+        mediaController?.prepare()
+        mediaController?.playWhenReady = true
+        
         _isPlaying.value = true
+        _currentCoverUrl.value = track.album.images.firstOrNull()?.url
         if (_isLiveSessionActive.value) {
             geminiLiveManager.sendText("User is now playing track: ${track.name}")
         }

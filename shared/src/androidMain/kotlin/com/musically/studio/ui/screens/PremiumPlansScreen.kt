@@ -1,6 +1,7 @@
 package com.musically.studio.ui.screens
 import com.musically.studio.dataconnect.instance
 import com.musically.studio.dataconnect.DefaultConnector
+import timber.log.Timber
 
 import android.app.Activity
 import androidx.compose.foundation.layout.*
@@ -102,7 +103,7 @@ fun PremiumPlansScreen(
                 }
             }
         } catch (e: Exception) {
-            android.util.Log.e("PremiumPlansScreen", "Failed to load DataConnect", e)
+            timber.log.Timber.e(e, "Failed to load DataConnect")
         }
     }
 
@@ -179,6 +180,15 @@ fun PremiumPlansScreen(
                     isLoading = isLoading,
                     onSelectClick = {
                         activity?.let { viewModel.launchBillingFlow(it, tier.productId) }
+                    },
+                    onAutomatedKitesurfClick = {
+                        viewModel.executeCloudflareKitesurfAutomatedPayment(tier.productId) { success, txOrError ->
+                            if (success) {
+                                Timber.d("Cloudflare Kitesurf Automated Payment Succeeded: tx=$txOrError")
+                            } else {
+                                Timber.e("Cloudflare Kitesurf Automated Payment Failed: $txOrError")
+                            }
+                        }
                     }
                 )
             }

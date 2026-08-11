@@ -8,12 +8,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musically.studio.ui.MainViewModel
 import com.musically.studio.ui.generateMusicPrompts
+import com.musically.studio.ui.startLiveSession
 import kotlinx.coroutines.delay
 
 @Composable
@@ -23,15 +25,24 @@ fun GeneratingSongScreen(
     onComplete: () -> Unit
 ) {
     val thinkingText by viewModel.thinkingText.collectAsState()
+    val tracks by viewModel.tracks.collectAsStateWithLifecycle()
+    val initialTracksSize = remember { tracks.size }
+    
+    LaunchedEffect(tracks.size) {
+        if (tracks.size > initialTracksSize) {
+            onComplete()
+        }
+    }
 
     LaunchedEffect(Unit) {
-        // Send the image and prompt Gemini to generate a song based on it
-        viewModel.geminiLiveManager.sendVideoFrame(imageBase64)
-        viewModel.geminiLiveManager.sendText("Look at the picture I just sent and give me a chain of thought describing the visual vibe, the aesthetic, and the musical mood it inspires. Think out loud! Then use the generate_cover_art tool to generate the cover and apply the music preset.")
-        
-        // Wait a bit more to simulate completion before navigating
-        delay(15000) // Gemini should ideally call a function and trigger navigation, but for now we timeout
-        onComplete()
+        if (viewModel.isLiveSessionActive.value) {
+            // Send the image and prompt Gemini Live websocket to analyze vibe and generate track
+            viewModel.geminiLiveManager.sendVideoFrame(imageBase64)
+            viewModel.geminiLiveManager.sendText("Look at the picture I just sent and give me a chain of thought describing the visual vibe, the aesthetic, and the musical mood it inspires. Think out loud! Then use the generate_cover_image tool to generate the cover, and use the generate_full_track tool to generate the music track based on this vibe.")
+        } else {
+            // Directly trigger backend music generation callable for camera capture photo vibe
+            viewModel.generateMusicFromCameraImage(imageBase64)
+        }
     }
 
     val decodedBitmap = remember(imageBase64) {

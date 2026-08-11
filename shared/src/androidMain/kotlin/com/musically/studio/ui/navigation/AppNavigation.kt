@@ -22,12 +22,17 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+
+
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.activity.compose.BackHandler
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.scene.SceneStrategy
@@ -48,21 +53,41 @@ fun MaveApp(
     onAcknowledgePermissions: () -> Unit,
     hasPermissions: Boolean
 ) {
-    val adaptiveInfo = currentWindowAdaptiveInfoV2()
-    val topLevelRoutes = setOf<Route>(Route.Welcome, Route.Home, Route.Library, Route.Search, Route.Chat, Route.Camera)
-    
-    val sceneStrategies: List<SceneStrategy<Route>> = listOf(
-        BottomSheetSceneStrategy(),
-        androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy(),
-        SinglePaneSceneStrategy()
-    )
+    val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
+    var startRoute by remember { androidx.compose.runtime.mutableStateOf<Route>(if (auth.currentUser != null) Route.Home else Route.Welcome) }
 
-    val navigationState = rememberNavigationState(
-        startRoute = Route.Welcome,
-        topLevelRoutes = topLevelRoutes,
-        serializer = androidx.savedstate.compose.serialization.serializers.MutableStateSerializer(Route.serializer())
-    )
-    val navigator = remember { Navigator(navigationState) }
+    androidx.compose.runtime.DisposableEffect(Unit) {
+        val listener = com.google.firebase.auth.FirebaseAuth.AuthStateListener { firebaseAuth ->
+            startRoute = if (firebaseAuth.currentUser != null) Route.Home else Route.Welcome
+        }
+        auth.addAuthStateListener(listener)
+        onDispose {
+            auth.removeAuthStateListener(listener)
+        }
+    }
+
+
+        val adaptiveInfo = currentWindowAdaptiveInfoV2()
+        val topLevelRoutes = setOf<Route>(Route.Welcome, Route.Home, Route.Library, Route.Search, Route.Chat, Route.Camera)
+        
+        val sceneStrategies: List<SceneStrategy<Route>> = listOf(
+            BottomSheetSceneStrategy(),
+            androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy(),
+            SinglePaneSceneStrategy()
+        )
+
+        val navigationState = rememberNavigationState(
+            startRoute = startRoute,
+            topLevelRoutes = topLevelRoutes,
+            serializer = androidx.savedstate.compose.serialization.serializers.MutableStateSerializer(Route.serializer())
+        )
+        val navigator = remember { Navigator(navigationState) }
+    LaunchedEffect(auth.currentUser != null) {
+        if (auth.currentUser != null) {
+            navigator.clearAll()
+            navigationState.topLevelRoute = Route.Home
+        }
+    }
     
     val currentPlayingTrack by viewModel.currentPlayingTrack.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
@@ -87,6 +112,9 @@ fun MaveApp(
     LaunchedEffect(Unit) {
         viewModel.clearNavigationEvent.collectLatest {
             navigator.clearAll()
+            if (auth.currentUser != null) {
+                startRoute = Route.Home
+            }
         }
     }
 
@@ -117,7 +145,7 @@ fun MaveApp(
             val track = viewModel.tracks.value.find { it.id == id } ?: viewModel.communityTracks.value.find { it.id == id }
             com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.getIdToken(false)?.addOnSuccessListener { result ->
                 val token = result.token
-                val url = "https://mave.studio/api/v1/tracks/\${track?.id}/audio"
+                val url = track?.audioUrl ?: return@addOnSuccessListener
                 val request = android.app.DownloadManager.Request(url.toUri())
                     .setTitle(track?.name ?: "Unknown Track")
                     .setDescription("Downloading track")
@@ -127,15 +155,21 @@ fun MaveApp(
                 val downloadManager = context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
                 downloadManager.enqueue(request)
             }?.addOnFailureListener { e ->
-                android.util.Log.e("Download", "Failed to get auth token for download", e)
+                timber.log.Timber.e(e, "Failed to get auth token for download")
             }
         }
     )
 
+    val isOnboarding = currentRoute is Route.Welcome || currentRoute is Route.SignIn || currentRoute is Route.MfaEnrollment || currentRoute is Route.MfaVerification
+
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = false,
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet(
+                drawerContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                drawerContentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+            ) {
                 Text(
                     text = "Mave Settings",
                     modifier = Modifier.padding(16.dp),
@@ -184,7 +218,8 @@ fun MaveApp(
         AppNavigationSuite(
         layoutType = layoutType,
         currentRoute = currentRoute,
-        navigator = navigator
+        navigator = navigator,
+        viewModel = viewModel
     ) {
         AppBottomSheet(
             sheetState = sheetState,
@@ -203,6 +238,22 @@ fun MaveApp(
                     .consumeWindowInsets(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
+                var backPressedOnce by remember { mutableStateOf(false) }
+                val context = LocalContext.current
+                
+                BackHandler(enabled = navigationState.stacksInUse.size == 1 && navigationState.backStacks[navigationState.topLevelRoute]?.size == 1) {
+                    if (backPressedOnce) {
+                        (context as? android.app.Activity)?.finish()
+                    } else {
+                        backPressedOnce = true
+                        android.widget.Toast.makeText(context, "Press back again to exit", android.widget.Toast.LENGTH_SHORT).show()
+                        coroutineScope.launch {
+                            kotlinx.coroutines.delay(2000)
+                            backPressedOnce = false
+                        }
+                    }
+                }
+
                 NavDisplay(
                     entries = navigationState.toEntries(entryProvider),
                     onBack = { navigator.goBack() },
@@ -211,7 +262,8 @@ fun MaveApp(
                     sceneStrategies = sceneStrategies
                 )
             }
-        }
+    }
     }
     }
 }
+

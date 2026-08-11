@@ -106,6 +106,18 @@ export interface ChatMessage_Key {
   __typename?: 'ChatMessage_Key';
 }
 
+export interface CreateAudiobookData {
+  audiobook_insert: Audiobook_Key;
+}
+
+export interface CreateAudiobookVariables {
+  title: string;
+  authorId: string;
+  narrator?: string | null;
+  coverUrl?: string | null;
+  storyContext?: string | null;
+}
+
 export interface CreateCameraCaptureData {
   cameraCapture_insert: CameraCapture_Key;
 }
@@ -135,6 +147,7 @@ export interface CreatePodcastVariables {
   publisher: string;
   coverUrl?: string | null;
   description?: string | null;
+  storyContext?: string | null;
 }
 
 export interface CreateTrackData {
@@ -309,6 +322,48 @@ export interface GetCommunityTracksData {
       displayName?: string | null;
     } & User_Key;
   } & Track_Key)[];
+}
+
+export interface GetEpisodeData {
+  episode?: {
+    id: string;
+    title: string;
+    description?: string | null;
+    publishDate?: TimestampString | null;
+    durationMs: number;
+    audioUrl: string;
+    show: {
+      id: string;
+      title: string;
+      publisher: string;
+      coverUrl?: string | null;
+    } & Show_Key;
+  } & Episode_Key;
+}
+
+export interface GetEpisodeVariables {
+  id: string;
+}
+
+export interface GetEpisodesForShowData {
+  episodes: ({
+    id: string;
+    title: string;
+    description?: string | null;
+    publishDate?: TimestampString | null;
+    durationMs: number;
+    audioUrl: string;
+    show: {
+      id: string;
+      title: string;
+      publisher: string;
+      coverUrl?: string | null;
+    } & Show_Key;
+  } & Episode_Key)[];
+}
+
+export interface GetEpisodesForShowVariables {
+  showId: string;
 }
 
 export interface GetLikedTracksData {
@@ -500,6 +555,11 @@ export interface HomeSection_Key {
   __typename?: 'HomeSection_Key';
 }
 
+export interface Instrument_Key {
+  name: string;
+  __typename?: 'Instrument_Key';
+}
+
 export interface LikeTrackData {
   likedTrack_upsert: LikedTrack_Key;
 }
@@ -560,6 +620,13 @@ export interface ListHomeSectionsData {
     orderIndex: number;
     route: string;
   } & HomeSection_Key)[];
+}
+
+export interface ListInstrumentsData {
+  instruments: ({
+    name: string;
+    iconUrl?: string | null;
+  } & Instrument_Key)[];
 }
 
 export interface ListSubscriptionPlansData {
@@ -657,6 +724,60 @@ export interface SearchTracksVariables {
   query: string;
 }
 
+export interface SeedAiPresetData {
+  aIPreset_insert: AIPreset_Key;
+}
+
+export interface SeedAiPresetVariables {
+  name: string;
+  promptFragment: string;
+  imageUrl?: string | null;
+}
+
+export interface SeedAuthorData {
+  author_upsert: Author_Key;
+}
+
+export interface SeedAuthorVariables {
+  id: string;
+  name: string;
+  bio?: string | null;
+}
+
+export interface SeedChapterData {
+  chapter_insert: Chapter_Key;
+}
+
+export interface SeedChapterVariables {
+  audiobookId: string;
+  title: string;
+  chapterNumber: number;
+  audioUrl?: string | null;
+  durationMs?: number | null;
+}
+
+export interface SeedEpisodeData {
+  episode_insert: Episode_Key;
+}
+
+export interface SeedEpisodeVariables {
+  showId: string;
+  title: string;
+  description?: string | null;
+  audioUrl?: string | null;
+  durationMs?: number | null;
+  publishDate: TimestampString;
+}
+
+export interface SeedInstrumentData {
+  instrument_upsert: Instrument_Key;
+}
+
+export interface SeedInstrumentVariables {
+  name: string;
+  iconUrl?: string | null;
+}
+
 export interface SeedTrackData {
   track_insert: Track_Key;
 }
@@ -705,6 +826,42 @@ export interface TrackArtist_Key {
 export interface Track_Key {
   id: string;
   __typename?: 'Track_Key';
+}
+
+export interface UpdateAudiobookContextData {
+  audiobook_update?: Audiobook_Key | null;
+}
+
+export interface UpdateAudiobookContextVariables {
+  id: string;
+  storyContext: string;
+}
+
+export interface UpdateEpisodeAudioData {
+  episode_update?: Episode_Key | null;
+}
+
+export interface UpdateEpisodeAudioVariables {
+  id: string;
+  audioUrl: string;
+}
+
+export interface UpdateShowContextData {
+  show_update?: Show_Key | null;
+}
+
+export interface UpdateShowContextVariables {
+  id: string;
+  storyContext: string;
+}
+
+export interface UpdateTrackVideoData {
+  track_update?: Track_Key | null;
+}
+
+export interface UpdateTrackVideoVariables {
+  id: string;
+  videoUrl: string;
 }
 
 export interface UpdateUserPreferencesData {
@@ -960,6 +1117,126 @@ export const seedUserRef: SeedUserRef;
 
 export function seedUser(vars: SeedUserVariables): MutationPromise<SeedUserData, SeedUserVariables>;
 export function seedUser(dc: DataConnect, vars: SeedUserVariables): MutationPromise<SeedUserData, SeedUserVariables>;
+
+interface SeedAiPresetRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedAiPresetVariables): MutationRef<SeedAiPresetData, SeedAiPresetVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SeedAiPresetVariables): MutationRef<SeedAiPresetData, SeedAiPresetVariables>;
+  operationName: string;
+}
+export const seedAiPresetRef: SeedAiPresetRef;
+
+export function seedAiPreset(vars: SeedAiPresetVariables): MutationPromise<SeedAiPresetData, SeedAiPresetVariables>;
+export function seedAiPreset(dc: DataConnect, vars: SeedAiPresetVariables): MutationPromise<SeedAiPresetData, SeedAiPresetVariables>;
+
+interface UpdateShowContextRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateShowContextVariables): MutationRef<UpdateShowContextData, UpdateShowContextVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateShowContextVariables): MutationRef<UpdateShowContextData, UpdateShowContextVariables>;
+  operationName: string;
+}
+export const updateShowContextRef: UpdateShowContextRef;
+
+export function updateShowContext(vars: UpdateShowContextVariables): MutationPromise<UpdateShowContextData, UpdateShowContextVariables>;
+export function updateShowContext(dc: DataConnect, vars: UpdateShowContextVariables): MutationPromise<UpdateShowContextData, UpdateShowContextVariables>;
+
+interface UpdateAudiobookContextRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateAudiobookContextVariables): MutationRef<UpdateAudiobookContextData, UpdateAudiobookContextVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateAudiobookContextVariables): MutationRef<UpdateAudiobookContextData, UpdateAudiobookContextVariables>;
+  operationName: string;
+}
+export const updateAudiobookContextRef: UpdateAudiobookContextRef;
+
+export function updateAudiobookContext(vars: UpdateAudiobookContextVariables): MutationPromise<UpdateAudiobookContextData, UpdateAudiobookContextVariables>;
+export function updateAudiobookContext(dc: DataConnect, vars: UpdateAudiobookContextVariables): MutationPromise<UpdateAudiobookContextData, UpdateAudiobookContextVariables>;
+
+interface SeedAuthorRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedAuthorVariables): MutationRef<SeedAuthorData, SeedAuthorVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SeedAuthorVariables): MutationRef<SeedAuthorData, SeedAuthorVariables>;
+  operationName: string;
+}
+export const seedAuthorRef: SeedAuthorRef;
+
+export function seedAuthor(vars: SeedAuthorVariables): MutationPromise<SeedAuthorData, SeedAuthorVariables>;
+export function seedAuthor(dc: DataConnect, vars: SeedAuthorVariables): MutationPromise<SeedAuthorData, SeedAuthorVariables>;
+
+interface CreateAudiobookRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateAudiobookVariables): MutationRef<CreateAudiobookData, CreateAudiobookVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateAudiobookVariables): MutationRef<CreateAudiobookData, CreateAudiobookVariables>;
+  operationName: string;
+}
+export const createAudiobookRef: CreateAudiobookRef;
+
+export function createAudiobook(vars: CreateAudiobookVariables): MutationPromise<CreateAudiobookData, CreateAudiobookVariables>;
+export function createAudiobook(dc: DataConnect, vars: CreateAudiobookVariables): MutationPromise<CreateAudiobookData, CreateAudiobookVariables>;
+
+interface SeedEpisodeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedEpisodeVariables): MutationRef<SeedEpisodeData, SeedEpisodeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SeedEpisodeVariables): MutationRef<SeedEpisodeData, SeedEpisodeVariables>;
+  operationName: string;
+}
+export const seedEpisodeRef: SeedEpisodeRef;
+
+export function seedEpisode(vars: SeedEpisodeVariables): MutationPromise<SeedEpisodeData, SeedEpisodeVariables>;
+export function seedEpisode(dc: DataConnect, vars: SeedEpisodeVariables): MutationPromise<SeedEpisodeData, SeedEpisodeVariables>;
+
+interface SeedChapterRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedChapterVariables): MutationRef<SeedChapterData, SeedChapterVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SeedChapterVariables): MutationRef<SeedChapterData, SeedChapterVariables>;
+  operationName: string;
+}
+export const seedChapterRef: SeedChapterRef;
+
+export function seedChapter(vars: SeedChapterVariables): MutationPromise<SeedChapterData, SeedChapterVariables>;
+export function seedChapter(dc: DataConnect, vars: SeedChapterVariables): MutationPromise<SeedChapterData, SeedChapterVariables>;
+
+interface UpdateTrackVideoRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateTrackVideoVariables): MutationRef<UpdateTrackVideoData, UpdateTrackVideoVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateTrackVideoVariables): MutationRef<UpdateTrackVideoData, UpdateTrackVideoVariables>;
+  operationName: string;
+}
+export const updateTrackVideoRef: UpdateTrackVideoRef;
+
+export function updateTrackVideo(vars: UpdateTrackVideoVariables): MutationPromise<UpdateTrackVideoData, UpdateTrackVideoVariables>;
+export function updateTrackVideo(dc: DataConnect, vars: UpdateTrackVideoVariables): MutationPromise<UpdateTrackVideoData, UpdateTrackVideoVariables>;
+
+interface UpdateEpisodeAudioRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateEpisodeAudioVariables): MutationRef<UpdateEpisodeAudioData, UpdateEpisodeAudioVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateEpisodeAudioVariables): MutationRef<UpdateEpisodeAudioData, UpdateEpisodeAudioVariables>;
+  operationName: string;
+}
+export const updateEpisodeAudioRef: UpdateEpisodeAudioRef;
+
+export function updateEpisodeAudio(vars: UpdateEpisodeAudioVariables): MutationPromise<UpdateEpisodeAudioData, UpdateEpisodeAudioVariables>;
+export function updateEpisodeAudio(dc: DataConnect, vars: UpdateEpisodeAudioVariables): MutationPromise<UpdateEpisodeAudioData, UpdateEpisodeAudioVariables>;
+
+interface SeedInstrumentRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedInstrumentVariables): MutationRef<SeedInstrumentData, SeedInstrumentVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SeedInstrumentVariables): MutationRef<SeedInstrumentData, SeedInstrumentVariables>;
+  operationName: string;
+}
+export const seedInstrumentRef: SeedInstrumentRef;
+
+export function seedInstrument(vars: SeedInstrumentVariables): MutationPromise<SeedInstrumentData, SeedInstrumentVariables>;
+export function seedInstrument(dc: DataConnect, vars: SeedInstrumentVariables): MutationPromise<SeedInstrumentData, SeedInstrumentVariables>;
 
 interface GetUserTracksRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -1260,4 +1537,40 @@ export const getTrackRef: GetTrackRef;
 
 export function getTrack(vars: GetTrackVariables, options?: ExecuteQueryOptions): QueryPromise<GetTrackData, GetTrackVariables>;
 export function getTrack(dc: DataConnect, vars: GetTrackVariables, options?: ExecuteQueryOptions): QueryPromise<GetTrackData, GetTrackVariables>;
+
+interface GetEpisodesForShowRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetEpisodesForShowVariables): QueryRef<GetEpisodesForShowData, GetEpisodesForShowVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetEpisodesForShowVariables): QueryRef<GetEpisodesForShowData, GetEpisodesForShowVariables>;
+  operationName: string;
+}
+export const getEpisodesForShowRef: GetEpisodesForShowRef;
+
+export function getEpisodesForShow(vars: GetEpisodesForShowVariables, options?: ExecuteQueryOptions): QueryPromise<GetEpisodesForShowData, GetEpisodesForShowVariables>;
+export function getEpisodesForShow(dc: DataConnect, vars: GetEpisodesForShowVariables, options?: ExecuteQueryOptions): QueryPromise<GetEpisodesForShowData, GetEpisodesForShowVariables>;
+
+interface GetEpisodeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetEpisodeVariables): QueryRef<GetEpisodeData, GetEpisodeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetEpisodeVariables): QueryRef<GetEpisodeData, GetEpisodeVariables>;
+  operationName: string;
+}
+export const getEpisodeRef: GetEpisodeRef;
+
+export function getEpisode(vars: GetEpisodeVariables, options?: ExecuteQueryOptions): QueryPromise<GetEpisodeData, GetEpisodeVariables>;
+export function getEpisode(dc: DataConnect, vars: GetEpisodeVariables, options?: ExecuteQueryOptions): QueryPromise<GetEpisodeData, GetEpisodeVariables>;
+
+interface ListInstrumentsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListInstrumentsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListInstrumentsData, undefined>;
+  operationName: string;
+}
+export const listInstrumentsRef: ListInstrumentsRef;
+
+export function listInstruments(options?: ExecuteQueryOptions): QueryPromise<ListInstrumentsData, undefined>;
+export function listInstruments(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListInstrumentsData, undefined>;
 

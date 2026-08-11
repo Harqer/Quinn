@@ -45,7 +45,34 @@ class PlaybackService : MediaSessionService() {
     override fun onCreate() {
         super.onCreate()
         
-        val player = ExoPlayer.Builder(this).build()
+        val defaultDataSourceFactory = androidx.media3.datasource.DefaultDataSource.Factory(this)
+        val customDataSourceFactory = DataSource.Factory {
+            object : DataSource {
+                private var dataSource: DataSource? = null
+                override fun addTransferListener(transferListener: androidx.media3.datasource.TransferListener) {}
+                override fun open(dataSpec: androidx.media3.datasource.DataSpec): Long {
+                    dataSource = if (dataSpec.uri.scheme == "mave") {
+                        FlowDataSource(pipedInputStream)
+                    } else {
+                        defaultDataSourceFactory.createDataSource()
+                    }
+                    return dataSource!!.open(dataSpec)
+                }
+                override fun getUri(): android.net.Uri? = dataSource?.uri
+                override fun close() {
+                    dataSource?.close()
+                }
+                override fun read(buffer: ByteArray, offset: Int, length: Int): Int {
+                    return dataSource?.read(buffer, offset, length) ?: -1
+                }
+            }
+        }
+        val mediaSourceFactory = androidx.media3.exoplayer.source.DefaultMediaSourceFactory(this)
+            .setDataSourceFactory(customDataSourceFactory)
+            
+        val player = ExoPlayer.Builder(this)
+            .setMediaSourceFactory(mediaSourceFactory)
+            .build()
         
         val audioAttributes = androidx.media3.common.AudioAttributes.Builder()
             .setUsage(androidx.media3.common.C.USAGE_MEDIA)
@@ -82,10 +109,7 @@ class PlaybackService : MediaSessionService() {
             )
             .build()
         
-        val factory = DataSource.Factory { FlowDataSource(pipedInputStream) }
-        val mediaSource = ProgressiveMediaSource.Factory(factory)
-            .createMediaSource(mediaItem)
-        player.setMediaSource(mediaSource)
+        player.setMediaItem(mediaItem)
         player.prepare()
         player.playWhenReady = true
         player.addListener(object : androidx.media3.common.Player.Listener {

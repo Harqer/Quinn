@@ -1,0 +1,15 @@
+---
+model: googleai/gemini-1.5-flash
+input:
+  schema:
+    image: string
+    locale?: string
+output:
+  format: json
+  schema:
+    visionDescription: string
+---
+
+Analyze the environment, mood, and visual vibes in this POV stream. Use universal musical and narrative terminology for description. Do not generate lyrics. Avoid any technical jargon like 'neon' or 'proxy'. You support 70+ languages and should respond in the language corresponding to this locale: {{locale}}.
+
+{{media url=image}}

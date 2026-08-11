@@ -53,6 +53,8 @@ query GetCategories @auth(level: PUBLIC) {
     id
     name
     type
+    colorHex
+    imageUrl
   }
 }
 
@@ -401,7 +403,71 @@ query GetTrack($id: String!) @auth(level: PUBLIC) {
     coverUrl
     playCount
     prompt
+    lyrics
     isCommunity
+    createdAt
+  }
+}
+
+query GetEpisodesForShow($showId: String!) @auth(level: PUBLIC) {
+  episodes(where: { show: { id: { eq: $showId } } }, orderBy: [{ publishDate: DESC }]) {
+    id
+    title
+    description
+    publishDate
+    durationMs
+    audioUrl
+    coverUrl
+    show {
+      id
+      title
+      publisher
+      coverUrl
+    }
+  }
+}
+
+query GetEpisode($id: String!) @auth(level: PUBLIC) {
+  episode(id: $id) {
+    id
+    title
+    description
+    publishDate
+    durationMs
+    audioUrl
+    coverUrl
+    show {
+      id
+      title
+      publisher
+      coverUrl
+    }
+  }
+}
+
+query ListInstruments @auth(level: PUBLIC) {
+  instruments {
+    name
+    iconUrl
+  }
+}
+
+query GetCoverArtForTrack($trackId: String!) @auth(level: PUBLIC) {
+  coverArts(where: { track: { id: { eq: $trackId } } }) {
+    id
+    imageUrl
+    promptUsed
+    stylePreset
+    createdAt
+  }
+}
+
+query GetMusicVideoForTrack($trackId: String!) @auth(level: PUBLIC) {
+  musicVideos(where: { track: { id: { eq: $trackId } } }) {
+    id
+    videoUrl
+    promptUsed
+    motionPreset
     createdAt
   }
 }

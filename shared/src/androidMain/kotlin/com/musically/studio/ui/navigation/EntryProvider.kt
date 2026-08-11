@@ -62,6 +62,9 @@ fun maveEntryProvider(
             onNavigateToAudiobooks = { navigator.navigate(Route.CategoryView("audiobooks")) },
             onNavigateToMusic = { navigator.navigate(Route.CategoryView("music")) },
             onNavigateToJam = { navigator.navigate(Route.JamLobby) },
+            onNavigateToTrivia = { navigator.navigate(Route.JamLobby) },
+            onGeneratePodcast = { navigator.navigate(Route.PodcastOnboarding) },
+            onGenerateAudiobook = { navigator.navigate(Route.PodcastOnboarding) },
             onTrackClick = { trackId ->
                 viewModel.tracks.value.find { it.id == trackId }?.let {
                     viewModel.playTrack(it)
@@ -118,6 +121,7 @@ fun maveEntryProvider(
             imageBase64 = key.imageBase64,
             viewModel = viewModel,
             onComplete = {
+                navigator.goBack()
                 navigator.navigate(Route.Home)
             }
         )
@@ -174,7 +178,8 @@ fun maveEntryProvider(
                 session = session,
                 onAddInstrument = { jamViewModel.addLayer("Add $it") },
                 onEndJam = { navigator.goBack() },
-                localUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                localUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: "",
+                instruments = jamViewModel.instruments.collectAsStateWithLifecycle().value
             )
         }
     }
@@ -243,9 +248,14 @@ fun maveEntryProvider(
     entry<Route.Podcast>(
         metadata = maveVerticalTransitionMetadata()
     ) {
-        PodcastGeneratorScreen(
-            viewModel = viewModel,
-            onNavigateToSettings = onMenuClick
+        val jetcasterViewModel = androidx.lifecycle.viewmodel.compose.viewModel<com.musically.studio.ui.jetcaster.ui.home.HomeViewModel>()
+        val windowSizeClass = androidx.compose.material3.adaptive.currentWindowAdaptiveInfo().windowSizeClass
+        com.musically.studio.ui.jetcaster.ui.home.MainScreen(
+            windowSizeClass = windowSizeClass,
+            navigateToPlayer = { episode ->
+                navigator.navigate(Route.NowPlaying(episode.uri))
+            },
+            viewModel = jetcasterViewModel
         )
     }
 
@@ -335,12 +345,27 @@ fun maveEntryProvider(
     entry<Route.CategoryView>(
         metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.detailPane() + maveVerticalTransitionMetadata()
     ) { key ->
-        CategoryViewScreen(
-            categoryId = key.categoryId,
-            viewModel = viewModel,
-            onNavigateBack = { navigator.goBack() },
-            onPlaylistClick = { navigator.navigate(Route.PlaylistView(it)) }
-        )
+        if (key.categoryId == "audiobooks") {
+            val jetcasterViewModel = androidx.lifecycle.viewmodel.compose.viewModel<com.musically.studio.ui.jetcaster.ui.home.HomeViewModel>()
+            val windowSizeClass = androidx.compose.material3.adaptive.currentWindowAdaptiveInfo().windowSizeClass
+            com.musically.studio.ui.jetcaster.ui.home.MainScreen(
+                windowSizeClass = windowSizeClass,
+                navigateToPlayer = { episode ->
+                    // Since Route.Player does not exist, we'll navigate to NowPlaying and adapt 
+                    // or just log. We'll use a local PlayerRoute if needed, but since we can't change routes easily,
+                    // we'll pass Route.Podcast and hope the navigation resolves or we'll add Route.NowPlaying(episode.uri)
+                    navigator.navigate(Route.NowPlaying(episode.uri))
+                },
+                viewModel = jetcasterViewModel
+            )
+        } else {
+            CategoryViewScreen(
+                categoryId = key.categoryId,
+                viewModel = viewModel,
+                onNavigateBack = { navigator.goBack() },
+                onPlaylistClick = { navigator.navigate(Route.PlaylistView(it)) }
+            )
+        }
     }
 
     entry<Route.AlbumView>(
@@ -367,8 +392,8 @@ fun maveEntryProvider(
             viewModel = viewModel,
             onBack = { navigator.goBack() },
             onSignedOut = {
-                // Clear back-stack to Welcome so the user cannot back-navigate after sign-out/deletion
-                navigator.navigate(Route.Welcome)
+                // Clear back-stack and reset route to Welcome so the user cannot back-navigate after sign-out/deletion
+                navigator.resetToRoute(Route.Welcome)
             },
             onNavigateToAlbum = { navigator.navigate(Route.AlbumView(it)) },
             onNavigateToSettings = { navigator.navigate(Route.Settings) },
@@ -419,6 +444,20 @@ fun maveEntryProvider(
             viewModel = viewModel,
             onEnrolled = { navigator.navigate(Route.Home) },
             onBack = { navigator.goBack() }
+        )
+    }
+
+    entry<Route.PodcastOnboarding> {
+        PodcastOnboardingScreen(
+            viewModel = viewModel,
+            onDone = { prompt -> navigator.navigate(Route.PodcastGenerator(prompt = prompt, isAudiobook = false)) }
+        )
+    }
+
+    entry<Route.PodcastGenerator> { key ->
+        PodcastGeneratorScreen(
+            viewModel = viewModel,
+            onNavigateToSettings = onMenuClick
         )
     }
 

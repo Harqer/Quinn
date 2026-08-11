@@ -1,10 +1,8 @@
 package com.musically.studio.ui.components.organisms
-import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -12,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -21,6 +20,8 @@ import com.musically.studio.ui.models.AudioDevice
 import com.musically.studio.ui.components.atoms.PlaybackControls
 import com.musically.studio.ui.components.atoms.PlaybackSlider
 import com.musically.studio.ui.components.atoms.VolumeSlider
+import com.musically.studio.ui.components.molecules.MediaFooterDeviceRow
+import com.musically.studio.ui.components.molecules.MediaVisualActionsRow
 
 @Composable
 fun MediaControlsPane(
@@ -133,59 +134,21 @@ fun MediaControlsPane(
         
         Spacer(modifier = Modifier.height(24.dp))
         
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Button(
-                onClick = onRequestCover,
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.1f))
-            ) {
-                Icon(Icons.Default.Palette, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(8.dp))
-                Text("New Cover", style = MaterialTheme.typography.labelMedium)
-            }
-            Button(
-                onClick = onRequestVideo,
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.1f))
-            ) {
-                Icon(Icons.Default.VideoLibrary, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(8.dp))
-                Text("Music Video", style = MaterialTheme.typography.labelMedium)
-            }
-        }
+        MediaVisualActionsRow(
+            onRequestCover = onRequestCover,
+            onRequestVideo = onRequestVideo
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
         VolumeSlider(volume = volume, onVolumeChange = onVolumeChange)
         Spacer(modifier = Modifier.height(16.dp))
         
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.small)
-                    .clickable { onDeviceClick() }
-                    .padding(8.dp)
-            ) {
-                Icon(Icons.Default.Bluetooth, contentDescription = "Device", tint = com.musically.studio.ui.theme.MaveBrand, modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(devices.firstOrNull()?.name ?: "Phone Speaker", color = com.musically.studio.ui.theme.MaveBrand, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                IconButton(onClick = onShare, modifier = Modifier.size(24.dp)) {
-                    Icon(Icons.Default.Share, contentDescription = "Share", tint = Color.White)
-                }
-                IconButton(onClick = onQueueClick, modifier = Modifier.size(24.dp)) {
-                    Icon(Icons.Default.Menu, contentDescription = "Queue", tint = Color.White)
-                }
-            }
-        }
+        MediaFooterDeviceRow(
+            devices = devices,
+            onDeviceClick = onDeviceClick,
+            onShare = onShare,
+            onQueueClick = onQueueClick
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -204,6 +167,7 @@ fun MediaControlsPane(
                 .weight(1f)
                 .clip(MaterialTheme.shapes.large)
                 .background(lyricsColor)
+                .semantics(mergeDescendants = true) {}
                 .clickable { onLyricsClick() }
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 0.dp),
         ) {

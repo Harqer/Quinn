@@ -26,10 +26,10 @@ fun CategoryCardsRow(
     onCategoryClick: (String) -> Unit
 ) {
     val defaultColors = listOf(
-        Color(0xFF9333EA), // Purple
-        Color(0xFF059669), // Emerald
-        Color(0xFFE11D48), // Rose
-        Color(0xFF0284C7)  // Sky Blue
+        MaterialTheme.colorScheme.primaryContainer,
+        MaterialTheme.colorScheme.secondaryContainer,
+        MaterialTheme.colorScheme.tertiaryContainer,
+        MaterialTheme.colorScheme.errorContainer
     )
     Column(
         modifier = modifier
@@ -38,7 +38,7 @@ fun CategoryCardsRow(
     ) {
         Text(
             text = "Generate a Vibe",
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
@@ -59,9 +59,15 @@ fun CategoryCardsRow(
                         .debouncedClickable { onCategoryClick(category.id) },
                     contentAlignment = Alignment.Center
                 ) {
+                    val onColors = listOf(
+                        MaterialTheme.colorScheme.onPrimaryContainer,
+                        MaterialTheme.colorScheme.onSecondaryContainer,
+                        MaterialTheme.colorScheme.onTertiaryContainer,
+                        MaterialTheme.colorScheme.onErrorContainer
+                    )
                     Text(
                         text = category.name,
-                        color = Color.White,
+                        color = onColors[index % onColors.size],
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )

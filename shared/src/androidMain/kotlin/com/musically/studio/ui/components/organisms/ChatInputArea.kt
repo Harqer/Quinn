@@ -15,6 +15,8 @@ import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Podcasts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -47,14 +49,15 @@ fun ChatInputArea(
     onAttachImage: () -> Unit,
     onVoiceRecord: () -> Unit,
     onGenerateCoverArt: () -> Unit,
-    onGenerateVideo: () -> Unit
+    onGenerateVideo: () -> Unit,
+    onGeneratePodcast: () -> Unit,
+    onGenerateAudiobook: () -> Unit
 ) {
     var showAttachmentMenu by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.navigationBars)
             .windowInsetsPadding(WindowInsets.ime)
             .padding(8.dp)
     ) {
@@ -86,6 +89,21 @@ fun ChatInputArea(
                     })
                     AttachmentOption(icon = Icons.Default.Animation, label = "Animate", onClick = {
                         onGenerateVideo()
+                        showAttachmentMenu = false
+                    })
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    AttachmentOption(icon = Icons.Default.Podcasts, label = "Podcast", onClick = {
+                        onGeneratePodcast()
+                        showAttachmentMenu = false
+                    })
+                    AttachmentOption(icon = Icons.Default.MenuBook, label = "Audiobook", onClick = {
+                        onGenerateAudiobook()
                         showAttachmentMenu = false
                     })
                 }

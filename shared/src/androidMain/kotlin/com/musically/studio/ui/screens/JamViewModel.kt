@@ -52,6 +52,9 @@ class JamViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(JamUiState())
     val uiState: StateFlow<JamUiState> = _uiState.asStateFlow()
 
+    private val _instruments = MutableStateFlow<List<com.musically.studio.dataconnect.ListInstrumentsQuery.Data.InstrumentsItem>>(emptyList())
+    val instruments: StateFlow<List<com.musically.studio.dataconnect.ListInstrumentsQuery.Data.InstrumentsItem>> = _instruments.asStateFlow()
+
     private val currentUser get() = auth.currentUser
     
     private val streamAudioPlayer = StreamAudioPlayer()
@@ -61,6 +64,11 @@ class JamViewModel @Inject constructor(
     private var audioRecord: AudioRecord? = null
 
     init {
+        viewModelScope.launch {
+            dataConnectRepository.listInstruments().collect { data ->
+                _instruments.update { data }
+            }
+        }
         viewModelScope.launch {
             geminiLiveManager.audioOutput.collect { pcmData ->
                 streamAudioPlayer.queueAudioChunk(pcmData)
@@ -141,6 +149,19 @@ class JamViewModel @Inject constructor(
         val roomCode = _uiState.value.currentRoomCode ?: return
         viewModelScope.launch {
             repository.updateStatus(roomCode, SessionStatus.IN_GAME)
+        }
+    }
+
+    fun finishGame() {
+        val roomCode = _uiState.value.currentRoomCode ?: return
+        val session = _uiState.value.session ?: return
+        viewModelScope.launch {
+            repository.updateStatus(roomCode, SessionStatus.RESULTS)
+            dataConnectRepository.createJamSessionHistory(
+                roomId = roomCode,
+                gameMode = session.gameMode,
+                participantCount = session.participants.size
+            )
         }
     }
 

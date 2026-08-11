@@ -58,13 +58,15 @@ mutation CreatePodcast(
   $title: String!,
   $publisher: String!,
   $coverUrl: String,
-  $description: String
+  $description: String,
+  $storyContext: String
 ) @auth(level: PUBLIC) {
   show_insert(data: {
     title: $title,
     publisher: $publisher,
     coverUrl: $coverUrl,
-    description: $description
+    description: $description,
+    storyContext: $storyContext
   })
 }
 
@@ -183,6 +185,7 @@ mutation AddChatMessage($userId: String!, $sender: String!, $text: String!) @aut
 mutation SeedTrack(
   $title: String!,
   $audioUrl: String!,
+  $coverUrl: String,
   $durationMs: Int,
   $prompt: String,
   $isCommunity: Boolean!,
@@ -191,6 +194,7 @@ mutation SeedTrack(
   track_insert(data: {
     title: $title,
     audioUrl: $audioUrl,
+    coverUrl: $coverUrl,
     durationMs: $durationMs,
     prompt: $prompt,
     isCommunity: $isCommunity,
@@ -207,5 +211,158 @@ mutation SeedUser(
     uid: $uid,
     username: $username,
     email: $email
+  })
+}
+
+mutation SeedAIPreset(
+  $name: String!,
+  $promptFragment: String!,
+  $imageUrl: String
+) @auth(level: PUBLIC) {
+  aIPreset_insert(data: {
+    name: $name,
+    promptFragment: $promptFragment,
+    imageUrl: $imageUrl,
+    isActive: true
+  })
+}
+
+mutation UpdateShowContext($id: String!, $storyContext: String!) @auth(level: PUBLIC) {
+  show_update(id: $id, data: { storyContext: $storyContext })
+}
+
+mutation UpdateAudiobookContext($id: String!, $storyContext: String!) @auth(level: PUBLIC) {
+  audiobook_update(id: $id, data: { storyContext: $storyContext })
+}
+
+mutation SeedAuthor(
+  $id: String!,
+  $name: String!,
+  $bio: String
+) @auth(level: PUBLIC) {
+  author_upsert(data: {
+    id: $id,
+    name: $name,
+    bio: $bio
+  })
+}
+
+mutation CreateAudiobook(
+  $title: String!,
+  $authorId: String!,
+  $narrator: String,
+  $coverUrl: String,
+  $storyContext: String
+) @auth(level: PUBLIC) {
+  audiobook_insert(data: {
+    title: $title,
+    authorId: $authorId,
+    narrator: $narrator,
+    coverUrl: $coverUrl,
+    storyContext: $storyContext
+  })
+}
+
+mutation SeedEpisode(
+  $showId: String!,
+  $title: String!,
+  $description: String,
+  $audioUrl: String,
+  $durationMs: Int,
+  $publishDate: Timestamp!
+) @auth(level: PUBLIC) {
+  episode_insert(data: {
+    showId: $showId,
+    title: $title,
+    description: $description,
+    audioUrl: $audioUrl,
+    durationMs: $durationMs,
+    publishDate: $publishDate
+  })
+}
+
+mutation SeedChapter(
+  $audiobookId: String!,
+  $title: String!,
+  $chapterNumber: Int!,
+  $audioUrl: String,
+  $durationMs: Int
+) @auth(level: PUBLIC) {
+  chapter_insert(data: {
+    audiobookId: $audiobookId,
+    title: $title,
+    chapterNumber: $chapterNumber,
+    audioUrl: $audioUrl,
+    durationMs: $durationMs
+  })
+}
+
+mutation UpdateTrackVideo($id: String!, $videoUrl: String!) @auth(level: USER) {
+  track_update(id: $id, data: { videoUrl: $videoUrl })
+}
+
+mutation UpdateEpisodeAudio($id: String!, $audioUrl: String!) @auth(level: USER) {
+  episode_update(id: $id, data: { audioUrl: $audioUrl })
+}
+
+mutation SeedInstrument(
+  $name: String!,
+  $iconUrl: String
+) @auth(level: PUBLIC) {
+  instrument_upsert(data: {
+    name: $name,
+    iconUrl: $iconUrl
+  })
+}
+
+mutation CreateCoverArt(
+  $trackId: String!,
+  $imageUrl: String!,
+  $promptUsed: String,
+  $stylePreset: String
+) @auth(level: PUBLIC) {
+  coverArt_insert(data: {
+    trackId: $trackId,
+    imageUrl: $imageUrl,
+    promptUsed: $promptUsed,
+    stylePreset: $stylePreset
+  })
+}
+
+mutation CreateMusicVideo(
+  $trackId: String!,
+  $videoUrl: String!,
+  $promptUsed: String,
+  $motionPreset: String
+) @auth(level: PUBLIC) {
+  musicVideo_insert(data: {
+    trackId: $trackId,
+    videoUrl: $videoUrl,
+    promptUsed: $promptUsed,
+    motionPreset: $motionPreset
+  })
+}
+
+mutation CreateJamSessionHistory(
+  $roomId: String!,
+  $gameMode: String!,
+  $participantCount: Int!
+) @auth(level: USER) {
+  jamSessionHistory_insert(data: {
+    roomId: $roomId,
+    gameMode: $gameMode,
+    hostId_expr: "auth.uid",
+    participantCount: $participantCount
+  })
+}
+
+mutation SaveUserEpisodeProgress(
+  $episodeId: String!,
+  $progressMs: Int!
+) @auth(level: USER) {
+  userEpisodeProgress_upsert(data: {
+    userId_expr: "auth.uid",
+    episodeId: $episodeId,
+    progressMs: $progressMs
   })
 }

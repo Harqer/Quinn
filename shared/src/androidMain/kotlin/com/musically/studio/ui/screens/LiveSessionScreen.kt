@@ -90,7 +90,7 @@ fun LiveSessionScreen(
             )
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().background(backgroundGradient)) {
+        Box(modifier = Modifier.fillMaxSize().background(backgroundGradient).padding(paddingValues)) {
             if (messages.isEmpty() && !isLiveSessionActive) {
                 EmptySessionState(onStartSession = { viewModel.startLiveSession() })
             } else if (messages.isEmpty() && thinkingText.isBlank()) {

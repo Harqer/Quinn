@@ -3,8 +3,11 @@ package com.musically.studio.ui.screens
 import com.musically.studio.dataconnect.instance
 import com.musically.studio.dataconnect.execute
 
+import com.google.firebase.Firebase
+import com.google.firebase.functions.functions
+import kotlinx.coroutines.tasks.await
 import android.media.MediaPlayer
-import android.util.Log
+import timber.log.Timber
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.musically.studio.data.repository.ChatRepository
@@ -58,7 +61,46 @@ class ChatViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            collectGeminiEvents()
+        }
+        viewModelScope.launch {
             loadChatHistory()
+        }
+    }
+
+    private suspend fun collectGeminiEvents() {
+        viewModelScope.launch {
+            geminiLiveManager.transcripts.collect { transcript ->
+                val newMsg = MaveChatMessage(
+                    id = System.currentTimeMillis().toString(),
+                    sender = if (transcript.startsWith("You: ")) "user" else "mave",
+                    text = transcript.removePrefix("You: ").removePrefix("Mave: ")
+                )
+                _messages.value = _messages.value + newMsg
+                saveMessage(newMsg)
+            }
+        }
+        viewModelScope.launch {
+            geminiLiveManager.functionCalls.collect { call ->
+                val name = call.optString("name")
+                val callId = call.optString("id")
+                try {
+                    val argsMap = mutableMapOf<String, Any?>()
+                    val argsObj = call.optJSONObject("args")
+                    if (argsObj != null) {
+                        val keys = argsObj.keys()
+                        while (keys.hasNext()) {
+                            val key = keys.next()
+                            argsMap[key] = argsObj.get(key)
+                        }
+                    }
+                    val result = chatRepository.executeTool(name, argsMap)
+                    geminiLiveManager.sendResponse(callId, name, result)
+                } catch (e: Exception) {
+                    val errorObj = JSONObject().apply { put("error", e.message) }
+                    geminiLiveManager.sendResponse(callId, name, errorObj)
+                }
+            }
         }
     }
 
@@ -80,7 +122,7 @@ class ChatViewModel @Inject constructor(
                 return
             }
         } catch (e: Exception) {
-            Log.e("ChatViewModel", "Failed to load chat history", e)
+            Timber.e(e, "Failed to load chat history")
         }
         
         _messages.value = emptyList()
@@ -93,6 +135,9 @@ class ChatViewModel @Inject constructor(
 
     private fun saveMessage(msg: MaveChatMessage) {
         viewModelScope.launch {
+            collectGeminiEvents()
+        }
+        viewModelScope.launch {
             try {
                 val userId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
                 com.musically.studio.dataconnect.DefaultConnector.instance.addChatMessage.execute(
@@ -101,7 +146,7 @@ class ChatViewModel @Inject constructor(
                     text = msg.text
                 )
             } catch (e: Exception) {
-                Log.e("ChatViewModel", "Failed to save message to Data Connect", e)
+                Timber.e(e, "Failed to save message to Data Connect")
             }
         }
     }
@@ -116,6 +161,9 @@ class ChatViewModel @Inject constructor(
         var fullText = ""
         var addedEmptyMessage = false
 
+        viewModelScope.launch {
+            collectGeminiEvents()
+        }
         viewModelScope.launch {
             try {
                 generativeService.generateContentStream(text.trim()).collect { chunk ->
@@ -138,15 +186,135 @@ class ChatViewModel @Inject constructor(
                 
                 // Save AI message when stream completes
                 val finalMsg = _messages.value.find { it.id == responseId }
-                if (finalMsg != null) {
-                    saveMessage(finalMsg)
-                }
+                finalMsg?.let { saveMessage(it) }
             } catch (e: Exception) {
-                Log.e("ChatViewModel", "sendMessage failed", e)
+                Timber.e(e, "Error generating response")
                 handleError(e, responseId, addedEmptyMessage)
             }
         }
     }
+
+    fun generateNarrativeSeries(topic: String, type: String = "podcast", targetEpisodes: Int = 3) {
+        val userMsg = MaveChatMessage(
+            id = System.currentTimeMillis().toString(),
+            sender = "user",
+            text = "Generate a $type about $topic"
+        )
+        _messages.value = _messages.value + userMsg
+        saveMessage(userMsg)
+
+        val responseId = (System.currentTimeMillis() + 1).toString()
+        _messages.value = _messages.value + MaveChatMessage(
+            id = responseId,
+            sender = "ai",
+            text = "Writing $type script..."
+        )
+
+        viewModelScope.launch {
+            collectGeminiEvents()
+        }
+        viewModelScope.launch {
+            try {
+                val functions = Firebase.functions
+                val result = functions
+                    .getHttpsCallable("generateNarrativeSeries")
+                    .withTimeout(300, java.util.concurrent.TimeUnit.SECONDS)
+                    .call(
+                        mapOf(
+                            "topic" to topic,
+                            "type" to type,
+                            "targetEpisodes" to targetEpisodes
+                        )
+                    )
+                    .await()
+                
+                val resultData = result.data as? Map<*, *>
+                val newContext = resultData?.get("newContext") as? String
+                val episodesList = resultData?.get("episodes") as? List<Map<String, String>> ?: emptyList()
+                
+                var generatedSeriesId: String? = null
+                val renderJobs = mutableListOf<Map<String, String>>()
+                
+                if (type == "podcast") {
+                    val createShowRes = com.musically.studio.dataconnect.DefaultConnector.instance.createPodcast.execute(
+                        title = "$topic Podcast",
+                        publisher = "Mave AI"
+                    ) {
+                        coverUrl = null
+                        description = "A generated podcast about $topic"
+                        storyContext = newContext
+                    }
+                    generatedSeriesId = createShowRes.data.show_insert?.id
+                    
+                    if (generatedSeriesId != null) {
+                        episodesList.forEach { ep ->
+                            val res = com.musically.studio.dataconnect.DefaultConnector.instance.seedEpisode.execute(
+                                showId = generatedSeriesId!!,
+                                title = ep["title"] ?: "Untitled Episode",
+                                publishDate = com.google.firebase.Timestamp.now()
+                            ) {
+                                description = ep["script"]
+                                audioUrl = null
+                                durationMs = 0
+                            }
+                            res.data.episode_insert?.id?.let {
+                                renderJobs.add(mapOf("episodeId" to it, "script" to (ep["script"] ?: "")))
+                            }
+                        }
+                    }
+                } else {
+                    val createBookRes = com.musically.studio.dataconnect.DefaultConnector.instance.createAudiobook.execute(
+                        title = "$topic Audiobook",
+                        authorId = "mave_ai"
+                    ) {
+                        narrator = "Mave AI"
+                        coverUrl = null
+                        storyContext = newContext
+                    }
+                    generatedSeriesId = createBookRes.data.audiobook_insert?.id
+                    
+                    if (generatedSeriesId != null) {
+                        episodesList.forEachIndexed { index, chapter ->
+                            val res = com.musically.studio.dataconnect.DefaultConnector.instance.seedChapter.execute(
+                                audiobookId = generatedSeriesId!!,
+                                title = chapter["title"] ?: "Chapter ${index + 1}",
+                                chapterNumber = index + 1
+                            ) {
+                                audioUrl = null
+                                durationMs = 0
+                            }
+                            res.data.chapter_insert?.id?.let {
+                                renderJobs.add(mapOf("episodeId" to it, "script" to (chapter["script"] ?: "")))
+                            }
+                        }
+                    }
+                }
+
+                _messages.value = _messages.value.map {
+                    if (it.id == responseId) it.copy(text = "Successfully generated and saved $type script with ${episodesList.size} episodes/chapters! Rendering audio now...") else it
+                }
+                
+                // Trigger background audio rendering here
+                launch(Dispatchers.IO) {
+                    renderJobs.forEach { job ->
+                        try {
+                            Firebase.functions
+                                .getHttpsCallable("renderNarrativeAudio")
+                                .call(job)
+                        } catch (e: Exception) {
+                            Timber.e(e, "Error triggering background audio render")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error generating narrative")
+                _messages.value = _messages.value.map {
+                    if (it.id == responseId) it.copy(text = "[Error] Failed to generate script: ${e.message}") else it
+                }
+            }
+        }
+    }
+
 
     private fun handleError(e: Exception, responseId: String, addedEmptyMessage: Boolean) {
         var errMsg = e.message ?: "Unknown error"
@@ -173,16 +341,19 @@ class ChatViewModel @Inject constructor(
 
     private fun handleToolCall(name: String, args: Map<String, Any?>) {
         viewModelScope.launch {
+            collectGeminiEvents()
+        }
+        viewModelScope.launch {
             try {
                 when (name) {
                     "generate_full_track" -> handleGenerateTrack(name, args)
                     "tweak_instrumentation" -> handleTweakInstrumentation(name, args)
-                    "generate_cover_art" -> handleGenerateCoverArt(args)
-                    "generate_video" -> handleGenerateVideo(args)
+                    "generate_cover_image" -> handleGenerateCoverArt(args)
+                    "generate_music_video" -> handleGenerateVideo(args)
                     else -> handleGenericToolCall(name, args)
                 }
             } catch (e: Exception) {
-                Log.e("ChatViewModel", "Tool call '$name' failed", e)
+                Timber.e(e, "Tool call '$name' failed")
                 _messages.value = _messages.value + MaveChatMessage(
                     id = System.currentTimeMillis().toString(),
                     sender = "ai",
@@ -197,15 +368,21 @@ class ChatViewModel @Inject constructor(
         val result = chatRepository.executeTool(name, args)
         val resObj = result.optJSONObject("result")
         val audioUrl = resObj?.optString("audioUrl")
-        val fallbackTitle = args["prompt"] as? String ?: args["description"] as? String ?: "Generated Track"
-        val trackName = resObj?.optString("trackName")?.takeIf { it.isNotBlank() } ?: fallbackTitle
-        val artistName = resObj?.optString("artistName")?.takeIf { it.isNotBlank() } ?: "Lyria"
+        val trackName = resObj?.optString("trackName")
+        val artistName = resObj?.optString("artistName")
         val responseText = resObj?.optString("response")?.takeIf { it.isNotBlank() } ?: "Here is your track!"
+        
+        val chatTracks = if (!trackName.isNullOrBlank() && !artistName.isNullOrBlank()) {
+            listOf(MaveChatTrack(title = trackName, artist = artistName))
+        } else {
+            emptyList()
+        }
+
         val msg = MaveChatMessage(
             id = System.currentTimeMillis().toString(),
             sender = "ai",
             text = responseText,
-            tracks = listOf(MaveChatTrack(title = trackName, artist = artistName)),
+            tracks = chatTracks,
             audioUrl = audioUrl,
             type = "track"
         )
@@ -221,7 +398,7 @@ class ChatViewModel @Inject constructor(
                     player.setOnCompletionListener { it.release() }
                     player.prepareAsync()
                 } catch (e: Exception) {
-                    Log.e("ChatViewModel", "MediaPlayer setup failed", e)
+                    Timber.e(e, "MediaPlayer setup failed")
                 }
             }
         }
@@ -244,7 +421,7 @@ class ChatViewModel @Inject constructor(
         val prompt = args["prompt"] as? String ?: ""
         val hq = args["hq"] as? Boolean ?: false
         val result = chatRepository.generateCover(prompt, hq)
-        val url = result.optString("url")
+        val url = result.optString("imageUrl").ifBlank { result.optString("url") }
         if (url.isNotBlank()) {
             _messages.value = _messages.value + MaveChatMessage(
                 id = System.currentTimeMillis().toString(),
@@ -272,7 +449,7 @@ class ChatViewModel @Inject constructor(
         )
         val prompt = args["prompt"] as? String ?: ""
         val result = chatRepository.generateVideo(prompt)
-        val url = result.optString("url")
+        val url = result.optString("videoUrl").ifBlank { result.optString("url") }
         if (url.isNotBlank()) {
             _messages.value = _messages.value.map {
                 if (it.id == loadingId) it.copy(text = "Your music video is ready!", videoUrl = url, type = "video")
@@ -298,11 +475,11 @@ class ChatViewModel @Inject constructor(
     }
 
     fun generateCoverArt(prompt: String, hq: Boolean = false) {
-        handleToolCall("generate_cover_art", mapOf("prompt" to prompt, "hq" to hq))
+        handleToolCall("generate_cover_image", mapOf("prompt" to prompt, "hq" to hq))
     }
 
     fun generateVideo(prompt: String) {
-        handleToolCall("generate_video", mapOf("prompt" to prompt))
+        handleToolCall("generate_music_video", mapOf("prompt" to prompt))
     }
 
     @android.annotation.SuppressLint("MissingPermission")
@@ -363,7 +540,7 @@ class ChatViewModel @Inject constructor(
                 text = "Recording voice... Tap again to stop."
             )
         } catch (e: Exception) {
-            Log.e("ChatViewModel", "Failed to start recording", e)
+            Timber.e(e, "Failed to start recording")
         }
     }
 

@@ -23,6 +23,7 @@ import com.musically.studio.ui.signOut
 import com.musically.studio.ui.components.atoms.MfaSettingItem
 import com.musically.studio.ui.components.atoms.PremiumSettingItem
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,8 +41,14 @@ fun SettingsScreen(
 
     LaunchedEffect(Unit) {
         viewModel.stripeUrl.collectLatest { url ->
-            val customTabsIntent = CustomTabsIntent.Builder().build()
-            customTabsIntent.launchUrl(context, Uri.parse(url))
+            val uri = Uri.parse(url)
+            val host = uri.host?.lowercase()
+            if (uri.scheme == "https" && (host?.endsWith("stripe.com") == true || host?.endsWith("lyria.studio") == true)) {
+                val customTabsIntent = CustomTabsIntent.Builder().build()
+                customTabsIntent.launchUrl(context, uri)
+            } else {
+                Timber.w("Blocked unsafe or non-whitelisted URL launch attempt: %s", url)
+            }
         }
     }
 

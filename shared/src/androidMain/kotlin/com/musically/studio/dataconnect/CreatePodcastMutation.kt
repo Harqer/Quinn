@@ -33,6 +33,8 @@ public interface CreatePodcastMutation :
   
     val description: com.google.firebase.dataconnect.OptionalVariable<String?>,
   
+    val storyContext: com.google.firebase.dataconnect.OptionalVariable<String?>,
+  
   ) {
     
     
@@ -46,6 +48,7 @@ public interface CreatePodcastMutation :
         public var publisher: String
         public var coverUrl: String?
         public var description: String?
+        public var storyContext: String?
         
       }
 
@@ -61,6 +64,8 @@ public interface CreatePodcastMutation :
             var coverUrl: com.google.firebase.dataconnect.OptionalVariable<String?> =
                 com.google.firebase.dataconnect.OptionalVariable.Undefined
             var description: com.google.firebase.dataconnect.OptionalVariable<String?> =
+                com.google.firebase.dataconnect.OptionalVariable.Undefined
+            var storyContext: com.google.firebase.dataconnect.OptionalVariable<String?> =
                 com.google.firebase.dataconnect.OptionalVariable.Undefined
             
 
@@ -81,11 +86,15 @@ public interface CreatePodcastMutation :
               get() = throw UnsupportedOperationException("getting builder values is not supported")
               set(value_) { description = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
               
+            override var storyContext: String?
+              get() = throw UnsupportedOperationException("getting builder values is not supported")
+              set(value_) { storyContext = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
+              
             
           }.apply(block_)
           .let {
             Variables(
-              title=title,publisher=publisher,coverUrl=coverUrl,description=description,
+              title=title,publisher=publisher,coverUrl=coverUrl,description=description,storyContext=storyContext,
             )
           }
         }

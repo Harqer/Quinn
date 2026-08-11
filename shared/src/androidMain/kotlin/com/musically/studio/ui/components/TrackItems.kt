@@ -93,12 +93,12 @@ fun TrackItem(
                 Spacer(modifier = Modifier.width(8.dp))
                 IconButton(
                     onClick = onRemixClick,
-                    modifier = Modifier.size(36.dp).background(Color(0xFF10b981), androidx.compose.foundation.shape.CircleShape)
+                    modifier = Modifier.size(36.dp).background(MaterialTheme.colorScheme.primary, androidx.compose.foundation.shape.CircleShape)
                 ) {
                     Icon(
                         imageVector = androidx.compose.material.icons.Icons.Default.PlayArrow,
                         contentDescription = "Remix with AI",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(20.dp)
                     )
                 }

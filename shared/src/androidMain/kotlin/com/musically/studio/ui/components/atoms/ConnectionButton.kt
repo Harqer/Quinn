@@ -28,14 +28,14 @@ fun ConnectionButton(
     onClick: () -> Unit
 ) {
     val bgColor = if (isConnected) {
-        if (platform == "Spotify") Color(0xFF1DB954).copy(alpha = 0.2f) else Color(0xFFFF0000).copy(alpha = 0.2f)
+        if (platform == "Spotify") MaterialTheme.colorScheme.primary.copy(alpha = 0.2f) else MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
     } else {
-        Color.White.copy(alpha = 0.05f)
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
     }
     val textColor = if (isConnected) {
-        if (platform == "Spotify") Color(0xFF1DB954) else Color(0xFFFF0000)
+        if (platform == "Spotify") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
     } else {
-        Color.White
+        MaterialTheme.colorScheme.onSurface
     }
 
     Row(

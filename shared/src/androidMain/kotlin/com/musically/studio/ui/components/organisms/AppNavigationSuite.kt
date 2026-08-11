@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,14 +20,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.filled.LibraryMusic
+import androidx.compose.material.icons.outlined.LibraryMusic
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
@@ -47,6 +56,9 @@ import com.musically.studio.ui.icons.books_movies_and_music
 import com.musically.studio.ui.navigation.Navigator
 import com.musically.studio.ui.navigation.Route
 import com.musically.studio.ui.utils.debouncedClickable
+import com.musically.studio.ui.sendTextCommand
+import com.musically.studio.ui.startLiveSession
+import com.musically.studio.ui.stopLiveSession
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +66,7 @@ fun AppNavigationSuite(
     layoutType: NavigationSuiteType,
     currentRoute: NavKey,
     navigator: Navigator,
+    viewModel: com.musically.studio.ui.MainViewModel,
     content: @Composable () -> Unit
 ) {
     var showChatSheet by remember { mutableStateOf(false) }
@@ -71,15 +84,15 @@ fun AppNavigationSuite(
                 onValueChange = { chatInputValue = it },
                 onSend = { 
                     showChatSheet = false
-                    // NOTE: Ideally we'd pass chatInputValue to the chat screen or viewmodel here.
-                    // For now, we clear the input and navigate.
                     chatInputValue = ""
                     navigator.navigate(Route.Chat)
                 },
                 onAttachImage = { showChatSheet = false; navigator.navigate(Route.Chat) },
                 onVoiceRecord = { showChatSheet = false; navigator.navigate(Route.Chat) },
                 onGenerateCoverArt = { showChatSheet = false; navigator.navigate(Route.Chat) },
-                onGenerateVideo = { showChatSheet = false; navigator.navigate(Route.Chat) }
+                onGenerateVideo = { showChatSheet = false; navigator.navigate(Route.Chat) },
+                onGeneratePodcast = { showChatSheet = false; navigator.navigate(Route.Chat) },
+                onGenerateAudiobook = { showChatSheet = false; navigator.navigate(Route.Chat) }
             )
             Spacer(modifier = Modifier.height(32.dp))
         }
@@ -87,102 +100,133 @@ fun AppNavigationSuite(
 
     if (layoutType == NavigationSuiteType.NavigationBar) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Box(modifier = Modifier.fillMaxSize().padding(bottom = 56.dp)) {
+            Box(modifier = Modifier.fillMaxSize().navigationBarsPadding().padding(bottom = 80.dp)) {
                 content()
             }
 
-            Box(
+            Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                                MaterialTheme.colorScheme.surface
-                            ),
-                            startY = 0f
-                        )
-                    )
             ) {
-                MaveBottomBar(
-                    tabs = listOf(
-                        MaveBottomNavItemData(
-                            title = "Home",
-                            icon = Icons.Default.Home,
-                            isSelected = currentRoute == Route.Home,
-                            onClick = { navigator.navigate(Route.Home) }
-                        ),
-                        MaveBottomNavItemData(
-                            title = "Search",
-                            icon = Icons.Default.Search,
-                            isSelected = currentRoute == Route.Search,
-                            onClick = { navigator.navigate(Route.Search) }
-                        ),
-                        // Spacer item for center button
-                        MaveBottomNavItemData(
-                            title = "",
-                            icon = Icons.Default.Add,
-                            isSelected = false,
-                            onClick = { navigator.navigate(Route.Camera) }
-                        ),
-                        MaveBottomNavItemData(
-                            title = "Library",
-                            icon = Icons.Default.LibraryMusic,
-                            isSelected = currentRoute == Route.Library,
-                            onClick = { navigator.navigate(Route.Library) }
-                        ),
-                        MaveBottomNavItemData(
-                            title = "Voice",
-                            icon = books_movies_and_music,
-                            isSelected = showChatSheet,
-                            onClick = { showChatSheet = true }
-                        )
-                    ),
-                    color = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.fillMaxWidth()
+                MaveChatbotSection(
+                    viewModel = viewModel,
+                    chatInputValue = chatInputValue,
+                    onChatInputValueChange = { chatInputValue = it },
+                    onSend = { 
+                        if (chatInputValue.isNotBlank()) {
+                            viewModel.sendTextCommand(chatInputValue)
+                            chatInputValue = ""
+                        }
+                    },
+                    onAttachImage = { },
+                    onVoiceRecord = { 
+                        if (!viewModel.isLiveSessionActive.value) {
+                            viewModel.startLiveSession()
+                        } else {
+                            viewModel.stopLiveSession()
+                        }
+                    },
+                    onGenerateCoverArt = { },
+                    onGenerateVideo = { },
+                    onGeneratePodcast = { navigator.navigate(Route.PodcastOnboarding) },
+                    onGenerateAudiobook = { navigator.navigate(Route.PodcastOnboarding) }
                 )
-            }
-            
-            // Custom Center Camera Button (Snapchat style)
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 24.dp)
-                    .size(64.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f))
-                    .border(
-                        width = 2.dp,
-                        brush = Brush.sweepGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.primary,
-                                MaterialTheme.colorScheme.tertiary,
-                                MaterialTheme.colorScheme.primary
-                            )
-                        ),
-                        shape = CircleShape
-                    )
-                    .debouncedClickable { navigator.navigate(Route.Camera) },
-                contentAlignment = Alignment.Center
-            ) {
                 Box(
                     modifier = Modifier
-                        .size(52.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
-                        .border(1.dp, Color.White.copy(alpha = 0.2f), CircleShape),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                                    MaterialTheme.colorScheme.surface
+                                ),
+                                startY = 0f
+                            )
+                        )
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.PhotoCamera,
-                        contentDescription = "Camera",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+                    NavigationBar(
+                    containerColor = Color.Transparent,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    tonalElevation = 0.dp
+                ) {
+                    NavigationBarItem(
+                        icon = { 
+                            Icon(
+                                if (currentRoute == Route.Home) Icons.Filled.Home else Icons.Outlined.Home, 
+                                contentDescription = "Home"
+                            ) 
+                        },
+                        label = { Text("Home") },
+                        selected = currentRoute == Route.Home,
+                        onClick = { navigator.navigate(Route.Home) },
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
                     )
+                    NavigationBarItem(
+                        icon = { 
+                            Icon(
+                                if (currentRoute == Route.Search) Icons.Filled.Search else Icons.Outlined.Search, 
+                                contentDescription = "Search"
+                            ) 
+                        },
+                        label = { Text("Search") },
+                        selected = currentRoute == Route.Search,
+                        onClick = { navigator.navigate(Route.Search) },
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    )
+                    NavigationBarItem(
+                        icon = { 
+                            Icon(
+                                if (currentRoute == Route.Camera) Icons.Filled.PhotoCamera else Icons.Default.PhotoCamera, 
+                                contentDescription = "Camera"
+                            ) 
+                        },
+                        label = { Text("Camera") },
+                        selected = currentRoute == Route.Camera,
+                        onClick = { navigator.navigate(Route.Camera) },
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = Color.Transparent,
+                            selectedIconColor = Color.White,
+                            unselectedIconColor = Color.White
+                        )
+                    )
+                    NavigationBarItem(
+                        icon = { 
+                            Icon(
+                                if (currentRoute == Route.Library) Icons.Filled.LibraryMusic else Icons.Outlined.LibraryMusic, 
+                                contentDescription = "Library"
+                            ) 
+                        },
+                        label = { Text("Library") },
+                        selected = currentRoute == Route.Library,
+                        onClick = { navigator.navigate(Route.Library) },
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    )
+                    NavigationBarItem(
+                        icon = { 
+                            Icon(
+                                if (currentRoute == Route.Settings) Icons.Filled.Settings else Icons.Outlined.Settings, 
+                                contentDescription = "Settings"
+                            ) 
+                        },
+                        label = { Text("Settings") },
+                        selected = currentRoute == Route.Settings,
+                        onClick = { navigator.navigate(Route.Settings) },
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    )
+                    // Removed Voice tab as per user request
                 }
+
+            }
             }
         }
     } else {
@@ -202,7 +246,7 @@ fun AppNavigationSuite(
                     onClick = { com.musically.studio.ui.utils.executeDebounced { navigator.navigate(Route.Search) } }
                 )
                 item(
-                    icon = { Icon(Icons.Default.Add, contentDescription = "Camera") },
+                    icon = { Icon(Icons.Default.PhotoCamera, contentDescription = "Camera") },
                     label = { Text("Camera") },
                     selected = currentRoute == Route.Camera,
                     onClick = { com.musically.studio.ui.utils.executeDebounced { navigator.navigate(Route.Camera) } }
@@ -214,11 +258,12 @@ fun AppNavigationSuite(
                     onClick = { com.musically.studio.ui.utils.executeDebounced { navigator.navigate(Route.Library) } }
                 )
                 item(
-                    icon = { Icon(books_movies_and_music, contentDescription = "Studio") },
-                    label = { Text("Voice") },
-                    selected = showChatSheet,
-                    onClick = { showChatSheet = true }
+                    icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                    label = { Text("Settings") },
+                    selected = currentRoute == Route.Settings,
+                    onClick = { com.musically.studio.ui.utils.executeDebounced { navigator.navigate(Route.Settings) } }
                 )
+                // Removed Voice tab as per user request
             },
             content = {
                 Box(modifier = Modifier.fillMaxSize()) {

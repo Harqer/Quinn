@@ -25,6 +25,8 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val bookmarkTrack: BookmarkTrackMutation
   
+    public val createAudiobook: CreateAudiobookMutation
+  
     public val createCameraCapture: CreateCameraCaptureMutation
   
     public val createPlaylist: CreatePlaylistMutation
@@ -48,6 +50,10 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
     public val getCategoryTracks: GetCategoryTracksQuery
   
     public val getCommunityTracks: GetCommunityTracksQuery
+  
+    public val getEpisode: GetEpisodeQuery
+  
+    public val getEpisodesForShow: GetEpisodesForShowQuery
   
     public val getLikedTracks: GetLikedTracksQuery
   
@@ -83,6 +89,8 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val listHomeSections: ListHomeSectionsQuery
   
+    public val listInstruments: ListInstrumentsQuery
+  
     public val listSubscriptionPlans: ListSubscriptionPlansQuery
   
     public val recordPayment: RecordPaymentMutation
@@ -93,9 +101,27 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val searchTracks: SearchTracksQuery
   
+    public val seedAiPreset: SeedAiPresetMutation
+  
+    public val seedAuthor: SeedAuthorMutation
+  
+    public val seedChapter: SeedChapterMutation
+  
+    public val seedEpisode: SeedEpisodeMutation
+  
+    public val seedInstrument: SeedInstrumentMutation
+  
     public val seedTrack: SeedTrackMutation
   
     public val seedUser: SeedUserMutation
+  
+    public val updateAudiobookContext: UpdateAudiobookContextMutation
+  
+    public val updateEpisodeAudio: UpdateEpisodeAudioMutation
+  
+    public val updateShowContext: UpdateShowContextMutation
+  
+    public val updateTrackVideo: UpdateTrackVideoMutation
   
     public val updateUserPreferences: UpdateUserPreferencesMutation
   
@@ -158,6 +184,10 @@ private class DefaultConnectorImpl(
       BookmarkTrackMutationImpl(this)
     }
   
+    override val createAudiobook by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      CreateAudiobookMutationImpl(this)
+    }
+  
     override val createCameraCapture by lazy(LazyThreadSafetyMode.PUBLICATION) {
       CreateCameraCaptureMutationImpl(this)
     }
@@ -204,6 +234,14 @@ private class DefaultConnectorImpl(
   
     override val getCommunityTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetCommunityTracksQueryImpl(this)
+    }
+  
+    override val getEpisode by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetEpisodeQueryImpl(this)
+    }
+  
+    override val getEpisodesForShow by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetEpisodesForShowQueryImpl(this)
     }
   
     override val getLikedTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -274,6 +312,10 @@ private class DefaultConnectorImpl(
       ListHomeSectionsQueryImpl(this)
     }
   
+    override val listInstruments by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      ListInstrumentsQueryImpl(this)
+    }
+  
     override val listSubscriptionPlans by lazy(LazyThreadSafetyMode.PUBLICATION) {
       ListSubscriptionPlansQueryImpl(this)
     }
@@ -294,12 +336,48 @@ private class DefaultConnectorImpl(
       SearchTracksQueryImpl(this)
     }
   
+    override val seedAiPreset by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      SeedAiPresetMutationImpl(this)
+    }
+  
+    override val seedAuthor by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      SeedAuthorMutationImpl(this)
+    }
+  
+    override val seedChapter by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      SeedChapterMutationImpl(this)
+    }
+  
+    override val seedEpisode by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      SeedEpisodeMutationImpl(this)
+    }
+  
+    override val seedInstrument by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      SeedInstrumentMutationImpl(this)
+    }
+  
     override val seedTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
       SeedTrackMutationImpl(this)
     }
   
     override val seedUser by lazy(LazyThreadSafetyMode.PUBLICATION) {
       SeedUserMutationImpl(this)
+    }
+  
+    override val updateAudiobookContext by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      UpdateAudiobookContextMutationImpl(this)
+    }
+  
+    override val updateEpisodeAudio by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      UpdateEpisodeAudioMutationImpl(this)
+    }
+  
+    override val updateShowContext by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      UpdateShowContextMutationImpl(this)
+    }
+  
+    override val updateTrackVideo by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      UpdateTrackVideoMutationImpl(this)
     }
   
     override val updateUserPreferences by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -325,6 +403,7 @@ private class DefaultConnectorImpl(
       addChatMessage,
         addTrackToPlaylist,
         bookmarkTrack,
+        createAudiobook,
         createCameraCapture,
         createPlaylist,
         createPodcast,
@@ -334,8 +413,17 @@ private class DefaultConnectorImpl(
         recordPayment,
         removeBookmarkedTrack,
         removeLikedTrack,
+        seedAiPreset,
+        seedAuthor,
+        seedChapter,
+        seedEpisode,
+        seedInstrument,
         seedTrack,
         seedUser,
+        updateAudiobookContext,
+        updateEpisodeAudio,
+        updateShowContext,
+        updateTrackVideo,
         updateUserPreferences,
         upsertUser,
         upsertUserSettings,
@@ -352,6 +440,8 @@ private class DefaultConnectorImpl(
         getCategories,
         getCategoryTracks,
         getCommunityTracks,
+        getEpisode,
+        getEpisodesForShow,
         getLikedTracks,
         getPaymentHistory,
         getPlaylistTracks,
@@ -368,6 +458,7 @@ private class DefaultConnectorImpl(
         listFaqItems,
         listFeatureHighlights,
         listHomeSections,
+        listInstruments,
         listSubscriptionPlans,
         searchTracks,
         
@@ -550,6 +641,21 @@ private class BookmarkTrackMutationImpl(
   )
 
 
+private class CreateAudiobookMutationImpl(
+  connector: DefaultConnector
+):
+  CreateAudiobookMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      CreateAudiobookMutation.Data,
+      CreateAudiobookMutation.Variables
+  >(
+    connector,
+    CreateAudiobookMutation.Companion.operationName,
+    CreateAudiobookMutation.Companion.dataDeserializer,
+    CreateAudiobookMutation.Companion.variablesSerializer,
+  )
+
+
 private class CreateCameraCaptureMutationImpl(
   connector: DefaultConnector
 ):
@@ -727,6 +833,36 @@ private class GetCommunityTracksQueryImpl(
     GetCommunityTracksQuery.Companion.operationName,
     GetCommunityTracksQuery.Companion.dataDeserializer,
     GetCommunityTracksQuery.Companion.variablesSerializer,
+  )
+
+
+private class GetEpisodeQueryImpl(
+  connector: DefaultConnector
+):
+  GetEpisodeQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetEpisodeQuery.Data,
+      GetEpisodeQuery.Variables
+  >(
+    connector,
+    GetEpisodeQuery.Companion.operationName,
+    GetEpisodeQuery.Companion.dataDeserializer,
+    GetEpisodeQuery.Companion.variablesSerializer,
+  )
+
+
+private class GetEpisodesForShowQueryImpl(
+  connector: DefaultConnector
+):
+  GetEpisodesForShowQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetEpisodesForShowQuery.Data,
+      GetEpisodesForShowQuery.Variables
+  >(
+    connector,
+    GetEpisodesForShowQuery.Companion.operationName,
+    GetEpisodesForShowQuery.Companion.dataDeserializer,
+    GetEpisodesForShowQuery.Companion.variablesSerializer,
   )
 
 
@@ -985,6 +1121,21 @@ private class ListHomeSectionsQueryImpl(
   )
 
 
+private class ListInstrumentsQueryImpl(
+  connector: DefaultConnector
+):
+  ListInstrumentsQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      ListInstrumentsQuery.Data,
+      Unit
+  >(
+    connector,
+    ListInstrumentsQuery.Companion.operationName,
+    ListInstrumentsQuery.Companion.dataDeserializer,
+    ListInstrumentsQuery.Companion.variablesSerializer,
+  )
+
+
 private class ListSubscriptionPlansQueryImpl(
   connector: DefaultConnector
 ):
@@ -1060,6 +1211,81 @@ private class SearchTracksQueryImpl(
   )
 
 
+private class SeedAiPresetMutationImpl(
+  connector: DefaultConnector
+):
+  SeedAiPresetMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      SeedAiPresetMutation.Data,
+      SeedAiPresetMutation.Variables
+  >(
+    connector,
+    SeedAiPresetMutation.Companion.operationName,
+    SeedAiPresetMutation.Companion.dataDeserializer,
+    SeedAiPresetMutation.Companion.variablesSerializer,
+  )
+
+
+private class SeedAuthorMutationImpl(
+  connector: DefaultConnector
+):
+  SeedAuthorMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      SeedAuthorMutation.Data,
+      SeedAuthorMutation.Variables
+  >(
+    connector,
+    SeedAuthorMutation.Companion.operationName,
+    SeedAuthorMutation.Companion.dataDeserializer,
+    SeedAuthorMutation.Companion.variablesSerializer,
+  )
+
+
+private class SeedChapterMutationImpl(
+  connector: DefaultConnector
+):
+  SeedChapterMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      SeedChapterMutation.Data,
+      SeedChapterMutation.Variables
+  >(
+    connector,
+    SeedChapterMutation.Companion.operationName,
+    SeedChapterMutation.Companion.dataDeserializer,
+    SeedChapterMutation.Companion.variablesSerializer,
+  )
+
+
+private class SeedEpisodeMutationImpl(
+  connector: DefaultConnector
+):
+  SeedEpisodeMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      SeedEpisodeMutation.Data,
+      SeedEpisodeMutation.Variables
+  >(
+    connector,
+    SeedEpisodeMutation.Companion.operationName,
+    SeedEpisodeMutation.Companion.dataDeserializer,
+    SeedEpisodeMutation.Companion.variablesSerializer,
+  )
+
+
+private class SeedInstrumentMutationImpl(
+  connector: DefaultConnector
+):
+  SeedInstrumentMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      SeedInstrumentMutation.Data,
+      SeedInstrumentMutation.Variables
+  >(
+    connector,
+    SeedInstrumentMutation.Companion.operationName,
+    SeedInstrumentMutation.Companion.dataDeserializer,
+    SeedInstrumentMutation.Companion.variablesSerializer,
+  )
+
+
 private class SeedTrackMutationImpl(
   connector: DefaultConnector
 ):
@@ -1087,6 +1313,66 @@ private class SeedUserMutationImpl(
     SeedUserMutation.Companion.operationName,
     SeedUserMutation.Companion.dataDeserializer,
     SeedUserMutation.Companion.variablesSerializer,
+  )
+
+
+private class UpdateAudiobookContextMutationImpl(
+  connector: DefaultConnector
+):
+  UpdateAudiobookContextMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      UpdateAudiobookContextMutation.Data,
+      UpdateAudiobookContextMutation.Variables
+  >(
+    connector,
+    UpdateAudiobookContextMutation.Companion.operationName,
+    UpdateAudiobookContextMutation.Companion.dataDeserializer,
+    UpdateAudiobookContextMutation.Companion.variablesSerializer,
+  )
+
+
+private class UpdateEpisodeAudioMutationImpl(
+  connector: DefaultConnector
+):
+  UpdateEpisodeAudioMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      UpdateEpisodeAudioMutation.Data,
+      UpdateEpisodeAudioMutation.Variables
+  >(
+    connector,
+    UpdateEpisodeAudioMutation.Companion.operationName,
+    UpdateEpisodeAudioMutation.Companion.dataDeserializer,
+    UpdateEpisodeAudioMutation.Companion.variablesSerializer,
+  )
+
+
+private class UpdateShowContextMutationImpl(
+  connector: DefaultConnector
+):
+  UpdateShowContextMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      UpdateShowContextMutation.Data,
+      UpdateShowContextMutation.Variables
+  >(
+    connector,
+    UpdateShowContextMutation.Companion.operationName,
+    UpdateShowContextMutation.Companion.dataDeserializer,
+    UpdateShowContextMutation.Companion.variablesSerializer,
+  )
+
+
+private class UpdateTrackVideoMutationImpl(
+  connector: DefaultConnector
+):
+  UpdateTrackVideoMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      UpdateTrackVideoMutation.Data,
+      UpdateTrackVideoMutation.Variables
+  >(
+    connector,
+    UpdateTrackVideoMutation.Companion.operationName,
+    UpdateTrackVideoMutation.Companion.dataDeserializer,
+    UpdateTrackVideoMutation.Companion.variablesSerializer,
   )
 
 

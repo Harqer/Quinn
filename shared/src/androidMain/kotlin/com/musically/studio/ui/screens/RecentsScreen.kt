@@ -51,7 +51,7 @@ fun RecentsScreen(viewModel: MainViewModel, onBack: () -> Unit) {
                 onRefresh = {
                     coroutineScope.launch {
                         isRefreshing = true
-                        delay(1000)
+                        viewModel.loadRecentTracks()
                         isRefreshing = false
                     }
                 },

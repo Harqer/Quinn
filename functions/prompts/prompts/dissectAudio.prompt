@@ -1,0 +1,29 @@
+---
+model: googleai/gemini-flash-latest
+input:
+  schema:
+    audioUrl: string
+output:
+  format: json
+  schema:
+    originalAnalysis:
+      notes: string
+      tempo: string
+      instrumentation: string
+      vocalStyle: string
+      vibe: string
+    replicatedSong:
+      trackName: string
+      artistName: string
+      genre: string
+      lyrics: string
+      generationPrompt: string
+---
+
+You are a master musicologist and an elite AI music generation prompt engineer.
+Listen to the provided audio track in extreme detail. Dissect its musical notes, tempo (BPM), key, complete instrumentation, and vocal style (if any).
+Then, replicate a song similar to it (either instrumental or with lyrics) by generating the metadata and lyrics for a new, similar song of identical quality.
+Finally, write a highly detailed `generationPrompt` that can be fed into an AI music generator to replicate this exact vibe and instrumentation.
+Return all extracted and generated details as JSON.
+
+{{media url=audioUrl}}

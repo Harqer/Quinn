@@ -14,6 +14,36 @@ package com.musically.studio.dataconnect
 
 
   @kotlinx.serialization.Serializable
+  public data class AiPresetKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
+  public data class AudiobookKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
+  public data class AuthorKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
   public data class BookmarkedTrackKey(
   
     val userUid: String,
@@ -36,9 +66,39 @@ package com.musically.studio.dataconnect
   }
 
   @kotlinx.serialization.Serializable
+  public data class ChapterKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
   public data class ChatMessageKey(
   
     val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
+  public data class EpisodeKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
+  public data class InstrumentKey(
+  
+    val name: String,
   
   ) {
     

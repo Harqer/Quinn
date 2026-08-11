@@ -22,14 +22,15 @@ import com.musically.studio.ui.components.atoms.MaveButton
 @Composable
 fun JamRemixScreen(
     session: JamSession,
+    instruments: List<com.musically.studio.dataconnect.ListInstrumentsQuery.Data.InstrumentsItem>,
     onAddInstrument: (String) -> Unit,
     onEndJam: () -> Unit,
     localUserId: String
 ) {
     // Dynamically filter available instruments to exclude those already active in the session
-    val allInstruments = listOf("Drums", "Bass", "Synth", "Guitar", "Vocals", "Strings", "Keys", "Percussion", "Horns")
+    val allInstrumentNames = instruments.map { it.name }
     val activeInstruments = session.tracks.values.toSet()
-    val availableInstruments = allInstruments.filter { it !in activeInstruments }
+    val availableInstruments = allInstrumentNames.filter { it !in activeInstruments }
     
     // For demo purposes, assuming session.participantIds dictates some active tracks
     

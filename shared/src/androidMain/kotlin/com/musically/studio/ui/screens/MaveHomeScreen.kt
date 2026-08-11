@@ -4,7 +4,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.items as gridItems
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.animation.AnimatedContent
@@ -34,6 +35,9 @@ fun MaveHomeScreen(
     onNavigateToMusic: () -> Unit = {},
     onNavigateToCamera: () -> Unit = {},
     onNavigateToJam: () -> Unit = {},
+    onNavigateToTrivia: () -> Unit = {},
+    onGeneratePodcast: () -> Unit = {},
+    onGenerateAudiobook: () -> Unit = {},
     hasPermissions: Boolean = false,
     onAcknowledgePermissions: () -> Unit = {},
     onTrackClick: (String) -> Unit
@@ -51,6 +55,8 @@ fun MaveHomeScreen(
     LaunchedEffect(Unit) {
         viewModel.fetchUserTracks()
         viewModel.fetchCommunityTracks()
+        viewModel.fetchPodcasts()
+        viewModel.fetchAudiobooks()
         try {
             val result = com.musically.studio.dataconnect.DefaultConnector.instance.listHomeSections.execute()
             homeSections = result.data.homeSections
@@ -65,7 +71,10 @@ fun MaveHomeScreen(
         }
     }
 
+    var chatInputValue by remember { mutableStateOf("") }
+
     Scaffold(
+        modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
         containerColor = com.musically.studio.ui.theme.MaveBackground,
         topBar = {
             MaveHomeTopBar(
@@ -73,7 +82,7 @@ fun MaveHomeScreen(
                 displayName = viewModel.getUserDisplayName(),
                 onNavigateToProfile = onNavigateToProfile
             )
-        }
+        },
     ) { paddingValues ->
         AnimatedContent(
             targetState = when {
@@ -111,6 +120,7 @@ fun MaveHomeScreen(
                     onNavigateToAudiobooks = onNavigateToAudiobooks,
                     onNavigateToConcerts = onNavigateToConcerts,
                     onNavigateToJam = onNavigateToJam,
+                    onNavigateToTrivia = onNavigateToTrivia,
                     onCategoryClick = { category ->
                         viewModel.sendTextCommand("Generate a song for category $category")
                         viewModel.navigateTo(com.musically.studio.ui.navigation.Route.LiveSession)

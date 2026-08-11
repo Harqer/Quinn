@@ -61,8 +61,7 @@ fun LibraryScreen(
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.oauthUrl.collect { url ->
-            val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
-            context.startActivity(intent)
+            com.musically.studio.ui.utils.SecurityUtils.safeLaunchUrl(context, url)
         }
     }
     

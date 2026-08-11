@@ -93,9 +93,29 @@ type Track @table {
   
   # Lyria-specific AI Generation Metadata
   prompt: String
+  videoUrl: String
+  lyrics: String
   visibility: String! @default(value: "public")
   owner: User!
   isCommunity: Boolean! @default(value: false)
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+type CoverArt @table {
+  id: String! @default(expr: "uuidV4()")
+  track: Track!
+  imageUrl: String!
+  promptUsed: String
+  stylePreset: String
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+type MusicVideo @table {
+  id: String! @default(expr: "uuidV4()")
+  track: Track!
+  videoUrl: String!
+  promptUsed: String
+  motionPreset: String
   createdAt: Timestamp! @default(expr: "request.time")
 }
 
@@ -129,6 +149,7 @@ type Show @table {
   rssFeedUrl: String
   coverUrl: String
   isExclusive: Boolean! @default(value: false)
+  storyContext: String
 }
 
 type Episode @table {
@@ -139,6 +160,7 @@ type Episode @table {
   publishDate: Timestamp
   durationMs: Int!
   audioUrl: String!
+  coverUrl: String
 }
 
 type UserEpisodeProgress @table(key: ["user", "episode"]) {
@@ -165,6 +187,7 @@ type Audiobook @table {
   isbn: String
   coverUrl: String
   totalDurationMs: Int
+  storyContext: String
 }
 
 type Chapter @table {
@@ -185,6 +208,8 @@ type Category @table {
   id: String! @default(expr: "uuidV4()")
   name: String! @unique
   type: CategoryType!
+  colorHex: String
+  imageUrl: String
 }
 
 type MusicCategory @table(key: ["track", "category"]) {
@@ -276,4 +301,18 @@ type HomeSection @table {
   title: String!
   orderIndex: Int!
   route: String!
+}
+
+type Instrument @table(key: "name") {
+  name: String!
+  iconUrl: String
+}
+
+type JamSessionHistory @table {
+  id: String! @default(expr: "uuidV4()")
+  roomId: String!
+  gameMode: String!
+  host: User!
+  participantCount: Int! @default(value: 1)
+  endedAt: Timestamp! @default(expr: "request.time")
 }

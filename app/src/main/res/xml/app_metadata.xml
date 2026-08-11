@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppFunctionAppMetadata xmlns:appfn="http://schemas.android.com/apk/androidx.appfunctions"
+    appfn:description="Mave is a music, podcast, and audiobook streaming app with AI-generated content.
+    Operational Patterns:
+    - Use 'searchContent' to resolve show/episode names to IDs before calling 'playEpisode' or 'playPodcast'.
+    - Use 'playAiSong' to generate and immediately play AI music from a text prompt.
+    - Use 'addToQueue' to queue episodes without interrupting current playback.
+    Constraints:
+    - All playback functions require a valid showId or episodeId from the app's Firebase backend.
+    - AI song generation may take up to 30 seconds; the function returns after playback begins."
+    appfn:displayDescription="@string/app_name" />

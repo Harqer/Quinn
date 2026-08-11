@@ -10,8 +10,8 @@ import android.util.Size
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
+import androidx.camera.compose.CameraXViewfinder
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -39,7 +39,12 @@ fun CameraPreview(
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
     
-    val preview = remember { Preview.Builder().build() }
+    var surfaceRequest by remember { mutableStateOf<SurfaceRequest?>(null) }
+    val preview = remember { 
+        Preview.Builder().build().apply {
+            setSurfaceProvider { request -> surfaceRequest = request }
+        }
+    }
     val imageAnalysis = remember {
         ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -84,32 +89,34 @@ fun CameraPreview(
         return
     }
 
-    AndroidView(
-        factory = { ctx ->
-            PreviewView(ctx).apply {
-                implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-            }
-        },
-        modifier = modifier.fillMaxSize(),
-        update = { previewView ->
-            preview.setSurfaceProvider(previewView.surfaceProvider)
-            
-            val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-            cameraProviderFuture.addListener({
-                val cameraProvider = cameraProviderFuture.get()
-                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-                imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
-                    val currentTime = System.currentTimeMillis()
-                    // Throttled analysis: 1 frame per 1.5 seconds for production stability
-                    if (currentTime - lastAnalysisTime >= 1500) {
-                        val base64 = imageProxy.toBase64()
-                        if (base64 != null) {
-                            viewModel?.sendFrame(base64)
-                        }
-                        lastAnalysisTime = currentTime
+    LaunchedEffect(context, lifecycleOwner) {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        cameraProviderFuture.addListener({
+            val cameraProvider = cameraProviderFuture.get()
+            imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
+                val currentTime = System.currentTimeMillis()
+                // Throttled analysis: 1 frame per 1.5 seconds for production stability
+                if (currentTime - lastAnalysisTime >= 1500) {
+                    val base64 = imageProxy.toBase64()
+                    if (base64 != null) {
+                        viewModel?.sendFrame(base64)
                     }
-                    imageProxy.close()
+                    lastAnalysisTime = currentTime
+                }
+                imageProxy.close()
+            }
+
+            val extensionsManagerFuture = androidx.camera.extensions.ExtensionsManager.getInstanceAsync(context, cameraProvider)
+            extensionsManagerFuture.addListener({
+                val extensionsManager = extensionsManagerFuture.get()
+                var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+                if (extensionsManager.isExtensionAvailable(cameraSelector, androidx.camera.extensions.ExtensionMode.AUTO)) {
+                    cameraSelector = extensionsManager.getExtensionEnabledCameraSelector(cameraSelector, androidx.camera.extensions.ExtensionMode.AUTO)
+                } else if (extensionsManager.isExtensionAvailable(cameraSelector, androidx.camera.extensions.ExtensionMode.NIGHT)) {
+                    cameraSelector = extensionsManager.getExtensionEnabledCameraSelector(cameraSelector, androidx.camera.extensions.ExtensionMode.NIGHT)
+                } else if (extensionsManager.isExtensionAvailable(cameraSelector, androidx.camera.extensions.ExtensionMode.HDR)) {
+                    cameraSelector = extensionsManager.getExtensionEnabledCameraSelector(cameraSelector, androidx.camera.extensions.ExtensionMode.HDR)
                 }
 
                 try {
@@ -124,8 +131,15 @@ fun CameraPreview(
                     Timber.e(e, "Use case binding failed")
                 }
             }, ContextCompat.getMainExecutor(context))
-        }
-    )
+        }, ContextCompat.getMainExecutor(context))
+    }
+
+    surfaceRequest?.let { request ->
+        CameraXViewfinder(
+            surfaceRequest = request,
+            modifier = modifier.fillMaxSize()
+        )
+    }
 }
 
 /**

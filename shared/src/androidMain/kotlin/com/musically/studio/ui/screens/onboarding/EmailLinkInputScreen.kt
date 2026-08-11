@@ -48,12 +48,21 @@ fun EmailLinkInputScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             } else {
-                MaveButton(
-                    text = "Check your email",
-                    onClick = { },
-                    enabled = false,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    MaveButton(
+                        text = if (isSending) "Resending..." else "Resend Magic Link",
+                        onClick = { 
+                            if (!isSending) {
+                                isSending = true
+                                viewModel.sendEmailLink(email) { success, _ ->
+                                    isSending = false
+                                }
+                            }
+                        },
+                        enabled = !isSending,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     ) {
