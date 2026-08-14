@@ -126,6 +126,8 @@ kotlin {
             implementation(libs.media3.exoplayer)
             implementation(libs.media3.session)
             implementation(libs.media3.ui)
+            implementation(libs.media3.ui.compose)
+            implementation(libs.media3.ui.compose.material3)
             
             // Google Play Billing
             implementation(libs.android.billing)
