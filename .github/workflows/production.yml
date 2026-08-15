@@ -1,4 +1,4 @@
-name: Meta Wearables WDAT CI/CD Pipeline
+name: Mave Studio CI/CD Pipeline
 
 on:
   push:
@@ -6,11 +6,18 @@ on:
   pull_request:
     branches: [ main, master, develop ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   validate_web_applet:
-    name: Build & Audit Web Applet & Functions
+    name: Build & Audit Web Applet
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -20,26 +27,69 @@ jobs:
         with:
           version: 10
 
-      - name: Set up Node.js
+      - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
       - name: Install Root Dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
 
       - name: Build Web Applet Production Assets
         run: pnpm run build
 
-      - name: Install & Build Firebase Cloud Functions
+  validate_cloud_functions:
+    name: Build & Audit Firebase Cloud Functions
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Build Firebase Cloud Functions
         run: |
           cd functions
-          pnpm install --no-frozen-lockfile
+          pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
           pnpm run build
 
+  validate_go_backend:
+    name: Build & Test Go Cloud Run Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Go 1.23
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          cache-dependency-path: backend/go.sum
+
+      - name: Build Go Server
+        run: |
+          cd backend
+          go build -v ./cmd/server
+
+      - name: Run Go Unit Tests
+        run: |
+          cd backend
+          go test -v ./...
+
   validate_android_companion:
-    name: Build & Test Android Companion
+    name: Build & Test Android Multi-Module Companion
     runs-on: ubuntu-latest
 
     steps:
@@ -51,9 +101,11 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-          cache: 'gradle'
 
-      - name: Configure WDAT Secrets & Repositories
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Configure WDAT Secrets & Manifest Placeholders
         env:
           MOCK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -63,8 +115,8 @@ jobs:
             echo "<plist version=\"1.0\"><dict><key>CLIENT_TOKEN</key><string>0</string></dict></plist>" > MWDAT.plist
           fi
 
-      - name: Compile Kotlin Companion Classes
-        run: ./gradlew :shared:compileDebugKotlinAndroid --no-daemon
+      - name: Compile Kotlin Companion Classes Across Modules
+        run: ./gradlew :shared:compileDebugKotlinAndroid :tv:compileDebugKotlinAndroid :wear:compileDebugKotlinAndroid --no-daemon
 
       - name: Package Companion Android APK
         run: ./gradlew assembleDebug --no-daemon
@@ -74,4 +126,3 @@ jobs:
         with:
           name: companion-app-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-
