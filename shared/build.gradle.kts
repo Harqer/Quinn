@@ -60,7 +60,7 @@ kotlin {
             implementation(libs.mwdat.camera)
             implementation(libs.mwdat.display)
             implementation(libs.mwdat.mockdevice)
-            implementation("com.qmdeve.liquidglass:core:1.0.5")
+            implementation(libs.liquidglass)
             implementation(libs.androidx.xr.glimmer)
             implementation(libs.androidx.xr.projected)
             implementation(kotlin("reflect"))
@@ -91,7 +91,7 @@ kotlin {
             implementation(libs.spotify.auth)
             implementation(libs.retrofit.core)
             implementation(libs.retrofit.gson)
-            implementation("com.squareup.okhttp3:okhttp-sse:4.12.0")
+            implementation(libs.okhttp.sse)
             implementation(libs.glide.core)
             implementation(libs.coil.compose)
 

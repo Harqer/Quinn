@@ -111,15 +111,14 @@ ksp {
 }
 
 dependencies {
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.robolectric:robolectric:4.11.1")
-    testImplementation("androidx.test.ext:junit:1.1.5")
-    testImplementation("androidx.test:core:1.5.0")
-    testImplementation("com.meta.wearable:mwdat-mockdevice:0.8.0")
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.mwdat.mockdevice)
 
-    implementation("com.meta.wearable:mwdat-core:0.8.0")
-    implementation("com.meta.wearable:mwdat-camera:0.8.0")
-    implementation("com.meta.wearable:mwdat-display:0.8.0")
+    implementation(libs.mwdat.core)
+    implementation(libs.mwdat.camera)
+    implementation(libs.mwdat.display)
     
     // Required for Coroutines and Flows used by the DAT SDK
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
