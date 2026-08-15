@@ -21,7 +21,8 @@ class ChatRepository @Inject constructor(
 
     suspend fun loadChatHistory(): JSONObject = withContext(Dispatchers.IO) {
         try {
-            val response = connector.listChatMessages.execute(userId = "current_user")
+            val currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
+            val response = connector.listChatMessages.execute(userId = currentUid)
             val array = JSONArray()
             response.data.chatMessages.forEach { msg ->
                 val obj = JSONObject()
@@ -37,10 +38,11 @@ class ChatRepository @Inject constructor(
 
     suspend fun saveChatHistory(body: JSONObject): JSONObject = withContext(Dispatchers.IO) {
         try {
+            val currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
             val role = body.optString("role", "user")
             val content = body.optString("content", "")
             connector.addChatMessage.execute(
-                userId = "current_user",
+                userId = currentUid,
                 sender = role,
                 text = content
             )

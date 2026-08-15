@@ -8,6 +8,8 @@ import com.meta.wearable.dat.display.views.TextColor
 import com.meta.wearable.dat.display.views.TextStyle
 import com.meta.wearable.dat.display.views.IconStyle
 
+import timber.log.Timber
+
 /**
  * Controller for managing the UI displayed on the Meta Wearables glasses.
  * Adheres to the AGENTS.md rule: exactly one root view (flexBox or video) per sendContent.
@@ -30,7 +32,7 @@ class GlassesUIController(private val display: Display) {
                 text(description, style = TextStyle.BODY, color = TextColor.SECONDARY)
             }
         }.onFailure { error, _ ->
-            // Log or handle error
+            Timber.e("GlassesUIController: Failed to show status card: $error")
         }
     }
 
@@ -63,7 +65,7 @@ class GlassesUIController(private val display: Display) {
                 )
             }
         }.onFailure { error, _ ->
-            // Log or handle error
+            Timber.e("GlassesUIController: Failed to show track complete card: $error")
         }
     }
 }

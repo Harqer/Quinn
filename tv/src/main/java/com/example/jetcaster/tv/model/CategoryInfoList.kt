@@ -16,8 +16,6 @@
 
 package com.example.jetcaster.tv.model
 
-import androidx.compose.runtime.Immutable
 import com.musically.studio.ui.jetcaster.core.model.CategoryInfo
 
-@Immutable
-data class CategoryInfoList(val member: List<CategoryInfo>) : List<CategoryInfo> by member
+typealias CategoryInfoList = List<CategoryInfo>

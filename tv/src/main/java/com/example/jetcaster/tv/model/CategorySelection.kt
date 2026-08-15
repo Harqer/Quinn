@@ -21,5 +21,4 @@ import com.musically.studio.ui.jetcaster.core.model.CategoryInfo
 
 data class CategorySelection(val categoryInfo: CategoryInfo, val isSelected: Boolean = false)
 
-@Immutable
-data class CategorySelectionList(val member: List<CategorySelection>) : List<CategorySelection> by member
+typealias CategorySelectionList = List<CategorySelection>

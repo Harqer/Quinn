@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -75,7 +75,10 @@ func main() {
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, `{"status":"SUCCESS","data":%v}`, result)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"status": "SUCCESS",
+			"data":   result,
+		})
 	})
 
 	if authValidator != nil {

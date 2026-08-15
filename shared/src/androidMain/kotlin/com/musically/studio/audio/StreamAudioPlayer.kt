@@ -17,12 +17,14 @@ class StreamAudioPlayer {
     private val channelConfig = AudioFormat.CHANNEL_OUT_MONO
     private val audioFormat = AudioFormat.ENCODING_PCM_16BIT
     private val bufferSize = AudioTrack.getMinBufferSize(sampleRate, channelConfig, audioFormat)
-    private val queue = Channel<ByteArray>(Channel.UNLIMITED)
-    private var isPlaying = false
+    private var queue: Channel<ByteArray>? = null
+    private var playbackJob: kotlinx.coroutines.Job? = null
+    @Volatile private var isPlaying = false
 
     fun start() {
         if (isPlaying) return
         isPlaying = true
+        queue = Channel(capacity = 64)
 
         audioTrack = AudioTrack.Builder()
             .setAudioAttributes(
@@ -44,11 +46,13 @@ class StreamAudioPlayer {
 
         audioTrack?.play()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        playbackJob = CoroutineScope(Dispatchers.IO).launch {
             try {
-                for (chunk in queue) {
-                    if (!isPlaying) break
-                    audioTrack?.write(chunk, 0, chunk.size)
+                queue?.let { ch ->
+                    for (chunk in ch) {
+                        if (!isPlaying) break
+                        audioTrack?.write(chunk, 0, chunk.size)
+                    }
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error playing audio chunk")
@@ -61,7 +65,7 @@ class StreamAudioPlayer {
             start()
         }
         try {
-            queue.trySend(pcmData)
+            queue?.trySend(pcmData)
         } catch (e: Exception) {
             Timber.e(e, "Failed to queue audio chunk")
         }
@@ -73,7 +77,7 @@ class StreamAudioPlayer {
         }
         try {
             val decodedBytes = Base64.decode(base64Data, Base64.NO_WRAP)
-            queue.trySend(decodedBytes)
+            queue?.trySend(decodedBytes)
         } catch (e: Exception) {
             Timber.e(e, "Failed to decode audio chunk")
         }
@@ -81,7 +85,10 @@ class StreamAudioPlayer {
 
     fun stop() {
         isPlaying = false
-        queue.close()
+        playbackJob?.cancel()
+        playbackJob = null
+        queue?.close()
+        queue = null
         try {
             audioTrack?.let {
                 it.stop()

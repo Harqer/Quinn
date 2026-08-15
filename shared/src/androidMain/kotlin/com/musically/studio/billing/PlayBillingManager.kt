@@ -3,9 +3,13 @@ package com.musically.studio.billing
 import android.app.Activity
 import android.content.Context
 import com.android.billingclient.api.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
@@ -48,11 +52,14 @@ class PlayBillingManager(
         connectToBilling()
     }
 
+    private var disconnectRetryCount = 0
+
     private fun connectToBilling() {
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     Timber.d("BillingClient connected successfully")
+                    disconnectRetryCount = 0
                     queryProductDetails()
                     queryActivePurchases()
                 } else {
@@ -60,8 +67,17 @@ class PlayBillingManager(
                 }
             }
             override fun onBillingServiceDisconnected() {
-                Timber.w("BillingClient disconnected, will retry...")
-                connectToBilling()
+                if (disconnectRetryCount < 5) {
+                    disconnectRetryCount++
+                    val delayMs = (1000L * (1 shl disconnectRetryCount)).coerceAtMost(16000L)
+                    Timber.w("BillingClient disconnected, retrying in ${delayMs}ms (attempt $disconnectRetryCount)...")
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(delayMs)
+                        connectToBilling()
+                    }
+                } else {
+                    Timber.e("BillingClient retry limit reached ($disconnectRetryCount attempts). Will not reconnect automatically.")
+                }
             }
         })
     }

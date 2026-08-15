@@ -16,8 +16,6 @@
 
 package com.example.jetcaster.tv.model
 
-import androidx.compose.runtime.Immutable
 import com.musically.studio.ui.jetcaster.core.player.model.PlayerEpisode
 
-@Immutable
-data class EpisodeList(val member: List<PlayerEpisode>) : List<PlayerEpisode> by member
+typealias EpisodeList = List<PlayerEpisode>

@@ -77,12 +77,23 @@ export const lyriaProAgent = ai.defineTool(
     const tempFilePath = path.join(os.tmpdir(), filename);
     fs.writeFileSync(tempFilePath, wavBuffer);
     
-    const bucket = getStorage().bucket();
-    await bucket.upload(tempFilePath, { destination: `generated_audio/${filename}`, metadata: { contentType: 'audio/wav' } });
-    
-    const fileRef = bucket.file(`generated_audio/${filename}`);
-    await fileRef.makePublic();
-    const url = `https://storage.googleapis.com/${bucket.name}/generated_audio/${filename}`;
+    let url = "";
+    try {
+      const bucket = getStorage().bucket();
+      await bucket.upload(tempFilePath, { destination: `generated_audio/${filename}`, metadata: { contentType: 'audio/wav' } });
+      
+      const fileRef = bucket.file(`generated_audio/${filename}`);
+      await fileRef.makePublic();
+      url = `https://storage.googleapis.com/${bucket.name}/generated_audio/${filename}`;
+    } finally {
+      if (fs.existsSync(tempFilePath)) {
+        try {
+          fs.unlinkSync(tempFilePath);
+        } catch (err) {
+          console.error("Failed to clean up temp file:", err);
+        }
+      }
+    }
     
     await executeMutation("SeedTrack", {
       title: input.prompt,
