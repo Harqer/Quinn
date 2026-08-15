@@ -55,16 +55,16 @@ fun SettingsScreen(
     val colors = MaterialTheme.colorScheme
 
     Scaffold(
-        containerColor = com.musically.studio.ui.theme.MaveBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Settings", color = Color.White, fontWeight = FontWeight.Bold) },
+                title = { Text("Settings", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = com.musically.studio.ui.theme.MaveBackground.copy(alpha = 0.9f))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.9f))
             )
         }
     ) { paddingValues ->
@@ -74,10 +74,10 @@ fun SettingsScreen(
         ) {
             item { Spacer(modifier = Modifier.height(8.dp)) }
             item {
-                Text("Account", style = MaterialTheme.typography.titleMedium, color = Color.Gray)
+                Text("Account", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(8.dp))
                 val email = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.email ?: "Not logged in"
-                Text(text = "Email: $email", style = MaterialTheme.typography.bodyMedium, color = Color.White)
+                Text(text = "Email: $email", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
             }
 
             item {
@@ -86,22 +86,22 @@ fun SettingsScreen(
             }
 
             item {
-                HorizontalDivider(color = Color.DarkGray)
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(modifier = Modifier.height(8.dp))
                 PremiumSettingItem(isPremium = isPremium, onNavigateToPremium = onNavigateToPremium)
             }
 
             item {
-                HorizontalDivider(color = Color.DarkGray)
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Preferences", style = MaterialTheme.typography.titleMedium, color = Color.Gray)
+                Text("Preferences", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             
             item {
                 val isDark = userSettings?.theme == "dark" || userSettings?.theme == "system"
                 ListItem(
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    headlineContent = { Text("Dark Theme", color = Color.White) },
+                    headlineContent = { Text("Dark Theme", color = MaterialTheme.colorScheme.onSurface) },
                     trailingContent = {
                         Switch(
                             checked = isDark,
@@ -109,7 +109,7 @@ fun SettingsScreen(
                                 view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                                 viewModel.updateTheme(if (it) "dark" else "light") 
                             },
-                            colors = SwitchDefaults.colors(checkedThumbColor = com.musically.studio.ui.theme.MaveGreenLight, checkedTrackColor = com.musically.studio.ui.theme.MaveGreenLight.copy(alpha = 0.5f))
+                            colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary, checkedTrackColor = MaterialTheme.colorScheme.primaryContainer)
                         )
                     }
                 )
@@ -125,8 +125,8 @@ fun SettingsScreen(
 
                 ListItem(
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    headlineContent = { Text("Notifications & Reminders", color = Color.White) },
-                    supportingContent = { Text("Receive daily AI music mix & podcast reminders", color = Color.LightGray) },
+                    headlineContent = { Text("Notifications & Reminders", color = MaterialTheme.colorScheme.onSurface) },
+                    supportingContent = { Text("Receive daily AI music mix & podcast reminders", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     trailingContent = {
                         Switch(
                             checked = notificationsEnabled,
@@ -146,7 +146,7 @@ fun SettingsScreen(
                                     viewModel.toggleNotifications(context, enabled)
                                 }
                             },
-                            colors = SwitchDefaults.colors(checkedThumbColor = com.musically.studio.ui.theme.MaveGreenLight, checkedTrackColor = com.musically.studio.ui.theme.MaveGreenLight.copy(alpha = 0.5f))
+                            colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary, checkedTrackColor = MaterialTheme.colorScheme.primaryContainer)
                         )
                     }
                 )
@@ -156,8 +156,8 @@ fun SettingsScreen(
                 val appsDevicesEnabled by viewModel.appsDevicesEnabled.collectAsState()
                 ListItem(
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    headlineContent = { Text("Apps & Devices", color = Color.White) },
-                    supportingContent = { Text("Allow other apps and devices to connect", color = Color.LightGray) },
+                    headlineContent = { Text("Apps & Devices", color = MaterialTheme.colorScheme.onSurface) },
+                    supportingContent = { Text("Allow other apps and devices to connect", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     trailingContent = {
                         Switch(
                             checked = appsDevicesEnabled,
@@ -165,7 +165,7 @@ fun SettingsScreen(
                                 view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                                 viewModel.toggleAppsDevices(it) 
                             },
-                            colors = SwitchDefaults.colors(checkedThumbColor = com.musically.studio.ui.theme.MaveGreenLight, checkedTrackColor = com.musically.studio.ui.theme.MaveGreenLight.copy(alpha = 0.5f))
+                            colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary, checkedTrackColor = MaterialTheme.colorScheme.primaryContainer)
                         )
                     }
                 )
@@ -175,8 +175,8 @@ fun SettingsScreen(
                 val offlineMode by viewModel.isOfflineMode.collectAsState()
                 ListItem(
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    headlineContent = { Text("Offline Mode", color = Color.White) },
-                    supportingContent = { Text("Only play downloaded tracks", color = Color.LightGray) },
+                    headlineContent = { Text("Offline Mode", color = MaterialTheme.colorScheme.onSurface) },
+                    supportingContent = { Text("Only play downloaded tracks", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     trailingContent = {
                         Switch(
                             checked = offlineMode,
@@ -184,7 +184,7 @@ fun SettingsScreen(
                                 view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                                 viewModel.toggleOfflineMode(it) 
                             },
-                            colors = SwitchDefaults.colors(checkedThumbColor = com.musically.studio.ui.theme.MaveGreenLight, checkedTrackColor = com.musically.studio.ui.theme.MaveGreenLight.copy(alpha = 0.5f))
+                            colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary, checkedTrackColor = MaterialTheme.colorScheme.primaryContainer)
                         )
                     }
                 )
@@ -194,8 +194,8 @@ fun SettingsScreen(
                 val parentalControls = userSettings?.parentalControlsEnabled ?: false
                 ListItem(
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    headlineContent = { Text("Parental Controls", color = Color.White) },
-                    supportingContent = { Text("Restrict explicit content", color = Color.LightGray) },
+                    headlineContent = { Text("Parental Controls", color = MaterialTheme.colorScheme.onSurface) },
+                    supportingContent = { Text("Restrict explicit content", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     trailingContent = {
                         Switch(
                             checked = parentalControls,
@@ -203,7 +203,7 @@ fun SettingsScreen(
                                 view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                                 viewModel.updateParentalControls(it) 
                             },
-                            colors = SwitchDefaults.colors(checkedThumbColor = com.musically.studio.ui.theme.MaveGreenLight, checkedTrackColor = com.musically.studio.ui.theme.MaveGreenLight.copy(alpha = 0.5f))
+                            colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary, checkedTrackColor = MaterialTheme.colorScheme.primaryContainer)
                         )
                     }
                 )
@@ -211,21 +211,21 @@ fun SettingsScreen(
 
             if (paymentHistory.isNotEmpty()) {
                 item {
-                    HorizontalDivider(color = Color.DarkGray)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("Payment History", style = MaterialTheme.typography.titleMedium, color = Color.Gray)
+                    Text("Payment History", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 
                 items(paymentHistory, key = { it.createdAt.seconds }) { payment ->
                     ListItem(
                         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        headlineContent = { Text(payment.status.replaceFirstChar { it.uppercase() }, color = Color.White) },
+                        headlineContent = { Text(payment.status.replaceFirstChar { it.uppercase() }, color = MaterialTheme.colorScheme.onSurface) },
                         supportingContent = { 
                             val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
                             val dateFormat = java.text.SimpleDateFormat("MMM dd, yyyy", locale)
-                            Text(dateFormat.format(java.util.Date(payment.createdAt.seconds * 1000)), color = Color.LightGray) 
+                            Text(dateFormat.format(java.util.Date(payment.createdAt.seconds * 1000)), color = MaterialTheme.colorScheme.onSurfaceVariant) 
                         },
-                        trailingContent = { Text("$${payment.amount}", color = Color.White, fontWeight = FontWeight.Bold) }
+                        trailingContent = { Text("$${payment.amount}", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold) }
                     )
                 }
             }

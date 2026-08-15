@@ -13,90 +13,104 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.google.android.material.color.MaterialColors
 
-import com.google.android.material.color.utilities.Scheme
+// Material 3 Dark Color Scheme (HCT Tonal Palette derived from MavePrimary 0xFF53E076)
+val DarkColorScheme = darkColorScheme(
+    primary = Color(0xFF53E076),
+    onPrimary = Color(0xFF003915),
+    primaryContainer = Color(0xFF005322),
+    onPrimaryContainer = Color(0xFF75FD90),
+    secondary = Color(0xFFB9CCB8),
+    onSecondary = Color(0xFF253427),
+    secondaryContainer = Color(0xFF3B4B3C),
+    onSecondaryContainer = Color(0xFFD5E8D4),
+    tertiary = Color(0xFFA1CED6),
+    onTertiary = Color(0xFF00363D),
+    tertiaryContainer = Color(0xFF1F4D54),
+    onTertiaryContainer = Color(0xFFBCEAE2),
+    error = Color(0xFFFFB4AB),
+    onError = Color(0xFF690005),
+    errorContainer = Color(0xFF93000A),
+    onErrorContainer = Color(0xFFFFDAD6),
+    background = Color(0xFF101411),
+    onBackground = Color(0xFFE1E3DF),
+    surface = Color(0xFF101411),
+    onSurface = Color(0xFFE1E3DF),
+    surfaceVariant = Color(0xFF414942),
+    onSurfaceVariant = Color(0xFFC1C9BF),
+    outline = Color(0xFF8B938A),
+    outlineVariant = Color(0xFF414942),
+    surfaceContainerLowest = Color(0xFF0B0F0C),
+    surfaceContainerLow = Color(0xFF181C19),
+    surfaceContainer = Color(0xFF1C201D),
+    surfaceContainerHigh = Color(0xFF272B27),
+    surfaceContainerHighest = Color(0xFF323632),
+    inverseSurface = Color(0xFFE1E3DF),
+    inverseOnSurface = Color(0xFF2D312E),
+    inversePrimary = Color(0xFF006D2F)
+)
 
-// Use the perceptual color model (HCT) to generate a fully harmonized dark theme 
-// based on the brand's primary seed color. This builds a tonal palette where all 
-// surfaces, accents, and text colors are in perceptual harmony.
-@android.annotation.SuppressLint("RestrictedApi")
-private fun createHarmonizedScheme(): ColorScheme {
-    val seedArgb = MavePrimary.toArgb()
-    val scheme = Scheme.dark(seedArgb)
-    return darkColorScheme(
-        primary = Color(scheme.primary),
-        onPrimary = Color(scheme.onPrimary),
-        primaryContainer = Color(scheme.primaryContainer),
-        onPrimaryContainer = Color(scheme.onPrimaryContainer),
-        secondary = Color(scheme.secondary),
-        onSecondary = Color(scheme.onSecondary),
-        secondaryContainer = Color(scheme.secondaryContainer),
-        onSecondaryContainer = Color(scheme.onSecondaryContainer),
-        tertiary = Color(scheme.tertiary),
-        onTertiary = Color(scheme.onTertiary),
-        tertiaryContainer = Color(scheme.tertiaryContainer),
-        onTertiaryContainer = Color(scheme.onTertiaryContainer),
-        error = Color(scheme.error),
-        onError = Color(scheme.onError),
-        errorContainer = Color(scheme.errorContainer),
-        onErrorContainer = Color(scheme.onErrorContainer),
-        background = Color(scheme.background),
-        onBackground = Color(scheme.onBackground),
-        surface = Color(scheme.surface),
-        onSurface = Color(scheme.onSurface),
-        surfaceVariant = Color(scheme.surfaceVariant),
-        onSurfaceVariant = Color(scheme.onSurfaceVariant),
-        outline = Color(scheme.outline),
-        inverseOnSurface = Color(scheme.inverseOnSurface),
-        inverseSurface = Color(scheme.inverseSurface),
-        inversePrimary = Color(scheme.inversePrimary),
-        surfaceTint = Color(scheme.primary)
-    )
-}
+// Material 3 Light Color Scheme (HCT Tonal Palette derived from MavePrimary 0xFF53E076)
+val LightColorScheme = lightColorScheme(
+    primary = Color(0xFF006D2F),
+    onPrimary = Color(0xFFFFFFFF),
+    primaryContainer = Color(0xFF75FD90),
+    onPrimaryContainer = Color(0xFF00210A),
+    secondary = Color(0xFF526353),
+    onSecondary = Color(0xFFFFFFFF),
+    secondaryContainer = Color(0xFFD5E8D4),
+    onSecondaryContainer = Color(0xFF101F13),
+    tertiary = Color(0xFF38656C),
+    onTertiary = Color(0xFFFFFFFF),
+    tertiaryContainer = Color(0xFFBCEAE2),
+    onTertiaryContainer = Color(0xFF002025),
+    error = Color(0xFFBA1A1A),
+    onError = Color(0xFFFFFFFF),
+    errorContainer = Color(0xFFFFDAD6),
+    onErrorContainer = Color(0xFF410002),
+    background = Color(0xFFF6FBF4),
+    onBackground = Color(0xFF181C19),
+    surface = Color(0xFFF6FBF4),
+    onSurface = Color(0xFF181C19),
+    surfaceVariant = Color(0xFFDDE5DB),
+    onSurfaceVariant = Color(0xFF414942),
+    outline = Color(0xFF717972),
+    outlineVariant = Color(0xFFC1C9BF),
+    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceContainerLow = Color(0xFFF0F5EE),
+    surfaceContainer = Color(0xFFEAEFE8),
+    surfaceContainerHigh = Color(0xFFE5EAE3),
+    surfaceContainerHighest = Color(0xFFDFE4DD),
+    inverseSurface = Color(0xFF2D312E),
+    inverseOnSurface = Color(0xFFEFF2EC),
+    inversePrimary = Color(0xFF53E076)
+)
 
-private val MaveColorScheme = createHarmonizedScheme()
-
-val LocalMaveColorScheme = staticCompositionLocalOf { MaveColorScheme }
-
-// Material You Dynamic Color Harmonization
-fun Color.harmonized(primary: Color): Color {
-    return try {
-        Color(MaterialColors.harmonize(this.toArgb(), primary.toArgb()))
-    } catch (e: Exception) {
-        // Fallback to simple RGB interpolation if MaterialColors is unavailable
-        androidx.compose.ui.graphics.lerp(this, primary, 0.2f)
-    }
-}
+val LocalMaveColorScheme = staticCompositionLocalOf { DarkColorScheme }
 
 @Composable
 fun MaveAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Enabled Dynamic color to support Material You personalization
+    // Supports Material You dynamic color adaptation on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val baseColorScheme = if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val context = LocalContext.current
-        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-    } else {
-        MaveColorScheme
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
     }
 
-    // Harmonize semantic colors (like Error) with the primary dynamic color 
-    // to maintain brand identity while blending with user's wallpaper hue.
-    val colorScheme = baseColorScheme.copy(
-        error = baseColorScheme.error.harmonized(baseColorScheme.primary)
-    )
-    
     val view = LocalView.current
-    if (!view.isInEditMode) {
+    if (!view.isInEditMode && view.context is Activity) {
         SideEffect {
             val window = (view.context as Activity).window
-            @Suppress("DEPRECATION")
-            window.statusBarColor = Color.Transparent.toArgb()
-            window.navigationBarColor = Color.Transparent.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            val insetsController = WindowCompat.getInsetsController(window, view)
+            insetsController.isAppearanceLightStatusBars = !darkTheme
+            insetsController.isAppearanceLightNavigationBars = !darkTheme
         }
     }
 

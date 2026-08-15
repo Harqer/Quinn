@@ -72,7 +72,7 @@ fun LibraryScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        containerColor = MaveBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
@@ -91,7 +91,7 @@ fun LibraryScreen(
                                 modifier = Modifier.size(32.dp).background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(displayName.take(1).uppercase(), color = Color.White, fontWeight = FontWeight.Bold)
+                                Text(displayName.take(1).uppercase(), color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                             }
                         }
                         Spacer(modifier = Modifier.width(16.dp))
@@ -99,16 +99,16 @@ fun LibraryScreen(
                             text = "Your Library",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
-                        Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
+                        Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaveBackground),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
                 scrollBehavior = scrollBehavior
             )
         }

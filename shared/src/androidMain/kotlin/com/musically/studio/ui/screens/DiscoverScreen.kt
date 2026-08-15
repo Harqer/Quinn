@@ -65,7 +65,7 @@ fun DiscoverScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            containerColor = com.musically.studio.ui.theme.MaveBackgroundVariant,
+            containerColor = MaterialTheme.colorScheme.background,
             contentWindowInsets = WindowInsets.safeDrawing,
             topBar = {
                 TopAppBar(
@@ -86,22 +86,22 @@ fun DiscoverScreen(
                     actions = {
                         Surface(
                             shape = MaterialTheme.shapes.small,
-                            color = com.musically.studio.ui.theme.MaveDarkSurface
+                            color = MaterialTheme.colorScheme.surfaceContainer
                         ) {
                             Row(modifier = Modifier.padding(4.dp)) {
                                 Button(
                                     onClick = { viewModel.fetchCommunityTracks() },
-                                    colors = ButtonDefaults.buttonColors(containerColor = com.musically.studio.ui.theme.MaveSurfaceVariant6, contentColor = Color.White)
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary)
                                 ) {
                                     Text("Discover", fontWeight = FontWeight.Bold)
                                 }
                                 TextButton(onClick = onNavigateToLibrary) {
-                                    Text("Library", color = Color.Gray, fontWeight = FontWeight.Bold)
+                                    Text("Library", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = com.musically.studio.ui.theme.MaveBackgroundVariant),
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
                     scrollBehavior = scrollBehavior
                 )
             },
@@ -109,7 +109,7 @@ fun DiscoverScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(com.musically.studio.ui.theme.MaveBackgroundVariant.copy(alpha = 0.9f))
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.9f))
                         .padding(24.dp)
                 ) {
                     MaveTextField(
@@ -119,10 +119,10 @@ fun DiscoverScreen(
                         trailingIcon = { 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 IconButton(onClick = onNavigateToCamera) {
-                                    Icon(Icons.Default.PhotoCamera, contentDescription = "Camera", tint = Color.Gray)
+                                    Icon(Icons.Default.PhotoCamera, contentDescription = "Camera", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                                 IconButton(onClick = { if (searchQuery.isNotEmpty()) onNavigateToSearch(searchQuery) }) {
-                                    Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.Gray) 
+                                    Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant) 
                                 }
                             }
                         },

@@ -75,7 +75,7 @@ fun MaveHomeScreen(
 
     Scaffold(
         modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
-        containerColor = com.musically.studio.ui.theme.MaveBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             MaveHomeTopBar(
                 photoUrl = viewModel.getUserPhotoUrl(),
