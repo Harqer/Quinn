@@ -21,8 +21,7 @@ import com.musically.studio.ui.*
 import com.musically.studio.ui.components.organisms.*
 import com.musically.studio.ui.components.molecules.MediaCard
 import com.musically.studio.ui.components.organisms.MediaCarousel
-import com.musically.studio.dataconnect.instance
-import com.musically.studio.dataconnect.execute
+// Note: DataConnect is accessed via ViewModel, not directly from the UI layer.
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,12 +56,10 @@ fun MaveHomeScreen(
         viewModel.fetchCommunityTracks()
         viewModel.fetchPodcasts()
         viewModel.fetchAudiobooks()
-        try {
-            val result = com.musically.studio.dataconnect.DefaultConnector.instance.listHomeSections.execute()
-            homeSections = result.data.homeSections
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        viewModel.fetchCategories()
+        // Fetch home sections via ViewModel to maintain MVVM separation.
+        // The screen does not access DataConnect directly.
+        homeSections = viewModel.loadHomeSections()
     }
 
     LaunchedEffect(hasPermissions) {
@@ -106,8 +103,12 @@ fun MaveHomeScreen(
                 "SUCCESS" -> HomeSuccessOrganism(
                     isLoading = isLoading,
                     onRefresh = {
+                        // Full content refresh: update all sections, not just tracks.
                         viewModel.fetchUserTracks()
                         viewModel.fetchCommunityTracks()
+                        viewModel.fetchPodcasts()
+                        viewModel.fetchAudiobooks()
+                        viewModel.fetchCategories()
                     },
                     homeSections = homeSections,
                     categories = categories,

@@ -166,6 +166,29 @@ class DataConnectRepository @Inject constructor(
         }
     }
 
+    /**
+     * Records a play event for [trackId].
+     *
+     * Until a PlayHistory table is added to the DataConnect schema, this uses RTDB
+     * to increment the track's global play count under `tracks/{trackId}/plays`.
+     * This provides lightweight cross-device analytics without schema changes.
+     *
+     * TODO: Replace with `connector.recordPlay.execute(trackId)` once the DataConnect
+     *       PlayHistory mutation is scaffolded in the schema.
+     */
+    suspend fun recordPlay(trackId: String): Boolean {
+        return try {
+            val db = com.google.firebase.Firebase.database
+            db.getReference("tracks/$trackId/plays")
+                .setValue(com.google.firebase.database.ServerValue.increment(1))
+                .await()
+            true
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to record play for track $trackId")
+            false
+        }
+    }
+
     fun searchTracks(query: String): Flow<List<SearchTracksQuery.Data.TracksItem>> = flow {
         try {
             val response = connector.searchTracks.execute(query = query)

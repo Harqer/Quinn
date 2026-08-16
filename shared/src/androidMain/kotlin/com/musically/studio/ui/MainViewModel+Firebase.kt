@@ -214,6 +214,7 @@ fun MainViewModel.clearLiveSessionHistory() {
 fun MainViewModel.generateLyrics(trackId: String, audioUrl: String?) {
     viewModelScope.launch {
         Timber.d("[MAIN_VM] Generating lyrics for track: %s", trackId)
+        _lyrics.value = null // Reset before fetch
         try {
             val functions = com.google.firebase.Firebase.functions
             val result = functions.getHttpsCallable("generateLyrics")
@@ -226,10 +227,12 @@ fun MainViewModel.generateLyrics(trackId: String, audioUrl: String?) {
             
             val data = result.data as? Map<String, Any>
             val lyrics = data?.get("lyrics") as? String
-            Timber.d("[MAIN_VM] Received lyrics")
-            // Here you would typically update the track object in the UI state with the new lyrics
+            Timber.d("[MAIN_VM] Received lyrics, length=%d", lyrics?.length ?: 0)
+            // Update the _lyrics StateFlow so LyricsBottomSheet can observe and render them.
+            _lyrics.value = lyrics ?: "No lyrics available for this track."
         } catch (e: Exception) {
             Timber.e(e, "[MAIN_VM] Failed to generate lyrics")
+            _lyrics.value = "Failed to generate lyrics. Please try again."
         }
     }
 }
@@ -285,30 +288,67 @@ fun MainViewModel.recordVoice(context: Context?) {
 fun MainViewModel.generatePodcast(topic: String) {
     viewModelScope.launch {
         Timber.d("[MAIN_VM] Generating podcast for topic: %s", topic)
+        _isLoading.value = true
         try {
             val result = Firebase.functions.getHttpsCallable("generatePodcastScript").call(mapOf("topic" to topic)).await()
             val data = result.data as? Map<*, *>
             val script = data?.get("script") as? String
-            Timber.d("[MAIN_VM] Generated Podcast Script: %s", script)
-            if (script != null) {
-                // In a full implementation, you would update the UI state with the script.
-                // Assuming you have a way to add to messages:
+            Timber.d("[MAIN_VM] Generated Podcast Script length: %d", script?.length ?: 0)
+            if (!script.isNullOrBlank()) {
                 messages.add(com.musically.studio.ui.models.ChatMessage(script, false))
+            } else {
+                // Surface an explicit empty state — never silently succeed with no content.
+                messages.add(com.musically.studio.ui.models.ChatMessage(
+                    "The podcast script returned empty. Please try a more specific topic.", false
+                ))
             }
         } catch (e: Exception) {
             Timber.e(e, "[MAIN_VM] Failed to generate podcast via Firebase Functions")
+            // Zero Silent Fallback policy: always surface errors to the user.
+            val userMessage = when {
+                e.message?.contains("429") == true -> "Podcast generation quota exceeded. Please try again in a moment."
+                e.message?.contains("503") == true -> "Podcast service is temporarily unavailable. Please try again."
+                else -> "Failed to generate podcast. Please check your connection and try again."
+            }
+            messages.add(com.musically.studio.ui.models.ChatMessage(userMessage, false))
+            _catalogErrorMessage.value = userMessage
+        } finally {
+            _isLoading.value = false
         }
     }
 }
 
+/**
+ * Adds [trackId] to the user's first available playlist, or bookmarks it if none exist.
+ *
+ * Semantic fix: previously this method called `bookmarkTrack` (wrong action).
+ * Now it correctly calls `addTrackToPlaylist` using the first available playlist,
+ * falling back to bookmarking if the user has no playlists yet.
+ *
+ * TODO: Replace with a Playlist Picker BottomSheet when that component is built
+ * so the user can choose which playlist to add to (see implementation_plan.md).
+ */
 fun MainViewModel.addToPlaylist(trackId: String) {
     viewModelScope.launch {
-        Timber.d("[MAIN_VM] Adding track %s to playlist", trackId)
+        Timber.d("[MAIN_VM] Adding track %s to first available playlist", trackId)
         try {
-            dataConnectRepository.bookmarkTrack(trackId)
-            Timber.d("[MAIN_VM] Successfully bookmarked track %s", trackId)
+            val firstPlaylist = _playlists.value.firstOrNull()
+            if (firstPlaylist != null) {
+                val success = dataConnectRepository.addTrackToPlaylist(trackId, firstPlaylist.id)
+                if (success) {
+                    Timber.d("[MAIN_VM] Successfully added track %s to playlist %s", trackId, firstPlaylist.id)
+                } else {
+                    Timber.w("[MAIN_VM] addTrackToPlaylist returned false for track %s", trackId)
+                    _catalogErrorMessage.value = "Couldn't add to playlist. Please try again."
+                }
+            } else {
+                // Fallback: bookmark the track if user has no playlists
+                Timber.d("[MAIN_VM] No playlists found, bookmarking track %s as fallback", trackId)
+                dataConnectRepository.bookmarkTrack(trackId)
+            }
         } catch (e: Exception) {
-            Timber.e(e, "[MAIN_VM] Failed to bookmark track %s", trackId)
+            Timber.e(e, "[MAIN_VM] Failed to add track %s to playlist", trackId)
+            _catalogErrorMessage.value = "Couldn't add to playlist. Please try again."
         }
     }
 }
@@ -339,6 +379,25 @@ fun MainViewModel.fetchCatalog() {
         fetchAudiobooks()
         fetchPodcasts()
         fetchCommunityTracks()
+    }
+}
+
+/**
+ * Loads the home sections layout from DataConnect.
+ *
+ * This is a suspend function so the UI can call it within a [LaunchedEffect] while
+ * keeping DataConnect access inside the ViewModel (MVVM compliance — screens must not
+ * access DataConnect directly).
+ *
+ * @return the list of home section definitions, or an empty list on error.
+ */
+suspend fun MainViewModel.loadHomeSections(): List<com.musically.studio.dataconnect.ListHomeSectionsQuery.Data.HomeSectionsItem> {
+    return try {
+        val result = com.musically.studio.dataconnect.DefaultConnector.instance.listHomeSections.execute()
+        result.data.homeSections
+    } catch (e: Exception) {
+        Timber.e(e, "[MAIN_VM] Failed to load home sections")
+        emptyList()
     }
 }
 

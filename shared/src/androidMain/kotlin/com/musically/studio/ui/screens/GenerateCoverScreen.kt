@@ -40,6 +40,7 @@ fun GenerateCoverScreen(
     var customPrompt by remember { mutableStateOf("") }
     var isGenerating by remember { mutableStateOf(false) }
     var generatedCoverUrl by remember { mutableStateOf<String?>(null) }
+    var generationError by remember { mutableStateOf<String?>(null) }
 
     var dynamicPresets by remember { mutableStateOf<List<String>>(emptyList()) }
     
@@ -142,6 +143,7 @@ fun GenerateCoverScreen(
                     }
                     view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                     isGenerating = true
+                    generationError = null // Clear previous error before new attempt
                     viewModel.sendTextCommand("Generate $coverType cover: $finalPrompt")
                     val apiType = if (coverType == "image") "cover_art" else "video_motion"
                     viewModel.generateCoverMedia(trackId, finalPrompt, apiType) { resultUrl ->
@@ -151,6 +153,8 @@ fun GenerateCoverScreen(
                             onCoverGenerated(resultUrl)
                         } else {
                             view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                            // Zero Silent Fallback: always surface error to the user.
+                            generationError = "Generation failed. Please try a different style or check your connection."
                         }
                     }
                 },
@@ -158,6 +162,16 @@ fun GenerateCoverScreen(
                 coverType = coverType,
                 primaryGreen = primaryGreen
             )
+
+            // Explicit error state: never silently fail.
+            if (generationError != null) {
+                Text(
+                    text = generationError!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = androidx.compose.ui.Modifier.fillMaxWidth()
+                )
+            }
 
             TextButton(
                 onClick = { coverType = if (coverType == "image") "video" else "image" }

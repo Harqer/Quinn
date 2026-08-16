@@ -64,6 +64,13 @@ fun MainViewModel.recordPlay(trackId: String) {
             currentRecents.add(0, track)
             _recentTracks.value = currentRecents.take(50) // Keep last 50
         }
+        // Persist to DataConnect for cross-device history and recommendation signals.
+        try {
+            dataConnectRepository.recordPlay(trackId)
+        } catch (e: Exception) {
+            // Non-fatal: local state is already updated; log but don't surface to user.
+            Timber.e(e, "Failed to persist play record for track $trackId to DataConnect")
+        }
     }
 }
 fun MainViewModel.downloadTrack(trackId: String) {

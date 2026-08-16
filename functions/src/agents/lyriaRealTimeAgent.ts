@@ -33,13 +33,23 @@ export const lyriaRealTimeAgent = ai.defineTool(
 
     const googleGenAi = new GoogleGenAI({ apiKey: input.apiKey, httpOptions: { apiVersion: "v1alpha" } });
     const responseQueue: any[] = [];
+    // Track stream lifecycle to prevent infinite loop when stream closes early.
+    let streamClosed = false;
+    let streamError: string | null = null;
     
     const session = await (googleGenAi.live as any).music.connect({
       model: "models/lyria-realtime-exp",
       callbacks: {
         onmessage: (message: any) => responseQueue.push(message),
-        onerror: (error: any) => console.error("music session error:", error),
-        onclose: () => console.log("Lyria RealTime stream closed."),
+        onerror: (error: any) => {
+          console.error("music session error:", error);
+          streamError = String(error);
+          streamClosed = true; // Exit the polling loop on error
+        },
+        onclose: () => {
+          console.log("Lyria RealTime stream closed.");
+          streamClosed = true; // Exit the polling loop on stream close
+        },
       },
     });
 
@@ -54,6 +64,13 @@ export const lyriaRealTimeAgent = ai.defineTool(
     let chunk_count = 0;
     const audioChunks: number[][] = [];
     while (!done) {
+      // Guard against infinite loop if stream terminates without hitting MAX_CHUNKS
+      if (streamClosed && responseQueue.length === 0) {
+        if (streamError) {
+          throw new Error(`Lyria RealTime stream terminated with error: ${streamError}`);
+        }
+        break; // Stream closed cleanly but fewer than MAX_CHUNKS received — use what we have
+      }
       if (responseQueue.length > 0) {
         const response = responseQueue.shift();
         if (response?.audioChunk?.data) {
@@ -72,6 +89,10 @@ export const lyriaRealTimeAgent = ai.defineTool(
       }
     }
     session.close();
+
+    if (audioChunks.length === 0) {
+      throw new Error("Lyria RealTime generated no audio chunks.");
+    }
     
     const flatArray = new Int16Array(audioChunks.flat());
     const wav = new WaveFile();
@@ -82,12 +103,24 @@ export const lyriaRealTimeAgent = ai.defineTool(
     const tempFilePath = path.join(os.tmpdir(), filename);
     fs.writeFileSync(tempFilePath, wavBuffer);
     
-    const bucket = getStorage().bucket();
-    await bucket.upload(tempFilePath, { destination: `generated_audio/${filename}`, metadata: { contentType: 'audio/wav' } });
-    
-    const fileRef = bucket.file(`generated_audio/${filename}`);
-    await fileRef.makePublic();
-    const url = `https://storage.googleapis.com/${bucket.name}/generated_audio/${filename}`;
+    let url = "";
+    try {
+      const bucket = getStorage().bucket();
+      await bucket.upload(tempFilePath, { destination: `generated_audio/${filename}`, metadata: { contentType: 'audio/wav' } });
+      
+      const fileRef = bucket.file(`generated_audio/${filename}`);
+      await fileRef.makePublic();
+      url = `https://storage.googleapis.com/${bucket.name}/generated_audio/${filename}`;
+    } finally {
+      // Always clean up the temp file to avoid disk leaks across invocations.
+      if (fs.existsSync(tempFilePath)) {
+        try {
+          fs.unlinkSync(tempFilePath);
+        } catch (err) {
+          console.error("Failed to clean up temp file:", err);
+        }
+      }
+    }
     
     await executeMutation("SeedTrack", {
       title: input.prompt,

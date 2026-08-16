@@ -29,12 +29,22 @@ export const lyriaProAgent = ai.defineTool(
     console.log(`Generating full track with Lyria 3 Pro for prompt: ${input.prompt}`);
     
     const responseQueue: any[] = [];
+    // Track stream lifecycle to prevent infinite loop when stream closes early.
+    let streamClosed = false;
+    let streamError: string | null = null;
     const session = await (googleGenAi.live as any).music.connect({
       model: "models/lyria-3-pro",
       callbacks: {
         onmessage: (message: any) => responseQueue.push(message),
-        onerror: (error: any) => console.error("music session error:", error),
-        onclose: () => console.log("Lyria 3 Pro stream closed."),
+        onerror: (error: any) => {
+          console.error("music session error:", error);
+          streamError = String(error);
+          streamClosed = true; // Exit the polling loop on error
+        },
+        onclose: () => {
+          console.log("Lyria 3 Pro stream closed.");
+          streamClosed = true; // Exit the polling loop on stream close
+        },
       },
     });
 
@@ -49,6 +59,13 @@ export const lyriaProAgent = ai.defineTool(
     let chunk_count = 0;
     const audioChunks: number[][] = [];
     while (!done) {
+      // Guard against infinite loop if stream terminates without hitting MAX_CHUNKS
+      if (streamClosed && responseQueue.length === 0) {
+        if (streamError) {
+          throw new Error(`Lyria 3 Pro stream terminated with error: ${streamError}`);
+        }
+        break; // Stream closed cleanly but fewer than MAX_CHUNKS received — use what we have
+      }
       if (responseQueue.length > 0) {
         const response = responseQueue.shift();
         if (response?.audioChunk?.data) {
@@ -67,6 +84,10 @@ export const lyriaProAgent = ai.defineTool(
       }
     }
     session.close();
+
+    if (audioChunks.length === 0) {
+      throw new Error("Lyria 3 Pro generated no audio chunks.");
+    }
     
     const flatArray = new Int16Array(audioChunks.flat());
     const wav = new WaveFile();
