@@ -155,7 +155,7 @@ try {
   console.error("[SENTRY] Failed to initialize Sentry safely:", e);
 }
 
-const init = asyn () => {
+const init = async () => {
   console.log("[LIFECYCLE] Mave app bootstrap sequence initiated.");
   try {
     console.log("[LIFECYCLE] Checking custom elements registry status...");
