@@ -1,0 +1,18 @@
+:root {
+  --vp-c-brand: #6d5dfc;
+  --vp-c-brand-light: #8e83fc;
+  --vp-c-brand-dark: #4b3dcc;
+}
+
+html.dark .mermaid {
+  background-color: #0d1117;
+  color: #e6edf3;
+}
+html.dark .mermaid .node rect, html.dark .mermaid .node circle, html.dark .mermaid .node polygon {
+  fill: #2d333b !important;
+  stroke: #6d5dfc !important;
+}
+html.dark .mermaid .cluster rect {
+  fill: #161b22 !important;
+  stroke: #30363d !important;
+}
