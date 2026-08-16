@@ -64,34 +64,38 @@ export async function buildExpertArtPrompt(apiKey: string, basePrompt: string, s
   const templateKey = stylePreset && ART_DESIGN_TEMPLATES[stylePreset] ? stylePreset : "golden_harmony_minimalist";
   const template = ART_DESIGN_TEMPLATES[templateKey];
 
-  const systemInstruction = `You are an elite Art Director and Master Visual Designer with foundational mastery of classical and modern artistic composition:
-- Golden Ratio (1:1.618 logarithmic spiral balance, harmonic proportional scale)
-- Rule of Thirds (3x3 grid alignment, placing key focal subjects on grid intersections)
-- Color Theory (complementary, split-complementary, triadic palettes with precise emotional resonance)
-- Volumetric Lighting, Depth of Field, and Tactile Textures.
+  const systemInstruction = `You are an elite Creative Director, Visual Advertising Strategist, and Master Art Director specializing in album cover design, musical visual storytelling, and high-persuasion visual advertising:
+1. SEMANTIC VIBE & GENRE ANALYSIS:
+   - Deconstruct the song concept/vibe ("${basePrompt}") to uncover its core emotional arc, sonic texture, and narrative genre.
+   - Translate musical atmosphere into iconic, high-impact visual symbolism.
 
-Use the following design blueprint as your artistic blueprint:
-Preset Name: ${template.name}
-Description: ${template.description}
-Rule of Thirds: ${template.ruleOfThirds}
-Golden Ratio: ${template.goldenRatio}
-Color Theory: ${template.colorTheory}
-Lighting & Texture: ${template.lightingAndTexture}
+2. ADVERTISING PERSUASION & PSYCHOLOGICAL HOOKS:
+   - Focal Hierarchy: Magnetic hero focal subject placed along the Golden Spiral (1:1.618) or Rule of Thirds grid intersection.
+   - High Contrast & Curiosity: Create immediate visual intrigue and emotional pull that stops scrolling listeners.
+   - Aesthetic Polish: Modern high-end editorial album artwork look (zero generic cliches).
 
-Construct a highly descriptive, vivid image prompt (max 400 characters) for Imagen 3 that incorporates the user's concept: "${basePrompt}".
+3. COMPOSITIONAL BLUEPRINT:
+   - Preset Name: ${template.name}
+   - Description: ${template.description}
+   - Rule of Thirds: ${template.ruleOfThirds}
+   - Golden Ratio: ${template.goldenRatio}
+   - Color Theory: ${template.colorTheory}
+   - Lighting & Texture: ${template.lightingAndTexture}
+
+Construct a highly descriptive, cinematic, vivid image prompt (max 400 characters) for Imagen 3 for: "${basePrompt}".
 Output ONLY the raw image generation prompt string. No conversational filler.`;
 
   try {
     const response = await googleGenAi.models.generateContent({
       model: "gemini-3.5-flash",
-      contents: `Create an expert artistic album cover prompt for: "${basePrompt}"`,
+      contents: `Construct a persuasive, semantically rich artistic album cover prompt for: "${basePrompt}"`,
       config: { systemInstruction }
     });
 
-    return response.text?.trim() || `${basePrompt}, golden ratio composition, rule of thirds, volumetric neon lighting, f/1.4 bokeh`;
+    return response.text?.trim() || `${basePrompt}, golden ratio composition, rule of thirds, volumetric neon lighting, high-persuasion focal contrast, 35mm film texture`;
   } catch (err) {
     console.error("Art Director prompt build error:", err);
-    return `${basePrompt}, golden ratio composition, rule of thirds, volumetric lighting, fine 35mm grain`;
+    return `${basePrompt}, golden ratio composition, rule of thirds, volumetric lighting, high-persuasion focal contrast, fine 35mm grain`;
   }
 }
 
