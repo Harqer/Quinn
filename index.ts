@@ -91,8 +91,7 @@ import { ToastMessage } from "@/components/toast_message";
 
 if (!customElements.get("toast-message")) {
   console.log("[LIFECYCLE] Defining 'toast-message' custom element manually...");
-// Break the build for webhook test
-customElements.defineX('mave-app', MaveApp);", ToastMessage);
+  customElements.define("toast-message", ToastMessage);
 }
 
 if (!customElements.get("lyria-camera")) {
