@@ -23,8 +23,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
+import com.meta.wearable.dat.core.Wearables
+import com.meta.wearable.dat.core.types.Permission
+import com.meta.wearable.dat.core.types.PermissionStatus
+import com.meta.wearable.dat.core.types.RegistrationState
 import com.musically.studio.ui.MainViewModel
+import com.musically.studio.ui.models.AudioDevice
 import com.musically.studio.ui.theme.LocalMaveColorScheme
 import com.musically.studio.ui.components.molecules.BluetoothToggleCard
 import com.musically.studio.ui.components.molecules.CurrentDeviceCard
@@ -49,6 +56,19 @@ fun DevicesScreen(
     val isBluetoothEnabled by viewModel.isBluetoothEnabled.collectAsStateWithLifecycle()
     val isScanning by viewModel.isScanning.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var pendingDevice by remember { mutableStateOf<AudioDevice?>(null) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(Wearables.RequestPermissionContract()) { result ->
+        result.onSuccess { status ->
+            if (status == PermissionStatus.Granted) {
+                pendingDevice?.let { viewModel.selectDevice(it) }
+            }
+            pendingDevice = null
+        }.onFailure { _, _ ->
+            pendingDevice = null
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.loadAudioDevices()
@@ -137,13 +157,30 @@ fun DevicesScreen(
                     onClick = {
                         if (device.name.contains("Meta", ignoreCase = true) || device.name.contains("Ray-Ban", ignoreCase = true)) {
                             if (context is android.app.Activity) {
-                                val isRegistered = com.meta.wearable.dat.core.Wearables.registrationState.value == com.meta.wearable.dat.core.types.RegistrationState.REGISTERED
+                                val isRegistered = Wearables.registrationState.value == RegistrationState.REGISTERED
                                 if (!isRegistered) {
-                                    com.meta.wearable.dat.core.Wearables.startRegistration(context)
+                                    Wearables.startRegistration(context)
+                                } else {
+                                    scope.launch {
+                                        Wearables.checkPermissionStatus(Permission.CAMERA).onSuccess { status ->
+                                            if (status == PermissionStatus.Granted) {
+                                                viewModel.selectDevice(device)
+                                            } else {
+                                                pendingDevice = device
+                                                permissionLauncher.launch(Permission.CAMERA)
+                                            }
+                                        }.onFailure { _, _ ->
+                                            pendingDevice = device
+                                            permissionLauncher.launch(Permission.CAMERA)
+                                        }
+                                    }
                                 }
+                            } else {
+                                viewModel.selectDevice(device)
                             }
+                        } else {
+                            viewModel.selectDevice(device)
                         }
-                        viewModel.selectDevice(device)
                     }
                 )
             }

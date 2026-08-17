@@ -4,8 +4,10 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.media.AudioManager
 import android.os.IBinder
 import com.meta.wearable.dat.camera.Stream
 import com.meta.wearable.dat.camera.addStream
@@ -51,6 +53,7 @@ class WearableStreamingService : Service() {
     private var audioRecord: AudioRecord? = null
     private var recordingJob: Job? = null
     private var isRecording = false
+    private var isSessionPaused = false
 
     companion object {
         private val _cameraFrames = MutableSharedFlow<ByteArray>(extraBufferCapacity = 1)
@@ -194,8 +197,13 @@ class WearableStreamingService : Service() {
                     session.state.collect { state ->
                         Timber.d("Session state changed: $state")
                         when (state) {
+                            DeviceSessionState.STARTED -> {
+                                Timber.i("Glasses session STARTED. Resuming stream processing.")
+                                isSessionPaused = false
+                            }
                             DeviceSessionState.PAUSED -> {
                                 Timber.w("Glasses session PAUSED. Suspending stream processing.")
+                                isSessionPaused = true
                             }
                             DeviceSessionState.STOPPED -> {
                                 Timber.i("Glasses session STOPPED. Stopping service.")
@@ -216,6 +224,7 @@ class WearableStreamingService : Service() {
     }
 
     private fun attachCapabilities(session: DeviceSession) {
+        activeDisplay?.let { session.removeDisplay() }
         session.addDisplay(DisplayConfiguration()).onSuccess { display ->
             activeDisplay = display
             uiController = GlassesUIController(display)
@@ -227,27 +236,38 @@ class WearableStreamingService : Service() {
         }
     }
 
+    private var frameCollectionJob: Job? = null
+    private var lastFrameTimeMs = 0L
+    private var frameIntervalMs = 1000L / 15L
+
     private fun startStream(session: DeviceSession) {
-        val config = StreamConfiguration(VideoQuality.MEDIUM, 15, false)
+        activeStream?.let { session.removeStream() }
+        val targetFps = 15
+        frameIntervalMs = 1000L / targetFps
+        val config = StreamConfiguration(VideoQuality.MEDIUM, targetFps, false)
         session.addStream(config).onSuccess { stream ->
             activeStream = stream
             
             scope.launch {
                 stream.state.collect { state ->
                     Timber.d("Stream state changed: $state")
-                    when (state) {
-                        StreamState.CLOSED -> {
-                            Timber.i("Stream CLOSED.")
-                            activeStream = null
+                    when (state.name) {
+                        "STREAMING" -> {
+                            startFrameCollection(stream)
+                        }
+                        "PAUSED", "STOPPED", "CLOSED" -> {
+                            stopFrameCollection()
+                            if (state.name == "CLOSED") {
+                                Timber.i("Stream CLOSED.")
+                                activeStream = null
+                            }
                         }
                         else -> Unit
                     }
                 }
             }
             
-            stream.start().onSuccess {
-                startFrameCollection(stream)
-            }.onFailure { error, _ ->
+            stream.start().onFailure { error, _ ->
                 Timber.e("Failed to start stream: ${error.description}")
             }
         }.onFailure { error, _ ->
@@ -255,12 +275,11 @@ class WearableStreamingService : Service() {
         }
     }
 
-    private var lastFrameTimeMs = 0L
-    private val frameIntervalMs = 1000L / 5L // 5 FPS max rate limiting
-
     private fun startFrameCollection(stream: Stream) {
-        scope.launch(Dispatchers.IO) {
+        if (frameCollectionJob?.isActive == true) return
+        frameCollectionJob = scope.launch(Dispatchers.IO) {
             stream.videoStream.collect { frame ->
+                if (isSessionPaused) return@collect
                 val now = System.currentTimeMillis()
                 if (now - lastFrameTimeMs >= frameIntervalMs) {
                     lastFrameTimeMs = now
@@ -272,9 +291,15 @@ class WearableStreamingService : Service() {
         }
     }
 
+    private fun stopFrameCollection() {
+        frameCollectionJob?.cancel()
+        frameCollectionJob = null
+    }
+
     private var autoDismissJob: Job? = null
 
     fun clearDisplay() {
+        if (isSessionPaused) return
         autoDismissJob?.cancel()
         scope.launch {
             activeDisplay?.sendContent {
@@ -306,6 +331,7 @@ class WearableStreamingService : Service() {
         coverArtUrl: String? = null,
         isPlaying: Boolean
     ) {
+        if (isSessionPaused) return
         autoDismissJob?.cancel()
         playerJob?.cancel()
         playerJob = scope.launch {
@@ -324,33 +350,41 @@ class WearableStreamingService : Service() {
     @android.annotation.SuppressLint("MissingPermission")
     private fun startAudioRecording() {
         if (isRecording) return
-        val sampleRate = 16000
-        val bufferSize = AudioRecord.getMinBufferSize(
-            sampleRate,
-            AudioFormat.CHANNEL_IN_MONO,
-            AudioFormat.ENCODING_PCM_16BIT
-        )
+        isRecording = true
 
-        try {
-            val recorder = AudioRecord(
-                MediaRecorder.AudioSource.MIC,
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.startBluetoothSco()
+        audioManager.setBluetoothScoOn(true)
+
+        recordingJob = scope.launch(Dispatchers.IO) {
+            delay(1000) // Wait for SCO connection
+
+            val sampleRate = 8000
+            val bufferSize = AudioRecord.getMinBufferSize(
                 sampleRate,
                 AudioFormat.CHANNEL_IN_MONO,
-                AudioFormat.ENCODING_PCM_16BIT,
-                bufferSize
+                AudioFormat.ENCODING_PCM_16BIT
             )
 
-            if (recorder.state != AudioRecord.STATE_INITIALIZED) {
-                Timber.e("AudioRecord failed to initialize")
-                recorder.release()
-                return
-            }
+            try {
+                val recorder = AudioRecord(
+                    MediaRecorder.AudioSource.MIC,
+                    sampleRate,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT,
+                    bufferSize
+                )
 
-            audioRecord = recorder
-            isRecording = true
-            recorder.startRecording()
+                if (recorder.state != AudioRecord.STATE_INITIALIZED) {
+                    Timber.e("AudioRecord failed to initialize")
+                    recorder.release()
+                    isRecording = false
+                    return@launch
+                }
 
-            recordingJob = scope.launch(Dispatchers.IO) {
+                audioRecord = recorder
+                recorder.startRecording()
+
                 val audioBuffer = ShortArray(bufferSize)
                 while (isRecording) {
                     val read = audioRecord?.read(audioBuffer, 0, bufferSize) ?: 0
@@ -364,9 +398,10 @@ class WearableStreamingService : Service() {
                         _audioFrames.emit(base64)
                     }
                 }
+            } catch (e: SecurityException) {
+                Timber.e(e, "Missing RECORD_AUDIO permission")
+                isRecording = false
             }
-        } catch (e: SecurityException) {
-            Timber.e(e, "Missing RECORD_AUDIO permission")
         }
     }
 
@@ -384,6 +419,10 @@ class WearableStreamingService : Service() {
             recorder.release()
         }
         audioRecord = null
+
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.stopBluetoothSco()
+        audioManager.setBluetoothScoOn(false)
     }
 
     private fun emitInteraction(type: String) {

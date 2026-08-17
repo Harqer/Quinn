@@ -50,7 +50,7 @@ import kotlinx.coroutines.delay
                     val wearableAudioDevices = datDevices.map { device ->
                         AudioDevice(
                             id = device.identifier,
-                            name = "Meta Glasses",
+                            name = "Meta Wearables Device",
                             subtitle = "Meta Wearable",
                             type = DeviceType.BLUETOOTH,
                             isCurrent = false
