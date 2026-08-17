@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for Typography.kt
+ */
+
 package com.musically.studio.ui.theme
 
 import androidx.compose.material3.Typography

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for EpisodeInfo.kt
+ */
+
 /*
  * Copyright 2024 The Android Open Source Project
  *

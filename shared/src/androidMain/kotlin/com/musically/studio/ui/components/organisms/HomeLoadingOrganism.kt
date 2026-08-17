@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for HomeLoadingOrganism.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 
 import androidx.compose.foundation.layout.Box

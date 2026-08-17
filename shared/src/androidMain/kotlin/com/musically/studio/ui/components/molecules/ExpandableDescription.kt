@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for ExpandableDescription.kt
+ */
+
 package com.musically.studio.ui.components.molecules
 
 import androidx.compose.animation.animateContentSize

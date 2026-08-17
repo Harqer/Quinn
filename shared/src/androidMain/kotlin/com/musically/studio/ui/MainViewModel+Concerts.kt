@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for MainViewModel+Concerts.kt
+ */
+
 package com.musically.studio.ui
 
 import androidx.lifecycle.viewModelScope

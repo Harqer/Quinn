@@ -64,6 +64,8 @@ public interface GetTrackQuery :
   
     val prompt: String?,
   
+    val lyrics: String?,
+  
     val isCommunity: Boolean,
   
     val createdAt: @kotlinx.serialization.Serializable(with = com.google.firebase.dataconnect.serializers.TimestampSerializer::class) com.google.firebase.Timestamp,

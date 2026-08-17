@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for JamViewModel.kt
+ */
+
 package com.musically.studio.ui.screens
 
 import androidx.lifecycle.ViewModel

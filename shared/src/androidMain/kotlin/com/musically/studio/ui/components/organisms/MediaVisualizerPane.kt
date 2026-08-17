@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for MediaVisualizerPane.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 
 import androidx.compose.foundation.background

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for AnimatedImagesIcon.kt
+ */
+
 package com.musically.studio.ui.components.atoms
 
 import androidx.compose.ui.graphics.Color

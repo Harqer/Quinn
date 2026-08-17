@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for WelcomeScreen.kt
+ */
+
 package com.musically.studio.ui.screens.onboarding
 import androidx.compose.material3.MaterialTheme
 

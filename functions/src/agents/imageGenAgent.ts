@@ -1,11 +1,11 @@
 import { z } from "genkit";
 import { ai } from "./genkit";
-import { GoogleGenAI } from "@google/genai";
 import { getStorage } from "firebase-admin/storage";
 import { executeMutation } from "../dataconnect";
 import * as path from "path";
 import * as os from "os";
 import * as fs from "fs";
+import * as logger from "firebase-functions/logger";
 
 export interface ArtDesignTemplate {
   name: string;
@@ -60,7 +60,6 @@ export const ART_DESIGN_TEMPLATES: Record<string, ArtDesignTemplate> = {
 };
 
 export async function buildExpertArtPrompt(apiKey: string, basePrompt: string, stylePreset?: string): Promise<string> {
-  const googleGenAi = new GoogleGenAI({ apiKey });
   const templateKey = stylePreset && ART_DESIGN_TEMPLATES[stylePreset] ? stylePreset : "golden_harmony_minimalist";
   const template = ART_DESIGN_TEMPLATES[templateKey];
 
@@ -82,15 +81,15 @@ Construct a highly descriptive, vivid image prompt (max 400 characters) for Imag
 Output ONLY the raw image generation prompt string. No conversational filler.`;
 
   try {
-    const response = await googleGenAi.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: `Create an expert artistic album cover prompt for: "${basePrompt}"`,
-      config: { systemInstruction }
+    const response = await ai.generate({
+      model: "googleai/gemini-3.5-flash",
+      system: systemInstruction,
+      prompt: `Create an expert artistic album cover prompt for: "${basePrompt}"`
     });
 
     return response.text?.trim() || `${basePrompt}, golden ratio composition, rule of thirds, volumetric neon lighting, f/1.4 bokeh`;
   } catch (err) {
-    console.error("Art Director prompt build error:", err);
+    logger.error("Art Director prompt build error:", err);
     return `${basePrompt}, golden ratio composition, rule of thirds, volumetric lighting, fine 35mm grain`;
   }
 }
@@ -101,9 +100,8 @@ export const imageGenAgent = ai.defineTool(
     description: "Generates expert artistic cover art for a track using Imagen 3 following Golden Ratio & Rule of Thirds.",
     inputSchema: z.object({
       prompt: z.string().describe("The description of the cover art to generate."),
-      apiKey: z.string().describe("The Gemini API key."),
-      uid: z.string().describe("The user ID requesting the image."),
-      preset: z.string().optional().describe("Art design template key (e.g. golden_harmony_minimalist, surrealist_dynamic_neovibe).")
+      preset: z.string().optional().describe("Art design template key (e.g. golden_harmony_minimalist, surrealist_dynamic_neovibe)."),
+      trackId: z.string().describe("The ID of the track to update with the new cover image.")
     }),
     outputSchema: z.object({
       result: z.string(),
@@ -111,26 +109,27 @@ export const imageGenAgent = ai.defineTool(
       promptUsed: z.string()
     }),
   },
-  async (input) => {
-    const googleGenAi = new GoogleGenAI({ apiKey: input.apiKey });
-    const artisticPrompt = await buildExpertArtPrompt(input.apiKey, input.prompt, input.preset);
-    console.log(`Generating expert artistic cover image with Imagen 3 for prompt: ${artisticPrompt}`);
+  async (input, options) => {
+    const { uid, apiKey } = options?.context || {};
+    if (!uid || !apiKey) throw new Error("Missing auth context (uid, apiKey) for tool execution.");
+    const artisticPrompt = await buildExpertArtPrompt(apiKey, input.prompt, input.preset);
+    logger.info(`Generating expert artistic cover image with Imagen 3 for prompt: ${artisticPrompt}`);
     
-    const response = await googleGenAi.models.generateImages({
-      model: "imagen-3.0-fast-generate-001",
+    const response = await ai.generate({
+      model: "googleai/nano-bana-2",
       prompt: artisticPrompt,
+      output: { format: "media" },
       config: {
-        numberOfImages: 1,
-        outputMimeType: "image/jpeg",
         aspectRatio: "1:1"
       }
     });
     
-    const base64Image = response.generatedImages?.[0]?.image?.imageBytes;
-    if (!base64Image) {
-      throw new Error("No image returned from Imagen 3 model.");
+    const media = response.media;
+    if (!media || !media.url) {
+      throw new Error("No image returned from model.");
     }
     
+    const base64Image = media.url.includes(",") ? media.url.split(",")[1] : media.url;
     const imageBuffer = Buffer.from(base64Image, "base64");
     const filename = `cover_${Date.now()}.jpg`;
     const tempFilePath = path.join(os.tmpdir(), filename);
@@ -143,13 +142,9 @@ export const imageGenAgent = ai.defineTool(
     await fileRef.makePublic();
     const url = `https://storage.googleapis.com/${bucket.name}/generated_images/${filename}`;
     
-    await executeMutation("SeedTrack", {
-      title: input.prompt,
-      audioUrl: url,
-      coverUrl: url,
-      prompt: artisticPrompt,
-      isCommunity: false,
-      ownerUid: input.uid
+    await executeMutation("UpdateTrackCover", {
+      id: input.trackId,
+      coverUrl: url
     });
     
     return { result: "success", imageUrl: url, promptUsed: artisticPrompt };

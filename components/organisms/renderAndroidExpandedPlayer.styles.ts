@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: UI Component for renderAndroidExpandedPlayer.styles.ts
+ */
+
 import { css } from 'lit';
 
 export const renderAndroidExpandedPlayerStyles = css`
@@ -55,7 +60,9 @@ export const renderAndroidExpandedPlayerStyles = css`
     left: 0;
     width: 100%;
     height: calc(100% - 24px);
-    background: linear-gradient(to bottom, #500a16 0%, #1a0307 40%, #0d0103 100%);
+    background: rgba(20, 5, 8, 0.7);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
     z-index: 50;
     display: flex;
     flex-direction: column;
@@ -360,4 +367,14 @@ export const renderAndroidExpandedPlayerStyles = css`
 .bottom-nav-tab-web .material-icons-round {
       font-size: 20px;
     }
+
+.playing-pulse img, .playing-pulse > div {
+    animation: art-pulse 2s infinite alternate ease-in-out;
+    box-shadow: 0 0 30px rgba(29, 185, 84, 0.4);
+}
+
+@keyframes art-pulse {
+    0% { transform: scale(1); box-shadow: 0 0 20px rgba(29, 185, 84, 0.2); }
+    100% { transform: scale(1.03); box-shadow: 0 0 40px rgba(29, 185, 84, 0.6); }
+}
 `;

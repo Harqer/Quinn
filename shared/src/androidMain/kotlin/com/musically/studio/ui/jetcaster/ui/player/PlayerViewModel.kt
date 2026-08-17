@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for PlayerViewModel.kt
+ */
+
 package com.musically.studio.ui.jetcaster.ui.player
 
 import androidx.compose.runtime.getValue
@@ -80,5 +85,13 @@ class PlayerViewModel(
         uiState.episodePlayerState.currentEpisode?.let {
             episodePlayer.addToQueue(it)
         }
+    }
+
+    fun onShuffle() {
+        // Shuffle implementation to be added
+    }
+
+    fun onRepeat() {
+        // Repeat implementation to be added
     }
 }

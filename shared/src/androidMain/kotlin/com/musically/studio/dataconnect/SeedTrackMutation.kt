@@ -29,6 +29,8 @@ public interface SeedTrackMutation :
   
     val audioUrl: String,
   
+    val coverUrl: com.google.firebase.dataconnect.OptionalVariable<String?>,
+  
     val durationMs: com.google.firebase.dataconnect.OptionalVariable<Int?>,
   
     val prompt: com.google.firebase.dataconnect.OptionalVariable<String?>,
@@ -48,6 +50,7 @@ public interface SeedTrackMutation :
       public interface Builder {
         public var title: String
         public var audioUrl: String
+        public var coverUrl: String?
         public var durationMs: Int?
         public var prompt: String?
         public var isCommunity: Boolean
@@ -64,6 +67,8 @@ public interface SeedTrackMutation :
         ): Variables {
           var title= title
             var audioUrl= audioUrl
+            var coverUrl: com.google.firebase.dataconnect.OptionalVariable<String?> =
+                com.google.firebase.dataconnect.OptionalVariable.Undefined
             var durationMs: com.google.firebase.dataconnect.OptionalVariable<Int?> =
                 com.google.firebase.dataconnect.OptionalVariable.Undefined
             var prompt: com.google.firebase.dataconnect.OptionalVariable<String?> =
@@ -80,6 +85,10 @@ public interface SeedTrackMutation :
             override var audioUrl: String
               get() = throw UnsupportedOperationException("getting builder values is not supported")
               set(value_) { audioUrl = value_ }
+              
+            override var coverUrl: String?
+              get() = throw UnsupportedOperationException("getting builder values is not supported")
+              set(value_) { coverUrl = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
               
             override var durationMs: Int?
               get() = throw UnsupportedOperationException("getting builder values is not supported")
@@ -101,7 +110,7 @@ public interface SeedTrackMutation :
           }.apply(block_)
           .let {
             Variables(
-              title=title,audioUrl=audioUrl,durationMs=durationMs,prompt=prompt,isCommunity=isCommunity,ownerUid=ownerUid,
+              title=title,audioUrl=audioUrl,coverUrl=coverUrl,durationMs=durationMs,prompt=prompt,isCommunity=isCommunity,ownerUid=ownerUid,
             )
           }
         }

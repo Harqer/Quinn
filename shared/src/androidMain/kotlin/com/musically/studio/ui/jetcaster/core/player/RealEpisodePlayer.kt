@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for RealEpisodePlayer.kt
+ */
+
 package com.musically.studio.ui.jetcaster.core.player
 
 import android.media.AudioAttributes

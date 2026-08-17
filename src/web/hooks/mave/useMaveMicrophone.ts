@@ -26,18 +26,51 @@ export function useMaveMicrophone(
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } });
         audioStreamRef.current = stream;
-        const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-        recorderRef.current = recorder;
-        recorder.ondataavailable = async (e) => {
-          if (e.data.size > 0 && sessionRef.current) {
-            const buffer = await e.data.arrayBuffer();
-            const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
-            sessionRef.current.sendRealtimeInput({
-              audio: { data: base64, mimeType: 'audio/pcm;rate=16000' }
-            });
+        
+        const audioContext = new AudioContext({ sampleRate: 16000 });
+        const source = audioContext.createMediaStreamSource(stream);
+        const processor = audioContext.createScriptProcessor(4096, 1, 1);
+        
+        processor.onaudioprocess = (e) => {
+          if (!sessionRef.current || !isRecording) return;
+          const inputData = e.inputBuffer.getChannelData(0);
+          
+          // Convert Float32Array to Int16Array
+          const pcmData = new Int16Array(inputData.length);
+          for (let i = 0; i < inputData.length; i++) {
+            const s = Math.max(-1, Math.min(1, inputData[i]));
+            pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
           }
+          
+          // Convert Int16Array to base64
+          const buffer = new ArrayBuffer(pcmData.length * 2);
+          const view = new DataView(buffer);
+          for (let i = 0; i < pcmData.length; i++) {
+            view.setInt16(i * 2, pcmData[i], true); // true for little-endian
+          }
+          
+          const bytes = new Uint8Array(buffer);
+          let binary = '';
+          for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+          }
+          const base64 = btoa(binary);
+
+          // The Google Gen AI SDK expects [{ mimeType, data }] for sendRealtimeInput
+          sessionRef.current.sendRealtimeInput([{
+            mimeType: 'audio/pcm;rate=16000',
+            data: base64
+          }]);
         };
-        recorder.start(250);
+
+        source.connect(processor);
+        processor.connect(audioContext.destination);
+        recorderRef.current = { stop: () => {
+          source.disconnect();
+          processor.disconnect();
+          audioContext.close();
+        }} as any;
+        
         setIsRecording(true);
       } catch (err) {
         logger.error('Microphone access denied', err);

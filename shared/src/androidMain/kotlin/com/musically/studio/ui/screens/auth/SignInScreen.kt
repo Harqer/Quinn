@@ -1,9 +1,15 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for SignInScreen.kt
+ */
+
 package com.musically.studio.ui.screens.auth
 import androidx.compose.material3.MaterialTheme
 
 import android.app.Activity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,7 +46,8 @@ fun SignInScreen(viewModel: MainViewModel) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(horizontal = 32.dp, vertical = 24.dp),
+                    .padding(horizontal = 32.dp, vertical = 24.dp)
+                    .verticalScroll(androidx.compose.foundation.rememberScrollState()),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

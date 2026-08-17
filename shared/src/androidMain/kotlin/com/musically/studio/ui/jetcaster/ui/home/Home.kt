@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for Home.kt
+ */
+
 /*
  * Copyright 2020-2025 The Android Open Source Project
  *

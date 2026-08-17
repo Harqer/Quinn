@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: UI Component for chat-interface.styles.ts
+ */
+
 import { css } from 'lit';
 
 export const chatInterfaceStyles = css`
@@ -201,4 +206,40 @@ export const chatInterfaceStyles = css`
 .bottom-nav-tab-web .material-icons-round {
       font-size: 20px;
     }
+
+.mic-pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid #ef4444;
+    opacity: 0;
+    pointer-events: none;
+  }
+.mic-button.recording ~ .ring-1 {
+    animation: mic-ripple 1.5s linear infinite;
+  }
+.mic-button.recording ~ .ring-2 {
+    animation: mic-ripple 1.5s linear infinite 0.75s;
+  }
+@keyframes mic-ripple {
+    0% {
+      width: 48px;
+      height: 48px;
+      opacity: 0.8;
+    }
+    100% {
+      width: 96px;
+      height: 96px;
+      opacity: 0;
+    }
+  }
+@keyframes mic-pulse-kf {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  }
 `;

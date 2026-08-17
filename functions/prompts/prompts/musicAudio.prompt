@@ -1,0 +1,14 @@
+---
+model: googleai/gemini-3.5-flash
+config:
+  responseModalities:
+    - AUDIO
+  speechConfig:
+    voiceConfig:
+      prebuiltVoiceConfig:
+        voiceName: Puck
+input:
+  schema:
+    lyrics: string
+---
+Read these lyrics dramatically like a spoken-word song: {{lyrics}}

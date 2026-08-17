@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for LiveSessionScreen.kt
+ */
+
 package com.musically.studio.ui.screens
 
 import androidx.compose.foundation.background
@@ -90,25 +95,41 @@ fun LiveSessionScreen(
             )
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().background(backgroundGradient).padding(paddingValues)) {
+        Box(modifier = Modifier.fillMaxSize().background(backgroundGradient)) {
             if (messages.isEmpty() && !isLiveSessionActive) {
                 EmptySessionState(onStartSession = { viewModel.startLiveSession() })
             } else if (messages.isEmpty() && thinkingText.isBlank()) {
                 SessionWaitingState()
             } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier.fillMaxHeight().widthIn(max = 840.dp).fillMaxWidth(),
-                        reverseLayout = true,
-                        contentPadding = PaddingValues(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = paddingValues.calculateTopPadding() + 8.dp,
-                            bottom = paddingValues.calculateBottomPadding() + 8.dp
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    var isRefreshing by remember { mutableStateOf(false) }
+                    val pullToRefreshState = androidx.compose.material3.pulltorefresh.rememberPullToRefreshState()
+                    
+                    androidx.compose.material3.pulltorefresh.PullToRefreshBox(
+                        isRefreshing = isRefreshing,
+                        onRefresh = { 
+                            isRefreshing = true
+                            // TODO: Add refresh history logic to viewModel
+                            coroutineScope.launch { 
+                                kotlinx.coroutines.delay(1000)
+                                isRefreshing = false 
+                            }
+                        },
+                        state = pullToRefreshState,
+                        modifier = Modifier.fillMaxHeight().widthIn(max = 840.dp).fillMaxWidth()
                     ) {
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier.fillMaxSize(),
+                            reverseLayout = true,
+                            contentPadding = PaddingValues(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = paddingValues.calculateTopPadding() + 8.dp,
+                                bottom = paddingValues.calculateBottomPadding() + 8.dp
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
                         if (thinkingText.isNotBlank()) {
                             item { ThinkingBubble(text = thinkingText) }
                         }
@@ -116,6 +137,7 @@ fun LiveSessionScreen(
                             ChatBubble(message = message, viewModel = viewModel)
                         }
                     }
+                    } // Close PullToRefreshBox
                 }
             }
             if (messages.isEmpty() && thinkingText.isNotBlank()) {

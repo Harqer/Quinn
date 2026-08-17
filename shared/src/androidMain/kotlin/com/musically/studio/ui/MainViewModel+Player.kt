@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for MainViewModel+Player.kt
+ */
+
 package com.musically.studio.ui
 
 import android.app.Activity

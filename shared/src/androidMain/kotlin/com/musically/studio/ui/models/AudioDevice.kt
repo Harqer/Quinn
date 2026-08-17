@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for AudioDevice.kt
+ */
+
 package com.musically.studio.ui.models
 
 data class AudioDevice(

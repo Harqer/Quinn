@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for PodcastDetailsViewModel.kt
+ */
+
 package com.musically.studio.ui.jetcaster.ui.podcast
 
 import androidx.compose.runtime.Immutable

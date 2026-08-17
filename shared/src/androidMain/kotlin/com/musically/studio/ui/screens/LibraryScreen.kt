@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for LibraryScreen.kt
+ */
+
 package com.musically.studio.ui.screens
 import androidx.compose.material3.MaterialTheme
 
@@ -108,23 +113,14 @@ fun LibraryScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.85f)),
                 scrollBehavior = scrollBehavior
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            LibraryFilterRow(
-                selectedFilter = selectedFilterState.value,
-                onFilterSelected = { selectedFilterState.value = it },
-                onSortClick = { sortOrder = if (sortOrder == "Recently played") "Alphabetical" else "Recently played" },
-                onViewToggleClick = { isListView = !isListView }
-            )
-
             if (isLoading && tracks.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -169,8 +165,24 @@ fun LibraryScreen(
                     androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
                         columns = androidx.compose.foundation.lazy.grid.GridCells.Adaptive(360.dp),
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = 120.dp)
+                        contentPadding = PaddingValues(
+                            top = innerPadding.calculateTopPadding() + 16.dp,
+                            bottom = innerPadding.calculateBottomPadding() + 120.dp,
+                            start = 16.dp,
+                            end = 16.dp
+                        ),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
+                        item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
+                            LibraryFilterRow(
+                                selectedFilter = selectedFilterState.value,
+                                onFilterSelected = { selectedFilterState.value = it },
+                                onSortClick = { sortOrder = if (sortOrder == "Recently played") "Alphabetical" else "Recently played" },
+                                onViewToggleClick = { isListView = !isListView }
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                         item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
                             ConnectionsSection(
                                 viewModel = viewModel,

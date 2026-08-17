@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: UI Component for player-controls.ts
+ */
+
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { playerControlsStyles } from './player-controls.styles';

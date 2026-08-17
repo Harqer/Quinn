@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for HomeViewModel.kt
+ */
+
 package com.musically.studio.ui.jetcaster.ui.home
 
 import androidx.compose.runtime.Immutable

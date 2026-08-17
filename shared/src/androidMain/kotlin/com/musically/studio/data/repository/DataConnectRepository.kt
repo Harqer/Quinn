@@ -169,19 +169,11 @@ class DataConnectRepository @Inject constructor(
     /**
      * Records a play event for [trackId].
      *
-     * Until a PlayHistory table is added to the DataConnect schema, this uses RTDB
-     * to increment the track's global play count under `tracks/{trackId}/plays`.
-     * This provides lightweight cross-device analytics without schema changes.
-     *
-     * TODO: Replace with `connector.recordPlay.execute(trackId)` once the DataConnect
-     *       PlayHistory mutation is scaffolded in the schema.
+     * This uses the DataConnect PlayHistory mutation to record when a user plays a track.
      */
     suspend fun recordPlay(trackId: String): Boolean {
         return try {
-            val db = com.google.firebase.Firebase.database
-            db.getReference("tracks/$trackId/plays")
-                .setValue(com.google.firebase.database.ServerValue.increment(1))
-                .await()
+            connector.recordPlay.execute(trackId = trackId)
             true
         } catch (e: Exception) {
             Timber.e(e, "Failed to record play for track $trackId")
@@ -195,6 +187,26 @@ class DataConnectRepository @Inject constructor(
             emit(response.data.tracks)
         } catch (e: Exception) {
             Timber.e(e, "Failed to search tracks")
+            emit(emptyList())
+        }
+    }
+
+    fun searchPodcasts(query: String): Flow<List<SearchPodcastsQuery.Data.ShowsItem>> = flow {
+        try {
+            val response = connector.searchPodcasts.execute(query = query)
+            emit(response.data.shows)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to search podcasts")
+            emit(emptyList())
+        }
+    }
+
+    fun searchAudiobooks(query: String): Flow<List<SearchAudiobooksQuery.Data.AudiobooksItem>> = flow {
+        try {
+            val response = connector.searchAudiobooks.execute(query = query)
+            emit(response.data.audiobooks)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to search audiobooks")
             emit(emptyList())
         }
     }
@@ -268,6 +280,30 @@ class DataConnectRepository @Inject constructor(
             true
         } catch (e: Exception) {
             Timber.e(e, "Failed to save episode progress")
+            false
+        }
+    }
+    suspend fun savePodcastEpisode(
+        showId: String,
+        title: String,
+        description: String,
+        audioUrl: String,
+        durationMs: Int,
+        publishDate: com.google.firebase.Timestamp
+    ): Boolean {
+        return try {
+            connector.seedEpisode.execute(
+                showId = showId,
+                title = title,
+                publishDate = publishDate
+            ) {
+                this.description = description
+                this.audioUrl = audioUrl
+                this.durationMs = durationMs.toLong().toInt()
+            }
+            true
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to save podcast episode")
             false
         }
     }

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for EpisodeListItem.kt
+ */
+
 /*
  * Copyright 2024 The Android Open Source Project
  *

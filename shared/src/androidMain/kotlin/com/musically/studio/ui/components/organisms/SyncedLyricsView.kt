@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for SyncedLyricsView.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 
 import androidx.compose.animation.animateColorAsState

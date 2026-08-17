@@ -72,7 +72,7 @@ private fun EpisodeThumbnail(
     Card(
         onClick = onClick,
         interactionSource = interactionSource,
-        scale = CardScale.None,
+        scale = CardDefaults.scale(focusedScale = 1.05f),
         shape = CardDefaults.shape(RoundedCornerShape(12.dp)),
         modifier = modifier,
     ) {

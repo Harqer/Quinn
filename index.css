@@ -23,3 +23,59 @@ lyria-camera {
   height: 100%;
 }
 
+
+:root {
+  --background: #121212;
+  --surface-container: rgba(255, 255, 255, 0.1);
+  --surface-container-high: rgba(255, 255, 255, 0.15);
+  --primary: #1DB954; /* Spotify green */
+  --primary-variant: #1ed760;
+  --on-surface: #FFFFFF;
+  --text-secondary: #B3B3B3;
+  --glass-blur: blur(16px);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --gradient-bg: linear-gradient(135deg, rgba(18,18,18,1) 0%, rgba(30,40,30,1) 100%);
+}
+
+body {
+  background: var(--gradient-bg);
+  color: var(--on-surface);
+}
+
+.bg-background { background: var(--background); }
+.bg-surface-container { 
+  background: var(--surface-container); 
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+}
+.bg-primary { background-color: var(--primary); }
+.text-primary { color: var(--primary); }
+.text-on-surface { color: var(--on-surface); }
+.text-secondary { color: var(--text-secondary); }
+
+/* Glassmorphism components */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+}
+
+/* Base tailwind flex/layout stubs for rendering if needed */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.rounded-full { border-radius: 9999px; }
+.rounded-2xl { border-radius: 1rem; }
+.overflow-hidden { overflow: hidden; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.p-4 { padding: 1rem; }
+.gap-4 { gap: 1rem; }

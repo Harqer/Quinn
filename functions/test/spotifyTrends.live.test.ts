@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import fetch from 'node-fetch';
 
 describe('fetchSpotifyTrends (LIVE TEST)', () => {
@@ -24,7 +25,7 @@ describe('fetchSpotifyTrends (LIVE TEST)', () => {
 
     expect(tokenResponse.ok).toBe(true);
     const tokenData = await tokenResponse.json();
-    const accessToken = tokenData.access_token;
+    const accessToken = (tokenData as any).access_token;
     expect(accessToken).toBeDefined();
 
     // 2. Fetch Top 50 Playlist
@@ -38,7 +39,7 @@ describe('fetchSpotifyTrends (LIVE TEST)', () => {
     });
 
     expect(response.ok).toBe(true);
-    const data = await response.json();
+    const data = await response.json() as any;
     expect(data.items).toBeDefined();
     expect(data.items.length).toBeGreaterThan(0);
     

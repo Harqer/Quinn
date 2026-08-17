@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for CameraPreview.kt
+ */
+
 package com.musically.studio.ui.components
 
 import com.musically.studio.ui.*

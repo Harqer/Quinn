@@ -44,6 +44,10 @@ public interface GetCategoriesQuery :
   
     val type: @kotlinx.serialization.Serializable(with = CategoryType.EnumValueSerializer::class) EnumValue<CategoryType>,
   
+    val colorHex: String?,
+  
+    val imageUrl: String?,
+  
   ) {
     
     

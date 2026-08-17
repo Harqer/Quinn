@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: UI Component for renderSecurity.styles.ts
+ */
+
 import { css } from 'lit';
 
 export const renderSecurityStyles = css`

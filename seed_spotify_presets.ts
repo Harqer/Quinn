@@ -1,10 +1,13 @@
 import { execSync } from 'child_process';
-import { generate } from '@genkit-ai/ai';
-import { gemini15Flash } from '@genkit-ai/googleai';
+import { genkit } from 'genkit';
+import { googleAI, gemini15Flash } from '@genkit-ai/googleai';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// 1. Fetch Secrets
+// Initialize Genkit
+const apiKey = execSync("gcloud secrets versions access latest --secret=GEMINI_API_KEY", { encoding: 'utf-8' }).trim();
+process.env.GEMINI_API_KEY = apiKey;
+const ai = genkit({ plugins: [googleAI()] });
 console.log("Fetching Spotify secrets from GCP Secret Manager...");
 const clientId = execSync("gcloud secrets versions access latest --secret=SPOTIFY_CLIENT_ID", { encoding: 'utf-8' }).trim();
 const clientSecret = execSync("gcloud secrets versions access latest --secret=SPOTIFY_CLIENT_SECRET", { encoding: 'utf-8' }).trim();
@@ -67,7 +70,7 @@ async function runSeeder() {
             
             // Execute Genkit
             try {
-                const response = await generate({
+                const response = await ai.generate({
                     model: gemini15Flash,
                     prompt: "Extract the exact prompt, genre, and metadata to replicate this track's musical vibe exactly.",
                     system: promptTemplate,
@@ -79,7 +82,7 @@ async function runSeeder() {
                     }
                 });
 
-                const rawJson = response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+                const rawJson = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
                 const analysis = JSON.parse(rawJson);
 
                 console.log("Analysis Output:", analysis);

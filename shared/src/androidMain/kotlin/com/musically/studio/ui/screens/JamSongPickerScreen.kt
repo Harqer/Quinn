@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for JamSongPickerScreen.kt
+ */
+
 package com.musically.studio.ui.screens
 import androidx.compose.material3.MaterialTheme
 

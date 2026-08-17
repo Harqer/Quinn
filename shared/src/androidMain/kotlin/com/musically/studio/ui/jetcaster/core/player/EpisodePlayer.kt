@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for EpisodePlayer.kt
+ */
+
 package com.musically.studio.ui.jetcaster.core.player
 
 import androidx.compose.runtime.Immutable

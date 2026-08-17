@@ -1,0 +1,7 @@
+---
+model: googleai/gemini-3.5-flash
+input:
+  schema:
+    prompt: string
+---
+Generate a short verse and chorus for a song based on this prompt: "{{prompt}}". Output ONLY the lyrics.

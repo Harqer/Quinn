@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for Color.kt
+ */
+
 /*
  * Copyright 2024 The Android Open Source Project
  *

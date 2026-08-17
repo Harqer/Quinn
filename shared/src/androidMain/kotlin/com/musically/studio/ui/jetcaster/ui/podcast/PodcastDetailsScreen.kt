@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for PodcastDetailsScreen.kt
+ */
+
 /*
  * Copyright 2024 The Android Open Source Project
  *

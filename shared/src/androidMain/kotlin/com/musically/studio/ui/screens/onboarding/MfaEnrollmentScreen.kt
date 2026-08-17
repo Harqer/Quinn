@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for MfaEnrollmentScreen.kt
+ */
+
 package com.musically.studio.ui.screens.onboarding
 
 import android.app.Activity

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: UI Component for renderAndroidWelcome.styles.ts
+ */
+
 import { css } from 'lit';
 
 export const renderAndroidWelcomeStyles = css`

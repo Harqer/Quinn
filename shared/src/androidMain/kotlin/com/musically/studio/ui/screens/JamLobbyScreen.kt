@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for JamLobbyScreen.kt
+ */
+
 package com.musically.studio.ui.screens
 
 import androidx.compose.foundation.background

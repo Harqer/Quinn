@@ -108,6 +108,7 @@ kotlin {
             implementation(libs.firebase.auth)
             implementation(libs.firebase.crashlytics)
             implementation(libs.firebase.functions)
+            implementation(libs.kotlinx.coroutines.play.services)
 
             implementation(libs.timber)
             implementation(libs.hilt.android)

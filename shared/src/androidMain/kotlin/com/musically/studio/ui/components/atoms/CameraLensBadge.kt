@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for CameraLensBadge.kt
+ */
+
 package com.musically.studio.ui.components.atoms
 
 import androidx.camera.core.CameraSelector

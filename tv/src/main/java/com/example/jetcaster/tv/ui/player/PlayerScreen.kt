@@ -181,7 +181,7 @@ private fun Player(
             )
             EpisodePlayerWithBackground(
                 playerEpisode = currentEpisode,
-                queue = EpisodeList(episodePlayerState.queue),
+                queue = episodePlayerState.queue,
                 isPlaying = episodePlayerState.isPlaying,
                 timeElapsed = episodePlayerState.timeElapsed,
                 play = (

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for SecurityUtils.kt
+ */
+
 package com.musically.studio.ui.utils
 
 import android.content.Context

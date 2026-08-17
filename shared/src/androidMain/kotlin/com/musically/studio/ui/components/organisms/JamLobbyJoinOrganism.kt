@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for JamLobbyJoinOrganism.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 import androidx.compose.material3.MaterialTheme
 

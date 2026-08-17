@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for MfaSettingItem.kt
+ */
+
 package com.musically.studio.ui.components.atoms
 
 import androidx.compose.material3.*

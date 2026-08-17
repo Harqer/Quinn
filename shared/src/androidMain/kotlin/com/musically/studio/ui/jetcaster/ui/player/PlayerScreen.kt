@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for PlayerScreen.kt
+ */
+
 /*
  * Copyright 2021 The Android Open Source Project
  *
@@ -51,6 +56,9 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -124,6 +132,8 @@ fun PlayerScreen(
             onSeekingFinished = viewModel::onSeekingFinished,
             onNext = viewModel::onNext,
             onPrevious = viewModel::onPrevious,
+            onShuffle = viewModel::onShuffle,
+            onRepeat = viewModel::onRepeat
         ),
     )
 }
@@ -181,7 +191,13 @@ private fun PlayerScreen(
                 EpisodeOptionsBottomSheet(
                     episode = currentEpisode.episodeInfo,
                     podcast = currentEpisode.podcastInfo,
-                    onQueueEpisode = { /* already playing */ },
+                    onQueueEpisode = { 
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(snackBarText)
+                        }
+                        onAddToQueue()
+                        showOptionsSheet = false
+                    },
                     onDismiss = { showOptionsSheet = false },
                 )
             }
@@ -243,6 +259,8 @@ data class PlayerControlActions(
     val onPrevious: () -> Unit,
     val onSeekingStarted: () -> Unit,
     val onSeekingFinished: (newElapsed: Duration) -> Unit,
+    val onShuffle: () -> Unit = {},
+    val onRepeat: () -> Unit = {}
 )
 
 @Composable
@@ -330,7 +348,9 @@ private fun PlayerContentRegular(
                         onRewindBy = playerControlActions.onRewindBy,
                         onNext = playerControlActions.onNext,
                         onPrevious = playerControlActions.onPrevious,
-                        Modifier.padding(vertical = 8.dp),
+                        onShuffle = playerControlActions.onShuffle,
+                        onRepeat = playerControlActions.onRepeat,
+                        modifier = Modifier.padding(vertical = 8.dp),
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
@@ -413,6 +433,8 @@ private fun PlayerContentTableTopBottom(
                 onRewindBy = playerControlActions.onRewindBy,
                 onNext = playerControlActions.onNext,
                 onPrevious = playerControlActions.onPrevious,
+                onShuffle = playerControlActions.onShuffle,
+                onRepeat = playerControlActions.onRepeat,
                 modifier = Modifier.padding(top = 8.dp),
             )
             PlayerSlider(
@@ -484,7 +506,9 @@ private fun PlayerContentBookEnd(uiState: PlayerUiState, playerControlActions: P
             onRewindBy = playerControlActions.onRewindBy,
             onNext = playerControlActions.onNext,
             onPrevious = playerControlActions.onPrevious,
-            Modifier.padding(vertical = 8.dp),
+            onShuffle = playerControlActions.onShuffle,
+            onRepeat = playerControlActions.onRepeat,
+            modifier = Modifier.padding(vertical = 8.dp),
         )
     }
 }
@@ -632,6 +656,8 @@ private fun PlayerButtons(
     onRewindBy: (Duration) -> Unit,
     onNext: () -> Unit,
     onPrevious: () -> Unit,
+    onShuffle: () -> Unit = {},
+    onRepeat: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -663,6 +689,17 @@ private fun PlayerButtons(
 
             val rewindFastForwardButtonsModifier = Modifier
                 .size(68.dp)
+
+            IconButton(
+                onClick = onShuffle,
+                modifier = skipButtonsModifier,
+                enabled = true,
+            ) {
+                Icon(
+                    Icons.Default.Shuffle,
+                    contentDescription = "Shuffle",
+                )
+            }
 
             IconButton(
                 onClick = onPrevious,
@@ -705,6 +742,17 @@ private fun PlayerButtons(
                 Icon(
                     painterResource(id = R.drawable.ic_skip_next),
                     contentDescription = null,
+                )
+            }
+
+            IconButton(
+                onClick = onRepeat,
+                modifier = skipButtonsModifier,
+                enabled = true,
+            ) {
+                Icon(
+                    Icons.Default.Repeat,
+                    contentDescription = "Repeat",
                 )
             }
         }

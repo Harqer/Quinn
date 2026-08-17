@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for LyricsBottomSheet.kt
+ */
+
 package com.musically.studio.ui.screens
 
 import androidx.compose.foundation.layout.*

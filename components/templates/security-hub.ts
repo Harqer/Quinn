@@ -1,0 +1,374 @@
+/**
+ * @AtomicLevel: Template
+ * @SemanticPurpose: UI Component for security-hub.ts
+ */
+
+import { LitElement, html, nothing } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { renderSecurityStyles } from './renderSecurity.styles';
+
+@customElement('security-hub')
+export class SecurityHub extends LitElement {
+  static styles = renderSecurityStyles;
+
+  @property({ type: Boolean }) mockAlertLoading = false;
+  @property({ type: Boolean }) webhookCopied = false;
+  @property({ type: Boolean }) spotifyLoading = false;
+  @property({ type: Boolean }) spotifyConnected = false;
+  @property({ type: Boolean }) spotifyTokenCopied = false;
+  @property({ type: String }) spotifyAccessToken = "";
+  @property({ type: Array }) securityAlerts = [];
+  @property({ type: Boolean }) securityAlertsLoading = false;
+  @property({ type: String }) expandedAlertId = "";
+
+  private triggerMockAlert() { this.dispatchEvent(new CustomEvent("mock-alert", { bubbles: true, composed: true })); }
+  private copyWebhookUrl() { this.dispatchEvent(new CustomEvent("copy-webhook", { bubbles: true, composed: true })); }
+  private copySpotifyAccessToken() { this.dispatchEvent(new CustomEvent("copy-spotify-token", { bubbles: true, composed: true })); }
+  private disconnectSpotify() { this.dispatchEvent(new CustomEvent("disconnect-spotify", { bubbles: true, composed: true })); }
+  private connectSpotify() { this.dispatchEvent(new CustomEvent("connect-spotify", { bubbles: true, composed: true })); }
+  private fetchSecurityAlerts() { this.dispatchEvent(new CustomEvent("fetch-alerts", { bubbles: true, composed: true })); }
+  private toggleAlertDetails(id: string) { this.dispatchEvent(new CustomEvent("toggle-alert", { detail: id, bubbles: true, composed: true })); }
+  private dispatchError(msg: string) { this.dispatchEvent(new CustomEvent("error", { detail: msg, bubbles: true, composed: true })); }
+
+  render() {
+    
+  
+    const webhookUrl = `${window.location.origin}/api/webhooks/github`;
+
+    return html`
+      <div id="security-hub">
+        <div class="sec-header">
+          <div class="sec-title-area">
+            <h2 class="sec-title">Security & Dependabot Hub</h2>
+            <p class="sec-subtitle">Dynamic vulnerability scanner, telemetry analyzer, and automated dependency resolution plans powered by Gemini.</p>
+          </div>
+          <button 
+            class="mock-trigger-btn"
+            ?disabled=${this.mockAlertLoading}
+            @click=${this.triggerMockAlert}
+          >
+            <span class="material-icons-round">science</span>
+            ${this.mockAlertLoading ? "Running Remediation..." : "Trigger Simulated Alert"}
+          </button>
+        </div>
+
+        <!-- Webhook Configuration Panel -->
+        <div class="webhook-config-card">
+          <div class="webhook-details">
+            <div class="webhook-header">
+              <span class="material-icons-round webhook-icon">webhook</span>
+              <h3>GitHub Webhook Integration</h3>
+            </div>
+            <p class="webhook-desc">
+              Connect your GitHub repository directly to our application backend to receive instant Dependabot updates and automated security audits:
+            </p>
+            
+            <div class="webhook-fields">
+              <div class="field-group">
+                <span class="field-label">Payload URL</span>
+                <div class="url-copy-box">
+                  <input type="text" readonly value="${webhookUrl}" id="webhook-url-input" />
+                  <button @click=${this.copyWebhookUrl} class="copy-btn">
+                    <span class="material-icons-round">${this.webhookCopied ? "check" : "content_copy"}</span>
+                    ${this.webhookCopied ? "Copied" : "Copy"}
+                  </button>
+                </div>
+              </div>
+              
+              <div class="field-row">
+                <div class="field-group">
+                  <span class="field-label">Content Type</span>
+                  <span class="field-value">application/json</span>
+                </div>
+                <div class="field-group">
+                  <span class="field-label">Trigger Events</span>
+                  <span class="field-value">Dependabot alerts</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="webhook-benefits">
+            <h4><span class="material-icons-round">shield</span> DevSecOps Pipeline</h4>
+            <ul>
+              <li><strong>Direct Connection</strong>: Exposes a real endpoint directly on our Cloud Run Node.js container (No separate Cloud Functions needed!).</li>
+              <li><strong>AI Remediation Engine</strong>: Undergoes automatic threat modeling & dependency resolution plans generated instantly via Gemini.</li>
+              <li><strong>Local Sandbox Simulation</strong>: Test the entire ingestion, storage, and remediation flow with the <em>Trigger Simulated Alert</em> button.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Spotify OAuth & Developer Token Hub -->
+        <div class="bg-[#18181b] border border-[#27272a] rounded-xl p-6 mb-6 flex flex-col md:flex-row gap-6 animate-fade-in" style="margin-bottom: 24px;">
+          <div class="flex-1 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <svg class="w-6 h-6 fill-[#1db954]" viewBox="0 0 24 24" style="width: 24px; height: 24px;">
+                <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.893-.982-.336.075-.668-.135-.744-.47-.077-.337.136-.669.47-.745 3.848-.874 7.14-.5 9.82 1.13.295.182.387.567.207.86zm1.224-2.72c-.227.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.078-1.182-.413.125-.844-.107-.97-.52-.124-.413.108-.844.52-.97 3.673-1.115 8.236-.572 11.34 1.34.368.228.488.708.262 1.072zm.107-2.828C14.484 8.766 8.823 8.58 5.518 9.582c-.512.156-1.047-.137-1.202-.65a.947.947 0 01.65-1.202C8.747 6.596 14.98 6.81 19.33 9.395c.462.274.61.874.336 1.336-.273.46-.873.61-1.335.336z"/>
+              </svg>
+              <h3 class="text-sm font-bold text-white uppercase tracking-wider m-0" style="margin: 0; font-size: 13px;">Spotify OAuth & Developer Token Hub</h3>
+            </div>
+            <p class="text-xs text-[#a1a1aa] leading-relaxed m-0" style="margin: 0; font-size: 11px; color: #a1a1aa;">
+              Authorize this app via OAuth to automatically retrieve and display your active <strong>Spotify Bearer Token</strong>. You can copy this token instantly to run external scripts, custom node services, or verify Spotify Web API endpoints.
+            </p>
+            
+            <div class="flex flex-col gap-3 mt-1" style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="flex flex-col gap-1.5" style="display: flex; flex-direction: column; gap: 4px;">
+                <span class="text-[10px] font-semibold text-[#a1a1aa] uppercase tracking-wider" style="font-size: 9px; text-transform: uppercase; color: #a1a1aa; font-weight: bold;">Active Spotify Access Token (Bearer)</span>
+                <div class="flex items-center gap-2 bg-[#111827] border border-[#27272a] rounded-lg p-2.5" style="display: flex; align-items: center; gap: 8px; background: #111827; border: 1px solid #27272a; padding: 10px; border-radius: 8px;">
+                  <input 
+                    type="text" 
+                    readonly 
+                    value="${this.spotifyAccessToken || 'No active token. Please connect Spotify to retrieve your developer token.'}" 
+                    class="flex-1 bg-transparent border-none text-xs font-mono text-[#34d399] select-all outline-none" 
+                    style="flex: 1; background: transparent; border: none; color: #34d399; font-family: monospace; font-size: 11px; outline: none; width: 100%;"
+                  />
+                  ${this.spotifyAccessToken ? html`
+                    <button @click=${this.copySpotifyAccessToken} class="flex items-center gap-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-none text-xs font-semibold py-1.5 px-3 rounded cursor-pointer transition-colors" style="display: flex; align-items: center; gap: 4px; background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">
+                      <span class="material-icons-round text-sm" style="font-size: 14px;">${this.spotifyTokenCopied ? "check" : "content_copy"}</span>
+                      <span>${this.spotifyTokenCopied ? "Copied" : "Copy"}</span>
+                    </button>
+                  ` : html`
+                    <button disabled class="flex items-center gap-1.5 bg-[#27272a] text-[#52525b] border-none text-xs font-semibold py-1.5 px-3 rounded cursor-not-allowed" style="display: flex; align-items: center; gap: 4px; background: #27272a; color: #52525b; border: none; padding: 6px 12px; border-radius: 4px; cursor: not-allowed; font-size: 11px; font-weight: bold;">
+                      <span class="material-icons-round text-sm" style="font-size: 14px;">lock</span>
+                      <span>Locked</span>
+                    </button>
+                  `}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="w-full md:w-[260px] bg-[#111827] border border-[#27272a] rounded-lg p-4 flex flex-col justify-between gap-4" style="width: 260px; background: #111827; border: 1px solid #27272a; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px;">
+            <div>
+              <h4 class="text-xs font-bold text-white uppercase tracking-wider m-0 mb-1 flex items-center gap-1.5" style="margin: 0 0 8px 0; font-size: 11px; font-weight: bold; text-transform: uppercase; color: white; display: flex; align-items: center; gap: 6px;">
+                <span class="material-icons-round text-xs text-[#1db954]" style="font-size: 14px; color: #1db954;">settings_ethernet</span>
+                OAuth Parameters
+              </h4>
+              <p class="text-[10px] text-[#9ca3af] leading-normal m-0" style="margin: 0; font-size: 9.5px; color: #9ca3af; line-height: 1.4;">
+                Add this exact Redirect URI to your Spotify Developer Application settings:
+              </p>
+              <div class="flex flex-col gap-2 mt-2 font-mono text-[9px]" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                <div class="bg-[#1f2937] p-2 rounded border border-[#2d3748]" style="background: #1f2937; padding: 8px; border-radius: 4px; border: 1px solid #2d3748; font-family: monospace;">
+                  <span class="text-[8px] text-[#9ca3af] block uppercase font-sans font-bold" style="font-size: 8px; color: #9ca3af; font-weight: bold; text-transform: uppercase; font-family: sans-serif; display: block; margin-bottom: 2px;">OAuth Callback URI</span>
+                  <code class="text-[#60a5fa] word-break break-all" style="color: #60a5fa; font-size: 9px; word-break: break-all;">${window.location.origin}/api/spotify/callback</code>
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex flex-col gap-2" style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="flex items-center gap-2" style="display: flex; align-items: center; gap: 8px;">
+                <span class="inline-block w-2 h-2 rounded-full ${this.spotifyConnected ? 'bg-[#10b981]' : 'bg-[#ef4444]'}" style="width: 8px; height: 8px; border-radius: 50%; background-color: ${this.spotifyConnected ? '#10b981' : '#ef4444'}; display: inline-block;"></span>
+                <span class="text-[11px] text-[#e4e4e7] font-medium" style="font-size: 11px; color: #e4e4e7; font-weight: 500;">Status: ${this.spotifyConnected ? 'Linked to Spotify' : 'Disconnected'}</span>
+              </div>
+              
+              ${this.spotifyConnected ? html`
+                <button 
+                  class="w-full bg-[#ef4444] hover:bg-[#dc2626] text-white font-bold text-xs py-2 px-4 rounded-lg cursor-pointer transition-colors border-none" 
+                  style="width: 100%; background: #ef4444; color: white; font-weight: bold; font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: background 0.2s; border: none;"
+                  @click=${this.disconnectSpotify}
+                >
+                  Disconnect Account
+                </button>
+              ` : html`
+                <button 
+                  class="w-full bg-[#1db954] hover:bg-[#1aa34a] text-white font-bold text-xs py-2 px-4 rounded-lg cursor-pointer transition-colors border-none flex items-center justify-center gap-1.5" 
+                  style="width: 100%; background: #1db954; color: white; font-weight: bold; font-size: 11px; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: background 0.2s; border: none; display: flex; align-items: center; justify-content: center; gap: 6px;"
+                  @click=${this.connectSpotify}
+                  ?disabled=${this.spotifyLoading}
+                >
+                  <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: white;">
+                    <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.893-.982-.336.075-.668-.135-.744-.47-.077-.337.136-.669.47-.745 3.848-.874 7.14-.5 9.82 1.13.295.182.387.567.207.86zm1.224-2.72c-.227.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.078-1.182-.413.125-.844-.107-.97-.52-.124-.413.108-.844.52-.97 3.673-1.115 8.236-.572 11.34 1.34.368.228.488.708.262 1.072zm.107-2.828C14.484 8.766 8.823 8.58 5.518 9.582c-.512.156-1.047-.137-1.202-.65a.947.947 0 01.65-1.202C8.747 6.596 14.98 6.81 19.33 9.395c.462.274.61.874.336 1.336-.273.46-.873.61-1.335.336z"/>
+                  </svg>
+                  Connect Spotify Account
+                </button>
+              `}
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts Center -->
+        <div class="alerts-section">
+          <div class="alerts-section-header">
+            <h3>Vulnerability Log Stream (${this.securityAlerts.length})</h3>
+            <button class="refresh-btn" @click=${this.fetchSecurityAlerts} ?disabled=${this.securityAlertsLoading}>
+              <span class="material-icons-round ${this.securityAlertsLoading ? "spin" : ""}">refresh</span>
+              Refresh Logs
+            </button>
+          </div>
+
+          ${this.securityAlertsLoading && this.securityAlerts.length === 0
+            ? html`
+                <div class="alerts-loading-state">
+                  <span class="material-icons-round spin loading-icon">sync</span>
+                  <p>Synchronizing Firestore registry and analyzing packages...</p>
+                </div>
+              `
+            : this.securityAlerts.length === 0
+            ? html`
+                <div class="alerts-empty-state">
+                  <span class="material-icons-round empty-icon">check_circle</span>
+                  <h4>Zero Vulnerabilities Found</h4>
+                  <p>No Dependabot alerts logged yet. Connect your repository using the payload URL above or trigger a live simulation.</p>
+                </div>
+              `
+            : html`
+                <div class="alerts-list">
+                  ${this.securityAlerts.map(alert => {
+                    const isExpanded = this.expandedAlertId === alert.alertId;
+                    const plan = alert.upgradePlan || {};
+                    const severityClass = `severity-${alert.severity || 'medium'}`;
+
+                    return html`
+                      <div class="alert-card ${isExpanded ? 'expanded' : ''}">
+                        <div class="alert-summary" @click=${() => this.toggleAlertDetails(alert.alertId)}>
+                          <div class="alert-left">
+                            <span class="severity-badge ${severityClass}">
+                              ${alert.severity?.toUpperCase()}
+                            </span>
+                            <div class="alert-info">
+                              <h4 class="package-name">${alert.packageName}</h4>
+                              <span class="ecosystem-tag">${alert.ecosystem}</span>
+                            </div>
+                          </div>
+                          <div class="alert-mid">
+                            <p class="advisory-summary">${alert.summary}</p>
+                          </div>
+                          <div class="alert-right">
+                            <span class="alert-date">
+                              ${new Date(alert.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                            </span>
+                            <span class="material-icons-round expand-arrow">
+                              ${isExpanded ? 'expand_less' : 'expand_more'}
+                            </span>
+                          </div>
+                        </div>
+
+                        ${isExpanded
+                          ? html`
+                              <div class="alert-details">
+                                <div class="details-grid">
+                                  <div class="details-left">
+                                    <h5>Threat Advisory</h5>
+                                    <p class="description-text">${alert.description}</p>
+                                    
+                                    <div class="meta-row">
+                                      <div class="meta-item">
+                                        <strong>Patched Release:</strong>
+                                        <span class="version-tag">${alert.firstPatchedVersion || 'latest'}</span>
+                                      </div>
+                                      <div class="meta-item">
+                                        <strong>Impacted Config:</strong>
+                                        <span class="file-tag">${plan.vulnerableLines || 'package.json'}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="details-right">
+                                    <div class="upgrade-plan-box">
+                                      <div class="plan-header">
+                                        <span class="material-icons-round plan-icon">auto_awesome</span>
+                                        <h5>Gemini Resolution Strategy</h5>
+                                        <span class="risk-badge risk-${(plan.riskLevel || 'medium').toLowerCase()}">
+                                          Risk: ${plan.riskLevel}
+                                        </span>
+                                      </div>
+
+                                      <div class="plan-section">
+                                        <h6>Analysis & Explanation</h6>
+                                        <p>${plan.explanation}</p>
+                                      </div>
+
+                                      <div class="plan-section">
+                                        <h6>Remediation Action</h6>
+                                        <p>${plan.remediation}</p>
+                                      </div>
+
+                                      <div class="plan-section">
+                                        <h6>Shell Upgrade Directive</h6>
+                                        <div class="command-box">
+                                          <code>${plan.command}</code>
+                                          <button 
+                                            class="copy-command-btn"
+                                            title="Copy shell command"
+                                            @click=${(e: Event) => {
+                                              e.stopPropagation();
+                                              navigator.clipboard.writeText(plan.command);
+                                              this.dispatchEvent(new CustomEvent('command-copied', { bubbles: true, composed: true }));
+                                            }}
+                                          >
+                                            <span class="material-icons-round">content_copy</span>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            `
+                          : nothing}
+                      </div>
+                    `;
+                  })}
+                </div>
+              `}
+        </div>
+
+        <!-- Privacy & Play Console Data Safety Compliance Card -->
+        <div class="webhook-config-card mt-8" style="border-left: 4px solid #10b981;">
+          <div class="webhook-details">
+            <div class="webhook-header">
+              <span class="material-icons-round text-emerald-400" style="font-size: 24px;">verified_user</span>
+              <h3>Compliance, Privacy & Play Store Data Safety Policy</h3>
+            </div>
+            <p class="webhook-desc" style="margin-bottom: 1.25rem;">
+              Our commitment to user-data hygiene, zero-persistence secure stream pipelines, and Android device security parameters:
+            </p>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.875rem; color: #d1d5db;">
+              <div style="background: rgba(24, 24, 27, 0.4); padding: 0.75rem 1rem; border-radius: 8px;">
+                <strong style="color: #f4f4f5; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                  <span class="material-icons-round text-emerald-400" style="font-size: 16px;">photo_camera</span>
+                  Camera POV Streams (Transient Analysis Only)
+                </strong>
+                <p style="margin: 0; line-height: 1.4;">Wearable and browser camera snapshot frames are securely processed over a TLS-encrypted proxy directly to Gemini. Frames are processed transiently in-memory and are immediately disposed of upon response generation. Absolutely no image or video data is recorded, saved, or cached on disk storage.</p>
+              </div>
+
+              <div style="background: rgba(24, 24, 27, 0.4); padding: 0.75rem 1rem; border-radius: 8px;">
+                <strong style="color: #f4f4f5; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                  <span class="material-icons-round text-emerald-400" style="font-size: 16px;">mic</span>
+                  Voice Audio & Dictation (No Storage)
+                </strong>
+                <p style="margin: 0; line-height: 1.4;">Microphone data captured during vocal commands is processed transiently to resolve user music vibes and control directives. Audio chunks are dispatched securely via our server-side translation helper and deleted instantly. We do not store or share any voice recordings.</p>
+              </div>
+
+              <div style="background: rgba(24, 24, 27, 0.4); padding: 0.75rem 1rem; border-radius: 8px;">
+                <strong style="color: #f4f4f5; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                  <span class="material-icons-round text-emerald-400" style="font-size: 16px;">storage</span>
+                  Durable Telemetry Logs (7-Day TTL Auto-Eviction)
+                </strong>
+                <p style="margin: 0; line-height: 1.4;">Physical touch gestures, wear proximity sensor states, and battery telemetry events logged to Firebase Cloud database are governed by a strict 7-day Time-To-Live (TTL) eviction policy. Telemetry data is purged automatically to protect privacy.</p>
+              </div>
+
+              <div style="background: rgba(24, 24, 27, 0.4); padding: 0.75rem 1rem; border-radius: 8px;">
+                <strong style="color: #f4f4f5; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                  <span class="material-icons-round text-emerald-400" style="font-size: 16px;">vpn_key</span>
+                  Secured OAuth Tokenization
+                </strong>
+                <p style="margin: 0; line-height: 1.4;">User identity is managed strictly via Firebase OAuth. Application tokens are verified server-side with zero exposure of cryptographic credentials, passwords, or client keys to the public frontend DOM.</p>
+              </div>
+            </div>
+          </div>
+          <div class="webhook-benefits" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15);">
+            <h4 style="color: #34d399; margin-bottom: 0.5rem;"><span class="material-icons-round">gavel</span> Play Console Certified</h4>
+            <ul style="color: #d1d5db; padding-left: 1.25rem;">
+              <li style="margin-bottom: 0.5rem;"><strong>Zero Permanent Persistence</strong>: Fully satisfies Google Play's Data Safety form regarding high-risk hardware streams.</li>
+              <li style="margin-bottom: 0.5rem;"><strong>Secure Transport</strong>: All communications are encrypted end-to-end via TLS 1.3 protocols.</li>
+              <li style="margin-bottom: 0.5rem;"><strong>Developer Auth Guard</strong>: Limits access to telemetry dashboard scopes to authorized Google Identity profiles only.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    `;
+  
+  }
+}

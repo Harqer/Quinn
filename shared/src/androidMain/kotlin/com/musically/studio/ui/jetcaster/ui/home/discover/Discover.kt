@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for Discover.kt
+ */
+
 /*
  * Copyright 2020 The Android Open Source Project
  *

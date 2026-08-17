@@ -106,6 +106,11 @@ export interface ChatMessage_Key {
   __typename?: 'ChatMessage_Key';
 }
 
+export interface CoverArt_Key {
+  id: string;
+  __typename?: 'CoverArt_Key';
+}
+
 export interface CreateAudiobookData {
   audiobook_insert: Audiobook_Key;
 }
@@ -127,6 +132,38 @@ export interface CreateCameraCaptureVariables {
   videoUrl?: string | null;
   environmentData?: string | null;
   generatedTrackId?: string | null;
+}
+
+export interface CreateCoverArtData {
+  coverArt_insert: CoverArt_Key;
+}
+
+export interface CreateCoverArtVariables {
+  trackId: string;
+  imageUrl: string;
+  promptUsed?: string | null;
+  stylePreset?: string | null;
+}
+
+export interface CreateJamSessionHistoryData {
+  jamSessionHistory_insert: JamSessionHistory_Key;
+}
+
+export interface CreateJamSessionHistoryVariables {
+  roomId: string;
+  gameMode: string;
+  participantCount: number;
+}
+
+export interface CreateMusicVideoData {
+  musicVideo_insert: MusicVideo_Key;
+}
+
+export interface CreateMusicVideoVariables {
+  trackId: string;
+  videoUrl: string;
+  promptUsed?: string | null;
+  motionPreset?: string | null;
 }
 
 export interface CreatePlaylistData {
@@ -271,6 +308,8 @@ export interface GetCategoriesData {
     id: string;
     name: string;
     type: CategoryType;
+    colorHex?: string | null;
+    imageUrl?: string | null;
   } & Category_Key)[];
 }
 
@@ -324,6 +363,20 @@ export interface GetCommunityTracksData {
   } & Track_Key)[];
 }
 
+export interface GetCoverArtForTrackData {
+  coverArts: ({
+    id: string;
+    imageUrl: string;
+    promptUsed?: string | null;
+    stylePreset?: string | null;
+    createdAt: TimestampString;
+  } & CoverArt_Key)[];
+}
+
+export interface GetCoverArtForTrackVariables {
+  trackId: string;
+}
+
 export interface GetEpisodeData {
   episode?: {
     id: string;
@@ -332,6 +385,7 @@ export interface GetEpisodeData {
     publishDate?: TimestampString | null;
     durationMs: number;
     audioUrl: string;
+    coverUrl?: string | null;
     show: {
       id: string;
       title: string;
@@ -353,6 +407,7 @@ export interface GetEpisodesForShowData {
     publishDate?: TimestampString | null;
     durationMs: number;
     audioUrl: string;
+    coverUrl?: string | null;
     show: {
       id: string;
       title: string;
@@ -388,6 +443,20 @@ export interface GetLikedTracksData {
     } & Track_Key;
     addedAt: TimestampString;
   })[];
+}
+
+export interface GetMusicVideoForTrackData {
+  musicVideos: ({
+    id: string;
+    videoUrl: string;
+    promptUsed?: string | null;
+    motionPreset?: string | null;
+    createdAt: TimestampString;
+  } & MusicVideo_Key)[];
+}
+
+export interface GetMusicVideoForTrackVariables {
+  trackId: string;
 }
 
 export interface GetPaymentHistoryData {
@@ -467,6 +536,7 @@ export interface GetTrackData {
     coverUrl?: string | null;
     playCount: Int64String;
     prompt?: string | null;
+    lyrics?: string | null;
     isCommunity: boolean;
     createdAt: TimestampString;
   } & Track_Key;
@@ -498,6 +568,9 @@ export interface GetUserSettingsData {
     isPremium: boolean;
     theme: string;
     parentalControlsEnabled: boolean;
+    notificationsEnabled: boolean;
+    appsDevicesEnabled: boolean;
+    offlineMode: boolean;
     stripeCustomerId?: string | null;
     user: {
       displayName?: string | null;
@@ -558,6 +631,11 @@ export interface HomeSection_Key {
 export interface Instrument_Key {
   name: string;
   __typename?: 'Instrument_Key';
+}
+
+export interface JamSessionHistory_Key {
+  id: string;
+  __typename?: 'JamSessionHistory_Key';
 }
 
 export interface LikeTrackData {
@@ -649,9 +727,21 @@ export interface MusicCategory_Key {
   __typename?: 'MusicCategory_Key';
 }
 
+export interface MusicVideo_Key {
+  id: string;
+  __typename?: 'MusicVideo_Key';
+}
+
 export interface PaymentHistory_Key {
   id: string;
   __typename?: 'PaymentHistory_Key';
+}
+
+export interface PlayHistory_Key {
+  userUid: string;
+  trackId: string;
+  playedAt: TimestampString;
+  __typename?: 'PlayHistory_Key';
 }
 
 export interface PlaylistEntry_Key {
@@ -683,6 +773,14 @@ export interface RecordPaymentVariables {
   stripeInvoiceId?: string | null;
 }
 
+export interface RecordPlayData {
+  playHistory_insert: PlayHistory_Key;
+}
+
+export interface RecordPlayVariables {
+  trackId: string;
+}
+
 export interface RemoveBookmarkedTrackData {
   bookmarkedTrack_delete?: BookmarkedTrack_Key | null;
 }
@@ -697,6 +795,47 @@ export interface RemoveLikedTrackData {
 
 export interface RemoveLikedTrackVariables {
   trackId: string;
+}
+
+export interface SaveUserEpisodeProgressData {
+  userEpisodeProgress_upsert: UserEpisodeProgress_Key;
+}
+
+export interface SaveUserEpisodeProgressVariables {
+  episodeId: string;
+  progressMs: number;
+}
+
+export interface SearchAudiobooksData {
+  audiobooks: ({
+    id: string;
+    title: string;
+    author: {
+      id: string;
+      name: string;
+    } & Author_Key;
+    narrator?: string | null;
+    coverUrl?: string | null;
+    totalDurationMs?: number | null;
+  } & Audiobook_Key)[];
+}
+
+export interface SearchAudiobooksVariables {
+  query: string;
+}
+
+export interface SearchPodcastsData {
+  shows: ({
+    id: string;
+    title: string;
+    publisher: string;
+    coverUrl?: string | null;
+    description?: string | null;
+  } & Show_Key)[];
+}
+
+export interface SearchPodcastsVariables {
+  query: string;
 }
 
 export interface SearchTracksData {
@@ -785,6 +924,7 @@ export interface SeedTrackData {
 export interface SeedTrackVariables {
   title: string;
   audioUrl: string;
+  coverUrl?: string | null;
   durationMs?: number | null;
   prompt?: string | null;
   isCommunity: boolean;
@@ -884,6 +1024,9 @@ export interface UpsertUserSettingsData {
 export interface UpsertUserSettingsVariables {
   theme?: string | null;
   parentalControlsEnabled?: boolean | null;
+  notificationsEnabled?: boolean | null;
+  appsDevicesEnabled?: boolean | null;
+  offlineMode?: boolean | null;
   stripeCustomerId?: string | null;
 }
 
@@ -1045,6 +1188,18 @@ export const bookmarkTrackRef: BookmarkTrackRef;
 
 export function bookmarkTrack(vars: BookmarkTrackVariables): MutationPromise<BookmarkTrackData, BookmarkTrackVariables>;
 export function bookmarkTrack(dc: DataConnect, vars: BookmarkTrackVariables): MutationPromise<BookmarkTrackData, BookmarkTrackVariables>;
+
+interface RecordPlayRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: RecordPlayVariables): MutationRef<RecordPlayData, RecordPlayVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: RecordPlayVariables): MutationRef<RecordPlayData, RecordPlayVariables>;
+  operationName: string;
+}
+export const recordPlayRef: RecordPlayRef;
+
+export function recordPlay(vars: RecordPlayVariables): MutationPromise<RecordPlayData, RecordPlayVariables>;
+export function recordPlay(dc: DataConnect, vars: RecordPlayVariables): MutationPromise<RecordPlayData, RecordPlayVariables>;
 
 interface RemoveBookmarkedTrackRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -1237,6 +1392,54 @@ export const seedInstrumentRef: SeedInstrumentRef;
 
 export function seedInstrument(vars: SeedInstrumentVariables): MutationPromise<SeedInstrumentData, SeedInstrumentVariables>;
 export function seedInstrument(dc: DataConnect, vars: SeedInstrumentVariables): MutationPromise<SeedInstrumentData, SeedInstrumentVariables>;
+
+interface CreateCoverArtRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateCoverArtVariables): MutationRef<CreateCoverArtData, CreateCoverArtVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateCoverArtVariables): MutationRef<CreateCoverArtData, CreateCoverArtVariables>;
+  operationName: string;
+}
+export const createCoverArtRef: CreateCoverArtRef;
+
+export function createCoverArt(vars: CreateCoverArtVariables): MutationPromise<CreateCoverArtData, CreateCoverArtVariables>;
+export function createCoverArt(dc: DataConnect, vars: CreateCoverArtVariables): MutationPromise<CreateCoverArtData, CreateCoverArtVariables>;
+
+interface CreateMusicVideoRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateMusicVideoVariables): MutationRef<CreateMusicVideoData, CreateMusicVideoVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateMusicVideoVariables): MutationRef<CreateMusicVideoData, CreateMusicVideoVariables>;
+  operationName: string;
+}
+export const createMusicVideoRef: CreateMusicVideoRef;
+
+export function createMusicVideo(vars: CreateMusicVideoVariables): MutationPromise<CreateMusicVideoData, CreateMusicVideoVariables>;
+export function createMusicVideo(dc: DataConnect, vars: CreateMusicVideoVariables): MutationPromise<CreateMusicVideoData, CreateMusicVideoVariables>;
+
+interface CreateJamSessionHistoryRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateJamSessionHistoryVariables): MutationRef<CreateJamSessionHistoryData, CreateJamSessionHistoryVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateJamSessionHistoryVariables): MutationRef<CreateJamSessionHistoryData, CreateJamSessionHistoryVariables>;
+  operationName: string;
+}
+export const createJamSessionHistoryRef: CreateJamSessionHistoryRef;
+
+export function createJamSessionHistory(vars: CreateJamSessionHistoryVariables): MutationPromise<CreateJamSessionHistoryData, CreateJamSessionHistoryVariables>;
+export function createJamSessionHistory(dc: DataConnect, vars: CreateJamSessionHistoryVariables): MutationPromise<CreateJamSessionHistoryData, CreateJamSessionHistoryVariables>;
+
+interface SaveUserEpisodeProgressRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SaveUserEpisodeProgressVariables): MutationRef<SaveUserEpisodeProgressData, SaveUserEpisodeProgressVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SaveUserEpisodeProgressVariables): MutationRef<SaveUserEpisodeProgressData, SaveUserEpisodeProgressVariables>;
+  operationName: string;
+}
+export const saveUserEpisodeProgressRef: SaveUserEpisodeProgressRef;
+
+export function saveUserEpisodeProgress(vars: SaveUserEpisodeProgressVariables): MutationPromise<SaveUserEpisodeProgressData, SaveUserEpisodeProgressVariables>;
+export function saveUserEpisodeProgress(dc: DataConnect, vars: SaveUserEpisodeProgressVariables): MutationPromise<SaveUserEpisodeProgressData, SaveUserEpisodeProgressVariables>;
 
 interface GetUserTracksRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -1442,6 +1645,30 @@ export const searchTracksRef: SearchTracksRef;
 export function searchTracks(vars: SearchTracksVariables, options?: ExecuteQueryOptions): QueryPromise<SearchTracksData, SearchTracksVariables>;
 export function searchTracks(dc: DataConnect, vars: SearchTracksVariables, options?: ExecuteQueryOptions): QueryPromise<SearchTracksData, SearchTracksVariables>;
 
+interface SearchPodcastsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SearchPodcastsVariables): QueryRef<SearchPodcastsData, SearchPodcastsVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SearchPodcastsVariables): QueryRef<SearchPodcastsData, SearchPodcastsVariables>;
+  operationName: string;
+}
+export const searchPodcastsRef: SearchPodcastsRef;
+
+export function searchPodcasts(vars: SearchPodcastsVariables, options?: ExecuteQueryOptions): QueryPromise<SearchPodcastsData, SearchPodcastsVariables>;
+export function searchPodcasts(dc: DataConnect, vars: SearchPodcastsVariables, options?: ExecuteQueryOptions): QueryPromise<SearchPodcastsData, SearchPodcastsVariables>;
+
+interface SearchAudiobooksRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SearchAudiobooksVariables): QueryRef<SearchAudiobooksData, SearchAudiobooksVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SearchAudiobooksVariables): QueryRef<SearchAudiobooksData, SearchAudiobooksVariables>;
+  operationName: string;
+}
+export const searchAudiobooksRef: SearchAudiobooksRef;
+
+export function searchAudiobooks(vars: SearchAudiobooksVariables, options?: ExecuteQueryOptions): QueryPromise<SearchAudiobooksData, SearchAudiobooksVariables>;
+export function searchAudiobooks(dc: DataConnect, vars: SearchAudiobooksVariables, options?: ExecuteQueryOptions): QueryPromise<SearchAudiobooksData, SearchAudiobooksVariables>;
+
 interface ListChatMessagesRef {
   /* Allow users to create refs without passing in DataConnect */
   (vars: ListChatMessagesVariables): QueryRef<ListChatMessagesData, ListChatMessagesVariables>;
@@ -1573,4 +1800,28 @@ export const listInstrumentsRef: ListInstrumentsRef;
 
 export function listInstruments(options?: ExecuteQueryOptions): QueryPromise<ListInstrumentsData, undefined>;
 export function listInstruments(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListInstrumentsData, undefined>;
+
+interface GetCoverArtForTrackRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetCoverArtForTrackVariables): QueryRef<GetCoverArtForTrackData, GetCoverArtForTrackVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetCoverArtForTrackVariables): QueryRef<GetCoverArtForTrackData, GetCoverArtForTrackVariables>;
+  operationName: string;
+}
+export const getCoverArtForTrackRef: GetCoverArtForTrackRef;
+
+export function getCoverArtForTrack(vars: GetCoverArtForTrackVariables, options?: ExecuteQueryOptions): QueryPromise<GetCoverArtForTrackData, GetCoverArtForTrackVariables>;
+export function getCoverArtForTrack(dc: DataConnect, vars: GetCoverArtForTrackVariables, options?: ExecuteQueryOptions): QueryPromise<GetCoverArtForTrackData, GetCoverArtForTrackVariables>;
+
+interface GetMusicVideoForTrackRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetMusicVideoForTrackVariables): QueryRef<GetMusicVideoForTrackData, GetMusicVideoForTrackVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetMusicVideoForTrackVariables): QueryRef<GetMusicVideoForTrackData, GetMusicVideoForTrackVariables>;
+  operationName: string;
+}
+export const getMusicVideoForTrackRef: GetMusicVideoForTrackRef;
+
+export function getMusicVideoForTrack(vars: GetMusicVideoForTrackVariables, options?: ExecuteQueryOptions): QueryPromise<GetMusicVideoForTrackData, GetMusicVideoForTrackVariables>;
+export function getMusicVideoForTrack(dc: DataConnect, vars: GetMusicVideoForTrackVariables, options?: ExecuteQueryOptions): QueryPromise<GetMusicVideoForTrackData, GetMusicVideoForTrackVariables>;
 

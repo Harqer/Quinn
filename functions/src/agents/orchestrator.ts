@@ -23,6 +23,7 @@ export const executeTool = onCall(
   {
     secrets: [GEMINI_API_KEY, RAPID_API_KEY],
     cors: true,
+    enforceAppCheck: true,
     timeoutSeconds: 300,
   },
   async (request) => {
@@ -38,24 +39,24 @@ export const executeTool = onCall(
       switch (name) {
         case "generate_full_track":
           if (!args?.prompt) throw new HttpsError("invalid-argument", "Prompt is required");
-          return await lyriaProAgent({ prompt: args.prompt, apiKey, uid });
+          return await lyriaProAgent({ prompt: args.prompt }, { context: { apiKey, uid } });
 
         case "jam_live":
         case "tweak_instrumentation":
           if (!args?.prompt) throw new HttpsError("invalid-argument", "Prompt is required");
-          return await lyriaRealTimeAgent({ prompt: args.prompt, audioUrl: args.audioUrl, apiKey, uid });
+          return await lyriaRealTimeAgent({ prompt: args.prompt, audioUrl: args.audioUrl }, { context: { apiKey, uid } });
 
         case "generate_cover_image":
-          if (!args?.prompt) throw new HttpsError("invalid-argument", "Prompt is required");
-          return await imageGenAgent({ prompt: args.prompt, apiKey, uid });
+          if (!args?.prompt || !args?.trackId) throw new HttpsError("invalid-argument", "Prompt and trackId are required");
+          return await imageGenAgent({ prompt: args.prompt, trackId: args.trackId }, { context: { apiKey, uid } });
 
         case "generate_music_video":
           if (!args?.prompt) throw new HttpsError("invalid-argument", "Prompt is required");
-          return await omniFlashAgent({ prompt: args.prompt, audioUrl: args.audioUrl, apiKey, uid });
+          return await omniFlashAgent({ prompt: args.prompt, audioUrl: args.audioUrl }, { context: { apiKey, uid } });
 
         case "search_concerts":
           if (!args?.query) throw new HttpsError("invalid-argument", "Query is required");
-          return await concertAgent({ query: args.query, rapidApiKey: RAPID_API_KEY.value() });
+          return await concertAgent({ query: args.query }, { context: { rapidApiKey: RAPID_API_KEY.value() } });
 
         case "validate_trivia_guess":
           if (!args?.guess || !args?.answer) throw new HttpsError("invalid-argument", "Guess and answer are required");

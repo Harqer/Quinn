@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for EpisodeOptionsBottomSheet.kt
+ */
+
 package com.musically.studio.ui.jetcaster.ui.shared
 
 import android.content.Intent

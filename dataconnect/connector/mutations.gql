@@ -73,6 +73,9 @@ mutation CreatePodcast(
 mutation UpsertUserSettings(
   $theme: String,
   $parentalControlsEnabled: Boolean,
+  $notificationsEnabled: Boolean,
+  $appsDevicesEnabled: Boolean,
+  $offlineMode: Boolean,
   $stripeCustomerId: String
 ) @auth(level: USER) {
   userSettings_upsert(data: {
@@ -80,6 +83,9 @@ mutation UpsertUserSettings(
     userUid_expr: "auth.uid",
     theme: $theme,
     parentalControlsEnabled: $parentalControlsEnabled,
+    notificationsEnabled: $notificationsEnabled,
+    appsDevicesEnabled: $appsDevicesEnabled,
+    offlineMode: $offlineMode,
     stripeCustomerId: $stripeCustomerId
   })
 }
@@ -134,6 +140,8 @@ mutation BookmarkTrack($trackId: String!) @auth(level: USER) {
   })
 }
 
+
+
 mutation RemoveBookmarkedTrack($trackId: String!) @auth(level: USER) {
   bookmarkedTrack_delete(key: {
     userUid_expr: "auth.uid",
@@ -141,46 +149,7 @@ mutation RemoveBookmarkedTrack($trackId: String!) @auth(level: USER) {
   })
 }
 
-mutation CreateCameraCapture(
-  $imageUrl: String,
-  $videoUrl: String,
-  $environmentData: String,
-  $generatedTrackId: String
-) @auth(level: USER) {
-  cameraCapture_insert(data: {
-    userUid_expr: "auth.uid",
-    imageUrl: $imageUrl,
-    videoUrl: $videoUrl,
-    environmentData: $environmentData,
-    generatedTrackId: $generatedTrackId
-  })
-}
 
-mutation CreateVideoDigestion(
-  $videoUrl: String!,
-  $extractedAudioUrl: String,
-  $atmosphereSummary: String,
-  $generatedTrackId: String
-) @auth(level: USER) {
-  videoDigestion_insert(data: {
-    userUid_expr: "auth.uid",
-    videoUrl: $videoUrl,
-    extractedAudioUrl: $extractedAudioUrl,
-    atmosphereSummary: $atmosphereSummary,
-    generatedTrackId: $generatedTrackId
-  })
-}
-
-# -------------------------------------
-# CHAT & AI
-# -------------------------------------
-mutation AddChatMessage($userId: String!, $sender: String!, $text: String!) @auth(level: USER) {
-  chatMessage_insert(data: {
-    userUid: $userId,
-    sender: $sender,
-    text: $text
-  })
-}
 
 mutation SeedTrack(
   $title: String!,
@@ -351,7 +320,7 @@ mutation CreateJamSessionHistory(
   jamSessionHistory_insert(data: {
     roomId: $roomId,
     gameMode: $gameMode,
-    hostId_expr: "auth.uid",
+    hostUid_expr: "auth.uid",
     participantCount: $participantCount
   })
 }
@@ -361,7 +330,7 @@ mutation SaveUserEpisodeProgress(
   $progressMs: Int!
 ) @auth(level: USER) {
   userEpisodeProgress_upsert(data: {
-    userId_expr: "auth.uid",
+    userUid_expr: "auth.uid",
     episodeId: $episodeId,
     progressMs: $progressMs
   })

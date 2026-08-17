@@ -5,7 +5,7 @@ import { FieldValue } from "firebase-admin/firestore";
 
 export async function checkFreeQuota(uid: string) {
   const userRecord = await getAuth().getUser(uid);
-  const tier = userRecord.customClaims?.subscriptionTier || 'FREE';
+  const tier = (userRecord.customClaims?.subscriptionTier as String | undefined)?.toUpperCase() || 'FREE';
 
   if (tier === 'PREMIUM' || tier === 'FAMILY') {
     return;

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for HomeErrorOrganism.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 
 import androidx.compose.foundation.layout.*

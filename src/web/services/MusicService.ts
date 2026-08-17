@@ -9,6 +9,7 @@ export interface Track {
   audioUrl?: string;
   videoUrl?: string;
   createdAt?: string;
+  duration?: number;
 }
 
 export interface Category {

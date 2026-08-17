@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for PlaybackControls.kt
+ */
+
 package com.musically.studio.ui.components.atoms
 
 import androidx.compose.foundation.background

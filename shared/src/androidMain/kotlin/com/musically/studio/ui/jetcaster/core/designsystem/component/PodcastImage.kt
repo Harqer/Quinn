@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for PodcastImage.kt
+ */
+
 /*
  * Copyright 2024 The Android Open Source Project
  *

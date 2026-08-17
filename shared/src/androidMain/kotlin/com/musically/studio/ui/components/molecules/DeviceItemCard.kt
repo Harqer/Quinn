@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for DeviceItemCard.kt
+ */
+
 package com.musically.studio.ui.components.molecules
 
 import android.content.Context

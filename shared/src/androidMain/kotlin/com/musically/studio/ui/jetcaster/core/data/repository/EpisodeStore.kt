@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for EpisodeStore.kt
+ */
+
 package com.musically.studio.ui.jetcaster.core.data.repository
 
 import com.musically.studio.data.repository.DataConnectRepository

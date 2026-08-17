@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for WindowInfoUtil.kt
+ */
+
 /*
  * Copyright 2021 The Android Open Source Project
  *

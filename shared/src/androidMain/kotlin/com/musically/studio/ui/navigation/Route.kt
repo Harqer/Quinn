@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for Route.kt
+ */
+
 package com.musically.studio.ui.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,6 +29,7 @@ sealed interface Route : NavKey {
     @Serializable data object JamRemix : Route
     @Serializable data object JamTrivia : Route
     @Serializable data object JamSongPicker : Route
+    @Serializable data class PlaylistPicker(val trackId: String) : Route
     @Serializable data class PlaylistView(val playlistId: String) : Route
     @Serializable data class CategoryView(val categoryId: String) : Route
     @Serializable data object Settings : Route

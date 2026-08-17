@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for Buttons.kt
+ */
+
 /*
  * Copyright 2020 The Android Open Source Project
  *

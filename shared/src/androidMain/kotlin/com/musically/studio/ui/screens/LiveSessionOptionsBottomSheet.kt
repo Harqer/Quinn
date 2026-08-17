@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for LiveSessionOptionsBottomSheet.kt
+ */
+
 package com.musically.studio.ui.screens
 import androidx.compose.material3.MaterialTheme
 

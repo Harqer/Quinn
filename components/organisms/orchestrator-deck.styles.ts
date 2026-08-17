@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: UI Component for orchestrator-deck.styles.ts
+ */
+
 import { css } from 'lit';
 
 export const orchestratorDeckStyles = css`

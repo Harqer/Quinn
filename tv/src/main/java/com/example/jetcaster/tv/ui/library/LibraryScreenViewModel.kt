@@ -28,10 +28,10 @@ class LibraryScreenViewModel @Inject constructor(
             list.map { it.toPodcastInfo() }
         }
 
-    private val latestEpisodeListFlow = flowOf(EpisodeList(emptyList()))
+    private val latestEpisodeListFlow = flowOf(emptyList<PlayerEpisode>())
 
     val uiState =
-        combine(followingPodcastListFlow, latestEpisodeListFlow) { podcastList, episodeList ->
+        combine(followingPodcastListFlow, latestEpisodeListFlow) { podcastList: List<PodcastInfo>, episodeList: List<PlayerEpisode> ->
             if (podcastList.isEmpty()) {
                 LibraryScreenUiState.NoSubscribedPodcast
             } else {

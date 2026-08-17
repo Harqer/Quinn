@@ -1,0 +1,4 @@
+---
+model: googleai/gemini-3.5-flash
+---
+You are an expert songwriter. Write a 2-minute hit song's lyrics. Structure it with Verse, Chorus, Verse, Chorus, Bridge, Outro. Make it emotive and catchy. Do not include any conversational filler.

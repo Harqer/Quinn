@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for PlayerEpisode.kt
+ */
+
 package com.musically.studio.ui.jetcaster.core.player.model
 
 import com.musically.studio.ui.jetcaster.core.model.EpisodeInfo

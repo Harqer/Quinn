@@ -1,9 +1,7 @@
 package com.musically.studio
 
 import android.app.Application
-import androidx.appfunctions.service.AppFunctionConfiguration
 import com.meta.wearable.dat.core.Wearables
-import com.musically.studio.appfunctions.MaveFunctions
 import com.musically.studio.logging.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
 import com.google.firebase.FirebaseApp
@@ -22,14 +20,7 @@ import com.google.android.recaptcha.RecaptchaClient
 import com.google.android.recaptcha.RecaptchaException
 
 @HiltAndroidApp
-class MyApplication : Application(), AppFunctionConfiguration.Provider {
-
-    @Inject lateinit var maveFunctions: MaveFunctions
-
-    override val appFunctionConfiguration: AppFunctionConfiguration =
-        AppFunctionConfiguration.Builder()
-            .addEnclosingClassFactory(MaveFunctions::class.java) { maveFunctions }
-            .build()
+class MyApplication : Application() {
 
     private val recaptchaScope = CoroutineScope(Dispatchers.IO)
 

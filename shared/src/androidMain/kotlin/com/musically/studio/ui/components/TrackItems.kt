@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for TrackItems.kt
+ */
+
 package com.musically.studio.ui.components
 import androidx.compose.material3.MaterialTheme
 

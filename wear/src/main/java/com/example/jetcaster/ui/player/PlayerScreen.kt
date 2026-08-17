@@ -65,7 +65,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import com.example.jetcaster.ui.components.SettingsButtons
 import com.google.android.horologist.audio.ui.VolumeUiState
 import com.google.android.horologist.audio.ui.VolumeViewModel
-import com.google.android.horologist.audio.ui.volumeRotaryBehavior
+import com.google.android.horologist.audio.ui.material3.volumeRotaryBehavior
 import com.google.android.horologist.images.base.paintable.DrawableResPaintable
 import com.google.android.horologist.images.coil.CoilPaintable
 import com.google.android.horologist.media.ui.components.controls.SeekButtonIncrement

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for SignInForm.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 
 import androidx.compose.foundation.layout.fillMaxWidth

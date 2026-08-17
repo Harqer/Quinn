@@ -80,9 +80,9 @@ val connector: DefaultConnector = DefaultConnector.getInstance(
 ### DefaultConnector - Query and Mutation Properties
 
 The `default` Data Connect connector defines
-28 queries and
-27 mutations,
-a total of 55 operations.
+32 queries and
+32 mutations,
+a total of 64 operations.
 Each of these operations is exposed
 as a property of [DefaultConnector].
 
@@ -240,18 +240,20 @@ however, if they _are_ specified,
 then they are specified in a Kotlin DSL block as the last argument
 of the `execute()` method.
 
-For example, the "CreateCameraCapture" mutation has 4 optional variables ("imageUrl", "videoUrl", "environmentData", and "generatedTrackId")
-and can be executed via the [DefaultConnector.createCameraCapture]
+For example, the "UpsertUserSettings" mutation has 6 optional variables ("theme", "parentalControlsEnabled", "notificationsEnabled", "appsDevicesEnabled", "offlineMode", and "stripeCustomerId")
+and can be executed via the [DefaultConnector.upsertUserSettings]
 property as follows:
 
 ```kotlin
 val connector = DefaultConnector.instance
-val mutationResult = connector.createCameraCapture.execute {
-  imageUrl = "grault"
-  videoUrl = "waldo"
-  environmentData = "fred"
-  generatedTrackId = "grault"
+val mutationResult = connector.upsertUserSettings.execute {
+  theme = "corge"
+  parentalControlsEnabled = true
+  notificationsEnabled = true
+  appsDevicesEnabled = false
+  offlineMode = false
+  stripeCustomerId = "qux"
 }
-println("CreateCameraCapture mutation returned: ${mutationResult.data}")
+println("UpsertUserSettings mutation returned: ${mutationResult.data}")
 ```
 

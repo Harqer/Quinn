@@ -29,6 +29,12 @@ public interface UpsertUserSettingsMutation :
   
     val parentalControlsEnabled: com.google.firebase.dataconnect.OptionalVariable<Boolean?>,
   
+    val notificationsEnabled: com.google.firebase.dataconnect.OptionalVariable<Boolean?>,
+  
+    val appsDevicesEnabled: com.google.firebase.dataconnect.OptionalVariable<Boolean?>,
+  
+    val offlineMode: com.google.firebase.dataconnect.OptionalVariable<Boolean?>,
+  
     val stripeCustomerId: com.google.firebase.dataconnect.OptionalVariable<String?>,
   
   ) {
@@ -42,6 +48,9 @@ public interface UpsertUserSettingsMutation :
       public interface Builder {
         public var theme: String?
         public var parentalControlsEnabled: Boolean?
+        public var notificationsEnabled: Boolean?
+        public var appsDevicesEnabled: Boolean?
+        public var offlineMode: Boolean?
         public var stripeCustomerId: String?
         
       }
@@ -57,6 +66,12 @@ public interface UpsertUserSettingsMutation :
                 com.google.firebase.dataconnect.OptionalVariable.Undefined
             var parentalControlsEnabled: com.google.firebase.dataconnect.OptionalVariable<Boolean?> =
                 com.google.firebase.dataconnect.OptionalVariable.Undefined
+            var notificationsEnabled: com.google.firebase.dataconnect.OptionalVariable<Boolean?> =
+                com.google.firebase.dataconnect.OptionalVariable.Undefined
+            var appsDevicesEnabled: com.google.firebase.dataconnect.OptionalVariable<Boolean?> =
+                com.google.firebase.dataconnect.OptionalVariable.Undefined
+            var offlineMode: com.google.firebase.dataconnect.OptionalVariable<Boolean?> =
+                com.google.firebase.dataconnect.OptionalVariable.Undefined
             var stripeCustomerId: com.google.firebase.dataconnect.OptionalVariable<String?> =
                 com.google.firebase.dataconnect.OptionalVariable.Undefined
             
@@ -70,6 +85,18 @@ public interface UpsertUserSettingsMutation :
               get() = throw UnsupportedOperationException("getting builder values is not supported")
               set(value_) { parentalControlsEnabled = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
               
+            override var notificationsEnabled: Boolean?
+              get() = throw UnsupportedOperationException("getting builder values is not supported")
+              set(value_) { notificationsEnabled = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
+              
+            override var appsDevicesEnabled: Boolean?
+              get() = throw UnsupportedOperationException("getting builder values is not supported")
+              set(value_) { appsDevicesEnabled = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
+              
+            override var offlineMode: Boolean?
+              get() = throw UnsupportedOperationException("getting builder values is not supported")
+              set(value_) { offlineMode = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
+              
             override var stripeCustomerId: String?
               get() = throw UnsupportedOperationException("getting builder values is not supported")
               set(value_) { stripeCustomerId = com.google.firebase.dataconnect.OptionalVariable.Value(value_) }
@@ -78,7 +105,7 @@ public interface UpsertUserSettingsMutation :
           }.apply(block_)
           .let {
             Variables(
-              theme=theme,parentalControlsEnabled=parentalControlsEnabled,stripeCustomerId=stripeCustomerId,
+              theme=theme,parentalControlsEnabled=parentalControlsEnabled,notificationsEnabled=notificationsEnabled,appsDevicesEnabled=appsDevicesEnabled,offlineMode=offlineMode,stripeCustomerId=stripeCustomerId,
             )
           }
         }

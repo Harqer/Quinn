@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for ChatViewModel.kt
+ */
+
 package com.musically.studio.ui.screens
 
 import com.musically.studio.dataconnect.instance
@@ -230,6 +235,7 @@ class ChatViewModel @Inject constructor(
                 
                 val resultData = result.data as? Map<*, *>
                 val newContext = resultData?.get("newContext") as? String
+                @Suppress("UNCHECKED_CAST")
                 val episodesList = resultData?.get("episodes") as? List<Map<String, String>> ?: emptyList()
                 
                 var generatedSeriesId: String? = null

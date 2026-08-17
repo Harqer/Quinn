@@ -121,6 +121,12 @@
       "skillPath": "skills/react-view-transitions/SKILL.md",
       "computedHash": "c8952fc9127fa0564d0cb71dccb4215a5608ac933b5831104f09173a97a46f85"
     },
+    "vibe-voice": {
+      "source": "terminalskills/skills",
+      "sourceType": "github",
+      "skillPath": "skills/vibe-voice/SKILL.md",
+      "computedHash": "1cd7b27262c16f3f69ea2ad1b7b39b2ed6152e2c5e63423c6883a4c56a033643"
+    },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",

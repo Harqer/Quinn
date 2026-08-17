@@ -130,3 +130,72 @@ export const executeAutomatedPaymentKitesurf = onCall(
   }
 );
 
+
+
+
+import { google } from "googleapis";
+
+export const verifyPlaySubscription = onCall(
+  { cors: true },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "User must be authenticated to verify Play subscription.");
+    }
+
+    const { purchaseToken, productId } = request.data || {};
+    if (!purchaseToken || !productId) {
+      throw new HttpsError("invalid-argument", "Missing purchaseToken or productId.");
+    }
+
+    try {
+      // Authenticate the googleapis client using the default service account 
+      // which should be granted "View financial data" permission in Google Play Console.
+      const auth = new google.auth.GoogleAuth({
+        scopes: ['https://www.googleapis.com/auth/androidpublisher']
+      });
+      const authClient = await auth.getClient();
+      const androidpublisher = google.androidpublisher({ version: 'v3', auth: authClient as any });
+      
+      const PACKAGE_NAME = "com.musically.studio";
+
+      logger.info(`Verifying Play subscription for user ${request.auth.uid}. Token: ${purchaseToken.substring(0, 10)}... Product: ${productId}`);
+
+      const res = await androidpublisher.purchases.subscriptionsv2.get({
+        packageName: PACKAGE_NAME,
+        token: purchaseToken,
+      });
+
+      const subData = res.data;
+      
+      // Payment state: SUBSCRIPTION_STATE_ACTIVE, SUBSCRIPTION_STATE_IN_GRACE_PERIOD, etc.
+      const subscriptionState = subData.subscriptionState;
+      const isExpired = subscriptionState === 'SUBSCRIPTION_STATE_EXPIRED' || subscriptionState === 'SUBSCRIPTION_STATE_CANCELED';
+      
+      if (isExpired) {
+          logger.warn(`Subscription for user ${request.auth.uid} expired. State: ${subscriptionState}`);
+          throw new HttpsError("permission-denied", "Subscription has expired.");
+      }
+
+      const expiryTime = subData.lineItems?.[0]?.expiryTime;
+      const expiryDate = expiryTime ? new Date(expiryTime) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+      const tier = "PREMIUM"; // Validated active subscription
+
+      // Update Firebase Auth custom claims
+      await getAuth().setCustomUserClaims(request.auth.uid, { subscriptionTier: tier });
+      
+      // Update Firestore user document
+      const db = getFirestore();
+      await db.collection("users").doc(request.auth.uid).set({
+        playStoreSubscriptionId: productId,
+        subscriptionTier: tier,
+        subscriptionExpiryTime: expiryDate
+      }, { merge: true });
+
+      return { success: true, tier };
+    } catch (error) {
+      logger.error("Failed to verify Play subscription:", error);
+      throw new HttpsError("internal", "Failed to verify Play subscription with Google Play Developer API.");
+    }
+  }
+);

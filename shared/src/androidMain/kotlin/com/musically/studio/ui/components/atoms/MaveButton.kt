@@ -1,6 +1,12 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for MaveButton.kt
+ */
+
 package com.musically.studio.ui.components.atoms
 
 import com.musically.studio.ui.utils.debouncedClickable
+import com.musically.studio.ui.utils.bounceClick
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,13 +38,14 @@ fun MaveButton(
     }
 
     Box(
-        modifier = modifier
-            .debouncedClickable(
+        modifier = if (enabled) {
+            modifier.bounceClick(
                 onClick = onClick,
-                enabled = enabled,
-                interactionSource = interactionSource,
-                indication = null // Styleable handles its own background indication ideally, or we can use LocalIndication
+                interactionSource = interactionSource
             )
+        } else {
+            modifier
+        }
             .styleable(styleState, MaveStyles.maveButtonStyle, style)
             .padding(horizontal = 24.dp, vertical = 12.dp)
             .defaultMinSize(minHeight = 48.dp),

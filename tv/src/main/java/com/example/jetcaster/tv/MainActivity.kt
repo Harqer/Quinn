@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     shape = RectangleShape,
                 ) {
-                    JetcasterApp()
+                    MaveTvApp()
                 }
             }
         }

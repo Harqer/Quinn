@@ -12,11 +12,15 @@ import com.meta.wearable.dat.camera.addStream
 import com.meta.wearable.dat.camera.removeStream
 import com.meta.wearable.dat.camera.types.StreamConfiguration
 import com.meta.wearable.dat.camera.types.VideoQuality
+import androidx.core.app.NotificationCompat
 import com.meta.wearable.dat.core.Wearables
+import com.meta.wearable.dat.core.types.Permission
+import com.meta.wearable.dat.core.types.PermissionStatus
 import com.meta.wearable.dat.core.selectors.AutoDeviceSelector
 import com.meta.wearable.dat.core.selectors.SpecificDeviceSelector
 import com.meta.wearable.dat.core.session.DeviceSession
 import com.meta.wearable.dat.core.session.DeviceSessionState
+import com.meta.wearable.dat.camera.types.StreamState
 import com.meta.wearable.dat.display.Display
 import com.meta.wearable.dat.display.addDisplay
 import com.meta.wearable.dat.display.removeDisplay
@@ -25,7 +29,9 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.util.Base64
+import com.musically.studio.glasses.GlassesUIController
 import com.meta.wearable.dat.display.views.*
+
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +46,7 @@ class WearableStreamingService : Service() {
     private var activeSession: DeviceSession? = null
     private var activeStream: Stream? = null
     private var activeDisplay: Display? = null
+    private var uiController: GlassesUIController? = null
 
     private var audioRecord: AudioRecord? = null
     private var recordingJob: Job? = null
@@ -60,10 +67,14 @@ class WearableStreamingService : Service() {
         
         private var instance: WearableStreamingService? = null
 
-        fun updateUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false, isPlaying: Boolean = false) {
-            instance?.updateWearableUi(songTitle, geminiResponse, coverArtUrl, isThinking, isPlaying)
+        fun updateUi(songTitle: String, coverArtUrl: String? = null, isPlaying: Boolean = false) {
+            instance?.updateWearableUi(songTitle, coverArtUrl, isPlaying)
         }
         
+        fun clearUi() {
+            instance?.clearDisplay()
+        }
+
         fun startVoiceRecording() {
             instance?.startAudioRecording()
         }
@@ -95,7 +106,21 @@ class WearableStreamingService : Service() {
 
         startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
         val deviceId = intent?.getStringExtra("DEVICE_ID")
-        startWearableSession(deviceId)
+        
+        scope.launch {
+            Wearables.checkPermissionStatus(Permission.CAMERA).onSuccess { status ->
+                if (status != PermissionStatus.Granted) {
+                    Timber.e("Wearables DAT SDK Camera permission not granted. Stopping.")
+                    stopSelf()
+                    return@onSuccess
+                }
+                startWearableSession(deviceId)
+            }.onFailure { error, _ ->
+                Timber.e("Failed to check Wearables permission: ${error.description}")
+                stopSelf()
+            }
+        }
+        
         return START_STICKY
     }
 
@@ -116,18 +141,45 @@ class WearableStreamingService : Service() {
         val pendingIntent = android.app.PendingIntent.getActivity(
             this@WearableStreamingService, 0, intent, android.app.PendingIntent.FLAG_IMMUTABLE
         )
-        return Notification.Builder(this@WearableStreamingService, "wearable_service_channel")
+        return NotificationCompat.Builder(this@WearableStreamingService, "wearable_service_channel")
             .setContentTitle("Mave Wearable")
             .setContentText("Streaming POV to Mave Studio...")
             .setSmallIcon(android.R.drawable.ic_menu_camera)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
+            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .build()
+    }
+    
+    private fun updateNotification(songTitle: String) {
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        val intent = packageManager.getLaunchIntentForPackage(packageName)?.apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        } ?: Intent()
+        val pendingIntent = android.app.PendingIntent.getActivity(
+            this@WearableStreamingService, 0, intent, android.app.PendingIntent.FLAG_IMMUTABLE
+        )
+        val notification = NotificationCompat.Builder(this@WearableStreamingService, "wearable_service_channel")
+            .setContentTitle("Mave Wearable")
+            .setContentText(if (songTitle.isNotEmpty()) "Playing: $songTitle" else "Streaming POV to Mave Studio...")
+            .setSmallIcon(android.R.drawable.ic_menu_camera)
+            .setContentIntent(pendingIntent)
+            .setOngoing(true)
+            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+            .build()
+        notificationManager.notify(1, notification)
     }
 
     private fun startWearableSession(deviceId: String?) {
         scope.launch {
             val targetDevice = deviceId?.let { id -> Wearables.devices.value.find { it.identifier == id } }
+            
+            if (Wearables.devices.value.isEmpty()) {
+                Timber.e("No devices found. Cannot start WearableSession. Please pair your glasses in the Meta AI app.")
+                _isServiceActive.value = false
+                stopSelf()
+                return@launch
+            }
 
             val sessionResult = if (targetDevice != null) {
                 Wearables.createSession(SpecificDeviceSelector(targetDevice))
@@ -166,6 +218,7 @@ class WearableStreamingService : Service() {
     private fun attachCapabilities(session: DeviceSession) {
         session.addDisplay(DisplayConfiguration()).onSuccess { display ->
             activeDisplay = display
+            uiController = GlassesUIController(display)
             updateWearableUi("", "") // Initial UI render
             startStream(session)
         }.onFailure { error, _ ->
@@ -178,6 +231,20 @@ class WearableStreamingService : Service() {
         val config = StreamConfiguration(VideoQuality.MEDIUM, 15, false)
         session.addStream(config).onSuccess { stream ->
             activeStream = stream
+            
+            scope.launch {
+                stream.state.collect { state ->
+                    Timber.d("Stream state changed: $state")
+                    when (state) {
+                        StreamState.CLOSED -> {
+                            Timber.i("Stream CLOSED.")
+                            activeStream = null
+                        }
+                        else -> Unit
+                    }
+                }
+            }
+            
             stream.start().onSuccess {
                 startFrameCollection(stream)
             }.onFailure { error, _ ->
@@ -207,70 +274,6 @@ class WearableStreamingService : Service() {
 
     private var autoDismissJob: Job? = null
 
-    fun showTransientCard(
-        title: String,
-        subtitle: String? = null,
-        iconName: IconName = IconName.MUSIC_NOTE,
-        durationMs: Long = 4000L
-    ) {
-        autoDismissJob?.cancel()
-        scope.launch {
-            activeDisplay?.sendContent {
-                flexBox(
-                    direction = Direction.COLUMN,
-                    gap = 8,
-                    paddingBottom = 16,
-                    paddingEnd = 16,
-                    paddingStart = 16,
-                    paddingTop = 16,
-                    alignment = Alignment.CENTER,
-                    crossAlignment = Alignment.CENTER
-                ) {
-                    icon(name = iconName)
-                    text(content = title, style = TextStyle.HEADING)
-                    if (!subtitle.isNullOrEmpty()) {
-                        text(content = subtitle, style = TextStyle.BODY)
-                    }
-                }
-            }?.onFailure { error, _ ->
-                Timber.e("Failed to send display content: ${error.description}")
-            }
-
-            // Auto-dismiss back to clean empty view after duration
-            autoDismissJob = scope.launch {
-                delay(durationMs)
-                clearDisplay()
-            }
-        }
-    }
-
-    fun showSteeringNotice(bpm: Int, densityPercent: Int, brightnessPercent: Int) {
-        showTransientCard(
-            title = "$bpm BPM",
-            subtitle = "Density: $densityPercent% • Brightness: $brightnessPercent%",
-            iconName = IconName.GEAR,
-            durationMs = 3000L
-        )
-    }
-
-    fun showTrackNotice(songTitle: String, artist: String = "Mave AI") {
-        showTransientCard(
-            title = songTitle,
-            subtitle = artist,
-            iconName = IconName.MUSIC_NOTE,
-            durationMs = 4000L
-        )
-    }
-
-    fun showThinkingNotice() {
-        showTransientCard(
-            title = "Mave is thinking...",
-            subtitle = "Crafting audio steering",
-            iconName = IconName.MUSIC_NOTE,
-            durationMs = 6000L
-        )
-    }
-
     fun clearDisplay() {
         autoDismissJob?.cancel()
         scope.launch {
@@ -286,11 +289,12 @@ class WearableStreamingService : Service() {
         }
     }
 
-    fun updateWearableUi(songTitle: String, geminiResponse: String, coverArtUrl: String? = null, isThinking: Boolean = false, isPlaying: Boolean = false) {
-        when {
-            isThinking -> showThinkingNotice()
-            songTitle.isNotEmpty() -> showMusicPlayerCard(songTitle, geminiResponse, coverArtUrl, isPlaying)
-            else -> clearDisplay()
+    fun updateWearableUi(songTitle: String, coverArtUrl: String? = null, isPlaying: Boolean = false) {
+        updateNotification(songTitle)
+        if (songTitle.isNotEmpty()) {
+            showMusicPlayerCard(songTitle, null, coverArtUrl, isPlaying)
+        } else {
+            clearDisplay()
         }
     }
 
@@ -305,25 +309,8 @@ class WearableStreamingService : Service() {
         autoDismissJob?.cancel()
         playerJob?.cancel()
         playerJob = scope.launch {
-            activeDisplay?.sendContent {
-                flexBox(
-                    direction = Direction.COLUMN,
-                    gap = 8,
-                    paddingBottom = 16,
-                    paddingEnd = 16,
-                    paddingStart = 16,
-                    paddingTop = 16,
-                    alignment = Alignment.CENTER,
-                    crossAlignment = Alignment.CENTER
-                ) {
-                    icon(name = IconName.MUSIC_NOTE)
-                    text(content = title, style = TextStyle.HEADING)
-                    if (!subtitle.isNullOrEmpty()) {
-                        text(content = subtitle, style = TextStyle.BODY, color = TextColor.SECONDARY)
-                    }
-                }
-            }?.onFailure { error, _ ->
-                Timber.e("Failed to send display content: ${error.description}")
+            uiController?.showMusicPlayerCard(title, subtitle, isPlaying) {
+                emitInteraction("play_pause")
             }
 
             // Auto-dismiss after 4 seconds per Meta Wearables minimal audio UI guidelines

@@ -661,6 +661,14 @@ export function useMave() {
 
     const base64Data = image.includes(',') ? image.split(',')[1] : image;
     
+    if (sessionRef.current) {
+      sessionRef.current.sendRealtimeInput([{
+        mimeType: actualMimeType,
+        data: base64Data
+      }]);
+      return;
+    }
+
     // Add loading message
     const responseId = Date.now().toString();
     setMessages(prev => [{ id: responseId, text: 'Analyzing media and composing track...', sender: 'mave' as const, isReasoningComplete: true }, ...prev].slice(0, 15));

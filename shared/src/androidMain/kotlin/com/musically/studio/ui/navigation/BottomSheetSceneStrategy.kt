@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for BottomSheetSceneStrategy.kt
+ */
+
 package com.musically.studio.ui.navigation
 
 import androidx.compose.material3.ExperimentalMaterial3Api

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for GenerateCoverButton.kt
+ */
+
 package com.musically.studio.ui.components.atoms
 
 import androidx.compose.foundation.layout.*

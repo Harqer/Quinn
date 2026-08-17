@@ -8,6 +8,7 @@
     "sourceMap": true,
     "strict": true,
     "target": "ES2022",
+    "esModuleInterop": true,
     "skipLibCheck": true
   },
   "compileOnSave": true,

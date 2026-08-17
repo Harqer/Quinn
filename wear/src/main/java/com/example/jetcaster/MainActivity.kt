@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             navController = rememberSwipeDismissableNavController()
 
-            WearApp(navController)
+            MaveWearApp()
         }
     }
 }

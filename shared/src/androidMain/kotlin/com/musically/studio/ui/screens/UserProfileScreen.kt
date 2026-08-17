@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for UserProfileScreen.kt
+ */
+
 package com.musically.studio.ui.screens
 import androidx.compose.material3.MaterialTheme
 
@@ -105,42 +110,50 @@ fun UserProfileScreen(
             )
         }
     ) { paddingValues ->
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(300.dp),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = paddingValues.calculateTopPadding() + 16.dp,
-                bottom = paddingValues.calculateBottomPadding() + 16.dp
-            )
+        androidx.compose.material3.pulltorefresh.PullToRefreshBox(
+            isRefreshing = isLoading,
+            onRefresh = { viewModel.fetchVibesByUserId(userId) },
+            modifier = Modifier.fillMaxSize()
         ) {
-            profileHeader(
-                avatarUrl = avatarUrl,
-                displayName = displayName,
-                userId = userId
-            )
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(300.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = paddingValues.calculateTopPadding() + 16.dp,
+                    bottom = paddingValues.calculateBottomPadding() + 16.dp
+                ),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                profileHeader(
+                    avatarUrl = avatarUrl,
+                    displayName = displayName,
+                    userId = userId
+                )
 
-            if (isOwnProfile) {
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    UserAccountActions(
-                        deletionState = deletionState,
-                        onSignOutClick = { showSignOutConfirmDialog = true },
-                        onDeleteAccountClick = { showDeleteConfirmDialog = true },
-                        onNavigateToDevices = onNavigateToDevices
-                    )
+                if (isOwnProfile) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        UserAccountActions(
+                            deletionState = deletionState,
+                            onSignOutClick = { showSignOutConfirmDialog = true },
+                            onDeleteAccountClick = { showDeleteConfirmDialog = true },
+                            onNavigateToDevices = onNavigateToDevices
+                        )
+                    }
                 }
+
+                userSongsSection(
+                    isOwnProfile = isOwnProfile,
+                    isLoading = isLoading,
+                    vibes = vibes,
+                    onPlayTrack = { viewModel.playTrack(it) },
+                    onNavigateToAlbum = onNavigateToAlbum
+                )
+
+                item(span = { GridItemSpan(maxLineSpan) }) { Spacer(modifier = Modifier.height(80.dp)) }
             }
-
-            userSongsSection(
-                isOwnProfile = isOwnProfile,
-                isLoading = isLoading,
-                vibes = vibes,
-                onPlayTrack = { viewModel.playTrack(it) },
-                onNavigateToAlbum = onNavigateToAlbum
-            )
-
-            item(span = { GridItemSpan(maxLineSpan) }) { Spacer(modifier = Modifier.height(80.dp)) }
         }
     }
 }

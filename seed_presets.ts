@@ -1,11 +1,14 @@
 import { execSync } from 'child_process';
+import { lyriaProAgent } from "./functions/src/agents/lyriaProAgent.ts";
+import { imageGenAgent } from "./functions/src/agents/imageGenAgent.ts";
 import { genkit } from "genkit";
 import { googleAI } from "@genkit-ai/google-genai";
-import * as fs from 'fs';
-import * as path from 'path';
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 // Fetch API key dynamically
-const apiKey = execSync("gcloud secrets versions access latest --secret=GEMINI_API_KEY", { encoding: 'utf-8' }).trim();
+const apiKey = execSync("gcloud secrets versions access latest --secret=GEMINI_API_KEY --project=musically-studio", { encoding: 'utf-8' }).trim();
 process.env.GEMINI_API_KEY = apiKey;
 
 const ai = genkit({
@@ -14,7 +17,7 @@ const ai = genkit({
 });
 
 async function fetchTopTracks() {
-    const response = await fetch('https://itunes.apple.com/us/rss/topsongs/limit=10/json');
+    const response = await fetch('https://itunes.apple.com/us/rss/topsongs/limit=5/json');
     const data = await response.json();
     return data.feed.entry.map((entry: any) => {
         const previewLink = entry.link.find((l: any) => l.attributes && l.attributes.rel === 'enclosure');
@@ -24,6 +27,20 @@ async function fetchTopTracks() {
             preview_url: previewLink ? previewLink.attributes.href : null
         };
     });
+}
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function runWithBackoff(fn: () => Promise<any>, retries = 3, backoffMs = 2000) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await fn();
+        } catch (err) {
+            console.error(`Attempt ${i + 1} failed:`, err);
+            if (i === retries - 1) throw err;
+            await sleep(backoffMs * Math.pow(2, i));
+        }
+    }
 }
 
 async function runSeeder() {
@@ -38,49 +55,48 @@ async function runSeeder() {
                 continue;
             }
 
+            console.log(`\n===========================================`);
             console.log(`Processing: ${track.name} by ${track.artist}`);
 
-            // Download M4A preview
-            const previewResponse = await fetch(track.preview_url);
-            const arrayBuffer = await previewResponse.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
-            const base64Audio = buffer.toString('base64');
-            const dataUri = `data:audio/mp4;base64,${base64Audio}`;
-
-            console.log("Generating metadata via Genkit...");
-            
-            // Execute Genkit using the registered prompt
             try {
-                const dissectPrompt = ai.prompt('dissectAudio');
-                const { text } = await dissectPrompt({ audioUrl: dataUri });
-
-                const rawJson = text.replace(/```json/g, '').replace(/```/g, '').trim();
-                const analysis = JSON.parse(rawJson);
-
-                console.log("Analysis Output:", analysis);
-
-                // Insert into Database
-                const durationMs = 30000;
+                // Generate a custom prompt based on the track name and artist
+                const promptText = `A chart-topping hit track titled "${track.name}" in the style of ${track.artist}.`;
                 
-                const mutationVars = {
-                    title: analysis.replicatedSong?.trackName || track.name,
-                    audioUrl: track.preview_url,
-                    durationMs: durationMs,
-                    prompt: analysis.replicatedSong?.generationPrompt || "",
-                    isCommunity: true,
-                    ownerUid: "yPtzH6t6kPPOieY4uM04viV6czw1"
-                };
+                console.log("-> Generating full track using Lyria 3 Pro...");
+                const trackResult = await runWithBackoff(() => lyriaProAgent({
+                    prompt: promptText,
+                    apiKey: apiKey,
+                    uid: "yPtzH6t6kPPOieY4uM04viV6czw1" // Community preset owner UID
+                }));
+                
+                const trackId = trackResult.trackId;
+                console.log(`   Success! Track ID: ${trackId}, Audio URL: ${trackResult.audioUrl}`);
 
-                console.log("Executing Data Connect mutation...");
-                const execResult = execSync(`npx -y firebase-tools@latest dataconnect:execute dataconnect/connector/mutations.gql SeedTrack --variables '${JSON.stringify(mutationVars).replace(/'/g, "'\\''")}'`, { encoding: 'utf-8' });
-                console.log("Success");
+                if (!trackId) {
+                    console.error("   Error: lyriaProAgent did not return a valid trackId. Skipping cover generation.");
+                    continue;
+                }
+
+                console.log("-> Generating cover image using Nano Banana 2 (Imagen 3)...");
+                const imageResult = await runWithBackoff(() => imageGenAgent({
+                    prompt: `Album cover for ${track.name} by ${track.artist}`,
+                    apiKey: apiKey,
+                    uid: "yPtzH6t6kPPOieY4uM04viV6czw1",
+                    trackId: trackId,
+                    preset: "glassmorphic_lumina"
+                }));
+                
+                console.log(`   Success! Cover URL: ${imageResult.imageUrl}`);
 
                 count++;
-                if (count >= 3) break; // Do 3 for now to test
+                if (count >= 3) break; // Limit to 3 for testing
             } catch (err) {
-                console.error("Failed to dissect or insert track:", err);
+                console.error(`Failed to process ${track.name}:`, err);
+                // Continue to the next track on failure
             }
         }
+        
+        console.log("Seeding complete!");
         
     } catch (err) {
         console.error("Seeder failed:", err);

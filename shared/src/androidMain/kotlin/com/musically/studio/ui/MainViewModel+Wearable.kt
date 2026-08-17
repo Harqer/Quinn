@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for MainViewModel+Wearable.kt
+ */
+
 package com.musically.studio.ui
 
 import kotlinx.coroutines.flow.collectLatest
@@ -8,6 +13,7 @@ import android.content.Intent
 import androidx.lifecycle.viewModelScope
 import com.musically.studio.network.*
 import com.musically.studio.data.repository.*
+import com.meta.wearable.dat.core.types.RegistrationState
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -72,7 +78,11 @@ import kotlinx.coroutines.delay
                     "next" -> skipNext()
                     "previous" -> skipPrevious()
                     "stop" -> stopPlayback()
-                    "generate" -> sendTextCommand("Generate a new atmosphere")
+                    "generate" -> {
+                        sendTextCommand("Generate a new atmosphere")
+                        // No thinking UI on glasses, handled by companion app
+                        WearableStreamingService.clearUi()
+                    }
                     "speak" -> recordVoice(null)
                 }
             }
@@ -123,13 +133,8 @@ import kotlinx.coroutines.delay
             geminiLiveManager.thoughts.collect { thought ->
                 Timber.d("Art Director Reasoning: $thought")
                 // Update Wearable HUD
-                WearableStreamingService.updateUi(
-                    songTitle = currentPlayingTrack.value?.name ?: "",
-                    geminiResponse = "",
-                    coverArtUrl = currentCoverUrl.value,
-                    isThinking = true,
-                    isPlaying = isPlaying.value
-                )
+                // Keep glasses UI minimal
+                WearableStreamingService.clearUi()
             }
         }
 
@@ -147,9 +152,7 @@ import kotlinx.coroutines.delay
                 if (track != null) {
                     WearableStreamingService.updateUi(
                         songTitle = track.name,
-                        geminiResponse = "",
                         coverArtUrl = currentCoverUrl.value,
-                        isThinking = false,
                         isPlaying = playing
                     )
                 }
@@ -161,13 +164,11 @@ import kotlinx.coroutines.delay
                 if (track != null) {
                     WearableStreamingService.updateUi(
                         songTitle = track.name,
-                        geminiResponse = "",
                         coverArtUrl = currentCoverUrl.value,
-                        isThinking = false,
                         isPlaying = isPlaying.value
                     )
                 } else {
-                    WearableStreamingService.updateUi("", "") // Clear
+                    WearableStreamingService.clearUi() // Clear
                 }
             }
         }
@@ -176,6 +177,10 @@ import kotlinx.coroutines.delay
     fun MainViewModel.setWearableConnected(context: Context, connected: Boolean) {
         val intent = Intent(context, WearableStreamingService::class.java)
         if (connected) {
+            if (com.meta.wearable.dat.core.Wearables.registrationState.value != RegistrationState.REGISTERED) {
+                Timber.w("Cannot connect wearable: User not registered with Meta AI app.")
+                return
+            }
             context.startForegroundService(intent)
         } else {
             context.stopService(intent)

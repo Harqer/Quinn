@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for AppNavigation.kt
+ */
+
 package com.musically.studio.ui.navigation
 
 import androidx.compose.foundation.interaction.MutableInteractionSource

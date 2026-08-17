@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for AlbumHeader.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 
 import android.content.Context

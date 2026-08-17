@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for Previews.kt
+ */
+
 package com.musically.studio.ui.theme
 
 import androidx.compose.ui.tooling.preview.Devices

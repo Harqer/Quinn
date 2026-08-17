@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for MainViewModel+Interaction.kt
+ */
+
 package com.musically.studio.ui
 
 import androidx.lifecycle.viewModelScope
@@ -73,17 +78,27 @@ fun MainViewModel.recordPlay(trackId: String) {
         }
     }
 }
-fun MainViewModel.downloadTrack(trackId: String) {
+fun MainViewModel.downloadTrack(trackId: String, context: android.content.Context) {
     viewModelScope.launch {
         val track = _tracks.value.find { it.id == trackId } 
             ?: _communityTracks.value.find { it.id == trackId }
             ?: _recentTracks.value.find { it.id == trackId }
+            ?: _searchResults.value.find { it.id == trackId }
         
-        if (track != null) {
-            val json = prefs.getString("downloaded_tracks", "[]")
-            val type = object : com.google.gson.reflect.TypeToken<List<MaveTrack>>() {}.type
-            val gson = com.google.gson.Gson()
+        if (track != null && !track.audioUrl.isNullOrEmpty()) {
+            val downloadManager = context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
+            val request = android.app.DownloadManager.Request(android.net.Uri.parse(track.audioUrl))
+                .setTitle(track.name)
+                .setDescription("Downloading ${track.name}...")
+                .setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setDestinationInExternalFilesDir(context, android.os.Environment.DIRECTORY_MUSIC, "${track.id}.mp3")
+            
             try {
+                downloadManager.enqueue(request)
+                
+                val json = prefs.getString("downloaded_tracks", "[]")
+                val type = object : com.google.gson.reflect.TypeToken<List<MaveTrack>>() {}.type
+                val gson = com.google.gson.Gson()
                 val currentDownloads: MutableList<MaveTrack> = gson.fromJson(json, type) ?: mutableListOf()
                 if (currentDownloads.none { it.id == trackId }) {
                     currentDownloads.add(track)
@@ -91,7 +106,7 @@ fun MainViewModel.downloadTrack(trackId: String) {
                     _downloadedTracks.value = currentDownloads
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Failed to parse downloaded tracks")
+                Timber.e(e, "Failed to enqueue download for track ${track.id}")
             }
         }
     }

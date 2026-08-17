@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: UI Component for player-controls.styles.ts
+ */
+
 import { css } from 'lit';
 
 export const playerControlsStyles = css`

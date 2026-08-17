@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for CameraTopToolbar.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 
 import androidx.camera.core.ImageCapture

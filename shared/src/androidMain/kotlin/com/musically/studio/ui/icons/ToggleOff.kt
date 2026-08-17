@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for ToggleOff.kt
+ */
+
 package com.musically.studio.ui.icons
 
 import androidx.compose.ui.graphics.Color

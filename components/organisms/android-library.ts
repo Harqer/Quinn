@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: UI Component for android-library.ts
+ */
+
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { AndroidLibraryStyles } from './android-library.styles';
@@ -232,12 +237,8 @@ export class AndroidLibrary extends LitElement {
                 </p>
                 <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 2px;">
                   <div style="display: flex; flex-direction: column; background: #1f2937; padding: 6px; border-radius: 4px; border: 1px solid #2d3748;">
-                    <span style="font-size: 7.5px; font-weight: bold; color: #9ca3af; text-transform: uppercase;">Development Callback URI:</span>
-                    <code style="font-size: 8px; color: #60a5fa; word-break: break-all; margin-top: 1px; font-family: monospace;">https://ais-dev-pgvcritokphyopw5nxth3h-123203256118.europe-west2.run.app/api/spotify/callback</code>
-                  </div>
-                  <div style="display: flex; flex-direction: column; background: #1f2937; padding: 6px; border-radius: 4px; border: 1px solid #2d3748;">
-                    <span style="font-size: 7.5px; font-weight: bold; color: #9ca3af; text-transform: uppercase;">Shared/Production Callback URI:</span>
-                    <code style="font-size: 8px; color: #34d399; word-break: break-all; margin-top: 1px; font-family: monospace;">https://ais-pre-pgvcritokphyopw5nxth3h-123203256118.europe-west2.run.app/api/spotify/callback</code>
+                    <span style="font-size: 7.5px; font-weight: bold; color: #9ca3af; text-transform: uppercase;">Callback URI:</span>
+                    <code style="font-size: 8px; color: #60a5fa; word-break: break-all; margin-top: 1px; font-family: monospace;">\${window.location.origin}/api/spotify/callback</code>
                   </div>
                 </div>
               </div>

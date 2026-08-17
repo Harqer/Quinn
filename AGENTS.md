@@ -1379,3 +1379,12 @@ Run through this the day before submission:
 ---
 
 *Note: Play Store policy details (target API level, Data Safety form specifics, permission requirements) change periodically. Worth a quick check of the current Play Console requirements at submission time rather than relying on this doc if it's been a while.*
+## 7. Android 17 (API 37) & Adaptive UI Standard (MANDATORY)
+
+When building or modifying Android UI with Jetpack Compose, you must adhere to the "window-first, adaptive workspaces" paradigm for Android 17:
+
+1. **Adaptive Navigation**: Use `NavigationSuiteScaffold` (Material 3 Adaptive) for top-level navigation instead of manual `BottomNavigation` or `NavigationRail` switching. The UI must automatically morph between bottom bars on compact screens and side rails on large screens.
+2. **Navigation 3 Scenes**: Prefer Navigation 3 `ListDetailSceneStrategy` or `SupportingPaneSceneStrategy` for multi-pane layouts to support seamless transitions into Desktop PiP and floating app bubbles.
+3. **State Preservation**: Strict enforcement of `rememberSaveable` or ViewModels/SavedStateHandle for UI state. Do not use ephemeral `remember {}` blocks for anything that should survive a resize into a floating window state.
+4. **Edge-to-Edge**: Rely on `.safeDrawingPadding()`, `.windowInsetsPadding(WindowInsets.systemBars)`, and Scaffold for inset handling. Edge-to-edge is mandatory on Android 17.
+5. **No Orientation Locks**: Never use `android:screenOrientation` or `android:resizeableActivity="false"`. Assume the app can be resized into any dimensions at any time.

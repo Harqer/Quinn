@@ -5,7 +5,7 @@ type TypographyVariant =
   | 'headline'
   | 'title-lg' | 'title-md' | 'title-sm'
   | 'body-lg' | 'body-md' | 'body-sm'
-  | 'label-md' | 'label-sm';
+  | 'label-lg' | 'label-md' | 'label-sm';
 
 type TypographyColor = 'primary' | 'secondary' | 'error' | 'inherit';
 

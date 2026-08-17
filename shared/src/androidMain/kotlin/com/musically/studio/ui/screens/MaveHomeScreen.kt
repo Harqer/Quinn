@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for MaveHomeScreen.kt
+ */
+
 package com.musically.studio.ui.screens
 
 import androidx.compose.foundation.layout.*

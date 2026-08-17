@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for Color.kt
+ */
+
 package com.musically.studio.ui.theme
 
 import androidx.compose.ui.graphics.Color

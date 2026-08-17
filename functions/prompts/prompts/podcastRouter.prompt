@@ -1,0 +1,7 @@
+---
+model: googleai/gemini-3.5-flash
+input:
+  schema:
+    topic: string
+---
+Classify the following podcast topic into exactly one of these genres: 'sports', 'autobiography', 'fiction', 'essay', or 'general'. Topic: "{{topic}}". Return ONLY the genre word in lowercase.

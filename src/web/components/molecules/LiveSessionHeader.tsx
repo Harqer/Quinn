@@ -6,9 +6,10 @@ interface LiveSessionHeaderProps {
   isConnected: boolean;
   onClose: () => void;
   onMoreOptions: () => void;
+  onNavigateHome?: () => void;
 }
 
-export const LiveSessionHeader: React.FC<LiveSessionHeaderProps> = ({ isConnected, onClose, onMoreOptions }) => (
+export const LiveSessionHeader: React.FC<LiveSessionHeaderProps> = ({ isConnected, onClose, onMoreOptions, onNavigateHome }) => (
   <div className="flex items-center gap-3 px-4 py-4 bg-surface-container sticky top-0 z-10 shadow-sm shrink-0">
     <button onClick={onClose} className="text-on-surface hover:opacity-80 transition-opacity">
       <Icon name="close" size="2xl" />

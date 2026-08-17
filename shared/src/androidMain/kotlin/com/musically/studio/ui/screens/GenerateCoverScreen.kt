@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for GenerateCoverScreen.kt
+ */
+
 package com.musically.studio.ui.screens
 import com.musically.studio.dataconnect.instance
 

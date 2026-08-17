@@ -142,8 +142,11 @@ export const fetchPersonalizedSpotifyVibe = onCall(
 
         const trackTitle = track.name;
         const artistName = track.artists?.map((a: any) => a.name).join(", ") || "Spotify Vibe Artist";
-        const coverUrl = track.album?.images?.[0]?.url || "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4";
-        const audioUrl = track.preview_url || "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+        const coverUrl = track.album?.images?.[0]?.url || null;
+        const audioUrl = track.preview_url;
+        
+        // If there's no audio URL, we skip seeding it instead of falling back to a mock domain.
+        if (!audioUrl) continue;
         const durationMs = track.duration_ms || 180000;
 
         await executeMutation("SeedTrack", {

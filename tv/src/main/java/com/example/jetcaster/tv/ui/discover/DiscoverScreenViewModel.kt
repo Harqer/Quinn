@@ -52,17 +52,17 @@ class DiscoverScreenViewModel @Inject constructor(
         list.map { it.toPodcastInfo() }
     }
 
-    private val latestEpisodeFlow = flowOf(EpisodeList(emptyList()))
+    private val latestEpisodeFlow = flowOf(emptyList<PlayerEpisode>())
 
     val uiState = combine(
         categoryListFlow,
         selectedCategoryFlow,
         podcastInSelectedCategory,
         latestEpisodeFlow,
-    ) { categoryList, category, podcastList, latestEpisodes ->
+    ) { categoryList: List<CategoryInfo>, category: CategoryInfo?, podcastList: List<PodcastInfo>, latestEpisodes: List<PlayerEpisode> ->
         if (category != null) {
             DiscoverScreenUiState.Ready(
-                CategoryInfoList(categoryList),
+                categoryList,
                 category,
                 podcastList,
                 latestEpisodes,

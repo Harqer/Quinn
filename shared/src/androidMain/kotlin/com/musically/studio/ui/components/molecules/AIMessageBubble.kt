@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for AIMessageBubble.kt
+ */
+
 package com.musically.studio.ui.components.molecules
 
 import androidx.compose.animation.core.*

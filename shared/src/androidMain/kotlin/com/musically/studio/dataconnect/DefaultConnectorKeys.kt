@@ -86,6 +86,16 @@ package com.musically.studio.dataconnect
   }
 
   @kotlinx.serialization.Serializable
+  public data class CoverArtKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
   public data class EpisodeKey(
   
     val id: String,
@@ -106,6 +116,16 @@ package com.musically.studio.dataconnect
   }
 
   @kotlinx.serialization.Serializable
+  public data class JamSessionHistoryKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
   public data class LikedTrackKey(
   
     val userUid: String,
@@ -118,9 +138,33 @@ package com.musically.studio.dataconnect
   }
 
   @kotlinx.serialization.Serializable
+  public data class MusicVideoKey(
+  
+    val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
   public data class PaymentHistoryKey(
   
     val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
+  public data class PlayHistoryKey(
+  
+    val userUid: String,
+  
+    val trackId: String,
+  
+    val playedAt: @kotlinx.serialization.Serializable(with = com.google.firebase.dataconnect.serializers.TimestampSerializer::class) com.google.firebase.Timestamp,
   
   ) {
     
@@ -163,6 +207,18 @@ package com.musically.studio.dataconnect
   public data class TrackKey(
   
     val id: String,
+  
+  ) {
+    
+    
+  }
+
+  @kotlinx.serialization.Serializable
+  public data class UserEpisodeProgressKey(
+  
+    val userUid: String,
+  
+    val episodeId: String,
   
   ) {
     

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for FilterPill.kt
+ */
+
 package com.musically.studio.ui.components.atoms
 
 import androidx.compose.foundation.background

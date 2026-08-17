@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { MaveMessage } from './types';
-import { readSSE } from './core';
 import { logger } from "../../lib/logger";
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useMaveAuth } from './useMaveAuth';
 
 export function useMaveTools(
@@ -13,6 +13,7 @@ export function useMaveTools(
 
   const handleToolCall = useCallback(async (toolCall: { name: string; args?: any; id?: string }) => {
     logger.info("Tool Call Received", toolCall);
+    const functions = getFunctions();
     const baseUrl = getBaseUrl();
     const authToken = await getAuthToken();
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -22,31 +23,24 @@ export function useMaveTools(
       switch (toolCall.name) {
         case 'generate_full_track': {
           const responseId = Date.now().toString();
-          let reasoningText = '';
-          setMessages(prev => [{ id: responseId, text: '', sender: 'mave' as const }, ...prev].slice(0, 15));
+          setMessages(prev => [{ id: responseId, text: 'Generating full track...', sender: 'mave' as const }, ...prev].slice(0, 15));
 
-          for await (const event of readSSE(`${baseUrl}/api/music/lyria/full`, { prompt: toolCall.args?.prompt }, authToken)) {
-            if (event.type === 'reasoning' && event.text) {
-              reasoningText += event.text;
-              setMessages(prev => prev.map(m => m.id === responseId ? { ...m, reasoning: reasoningText } : m));
-            } else if (event.type === 'status' || event.type === 'audio_chunk') {
-              if (event.type === 'status') {
-                 setMessages(prev => prev.map(m => m.id === responseId ? { ...m, text: event.message, isReasoningComplete: true } : m));
-              }
-            } else if (event.type === 'done' && event.audioUrl) {
-              setMessages(prev => prev.map(m => m.id === responseId ? {
-                ...m,
-                text: reasoningText || 'Here is your track!',
-                audioUrl: event.audioUrl,
-                title: event.trackName,
-                voice: event.artistName,
-                type: 'track'
-              } : m));
-              const audio = new Audio(event.audioUrl);
-              audio.play().catch(e => logger.error('Autoplay failed', e));
-            } else if (event.type === 'error') {
-              setMessages(prev => prev.map(m => m.id === responseId ? { ...m, text: `Error: ${event.message}` } : m));
-            }
+          const generateFullTrack = httpsCallable(functions, 'generateFullTrack');
+          const res = await generateFullTrack({ prompt: toolCall.args?.prompt });
+          const data = res.data as any;
+
+          if (data.success && data.audioUrl) {
+            setMessages(prev => prev.map(m => m.id === responseId ? {
+              ...m,
+              text: 'Here is your track!\n\n' + (data.lyrics || ''),
+              audioUrl: data.audioUrl,
+              title: toolCall.args?.prompt,
+              type: 'track'
+            } : m));
+            const audio = new Audio(data.audioUrl);
+            audio.play().catch(e => logger.error('Autoplay failed', e));
+          } else {
+            setMessages(prev => prev.map(m => m.id === responseId ? { ...m, text: `Error: Track generation failed` } : m));
           }
           break;
         }
@@ -86,16 +80,14 @@ export function useMaveTools(
         }
 
         case 'generate_cover_art': {
-          const res = await fetch(`${baseUrl}/api/music/cover`, {
-            method: 'POST', headers,
-            body: JSON.stringify({ prompt: toolCall.args?.prompt, hq: toolCall.args?.hq })
-          });
-          const data = await res.json();
-          if (data.url) {
-            setCoverArtUrl(data.url);
-            setMessages(prev => [{ id: Date.now().toString(), text: 'Cover art updated!', sender: 'mave' as const, coverUrl: data.url, type: 'cover_art' }, ...prev].slice(0, 15));
+          const generateVisualMedia = httpsCallable(functions, 'generateVisualMedia');
+          const res = await generateVisualMedia({ prompt: toolCall.args?.prompt });
+          const data = res.data as any;
+          if (data.success && data.mediaUrl) {
+            setCoverArtUrl(data.mediaUrl);
+            setMessages(prev => [{ id: Date.now().toString(), text: 'Cover art updated!', sender: 'mave' as const, coverUrl: data.mediaUrl, type: 'cover_art' }, ...prev].slice(0, 15));
           } else {
-            throw new Error(data.error || 'Cover art generation failed');
+            throw new Error('Cover art generation failed');
           }
           break;
         }
@@ -124,7 +116,7 @@ export function useMaveTools(
       logger.error('Failed to execute tool', err);
       setMessages(prev => [{ id: Date.now().toString(), text: `Error: Tool execution failed: ${err?.message || 'Unknown error'}`, sender: 'mave' as const }, ...prev].slice(0, 15));
     }
-  }, [getBaseUrl, getAuthToken, setMessages, setCoverArtUrl, setVideoMotionUrl]);
+  }, [setMessages, setCoverArtUrl, setVideoMotionUrl]);
 
   return { handleToolCall };
 }

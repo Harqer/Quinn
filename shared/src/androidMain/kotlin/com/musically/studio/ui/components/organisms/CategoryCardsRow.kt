@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for CategoryCardsRow.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 
 import androidx.compose.foundation.background

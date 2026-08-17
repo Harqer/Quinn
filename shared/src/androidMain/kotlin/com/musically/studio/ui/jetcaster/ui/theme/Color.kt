@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for Color.kt
+ */
+
 /*
  * Copyright 2020 The Android Open Source Project
  *

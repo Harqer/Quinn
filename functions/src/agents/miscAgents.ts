@@ -8,7 +8,6 @@ export const concertAgent = ai.defineTool(
     description: "Searches for concerts based on a query.",
     inputSchema: z.object({
       query: z.string().describe("The search query for concerts."),
-      rapidApiKey: z.string().describe("The RapidAPI key."),
     }),
     outputSchema: z.object({
       result: z.string(),
@@ -16,10 +15,12 @@ export const concertAgent = ai.defineTool(
       message: z.string(),
     }),
   },
-  async (input) => {
+  async (input, options) => {
+    const { rapidApiKey } = options?.context || {};
+    if (!rapidApiKey) throw new Error("Missing auth context (rapidApiKey) for tool execution.");
     const queryParams = new URLSearchParams();
     queryParams.append("q", input.query);
-    const data = await fetchConcerts(queryParams, input.rapidApiKey);
+    const data = await fetchConcerts(queryParams, rapidApiKey);
     return {
       result: "success",
       concerts: data,

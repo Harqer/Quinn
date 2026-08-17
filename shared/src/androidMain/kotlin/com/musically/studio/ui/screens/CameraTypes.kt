@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for CameraTypes.kt
+ */
+
 package com.musically.studio.ui.screens
 
 import androidx.camera.core.AspectRatio

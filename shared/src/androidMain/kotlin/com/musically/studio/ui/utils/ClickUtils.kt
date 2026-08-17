@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for ClickUtils.kt
+ */
+
 package com.musically.studio.ui.utils
 
 import androidx.compose.foundation.LocalIndication

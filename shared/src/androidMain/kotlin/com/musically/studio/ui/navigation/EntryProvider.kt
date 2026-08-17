@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for EntryProvider.kt
+ */
+
 package com.musically.studio.ui.navigation
 
 import androidx.compose.animation.*
@@ -19,6 +24,12 @@ import com.musically.studio.ui.*
 import com.musically.studio.ui.screens.*
 import com.musically.studio.ui.screens.onboarding.*
 import androidx.navigation3.runtime.metadata
+import com.musically.studio.ui.components.organisms.EmptyPaneState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Chat
+import androidx.compose.material.icons.rounded.LibraryMusic
+import androidx.compose.material.icons.rounded.Devices
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -229,11 +240,23 @@ fun maveEntryProvider(
         )
     }
 
+    entry<Route.PlaylistPicker>(
+        metadata = BottomSheetSceneStrategy.bottomSheet()
+    ) { key ->
+        com.musically.studio.ui.screens.PlaylistPickerBottomSheet(
+            trackId = key.trackId,
+            viewModel = viewModel,
+            onDismiss = { navigator.goBack() }
+        )
+    }
+
     entry<Route.Search>(
         metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
-            Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
-                androidx.compose.material3.Text("Search for something", color = androidx.compose.ui.graphics.Color.Gray) 
-            }
+            EmptyPaneState(
+                title = "Search for something",
+                subtitle = "Find your favorite songs, artists, and podcasts",
+                icon = Icons.Rounded.Search
+            )
         }
     ) {
         SearchScreen(
@@ -268,9 +291,11 @@ fun maveEntryProvider(
 
     entry<Route.Chat>(
         metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
-            Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
-                androidx.compose.material3.Text("Chat", color = androidx.compose.ui.graphics.Color.Gray) 
-            }
+            EmptyPaneState(
+                title = "Start a chat",
+                subtitle = "Generate songs or podcasts with AI",
+                icon = Icons.Rounded.Chat
+            )
         }
     ) {
         ChatScreen(
@@ -290,9 +315,11 @@ fun maveEntryProvider(
 
     entry<Route.Library>(
         metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
-            Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
-                androidx.compose.material3.Text("Select an item", color = androidx.compose.ui.graphics.Color.Gray) 
-            }
+            EmptyPaneState(
+                title = "Your Library",
+                subtitle = "Select an album or playlist to start listening",
+                icon = Icons.Rounded.LibraryMusic
+            )
         }
     ) {
         LibraryScreen(
@@ -312,9 +339,11 @@ fun maveEntryProvider(
 
     entry<Route.Devices>(
         metadata = androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.listPane {
-            Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { 
-                androidx.compose.material3.Text("Devices", color = androidx.compose.ui.graphics.Color.Gray) 
-            }
+            EmptyPaneState(
+                title = "Devices",
+                subtitle = "Connect to Meta Wearables",
+                icon = Icons.Rounded.Devices
+            )
         }
     ) {
         DevicesScreen(
@@ -517,7 +546,10 @@ fun maveEntryProvider(
         TrackOptionsBottomSheet(
             trackId = key.trackId,
             viewModel = viewModel,
-            onDismiss = { navigator.goBack() }
+            onDismiss = { navigator.goBack() },
+            onAddToPlaylistClick = { trackId ->
+                navigator.navigate(Route.PlaylistPicker(trackId))
+            }
         )
     }
 

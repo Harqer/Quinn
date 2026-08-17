@@ -1,0 +1,9 @@
+#!/usr/bin/expect -f
+spawn firebase dataconnect:sql:shell
+expect "Type your your SQL query or '.exit' to quit"
+send "DROP TABLE public.ai_preset CASCADE;\n\n"
+expect "Type your your SQL query or '.exit' to quit"
+send "DROP TABLE public.a_i_preset CASCADE;\n\n"
+expect "Type your your SQL query or '.exit' to quit"
+send ".exit\n"
+expect eof

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for MainViewModel.kt
+ */
+
 package com.musically.studio.ui
 
 import android.annotation.SuppressLint
@@ -74,7 +79,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     @param:ApplicationContext internal val context: Context,
-    internal val geminiLiveManager: GeminiLiveManager,
+    val geminiLiveManager: GeminiLiveManager,
     internal val auth: FirebaseAuth,
     internal val rtdb: FirebaseDatabase,
     internal val dataConnectRepository: com.musically.studio.data.repository.DataConnectRepository,
@@ -83,11 +88,22 @@ class MainViewModel @Inject constructor(
 
     internal val playBillingManager = PlayBillingManager(
         context = context,
-        onPurchaseAcknowledged = { _ ->
+        onPurchaseAcknowledged = { productId, purchaseToken ->
             // Optimistic update: re-sync settings so isPremium reflects the new state.
-            // The authoritative DB update happens via the Play Developer Notification webhook
-            // (server-side, not implemented in this client PR — see implementation_plan.md).
             fetchUserSettings()
+            
+            // Invoke the Cloud Function to verify the subscription securely
+            com.google.firebase.functions.FirebaseFunctions.getInstance()
+                .getHttpsCallable("verifyPlaySubscription")
+                .call(mapOf("productId" to productId, "purchaseToken" to purchaseToken))
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        timber.log.Timber.d("verifyPlaySubscription succeeded.")
+                        fetchUserSettings() // Fetch again in case claims have propagated
+                    } else {
+                        timber.log.Timber.e(task.exception, "verifyPlaySubscription failed.")
+                    }
+                }
         }
     )
     val billingProductDetails = playBillingManager.productDetails
@@ -183,23 +199,51 @@ class MainViewModel @Inject constructor(
     internal val _recentTracks = MutableStateFlow<List<MaveTrack>>(emptyList())
     val recentTracks: StateFlow<List<MaveTrack>> = _recentTracks.asStateFlow()
 
-    internal val _isOfflineMode = MutableStateFlow(prefs.getBoolean("offline_mode", false))
+    internal val _isOfflineMode = MutableStateFlow(false)
     val isOfflineMode: StateFlow<Boolean> = _isOfflineMode.asStateFlow()
 
-    internal val _notificationsEnabled = MutableStateFlow(prefs.getBoolean("notifications_enabled", true))
+    internal val _notificationsEnabled = MutableStateFlow(true)
     val notificationsEnabled: StateFlow<Boolean> = _notificationsEnabled.asStateFlow()
 
-    internal val _appsDevicesEnabled = MutableStateFlow(prefs.getBoolean("apps_devices_enabled", true))
+    internal val _appsDevicesEnabled = MutableStateFlow(true)
     val appsDevicesEnabled: StateFlow<Boolean> = _appsDevicesEnabled.asStateFlow()
 
     fun toggleOfflineMode(enabled: Boolean) {
-        prefs.edit { putBoolean("offline_mode", enabled) }
-        _isOfflineMode.value = enabled
+        val currentSettings = _userSettings.value
+        viewModelScope.launch {
+            try {
+                DefaultConnector.instance.upsertUserSettings.execute {
+                    this.theme = currentSettings?.theme ?: "system"
+                    this.parentalControlsEnabled = currentSettings?.parentalControlsEnabled ?: false
+                    this.notificationsEnabled = currentSettings?.notificationsEnabled ?: true
+                    this.appsDevicesEnabled = currentSettings?.appsDevicesEnabled ?: true
+                    this.offlineMode = enabled
+                }
+                _isOfflineMode.value = enabled
+                fetchUserSettings() // Reload
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to update offline mode")
+            }
+        }
     }
 
     fun toggleNotifications(context: Context, enabled: Boolean) {
-        prefs.edit { putBoolean("notifications_enabled", enabled) }
-        _notificationsEnabled.value = enabled
+        val currentSettings = _userSettings.value
+        viewModelScope.launch {
+            try {
+                DefaultConnector.instance.upsertUserSettings.execute {
+                    this.theme = currentSettings?.theme ?: "system"
+                    this.parentalControlsEnabled = currentSettings?.parentalControlsEnabled ?: false
+                    this.notificationsEnabled = enabled
+                    this.appsDevicesEnabled = currentSettings?.appsDevicesEnabled ?: true
+                    this.offlineMode = currentSettings?.offlineMode ?: false
+                }
+                _notificationsEnabled.value = enabled
+                fetchUserSettings() // Reload
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to update notifications")
+            }
+        }
         val reminderManager = com.musically.studio.notifications.NotificationReminderManager(context)
         if (enabled) {
             reminderManager.scheduleDailyReminder()
@@ -215,8 +259,22 @@ class MainViewModel @Inject constructor(
     }
 
     fun toggleAppsDevices(enabled: Boolean) {
-        prefs.edit { putBoolean("apps_devices_enabled", enabled) }
-        _appsDevicesEnabled.value = enabled
+        val currentSettings = _userSettings.value
+        viewModelScope.launch {
+            try {
+                DefaultConnector.instance.upsertUserSettings.execute {
+                    this.theme = currentSettings?.theme ?: "system"
+                    this.parentalControlsEnabled = currentSettings?.parentalControlsEnabled ?: false
+                    this.notificationsEnabled = currentSettings?.notificationsEnabled ?: true
+                    this.appsDevicesEnabled = enabled
+                    this.offlineMode = currentSettings?.offlineMode ?: false
+                }
+                _appsDevicesEnabled.value = enabled
+                fetchUserSettings() // Reload
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to update apps & devices settings")
+            }
+        }
     }
 
     private val gson = Gson()
@@ -535,6 +593,12 @@ class MainViewModel @Inject constructor(
                 val settingsResult = DefaultConnector.instance.getUserSettings.execute()
                 _userSettings.value = settingsResult.data.userSettings
 
+                settingsResult.data.userSettings?.let {
+                    _notificationsEnabled.value = it.notificationsEnabled
+                    _appsDevicesEnabled.value = it.appsDevicesEnabled
+                    _isOfflineMode.value = it.offlineMode
+                }
+
                 // Fetch payment history
                 val historyResult = DefaultConnector.instance.getPaymentHistory.execute()
                 _paymentHistory.value = historyResult.data.paymentHistories
@@ -592,6 +656,9 @@ class MainViewModel @Inject constructor(
                 DefaultConnector.instance.upsertUserSettings.execute {
                     this.theme = theme
                     this.parentalControlsEnabled = currentSettings?.parentalControlsEnabled ?: false
+                    this.notificationsEnabled = currentSettings?.notificationsEnabled ?: true
+                    this.appsDevicesEnabled = currentSettings?.appsDevicesEnabled ?: true
+                    this.offlineMode = currentSettings?.offlineMode ?: false
                 }
                 fetchUserSettings() // Reload
             } catch (e: Exception) {
@@ -607,6 +674,9 @@ class MainViewModel @Inject constructor(
                 DefaultConnector.instance.upsertUserSettings.execute {
                     this.theme = currentSettings?.theme ?: "system"
                     this.parentalControlsEnabled = enabled
+                    this.notificationsEnabled = currentSettings?.notificationsEnabled ?: true
+                    this.appsDevicesEnabled = currentSettings?.appsDevicesEnabled ?: true
+                    this.offlineMode = currentSettings?.offlineMode ?: false
                 }
                 fetchUserSettings() // Reload
             } catch (e: Exception) {
@@ -749,9 +819,7 @@ class MainViewModel @Inject constructor(
                     messages.add(0, ChatMessage(text, false))
                     WearableStreamingService.updateUi(
                         songTitle = _currentPlayingTrack.value?.name ?: "Mave Studio",
-                        geminiResponse = text,
                         coverArtUrl = _currentCoverUrl.value,
-                        isThinking = false,
                         isPlaying = _isPlaying.value
                     )
                 }
@@ -791,6 +859,7 @@ class MainViewModel @Inject constructor(
                                 val functions = com.google.firebase.Firebase.functions
                                 val result = functions.getHttpsCallable("searchConcerts").call(functionArgs).await()
                                 
+                                @Suppress("UNCHECKED_CAST")
                                 val data = result.data as? Map<String, Any>
                                 val jsonResponse = JSONObject(data ?: emptyMap<String, Any>())
                                 
@@ -810,9 +879,16 @@ class MainViewModel @Inject constructor(
                                 args?.keys()?.forEach { key ->
                                     argsMap[key] = args.get(key)
                                 }
+                                if (name == "tweak_instrumentation" || name == "jam_live") {
+                                    val currentUrl = _currentPlayingTrack.value?.audioUrl
+                                    if (currentUrl != null) {
+                                        argsMap["audioUrl"] = currentUrl
+                                    }
+                                }
                                 val result = functions.getHttpsCallable("executeTool").call(
                                     mapOf("name" to name, "args" to argsMap)
                                 ).await()
+                                @Suppress("UNCHECKED_CAST")
                                 val data = result.data as? Map<String, Any>
                                 val jsonResponse = JSONObject(data ?: emptyMap<String, Any>())
                                 geminiLiveManager.sendResponse(call.optString("id", "0"), name, jsonResponse)
@@ -864,6 +940,7 @@ class MainViewModel @Inject constructor(
     fun generateMusicFromCameraImage(imageBase64: String) {
         viewModelScope.launch {
             try {
+                _catalogErrorMessage.value = null
                 _thinkingText.value = "Analyzing visual atmosphere & vibe from camera capture..."
                 val functions = com.google.firebase.Firebase.functions
                 val payload = mapOf(
@@ -874,13 +951,68 @@ class MainViewModel @Inject constructor(
                     )
                 )
                 val result = functions.getHttpsCallable("executeTool").call(payload).await()
-                val data = result.data as? Map<String, Any>
-                val audioUrl = data?.get("audioUrl") as? String ?: (data?.get("result") as? Map<String, Any>)?.get("audioUrl") as? String
+                val rawData = result.data
+                val data: Map<String, Any>? = when (rawData) {
+                    is Map<*, *> -> @Suppress("UNCHECKED_CAST") (rawData as Map<String, Any>)
+                    is String -> {
+                        try {
+                            val json = org.json.JSONObject(rawData)
+                            val map = mutableMapOf<String, Any>()
+                            val keys = json.keys()
+                            while (keys.hasNext()) {
+                                val key = keys.next()
+                                map[key] = json.get(key)
+                            }
+                            map
+                        } catch (e: Exception) {
+                            Timber.e(e, "Failed to parse string response as JSON")
+                            null
+                        }
+                    }
+                    else -> null
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                val resultData = data?.get("result") as? Map<String, Any> ?: data?.get("result")?.let { res ->
+                    if (res is String) {
+                        try {
+                            val json = org.json.JSONObject(res)
+                            val map = mutableMapOf<String, Any>()
+                            val keys = json.keys()
+                            while (keys.hasNext()) {
+                                val key = keys.next()
+                                map[key] = json.get(key)
+                            }
+                            map
+                        } catch (e: Exception) { null }
+                    } else null
+                }
+
+                val audioUrl = data?.get("audioUrl") as? String ?: resultData?.get("audioUrl") as? String
+                var backendCover = data?.get("coverUrl") as? String ?: resultData?.get("coverUrl") as? String
                 
+                val trackId = data?.get("trackId") as? String ?: "cam_${System.currentTimeMillis()}"
+
                 if (audioUrl != null) {
-                    val cover = _currentCoverUrl.value?.ifEmpty { "https://picsum.photos/400/400" } ?: "https://picsum.photos/400/400"
+                    if (backendCover.isNullOrEmpty()) {
+                        try {
+                            _thinkingText.value = "Generating missing cover art..."
+                            val coverResult = functions.getHttpsCallable("executeTool").call(
+                                mapOf("name" to "generate_cover_image", "args" to mapOf("prompt" to "A cinematic song inspired by the visual vibe and atmosphere of the captured scene", "trackId" to trackId))
+                            ).await()
+                            
+                            val rawCover = coverResult.data
+                            val coverData: Map<String, Any>? = if (rawCover is Map<*, *>) @Suppress("UNCHECKED_CAST") (rawCover as Map<String, Any>) else null
+                            val coverResData = coverData?.get("result") as? Map<String, Any>
+                            backendCover = coverData?.get("imageUrl") as? String ?: coverResData?.get("imageUrl") as? String
+                        } catch (e: Exception) {
+                            Timber.e(e, "Failed to generate fallback cover image")
+                        }
+                    }
+
+                    val cover = _currentCoverUrl.value?.ifEmpty { backendCover } ?: backendCover ?: ""
                     val newTrack = MaveTrack(
-                        id = "cam_${System.currentTimeMillis()}",
+                        id = trackId,
                         name = "Camera Capture Vibe Track",
                         artists = listOf(com.musically.studio.network.MaveArtist(id = "lyria_ai", name = "Lyria AI")),
                         album = com.musically.studio.network.MaveAlbum(
@@ -893,11 +1025,19 @@ class MainViewModel @Inject constructor(
                     )
                     _tracks.value = _tracks.value + newTrack
                     playTrack(newTrack)
+                } else {
+                    _catalogErrorMessage.value = "We couldn't generate audio from your image. Please try a different scene."
                 }
                 _thinkingText.value = ""
             } catch (e: Exception) {
                 Timber.e(e, "Failed to generate music from camera image")
                 _thinkingText.value = ""
+                val errorMessage = when {
+                    e.message?.contains("429") == true -> "You've hit the generation limit. Try again later."
+                    e.message?.contains("503") == true -> "The generation service is temporarily offline."
+                    else -> "We couldn't process your camera image. Please try again."
+                }
+                _catalogErrorMessage.value = errorMessage
             }
         }
     }

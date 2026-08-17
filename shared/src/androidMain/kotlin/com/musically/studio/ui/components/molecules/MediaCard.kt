@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for MediaCard.kt
+ */
+
 package com.musically.studio.ui.components.molecules
 
 import androidx.compose.foundation.background
@@ -16,12 +21,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.musically.studio.ui.utils.debouncedClickable
+import com.musically.studio.ui.utils.shimmerEffect
 
 @Composable
 fun MediaCard(
     title: String,
     subtitle: String,
     imageUrl: String?,
+    isLoading: Boolean = false,
     onClick: () -> Unit
 ) {
     Column(
@@ -34,8 +41,9 @@ fun MediaCard(
                 .size(140.dp)
                 .clip(MaterialTheme.shapes.small)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
+                .shimmerEffect(isLoading)
         ) {
-            if (imageUrl != null) {
+            if (imageUrl != null && !isLoading) {
                 AsyncImage(
                     model = imageUrl,
                     contentDescription = title,

@@ -111,6 +111,9 @@ query GetUserSettings @auth(level: USER) {
     isPremium
     theme
     parentalControlsEnabled
+    notificationsEnabled
+    appsDevicesEnabled
+    offlineMode
     stripeCustomerId
     user {
       displayName
@@ -187,43 +190,7 @@ query GetBookmarkedTracks @auth(level: USER) {
   }
 }
 
-query GetUserCameraCaptures @auth(level: USER) {
-  cameraCaptures(
-    where: { user: { uid: { eq_expr: "auth.uid" } } },
-    orderBy: [{ createdAt: DESC }]
-  ) {
-    id
-    imageUrl
-    videoUrl
-    environmentData
-    createdAt
-    generatedTrack {
-      id
-      title
-      coverUrl
-      audioUrl
-    }
-  }
-}
 
-query GetUserVideoDigestions @auth(level: USER) {
-  videoDigestions(
-    where: { user: { uid: { eq_expr: "auth.uid" } } },
-    orderBy: [{ createdAt: DESC }]
-  ) {
-    id
-    videoUrl
-    extractedAudioUrl
-    atmosphereSummary
-    createdAt
-    generatedTrack {
-      id
-      title
-      coverUrl
-      audioUrl
-    }
-  }
-}
 
 query GetPlaylistTracks($playlistId: String!) @auth(level: PUBLIC) {
   playlistEntries(where: { playlist: { id: { eq: $playlistId } } }, orderBy: [{ orderIndex: ASC }]) {
@@ -313,17 +280,31 @@ query SearchTracks($query: String!) @auth(level: PUBLIC) {
   }
 }
 
-# -------------------------------------
-# CHAT & AI
-# -------------------------------------
-query ListChatMessages($userId: String!) @auth(level: USER) {
-  chatMessages(where: { user: { uid: { eq: $userId } } }, orderBy: [{ createdAt: ASC }]) {
+query SearchPodcasts($query: String!) @auth(level: PUBLIC) {
+  shows(where: { title: { contains: $query } }) {
     id
-    sender
-    text
-    createdAt
+    title
+    publisher
+    coverUrl
+    description
   }
 }
+
+query SearchAudiobooks($query: String!) @auth(level: PUBLIC) {
+  audiobooks(where: { title: { contains: $query } }) {
+    id
+    title
+    author {
+      id
+      name
+    }
+    narrator
+    coverUrl
+    totalDurationMs
+  }
+}
+
+
 
 # -------------------------------------
 # PREMIUM & APP CONTENT

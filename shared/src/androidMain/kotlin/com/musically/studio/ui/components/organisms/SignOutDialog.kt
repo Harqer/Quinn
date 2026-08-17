@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for SignOutDialog.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 import androidx.compose.material3.MaterialTheme
 

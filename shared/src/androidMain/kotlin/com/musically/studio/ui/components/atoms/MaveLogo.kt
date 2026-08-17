@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for MaveLogo.kt
+ */
+
 package com.musically.studio.ui.components.atoms
 
 import androidx.compose.foundation.Image

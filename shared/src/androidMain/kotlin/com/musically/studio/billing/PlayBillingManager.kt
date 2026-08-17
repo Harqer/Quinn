@@ -29,7 +29,7 @@ import timber.log.Timber
 class PlayBillingManager(
     private val context: Context,
     /** Invoked on the calling thread whenever a new purchase is acknowledged successfully. */
-    private val onPurchaseAcknowledged: (productId: String) -> Unit = {},
+    private val onPurchaseAcknowledged: (productId: String, purchaseToken: String) -> Unit = { _, _ -> },
 ) : PurchasesUpdatedListener {
 
     private val billingClient = BillingClient.newBuilder(context)
@@ -190,7 +190,7 @@ class PlayBillingManager(
                 Timber.d("Purchase acknowledged successfully for token ${purchase.purchaseToken.take(10)}... productId: $productId")
                 if (productId != null) {
                     _currentProductId.value = productId
-                    onPurchaseAcknowledged(productId)
+                    onPurchaseAcknowledged(productId, purchase.purchaseToken)
                 }
             } else {
                 Timber.e("Acknowledgement failed: ${billingResult.debugMessage}")

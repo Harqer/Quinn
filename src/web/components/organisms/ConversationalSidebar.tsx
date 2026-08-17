@@ -8,8 +8,10 @@ interface ConversationalSidebarProps {
   messages: any[];
   thinkingText: string | null;
   showToast: (msg: string) => void;
-  handleAction: (action: 'like' | 'bookmark', trackId?: string) => void;
-  warp: any;
+  handleAction?: (action: 'like' | 'bookmark', trackId?: string) => void;
+  warp?: any;
+  onWarp?: (params: { bpm?: number; density?: number; }) => void;
+  mode?: any;
 }
 
 export const ConversationalSidebar: React.FC<ConversationalSidebarProps> = ({
@@ -17,7 +19,10 @@ export const ConversationalSidebar: React.FC<ConversationalSidebarProps> = ({
   thinkingText,
   showToast,
   handleAction,
-  warp
+  warp,
+  onWarp,
+  mode
+
 }) => {
   const { t } = useTranslation();
 

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for POVView.kt
+ */
+
 package com.musically.studio.ui.components
 
 import android.graphics.BitmapFactory

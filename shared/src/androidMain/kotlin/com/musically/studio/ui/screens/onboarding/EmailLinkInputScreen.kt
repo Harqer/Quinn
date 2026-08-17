@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for EmailLinkInputScreen.kt
+ */
+
 package com.musically.studio.ui.screens.onboarding
 import androidx.compose.material3.MaterialTheme
 

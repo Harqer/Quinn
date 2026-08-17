@@ -8,7 +8,7 @@ interface LiveSessionInputProps {
   showCamera: boolean;
   isRecording: boolean;
   onSend: () => void;
-  onToggleCamera: () => void;
+  onCameraToggle: () => void;
   onMicToggle: () => void;
 }
 
@@ -19,17 +19,18 @@ export const LiveSessionInput: React.FC<LiveSessionInputProps> = ({
   showCamera,
   isRecording,
   onSend,
-  onToggleCamera,
+  onCameraToggle,
   onMicToggle
 }) => {
   return (
     <div className="bg-surface-container border-t border-white/5 p-3 px-4 flex items-center gap-2 shrink-0">
-      <button 
-        onClick={onToggleCamera}
-        className={`w-10 h-10 flex items-center justify-center transition-colors ${showCamera ? 'text-primary' : 'text-secondary hover:text-white'}`}
-      >
-        <Icon name="camera_alt" size="xl" />
-      </button>
+        <button 
+          onClick={onCameraToggle}
+          className={`p-3 rounded-full shrink-0 transition-colors ${showCamera ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface'}`}
+          aria-label="Toggle Camera"
+        >
+          <Icon name={showCamera ? "videocam" : "videocam_off"} />
+        </button>
       <div className="flex-1 bg-surface rounded-full flex items-center px-4 py-2 border border-white/10 focus-within:border-primary transition-colors">
         <input
           type="text"

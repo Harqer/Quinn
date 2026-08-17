@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for MaveCarousel.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 
 import androidx.compose.foundation.layout.*

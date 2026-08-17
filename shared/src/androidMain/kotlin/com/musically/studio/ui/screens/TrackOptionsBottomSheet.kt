@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for TrackOptionsBottomSheet.kt
+ */
+
 package com.musically.studio.ui.screens
 import androidx.compose.material3.MaterialTheme
 
@@ -26,7 +31,8 @@ import com.musically.studio.ui.utils.debouncedClickable
 fun TrackOptionsBottomSheet(
     trackId: String,
     viewModel: MainViewModel,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onAddToPlaylistClick: (String) -> Unit
 ) {
     val tracks by viewModel.tracks.collectAsState()
     val context = LocalContext.current
@@ -52,7 +58,7 @@ fun TrackOptionsBottomSheet(
                     headlineContent = { Text(headlineAdd, color = MaterialTheme.colorScheme.onSurface) },
                     leadingContent = { Icon(addIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                     modifier = Modifier.debouncedClickable { 
-                        viewModel.addToPlaylist(track.id)
+                        onAddToPlaylistClick(track.id)
                         onDismiss()
                     }
                 )
@@ -96,7 +102,7 @@ fun TrackOptionsBottomSheet(
                     headlineContent = { Text(headlineDownload, color = MaterialTheme.colorScheme.onSurface) },
                     leadingContent = { Icon(downloadIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                     modifier = Modifier.debouncedClickable {
-                        viewModel.downloadTrack(track.id)
+                        viewModel.downloadTrack(track.id, context)
                         onDismiss()
                     }
                 )

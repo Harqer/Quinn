@@ -60,6 +60,8 @@ public interface GetEpisodeQuery :
   
     val audioUrl: String,
   
+    val coverUrl: String?,
+  
     val show: Show,
   
   ) {

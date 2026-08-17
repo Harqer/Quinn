@@ -29,6 +29,12 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val createCameraCapture: CreateCameraCaptureMutation
   
+    public val createCoverArt: CreateCoverArtMutation
+  
+    public val createJamSessionHistory: CreateJamSessionHistoryMutation
+  
+    public val createMusicVideo: CreateMusicVideoMutation
+  
     public val createPlaylist: CreatePlaylistMutation
   
     public val createPodcast: CreatePodcastMutation
@@ -51,11 +57,15 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val getCommunityTracks: GetCommunityTracksQuery
   
+    public val getCoverArtForTrack: GetCoverArtForTrackQuery
+  
     public val getEpisode: GetEpisodeQuery
   
     public val getEpisodesForShow: GetEpisodesForShowQuery
   
     public val getLikedTracks: GetLikedTracksQuery
+  
+    public val getMusicVideoForTrack: GetMusicVideoForTrackQuery
   
     public val getPaymentHistory: GetPaymentHistoryQuery
   
@@ -95,9 +105,17 @@ public interface DefaultConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val recordPayment: RecordPaymentMutation
   
+    public val recordPlay: RecordPlayMutation
+  
     public val removeBookmarkedTrack: RemoveBookmarkedTrackMutation
   
     public val removeLikedTrack: RemoveLikedTrackMutation
+  
+    public val saveUserEpisodeProgress: SaveUserEpisodeProgressMutation
+  
+    public val searchAudiobooks: SearchAudiobooksQuery
+  
+    public val searchPodcasts: SearchPodcastsQuery
   
     public val searchTracks: SearchTracksQuery
   
@@ -192,6 +210,18 @@ private class DefaultConnectorImpl(
       CreateCameraCaptureMutationImpl(this)
     }
   
+    override val createCoverArt by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      CreateCoverArtMutationImpl(this)
+    }
+  
+    override val createJamSessionHistory by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      CreateJamSessionHistoryMutationImpl(this)
+    }
+  
+    override val createMusicVideo by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      CreateMusicVideoMutationImpl(this)
+    }
+  
     override val createPlaylist by lazy(LazyThreadSafetyMode.PUBLICATION) {
       CreatePlaylistMutationImpl(this)
     }
@@ -236,6 +266,10 @@ private class DefaultConnectorImpl(
       GetCommunityTracksQueryImpl(this)
     }
   
+    override val getCoverArtForTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetCoverArtForTrackQueryImpl(this)
+    }
+  
     override val getEpisode by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetEpisodeQueryImpl(this)
     }
@@ -246,6 +280,10 @@ private class DefaultConnectorImpl(
   
     override val getLikedTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
       GetLikedTracksQueryImpl(this)
+    }
+  
+    override val getMusicVideoForTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      GetMusicVideoForTrackQueryImpl(this)
     }
   
     override val getPaymentHistory by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -324,12 +362,28 @@ private class DefaultConnectorImpl(
       RecordPaymentMutationImpl(this)
     }
   
+    override val recordPlay by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      RecordPlayMutationImpl(this)
+    }
+  
     override val removeBookmarkedTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
       RemoveBookmarkedTrackMutationImpl(this)
     }
   
     override val removeLikedTrack by lazy(LazyThreadSafetyMode.PUBLICATION) {
       RemoveLikedTrackMutationImpl(this)
+    }
+  
+    override val saveUserEpisodeProgress by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      SaveUserEpisodeProgressMutationImpl(this)
+    }
+  
+    override val searchAudiobooks by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      SearchAudiobooksQueryImpl(this)
+    }
+  
+    override val searchPodcasts by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      SearchPodcastsQueryImpl(this)
     }
   
     override val searchTracks by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -405,14 +459,19 @@ private class DefaultConnectorImpl(
         bookmarkTrack,
         createAudiobook,
         createCameraCapture,
+        createCoverArt,
+        createJamSessionHistory,
+        createMusicVideo,
         createPlaylist,
         createPodcast,
         createTrack,
         createVideoDigestion,
         likeTrack,
         recordPayment,
+        recordPlay,
         removeBookmarkedTrack,
         removeLikedTrack,
+        saveUserEpisodeProgress,
         seedAiPreset,
         seedAuthor,
         seedChapter,
@@ -440,9 +499,11 @@ private class DefaultConnectorImpl(
         getCategories,
         getCategoryTracks,
         getCommunityTracks,
+        getCoverArtForTrack,
         getEpisode,
         getEpisodesForShow,
         getLikedTracks,
+        getMusicVideoForTrack,
         getPaymentHistory,
         getPlaylistTracks,
         getPlaylists,
@@ -460,6 +521,8 @@ private class DefaultConnectorImpl(
         listHomeSections,
         listInstruments,
         listSubscriptionPlans,
+        searchAudiobooks,
+        searchPodcasts,
         searchTracks,
         
     )
@@ -671,6 +734,51 @@ private class CreateCameraCaptureMutationImpl(
   )
 
 
+private class CreateCoverArtMutationImpl(
+  connector: DefaultConnector
+):
+  CreateCoverArtMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      CreateCoverArtMutation.Data,
+      CreateCoverArtMutation.Variables
+  >(
+    connector,
+    CreateCoverArtMutation.Companion.operationName,
+    CreateCoverArtMutation.Companion.dataDeserializer,
+    CreateCoverArtMutation.Companion.variablesSerializer,
+  )
+
+
+private class CreateJamSessionHistoryMutationImpl(
+  connector: DefaultConnector
+):
+  CreateJamSessionHistoryMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      CreateJamSessionHistoryMutation.Data,
+      CreateJamSessionHistoryMutation.Variables
+  >(
+    connector,
+    CreateJamSessionHistoryMutation.Companion.operationName,
+    CreateJamSessionHistoryMutation.Companion.dataDeserializer,
+    CreateJamSessionHistoryMutation.Companion.variablesSerializer,
+  )
+
+
+private class CreateMusicVideoMutationImpl(
+  connector: DefaultConnector
+):
+  CreateMusicVideoMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      CreateMusicVideoMutation.Data,
+      CreateMusicVideoMutation.Variables
+  >(
+    connector,
+    CreateMusicVideoMutation.Companion.operationName,
+    CreateMusicVideoMutation.Companion.dataDeserializer,
+    CreateMusicVideoMutation.Companion.variablesSerializer,
+  )
+
+
 private class CreatePlaylistMutationImpl(
   connector: DefaultConnector
 ):
@@ -836,6 +944,21 @@ private class GetCommunityTracksQueryImpl(
   )
 
 
+private class GetCoverArtForTrackQueryImpl(
+  connector: DefaultConnector
+):
+  GetCoverArtForTrackQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetCoverArtForTrackQuery.Data,
+      GetCoverArtForTrackQuery.Variables
+  >(
+    connector,
+    GetCoverArtForTrackQuery.Companion.operationName,
+    GetCoverArtForTrackQuery.Companion.dataDeserializer,
+    GetCoverArtForTrackQuery.Companion.variablesSerializer,
+  )
+
+
 private class GetEpisodeQueryImpl(
   connector: DefaultConnector
 ):
@@ -878,6 +1001,21 @@ private class GetLikedTracksQueryImpl(
     GetLikedTracksQuery.Companion.operationName,
     GetLikedTracksQuery.Companion.dataDeserializer,
     GetLikedTracksQuery.Companion.variablesSerializer,
+  )
+
+
+private class GetMusicVideoForTrackQueryImpl(
+  connector: DefaultConnector
+):
+  GetMusicVideoForTrackQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      GetMusicVideoForTrackQuery.Data,
+      GetMusicVideoForTrackQuery.Variables
+  >(
+    connector,
+    GetMusicVideoForTrackQuery.Companion.operationName,
+    GetMusicVideoForTrackQuery.Companion.dataDeserializer,
+    GetMusicVideoForTrackQuery.Companion.variablesSerializer,
   )
 
 
@@ -1166,6 +1304,21 @@ private class RecordPaymentMutationImpl(
   )
 
 
+private class RecordPlayMutationImpl(
+  connector: DefaultConnector
+):
+  RecordPlayMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      RecordPlayMutation.Data,
+      RecordPlayMutation.Variables
+  >(
+    connector,
+    RecordPlayMutation.Companion.operationName,
+    RecordPlayMutation.Companion.dataDeserializer,
+    RecordPlayMutation.Companion.variablesSerializer,
+  )
+
+
 private class RemoveBookmarkedTrackMutationImpl(
   connector: DefaultConnector
 ):
@@ -1193,6 +1346,51 @@ private class RemoveLikedTrackMutationImpl(
     RemoveLikedTrackMutation.Companion.operationName,
     RemoveLikedTrackMutation.Companion.dataDeserializer,
     RemoveLikedTrackMutation.Companion.variablesSerializer,
+  )
+
+
+private class SaveUserEpisodeProgressMutationImpl(
+  connector: DefaultConnector
+):
+  SaveUserEpisodeProgressMutation,
+  DefaultConnectorGeneratedMutationImpl<
+      SaveUserEpisodeProgressMutation.Data,
+      SaveUserEpisodeProgressMutation.Variables
+  >(
+    connector,
+    SaveUserEpisodeProgressMutation.Companion.operationName,
+    SaveUserEpisodeProgressMutation.Companion.dataDeserializer,
+    SaveUserEpisodeProgressMutation.Companion.variablesSerializer,
+  )
+
+
+private class SearchAudiobooksQueryImpl(
+  connector: DefaultConnector
+):
+  SearchAudiobooksQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      SearchAudiobooksQuery.Data,
+      SearchAudiobooksQuery.Variables
+  >(
+    connector,
+    SearchAudiobooksQuery.Companion.operationName,
+    SearchAudiobooksQuery.Companion.dataDeserializer,
+    SearchAudiobooksQuery.Companion.variablesSerializer,
+  )
+
+
+private class SearchPodcastsQueryImpl(
+  connector: DefaultConnector
+):
+  SearchPodcastsQuery,
+  DefaultConnectorGeneratedQueryImpl<
+      SearchPodcastsQuery.Data,
+      SearchPodcastsQuery.Variables
+  >(
+    connector,
+    SearchPodcastsQuery.Companion.operationName,
+    SearchPodcastsQuery.Companion.dataDeserializer,
+    SearchPodcastsQuery.Companion.variablesSerializer,
   )
 
 

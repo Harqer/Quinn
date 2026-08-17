@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for MaveBottomBar.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 
 import androidx.annotation.FloatRange

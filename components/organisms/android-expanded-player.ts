@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: UI Component for android-expanded-player.ts
+ */
+
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { renderAndroidExpandedPlayerStyles } from './renderAndroidExpandedPlayer.styles';
@@ -8,17 +13,33 @@ export class AndroidExpandedPlayer extends LitElement {
 
   @property({ type: String }) androidActiveSongTitle = "";
   @property({ type: String }) androidActiveSongArtist = "";
-  @property({ type: String }) androidActiveSongCover = "";
+  @property({ type: String }) androidActiveSongImage = "default_album_cover";
   @property({ type: Number }) androidSongProgress = 0;
+  @property({ type: Number }) androidSongDuration = 240;
   @property({ type: Boolean }) isAndroidPlaying = false;
-  @property({ type: Array }) androidLikedSongs = [];
+  @property({ type: Boolean }) isAndroidPlayerExpanded = true;
+  @property({ type: Boolean }) isAndroidShuffleEnabled = false;
+  @property({ type: Boolean }) isAndroidRepeatEnabled = false;
+  @property({ type: Boolean }) isAndroidLyricsMoreOpen = false;
+  @property({ type: Array }) androidLikedSongs: string[] = [];
   
   private toggleLikeSong(title: string) { this.dispatchEvent(new CustomEvent("toggle-like", { detail: title, bubbles: true, composed: true })); }
   private playPreviousTrack() { this.dispatchEvent(new CustomEvent("play-previous", { bubbles: true, composed: true })); }
   private toggleAndroidPlayPause() { this.dispatchEvent(new CustomEvent("toggle-play", { bubbles: true, composed: true })); }
   private playNextTrack() { this.dispatchEvent(new CustomEvent("play-next", { bubbles: true, composed: true })); }
   private closeAndroidExpandedPlayer() { this.dispatchEvent(new CustomEvent("close-player", { bubbles: true, composed: true })); }
-  private openAndroidOptionsMenu() { this.dispatchEvent(new CustomEvent("open-options", { bubbles: true, composed: true })); }
+  private openOptionsMenu(title: string, artist: string, image: string) { this.dispatchEvent(new CustomEvent("open-options", { detail: { title, artist, image }, bubbles: true, composed: true })); }
+  private handleSeekbarClick(e: MouseEvent) { this.dispatchEvent(new CustomEvent("seek", { detail: e, bubbles: true, composed: true })); }
+  private shareActiveSong() { this.dispatchEvent(new CustomEvent("share-song", { bubbles: true, composed: true })); }
+  
+  private getLyricsForActiveSong() {
+    return [
+      "Waitin' on a generative miracle",
+      "Streaming from the cloud",
+      "I hear the beat drop in my glasses",
+      "I'm singing it out loud!"
+    ];
+  }
 
   render() {
     
@@ -53,7 +74,7 @@ export class AndroidExpandedPlayer extends LitElement {
         </div>
 
         <!-- Album Art Box -->
-        <div class="expanded-player-art-container">
+        <div class="expanded-player-art-container ${this.isAndroidPlaying ? 'playing-pulse' : ''}">
           ${this.androidActiveSongImage === "default_album_cover" ? html`
             <div style="background: #e3001a; width: 220px; height: 220px; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);">
               <div style="position: absolute; top: 18px; left: 18px; color: #fcd34d; font-size: 9px; font-weight: 900; letter-spacing: 0.5px;">GENERATIVE</div>
@@ -98,8 +119,8 @@ export class AndroidExpandedPlayer extends LitElement {
             <span class="material-icons-round">skip_previous</span>
           </button>
           
-          <button class="expanded-player-play-btn" @click=${this.togglePlayback}>
-            <span class="material-icons-round">${this.playbackState === "playing" ? "pause" : "play_arrow"}</span>
+          <button class="expanded-player-play-btn" @click=${this.toggleAndroidPlayPause}>
+            <span class="material-icons-round">${this.isAndroidPlaying ? "pause" : "play_arrow"}</span>
           </button>
           
           <button class="expanded-player-control-btn" @click=${this.playNextTrack}>
@@ -113,7 +134,7 @@ export class AndroidExpandedPlayer extends LitElement {
 
         <!-- Accessories Row -->
         <div class="expanded-player-accessories-row">
-          <div class="expanded-player-device-selector" @click=${() => this.dispatchError("Connected to Beats Pill via Wearables Bluetooth sync.")}>
+          <div class="expanded-player-device-selector" @click=${() => this.dispatchEvent(new CustomEvent('device-selector', { bubbles: true, composed: true }))}>
             <span class="material-icons-round">bluetooth_audio</span>
             <span>BEATSPILL+</span>
           </div>
@@ -122,7 +143,7 @@ export class AndroidExpandedPlayer extends LitElement {
             <button class="expanded-player-control-btn" style="padding: 4px;" @click=${this.shareActiveSong}>
               <span class="material-icons-round" style="font-size: 20px !important;">share</span>
             </button>
-            <button class="expanded-player-control-btn" style="padding: 4px;" @click=${() => this.dispatchError("Opening queue details...")}>
+            <button class="expanded-player-control-btn" style="padding: 4px;" @click=${() => this.dispatchEvent(new CustomEvent('open-queue', { bubbles: true, composed: true }))}>
               <span class="material-icons-round" style="font-size: 20px !important;">queue_music</span>
             </button>
           </div>

@@ -158,6 +158,9 @@ export const PodcastGeneratorScreen: React.FC = () => {
         <PodcastResultCard 
           podcastResult={podcastResult} 
           prompt={prompt} 
+          handleAction={(action, id) => console.log('Action:', action, id)}
+          setCurrentTrack={setCurrentTrack}
+          setIsPlaying={setIsPlaying}
         />
       )}
     </div>

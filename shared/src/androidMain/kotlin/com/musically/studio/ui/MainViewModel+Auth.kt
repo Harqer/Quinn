@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for MainViewModel+Auth.kt
+ */
+
 @file:kotlin.OptIn(androidx.credentials.ExperimentalDigitalCredentialApi::class)
 package com.musically.studio.ui
 

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for MaveHomeTopBar.kt
+ */
+
 package com.musically.studio.ui.components.organisms
 
 import androidx.compose.foundation.background

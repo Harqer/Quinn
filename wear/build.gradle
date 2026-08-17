@@ -41,15 +41,16 @@ dependencies {
     implementation libs.androidx.activity.compose
     implementation libs.androidx.core.splashscreen
 
-    implementation libs.androidx.wear.compose.material
+    // implementation libs.androidx.wear.compose.material
+    implementation libs.androidx.wear.compose.material3
     implementation libs.androidx.compose.material3
     implementation libs.kotlinx.collections.immutable
     implementation libs.androidx.wear.compose.foundation
 
-    implementation libs.horologist.media.ui
+    // implementation libs.horologist.media.ui
     implementation libs.horologist.media.uimaterial3
     implementation libs.horologist.media.ui.model
-    implementation libs.horologist.audio.ui
+    // implementation libs.horologist.audio.ui
     implementation libs.horologist.audio.uimaterial3
     implementation libs.horologist.audio.ui.model
     implementation libs.horologist.media.data

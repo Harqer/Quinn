@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for SelectDeviceHeader.kt
+ */
+
 package com.musically.studio.ui.components.molecules
 
 import android.content.Context

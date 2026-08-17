@@ -46,6 +46,12 @@ public interface GetUserSettingsQuery :
   
     val parentalControlsEnabled: Boolean,
   
+    val notificationsEnabled: Boolean,
+  
+    val appsDevicesEnabled: Boolean,
+  
+    val offlineMode: Boolean,
+  
     val stripeCustomerId: String?,
   
     val user: User,

@@ -175,6 +175,20 @@ exports.bookmarkTrack = function bookmarkTrack(dcOrVars, vars) {
 }
 ;
 
+const recordPlayRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'RecordPlay', inputVars);
+}
+recordPlayRef.operationName = 'RecordPlay';
+exports.recordPlayRef = recordPlayRef;
+
+exports.recordPlay = function recordPlay(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(recordPlayRef(dcInstance, inputVars));
+}
+;
+
 const removeBookmarkedTrackRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -396,6 +410,62 @@ exports.seedInstrumentRef = seedInstrumentRef;
 exports.seedInstrument = function seedInstrument(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
   return executeMutation(seedInstrumentRef(dcInstance, inputVars));
+}
+;
+
+const createCoverArtRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateCoverArt', inputVars);
+}
+createCoverArtRef.operationName = 'CreateCoverArt';
+exports.createCoverArtRef = createCoverArtRef;
+
+exports.createCoverArt = function createCoverArt(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createCoverArtRef(dcInstance, inputVars));
+}
+;
+
+const createMusicVideoRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateMusicVideo', inputVars);
+}
+createMusicVideoRef.operationName = 'CreateMusicVideo';
+exports.createMusicVideoRef = createMusicVideoRef;
+
+exports.createMusicVideo = function createMusicVideo(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createMusicVideoRef(dcInstance, inputVars));
+}
+;
+
+const createJamSessionHistoryRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateJamSessionHistory', inputVars);
+}
+createJamSessionHistoryRef.operationName = 'CreateJamSessionHistory';
+exports.createJamSessionHistoryRef = createJamSessionHistoryRef;
+
+exports.createJamSessionHistory = function createJamSessionHistory(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createJamSessionHistoryRef(dcInstance, inputVars));
+}
+;
+
+const saveUserEpisodeProgressRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SaveUserEpisodeProgress', inputVars);
+}
+saveUserEpisodeProgressRef.operationName = 'SaveUserEpisodeProgress';
+exports.saveUserEpisodeProgressRef = saveUserEpisodeProgressRef;
+
+exports.saveUserEpisodeProgress = function saveUserEpisodeProgress(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(saveUserEpisodeProgressRef(dcInstance, inputVars));
 }
 ;
 
@@ -654,6 +724,36 @@ exports.searchTracks = function searchTracks(dcOrVars, varsOrOptions, options) {
 }
 ;
 
+const searchPodcastsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'SearchPodcasts', inputVars);
+}
+searchPodcastsRef.operationName = 'SearchPodcasts';
+exports.searchPodcastsRef = searchPodcastsRef;
+
+exports.searchPodcasts = function searchPodcasts(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(searchPodcastsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const searchAudiobooksRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'SearchAudiobooks', inputVars);
+}
+searchAudiobooksRef.operationName = 'SearchAudiobooks';
+exports.searchAudiobooksRef = searchAudiobooksRef;
+
+exports.searchAudiobooks = function searchAudiobooks(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(searchAudiobooksRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
 const listChatMessagesRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -816,5 +916,35 @@ exports.listInstruments = function listInstruments(dcOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
   return executeQuery(listInstrumentsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getCoverArtForTrackRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetCoverArtForTrack', inputVars);
+}
+getCoverArtForTrackRef.operationName = 'GetCoverArtForTrack';
+exports.getCoverArtForTrackRef = getCoverArtForTrackRef;
+
+exports.getCoverArtForTrack = function getCoverArtForTrack(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getCoverArtForTrackRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getMusicVideoForTrackRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetMusicVideoForTrack', inputVars);
+}
+getMusicVideoForTrackRef.operationName = 'GetMusicVideoForTrack';
+exports.getMusicVideoForTrackRef = getMusicVideoForTrackRef;
+
+exports.getMusicVideoForTrack = function getMusicVideoForTrack(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getMusicVideoForTrackRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;

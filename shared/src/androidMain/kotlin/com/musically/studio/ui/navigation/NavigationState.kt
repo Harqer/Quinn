@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for NavigationState.kt
+ */
+
 package com.musically.studio.ui.navigation
 
 import androidx.compose.runtime.Composable

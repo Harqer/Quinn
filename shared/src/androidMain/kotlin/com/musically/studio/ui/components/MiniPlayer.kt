@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for MiniPlayer.kt
+ */
+
 package com.musically.studio.ui.components
 import androidx.compose.material3.MaterialTheme
 

@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for MainViewModel+Catalog.kt
+ */
+
 package com.musically.studio.ui
 
 import androidx.lifecycle.viewModelScope
@@ -7,6 +12,8 @@ import com.musically.studio.network.MaveAlbum
 import com.musically.studio.network.MaveArtist
 import com.musically.studio.network.MaveImage
 
+import kotlinx.coroutines.flow.combine
+
 fun MainViewModel.searchCatalog(query: String) {
     if (query.isBlank()) {
         _searchResults.value = emptyList()
@@ -14,9 +21,12 @@ fun MainViewModel.searchCatalog(query: String) {
     }
     viewModelScope.launch {
         _isLoading.value = true
-        dataConnectRepository.searchTracks(query).collect { results ->
-            // Map the DataConnect result type to MaveTrack
-            val mappedResults = results.map { item ->
+        combine(
+            dataConnectRepository.searchTracks(query),
+            dataConnectRepository.searchPodcasts(query),
+            dataConnectRepository.searchAudiobooks(query)
+        ) { tracks, podcasts, audiobooks ->
+            val mappedTracks = tracks.map { item ->
                 MaveTrack(
                     id = item.id,
                     name = item.title,
@@ -42,7 +52,37 @@ fun MainViewModel.searchCatalog(query: String) {
                     audioUrl = item.audioUrl ?: ""
                 )
             }
-            _searchResults.value = mappedResults
+            val mappedPodcasts = podcasts.map { item ->
+                MaveTrack(
+                    id = item.id,
+                    name = item.title,
+                    album = MaveAlbum(
+                        id = item.id,
+                        name = "Podcast",
+                        artists = listOf(MaveArtist(id = "publisher", name = item.publisher ?: "Unknown")),
+                        images = listOf(MaveImage(url = item.coverUrl ?: ""))
+                    ),
+                    artists = listOf(MaveArtist(id = "publisher", name = item.publisher ?: "Unknown")),
+                    audioUrl = ""
+                )
+            }
+            val mappedAudiobooks = audiobooks.map { item ->
+                MaveTrack(
+                    id = item.id,
+                    name = item.title,
+                    album = MaveAlbum(
+                        id = item.id,
+                        name = "Audiobook",
+                        artists = listOf(MaveArtist(id = item.author?.id ?: "", name = item.author?.name ?: "Unknown")),
+                        images = listOf(MaveImage(url = item.coverUrl ?: ""))
+                    ),
+                    artists = listOf(MaveArtist(id = item.author?.id ?: "", name = item.author?.name ?: "Unknown")),
+                    audioUrl = ""
+                )
+            }
+            mappedTracks + mappedPodcasts + mappedAudiobooks
+        }.collect { combinedResults ->
+            _searchResults.value = combinedResults
             _isLoading.value = false
         }
     }

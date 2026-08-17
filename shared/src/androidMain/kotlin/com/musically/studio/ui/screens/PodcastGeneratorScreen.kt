@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for PodcastGeneratorScreen.kt
+ */
+
 package com.musically.studio.ui.screens
 
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -19,6 +24,7 @@ import com.musically.studio.ui.*
 import com.musically.studio.ui.components.molecules.AIMessageBubble
 import com.musically.studio.ui.components.molecules.UserMessageBubble
 import com.musically.studio.ui.components.organisms.PodcastInputBar
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,6 +44,16 @@ fun PodcastGeneratorScreen(
     val onSurfaceColor = com.musically.studio.ui.theme.LocalMaveColorScheme.current.onSurface
     
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val listState = androidx.compose.foundation.lazy.rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    
+    val messages = viewModel.messages
+
+    LaunchedEffect(messages.size) {
+        if (messages.isNotEmpty()) {
+            coroutineScope.launch { listState.animateScrollToItem(0) }
+        }
+    }
     
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -110,19 +126,20 @@ fun PodcastGeneratorScreen(
             contentAlignment = Alignment.Center
         ) {
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .fillMaxHeight()
                     .widthIn(max = 840.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
                     top = innerPadding.calculateTopPadding() + 16.dp,
                     bottom = innerPadding.calculateBottomPadding() + 16.dp
                 ),
                 reverseLayout = true
             ) {
-                val messages = viewModel.messages
                 items(messages) { msg ->
                     if (msg.isUser) {
                         UserMessageBubble(msg.text)

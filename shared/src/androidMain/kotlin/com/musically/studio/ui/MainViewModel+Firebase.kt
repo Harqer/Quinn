@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for MainViewModel+Firebase.kt
+ */
+
 package com.musically.studio.ui
 
 import timber.log.Timber
@@ -21,6 +26,7 @@ import com.musically.studio.network.toMavePlaylist
 import com.musically.studio.network.toMaveCategory
 import com.musically.studio.network.toMaveAudiobook
 import com.musically.studio.network.toMavePodcast
+import com.musically.studio.dataconnect.*
 import android.Manifest
 import android.content.pm.PackageManager
 import android.media.AudioFormat
@@ -181,7 +187,7 @@ fun MainViewModel.generateCoverMedia(trackId: String?, customPrompt: String, api
         Timber.d("[MAIN_VM] Generating cover media with prompt: %s, apiType: %s", customPrompt, apiType)
         try {
             val functions = com.google.firebase.Firebase.functions
-            val result = functions.getHttpsCallable("generateVisualMedia")
+            val result = functions.getHttpsCallableFromUrl(java.net.URL("https://musically-studio.firebaseapp.com/api/generateVisualMedia"))
                 .call(
                     mapOf(
                         "trackId" to trackId,
@@ -190,6 +196,7 @@ fun MainViewModel.generateCoverMedia(trackId: String?, customPrompt: String, api
                     )
                 ).await()
             
+            @Suppress("UNCHECKED_CAST")
             val data = result.data as? Map<String, Any>
             val url = data?.get("url") as? String
             Timber.d("[MAIN_VM] Received media URL: %s", url)
@@ -217,7 +224,7 @@ fun MainViewModel.generateLyrics(trackId: String, audioUrl: String?) {
         _lyrics.value = null // Reset before fetch
         try {
             val functions = com.google.firebase.Firebase.functions
-            val result = functions.getHttpsCallable("generateLyrics")
+            val result = functions.getHttpsCallableFromUrl(java.net.URL("https://musically-studio.firebaseapp.com/api/generateLyrics"))
                 .call(
                     mapOf(
                         "trackId" to trackId,
@@ -225,6 +232,7 @@ fun MainViewModel.generateLyrics(trackId: String, audioUrl: String?) {
                     )
                 ).await()
             
+            @Suppress("UNCHECKED_CAST")
             val data = result.data as? Map<String, Any>
             val lyrics = data?.get("lyrics") as? String
             Timber.d("[MAIN_VM] Received lyrics, length=%d", lyrics?.length ?: 0)
@@ -290,12 +298,46 @@ fun MainViewModel.generatePodcast(topic: String) {
         Timber.d("[MAIN_VM] Generating podcast for topic: %s", topic)
         _isLoading.value = true
         try {
-            val result = Firebase.functions.getHttpsCallable("generatePodcastScript").call(mapOf("topic" to topic)).await()
-            val data = result.data as? Map<*, *>
+            // 1. Generate Script
+            val result = Firebase.functions.getHttpsCallableFromUrl(java.net.URL("https://musically-studio.firebaseapp.com/api/generatePodcastScript")).call(mapOf("topic" to topic)).await()
+            @Suppress("UNCHECKED_CAST")
+            val data = result.data as? Map<String, Any>
             val script = data?.get("script") as? String
             Timber.d("[MAIN_VM] Generated Podcast Script length: %d", script?.length ?: 0)
+            
             if (!script.isNullOrBlank()) {
-                messages.add(com.musically.studio.ui.models.ChatMessage(script, false))
+                messages.add(com.musically.studio.ui.models.ChatMessage("Generated script. Now synthesizing audio via VibeVoice...", false))
+                
+                // 2. Synthesize Audio
+                val audioResult = Firebase.functions.getHttpsCallableFromUrl(java.net.URL("https://musically-studio.firebaseapp.com/api/generatePodcastAudio"))
+                    .withTimeout(540, java.util.concurrent.TimeUnit.SECONDS) // VibeVoice takes a while
+                    .call(mapOf("scriptData" to data))
+                    .await()
+                
+                @Suppress("UNCHECKED_CAST")
+                val audioData = audioResult.data as? Map<String, Any>
+                val audioUrl = audioData?.get("audioUrl") as? String
+                
+                if (audioUrl != null) {
+                    // 3. Persist via DataConnect
+                    val publishDate = com.google.firebase.Timestamp.now()
+                    val success = dataConnectRepository.savePodcastEpisode(
+                        showId = "1", 
+                        title = topic, 
+                        description = script.take(200),
+                        audioUrl = audioUrl,
+                        durationMs = 0,
+                        publishDate = publishDate
+                    )
+                    
+                    if (success) {
+                        messages.add(com.musically.studio.ui.models.ChatMessage("Audio synthesized successfully! Available in your podcasts.", false))
+                    } else {
+                        messages.add(com.musically.studio.ui.models.ChatMessage("Audio generated but failed to save to database.", false))
+                    }
+                } else {
+                    messages.add(com.musically.studio.ui.models.ChatMessage("Failed to synthesize audio.", false))
+                }
             } else {
                 // Surface an explicit empty state — never silently succeed with no content.
                 messages.add(com.musically.studio.ui.models.ChatMessage(
@@ -319,32 +361,19 @@ fun MainViewModel.generatePodcast(topic: String) {
 }
 
 /**
- * Adds [trackId] to the user's first available playlist, or bookmarks it if none exist.
- *
- * Semantic fix: previously this method called `bookmarkTrack` (wrong action).
- * Now it correctly calls `addTrackToPlaylist` using the first available playlist,
- * falling back to bookmarking if the user has no playlists yet.
- *
- * TODO: Replace with a Playlist Picker BottomSheet when that component is built
- * so the user can choose which playlist to add to (see implementation_plan.md).
+ * Adds [trackId] to the specified playlist.
+ * If [playlistId] is not provided, it falls back to bookmarking the track.
  */
-fun MainViewModel.addToPlaylist(trackId: String) {
+fun MainViewModel.addToPlaylist(playlistId: String, trackId: String) {
     viewModelScope.launch {
-        Timber.d("[MAIN_VM] Adding track %s to first available playlist", trackId)
+        Timber.d("[MAIN_VM] Adding track %s to playlist %s", trackId, playlistId)
         try {
-            val firstPlaylist = _playlists.value.firstOrNull()
-            if (firstPlaylist != null) {
-                val success = dataConnectRepository.addTrackToPlaylist(trackId, firstPlaylist.id)
-                if (success) {
-                    Timber.d("[MAIN_VM] Successfully added track %s to playlist %s", trackId, firstPlaylist.id)
-                } else {
-                    Timber.w("[MAIN_VM] addTrackToPlaylist returned false for track %s", trackId)
-                    _catalogErrorMessage.value = "Couldn't add to playlist. Please try again."
-                }
+            val success = dataConnectRepository.addTrackToPlaylist(trackId, playlistId)
+            if (success) {
+                Timber.d("[MAIN_VM] Successfully added track %s to playlist %s", trackId, playlistId)
             } else {
-                // Fallback: bookmark the track if user has no playlists
-                Timber.d("[MAIN_VM] No playlists found, bookmarking track %s as fallback", trackId)
-                dataConnectRepository.bookmarkTrack(trackId)
+                Timber.w("[MAIN_VM] addTrackToPlaylist returned false for track %s", trackId)
+                _catalogErrorMessage.value = "Couldn't add to playlist. Please try again."
             }
         } catch (e: Exception) {
             Timber.e(e, "[MAIN_VM] Failed to add track %s to playlist", trackId)
@@ -431,7 +460,7 @@ fun MainViewModel.fetchVibesByUserId(userId: String) {
     viewModelScope.launch {
         try {
             _isLoading.value = true
-            com.google.firebase.Firebase.functions.getHttpsCallable("fetchPersonalizedSpotifyVibe")
+            com.google.firebase.Firebase.functions.getHttpsCallableFromUrl(java.net.URL("https://musically-studio.firebaseapp.com/api/fetchPersonalizedSpotifyVibe"))
                 .call(mapOf("vibeQuery" to "chill", "playlistId" to "37i9dQZEVXbMDoHDwVN2tF")).await()
             fetchCommunityTracks()
             fetchUserTracks()

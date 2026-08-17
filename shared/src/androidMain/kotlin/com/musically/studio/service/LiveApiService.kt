@@ -75,7 +75,8 @@ class LiveApiService @Inject constructor(
             "args" to args
         )
         try {
-            val result = Firebase.functions.getHttpsCallable("executeTool").call(payload).await()
+            val url = "$baseUrl/api/music/execute-tool"
+            val result = Firebase.functions.getHttpsCallableFromUrl(java.net.URL(url)).call(payload).await()
             val data = result.data as? Map<*, *>
             if (data != null) {
                 JSONObject(data)

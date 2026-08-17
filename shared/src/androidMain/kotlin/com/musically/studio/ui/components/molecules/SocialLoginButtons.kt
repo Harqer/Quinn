@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for SocialLoginButtons.kt
+ */
+
 package com.musically.studio.ui.components.molecules
 
 import android.app.Activity

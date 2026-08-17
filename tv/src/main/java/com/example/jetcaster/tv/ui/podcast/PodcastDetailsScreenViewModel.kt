@@ -44,7 +44,7 @@ class PodcastDetailsScreenViewModel @Inject constructor(
     private val episodeListFlow = handle.getStateFlow<String?>("podcastUri", null).flatMapLatest { uri ->
         if (uri != null) {
             dataConnectRepository.getEpisodesForShow(uri).map { list ->
-                EpisodeList(list.map { ep ->
+                list.map { ep ->
                     PlayerEpisode(
                         podcastInfo = PodcastInfo(
                             uri = ep.show.id,
@@ -64,10 +64,10 @@ class PodcastDetailsScreenViewModel @Inject constructor(
                             mediaUrls = listOf(ep.audioUrl)
                         )
                     )
-                })
+                }
             }
         } else {
-            flowOf(EpisodeList(emptyList()))
+            flowOf(emptyList())
         }
     }
 
@@ -79,7 +79,7 @@ class PodcastDetailsScreenViewModel @Inject constructor(
         podcastFlow,
         episodeListFlow,
         subscribedPodcastListFlow,
-    ) { podcast, episodeList, subscribedPodcastList ->
+    ) { podcast: PodcastInfo?, episodeList: List<PlayerEpisode>, subscribedPodcastList: List<PodcastInfo> ->
         if (podcast != null) {
             val isSubscribed = subscribedPodcastList.any { it.uri == podcastUri }
             PodcastScreenUiState.Ready(podcast, episodeList, isSubscribed)

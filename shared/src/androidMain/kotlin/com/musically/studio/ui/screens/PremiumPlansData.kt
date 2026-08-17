@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for PremiumPlansData.kt
+ */
+
 package com.musically.studio.ui.screens
 
 import androidx.compose.material.icons.Icons

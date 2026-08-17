@@ -15,7 +15,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("./firebase"); // Initialize Firebase admin first
-__exportStar(require("./ai"), exports);
+__exportStar(require("./api/live"), exports);
+__exportStar(require("./api/podcast"), exports);
+__exportStar(require("./api/music"), exports);
+__exportStar(require("./api/media"), exports);
 __exportStar(require("./external"), exports);
 __exportStar(require("./agents/orchestrator"), exports);
 __exportStar(require("./billing"), exports);

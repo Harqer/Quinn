@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for Theme.kt
+ */
+
 package com.musically.studio.ui.theme
 
 import android.app.Activity

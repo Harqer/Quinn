@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
 import { Server } from 'http';
 import fetch from 'node-fetch'; // Polyfill or built-in
@@ -88,7 +89,7 @@ describe('fetchSpotifyTrends', () => {
     if (dcResponse.ok) {
         const dcData = await dcResponse.json();
         console.log("DataConnect Tracks:", JSON.stringify(dcData));
-        const tracks = dcData.data?.tracks || [];
+        const tracks = (dcData as any).data?.tracks || [];
         // We might not be able to cleanly assert on the entire list if there's existing data, 
         // but we can check if our mock track is there.
         const mockTrack = tracks.find((t: any) => t.title === "Mock Trending Track 1");

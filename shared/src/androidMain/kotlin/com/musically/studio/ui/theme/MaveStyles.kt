@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for MaveStyles.kt
+ */
+
 package com.musically.studio.ui.theme
 
 import androidx.compose.foundation.style.Style

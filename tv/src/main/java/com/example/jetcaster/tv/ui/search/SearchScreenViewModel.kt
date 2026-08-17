@@ -31,7 +31,7 @@ class SearchScreenViewModel @Inject constructor(
 
     private val categoryInfoListFlow =
         dataConnectRepository.getCategories().map { list ->
-            CategoryInfoList(list.map { it.toCategoryInfo() })
+            list.map { it.toCategoryInfo() }
         }
 
     private val searchConditionFlow =
@@ -39,7 +39,7 @@ class SearchScreenViewModel @Inject constructor(
             keywordFlow,
             selectedCategoryListFlow,
             categoryInfoListFlow,
-        ) { keyword, selectedCategories, categories ->
+        ) { keyword: String, selectedCategories: List<CategoryInfo>, categories: List<CategoryInfo> ->
             val selected = selectedCategories.ifEmpty {
                 categories
             }
@@ -66,11 +66,10 @@ class SearchScreenViewModel @Inject constructor(
         combine(
             categoryInfoListFlow,
             selectedCategoryListFlow,
-        ) { categoryList, selectedCategories ->
-            val list = categoryList.map {
+        ) { categoryList: List<CategoryInfo>, selectedCategories: List<CategoryInfo> ->
+            categoryList.map {
                 CategorySelection(it, selectedCategories.contains(it))
             }
-            CategorySelectionList(list)
         }
 
     val uiStateFlow =
@@ -78,7 +77,7 @@ class SearchScreenViewModel @Inject constructor(
             keywordFlow,
             categorySelectionFlow,
             searchResultFlow,
-        ) { keyword, categorySelection, result ->
+        ) { keyword: String, categorySelection: List<CategorySelection>, result: List<PodcastInfo> ->
             val podcastList = result
             when {
                 result.isEmpty() -> SearchScreenUiState.Ready(keyword, categorySelection)
@@ -124,12 +123,7 @@ class SearchScreenViewModel @Inject constructor(
     )
 }
 
-private data class SearchCondition(val keyword: String, val selectedCategories: CategoryInfoList) {
-    constructor(keyword: String, categoryInfoList: List<CategoryInfo>) : this(
-        keyword,
-        CategoryInfoList(categoryInfoList),
-    )
-}
+private data class SearchCondition(val keyword: String, val selectedCategories: List<CategoryInfo>)
 
 sealed interface SearchScreenUiState {
     data object Loading : SearchScreenUiState

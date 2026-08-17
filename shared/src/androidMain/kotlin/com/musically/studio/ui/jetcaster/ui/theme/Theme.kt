@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: Android Component for Theme.kt
+ */
+
 /*
  * Copyright 2020 The Android Open Source Project
  *

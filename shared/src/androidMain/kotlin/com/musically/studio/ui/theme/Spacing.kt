@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for Spacing.kt
+ */
+
 package com.musically.studio.ui.theme
 
 import androidx.compose.runtime.Immutable

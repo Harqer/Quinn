@@ -123,6 +123,7 @@ dependencies {
     // Required for Coroutines and Flows used by the DAT SDK
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    implementation("androidx.car.app:app:1.4.0")
     implementation(project(":shared"))
 
     implementation(libs.hilt.android)

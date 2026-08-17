@@ -78,13 +78,23 @@ class JamSessionRepository @Inject constructor(
     private val jamRef = database.getReference("jam_sessions")
 
     suspend fun createRoom(hostId: String, hostName: String, hostAvatar: String, gameMode: GameMode, triviaCategory: String = "All"): String {
-        // Generate a 5-digit room code
-        var roomCode = (10000..99999).random().toString()
-        
-        // Very basic collision avoidance, in production we would retry or use a more robust short-id generator
-        val existing = jamRef.child(roomCode).get().await()
-        if (existing.exists()) {
+        var roomCode = ""
+        var isUnique = false
+        var attempts = 0
+        val maxAttempts = 10
+
+        while (!isUnique && attempts < maxAttempts) {
             roomCode = (10000..99999).random().toString()
+            val existing = jamRef.child(roomCode).get().await()
+            if (!existing.exists()) {
+                isUnique = true
+            }
+            attempts++
+        }
+
+        if (!isUnique) {
+            // Fallback to a push ID if we miraculously collide 10 times
+            roomCode = jamRef.push().key?.takeLast(5) ?: "99999"
         }
 
         val session = JamSession(
@@ -103,12 +113,17 @@ class JamSessionRepository @Inject constructor(
     }
 
     suspend fun joinRoom(roomCode: String, uid: String, displayName: String, avatarUrl: String): Boolean {
-        val roomSnapshot = jamRef.child(roomCode).get().await()
-        if (!roomSnapshot.exists()) return false
+        return try {
+            val roomSnapshot = jamRef.child(roomCode).get().await()
+            if (!roomSnapshot.exists()) return false
 
-        val participant = JamParticipant(uid = uid, displayName = displayName, avatarUrl = avatarUrl)
-        jamRef.child(roomCode).child("participants").child(uid).setValue(participant).await()
-        return true
+            val participant = JamParticipant(uid = uid, displayName = displayName, avatarUrl = avatarUrl)
+            jamRef.child(roomCode).child("participants").child(uid).setValue(participant).await()
+            true
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to join room $roomCode")
+            false
+        }
     }
 
     fun observeRoom(roomCode: String): Flow<JamSession?> = callbackFlow {

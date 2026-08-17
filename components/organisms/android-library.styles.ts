@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Organism
+ * @SemanticPurpose: UI Component for android-library.styles.ts
+ */
+
 import { css } from 'lit';
 
 export const AndroidLibraryStyles = css`
@@ -88,7 +93,9 @@ export const AndroidLibraryStyles = css`
     display: flex;
     flex-direction: column;
     text-align: left;
-    background: linear-gradient(to bottom, #064e3b 0%, #121212 50%);
+    background: rgba(6, 78, 59, 0.4);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
   }
 .presets-section-title {
     font-size: 14px;

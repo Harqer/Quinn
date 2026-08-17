@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Molecule
+ * @SemanticPurpose: Android Component for ThinkingBubble.kt
+ */
+
 package com.musically.studio.ui.components.molecules
 
 import androidx.compose.animation.core.*
@@ -5,9 +10,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +17,45 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+
+@Composable
+fun AnimatedMarble(modifier: Modifier = Modifier) {
+    val infiniteTransition = rememberInfiniteTransition(label = "marble")
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "marbleRotation"
+    )
+
+    val colors = listOf(
+        com.musically.studio.ui.theme.MavePurple500,
+        com.musically.studio.ui.theme.MaveCyan500,
+        Color(0xFFFF007F), // Neon pink
+        com.musically.studio.ui.theme.MavePurple500
+    )
+
+    Box(
+        modifier = modifier
+            .clip(CircleShape)
+            .graphicsLayer { rotationZ = rotation }
+            .background(Brush.sweepGradient(colors))
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer { rotationZ = -rotation * 1.5f }
+                .background(Brush.radialGradient(colors.reversed(), radius = 50f), alpha = 0.5f)
+        )
+    }
+}
 
 @Composable
 fun ThinkingBubble(text: String, modifier: Modifier = Modifier) {
@@ -28,15 +68,9 @@ fun ThinkingBubble(text: String, modifier: Modifier = Modifier) {
     )
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.Top) {
-        Box(
-            modifier = Modifier.size(32.dp)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(Icons.Default.AutoAwesome, contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = alpha),
-                modifier = Modifier.size(16.dp))
-        }
+        
+        AnimatedMarble(modifier = Modifier.size(32.dp))
+        
         Spacer(modifier = Modifier.width(8.dp))
         Box(
             modifier = Modifier.widthIn(max = 280.dp)

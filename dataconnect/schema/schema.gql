@@ -29,6 +29,9 @@ type UserSettings @table(key: "userId") {
   isPremium: Boolean! @default(value: false)
   theme: String! @default(value: "dark")
   parentalControlsEnabled: Boolean! @default(value: false)
+  notificationsEnabled: Boolean! @default(value: true)
+  appsDevicesEnabled: Boolean! @default(value: true)
+  offlineMode: Boolean! @default(value: false)
   stripeCustomerId: String
 }
 
@@ -138,6 +141,8 @@ type BookmarkedTrack @table(key: ["user", "track"]) {
   addedAt: Timestamp! @default(expr: "request.time")
 }
 
+
+
 # -------------------------------------
 # DOMAIN: PODCASTS CATALOG
 # -------------------------------------
@@ -223,38 +228,9 @@ type PodcastCategory @table(key: ["show", "category"]) {
 }
 
 # -------------------------------------
-# LYRIA-SPECIFIC: CAPTURES & GENERATION
-# -------------------------------------
-type CameraCapture @table {
-  id: String! @default(expr: "uuidV4()")
-  user: User!
-  imageUrl: String
-  videoUrl: String
-  environmentData: String # The metadata/vibe extracted from the environment
-  generatedTrack: Track   # The track generated from this capture, if any
-  createdAt: Timestamp! @default(expr: "request.time")
-}
 
-type VideoDigestion @table {
-  id: String! @default(expr: "uuidV4()")
-  user: User!
-  videoUrl: String!
-  extractedAudioUrl: String
-  atmosphereSummary: String # AI summary of the video's vibe
-  generatedTrack: Track
-  createdAt: Timestamp! @default(expr: "request.time")
-}
 
-# -------------------------------------
-# CHAT & AI
-# -------------------------------------
-type ChatMessage @table {
-  id: String! @default(expr: "uuidV4()")
-  user: User!
-  sender: String! # "user" or "ai"
-  text: String!
-  createdAt: Timestamp! @default(expr: "request.time")
-}
+
 
 # -------------------------------------
 # PREMIUM & APP CONTENT

@@ -117,7 +117,12 @@ export const LiveSessionScreen: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full w-full bg-background overflow-hidden relative pb-[80px]">
-      <LiveSessionHeader isConnected={isConnected} onNavigateHome={() => navigate('home')} />
+      <LiveSessionHeader 
+        isConnected={isConnected} 
+        onNavigateHome={() => navigate('home')} 
+        onClose={() => navigate('home')}
+        onMoreOptions={() => {}}
+      />
 
       <LiveCameraView 
         videoRef={videoRef} 

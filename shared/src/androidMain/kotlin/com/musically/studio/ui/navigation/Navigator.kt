@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for Navigator.kt
+ */
+
 package com.musically.studio.ui.navigation
 
 /**

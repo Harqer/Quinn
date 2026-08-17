@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Atom
+ * @SemanticPurpose: Android Component for HomeSectionTitle.kt
+ */
+
 package com.musically.studio.ui.components.molecules
 
 import androidx.compose.foundation.layout.padding

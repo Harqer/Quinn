@@ -26,7 +26,7 @@ export class ToastMessage extends LitElement {
       justify-content: space-between;
       gap: 1rem;
       width: min(450px, 80vw);
-      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+      transition: transform 0.5s var(--spring-bounce, cubic-bezier(0.175, 0.885, 0.32, 1.275));
       border: 1px solid rgba(255, 255, 255, 0.2);
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
       z-index: 100;
@@ -67,8 +67,23 @@ export class ToastMessage extends LitElement {
     });
   }
 
+  private touchStartX = 0;
+
+  private handleTouchStart(e: TouchEvent) {
+    this.touchStartX = e.touches[0].clientX;
+  }
+
+  private handleTouchEnd(e: TouchEvent) {
+    const touchEndX = e.changedTouches[0].clientX;
+    if (Math.abs(this.touchStartX - touchEndX) > 50) {
+      this.hide();
+    }
+  }
+
   override render() {
-    return html`<div class=${classMap({ showing: this.showing, toast: true })}>
+    return html`<div class=${classMap({ showing: this.showing, toast: true })}
+      @touchstart=${this.handleTouchStart}
+      @touchend=${this.handleTouchEnd}>
       <div class="message">${this.renderMessageWithLinks()}</div>
       <button @click=${this.hide}>✕</button>
     </div>`;

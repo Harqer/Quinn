@@ -16,13 +16,22 @@ import androidx.media3.datasource.DataSpec
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaSessionService
+import androidx.media3.session.MediaLibraryService
+import androidx.media3.session.MediaLibraryService.MediaLibrarySession
+import androidx.media3.session.LibraryResult
+import androidx.media3.common.MediaMetadata
+import androidx.media3.session.MediaConstants
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.Futures
+import com.google.common.collect.ImmutableList
+import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import com.musically.studio.network.GeminiLiveManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
@@ -30,12 +39,12 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 @OptIn(UnstableApi::class)
-class PlaybackService : MediaSessionService() {
+class PlaybackService : MediaLibraryService() {
 
     @Inject
     lateinit var geminiLiveManager: GeminiLiveManager
 
-    private var mediaSession: MediaSession? = null
+    private var mediaSession: MediaLibrarySession? = null
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     // Pipe to feed the ExoPlayer DataSource from the WebSocket SharedFlow
@@ -75,16 +84,16 @@ class PlaybackService : MediaSessionService() {
             .build()
         
         val audioAttributes = androidx.media3.common.AudioAttributes.Builder()
-            .setUsage(androidx.media3.common.C.USAGE_MEDIA)
-            .setContentType(androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC)
+            .setUsage(androidx.media3.common.C.USAGE_ASSISTANT)
+            .setContentType(androidx.media3.common.C.AUDIO_CONTENT_TYPE_SPEECH)
             .build()
         
         player.setAudioAttributes(audioAttributes, true)
         
         createNotificationChannel()
         
-        mediaSession = MediaSession.Builder(this, player)
-            .setCallback(CustomMediaSessionCallback())
+        mediaSession = MediaLibrarySession.Builder(this, player, CustomMediaLibrarySessionCallback())
+            .setId("LyriaMediaLibrarySession")
             .build()
             
         // Collect audio bytes and write them to the pipe from both sources
@@ -123,7 +132,7 @@ class PlaybackService : MediaSessionService() {
         })
     }
 
-    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? {
         return mediaSession
     }
 
@@ -152,9 +161,113 @@ class PlaybackService : MediaSessionService() {
         super.onDestroy()
     }
     
-    private inner class CustomMediaSessionCallback : MediaSession.Callback {
-        // Removed unsupported overrides onSkipToNext and onSkipToPrevious
+    private inner class CustomMediaLibrarySessionCallback : MediaLibrarySession.Callback {
+        override fun onConnect(
+            session: MediaSession,
+            controller: MediaSession.ControllerInfo
+        ): MediaSession.ConnectionResult {
+            return super.onConnect(session, controller)
+        }
+
+        override fun onGetLibraryRoot(
+            session: MediaLibrarySession,
+            browser: MediaSession.ControllerInfo,
+            params: LibraryParams?
+        ): ListenableFuture<LibraryResult<MediaItem>> {
+            val rootExtras = Bundle().apply {
+                putInt(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_BROWSABLE, MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM)
+                putInt(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_PLAYABLE, MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_LIST_ITEM)
+                putBoolean("android.media.extra.RECENT", true)
+            }
+            val libraryParams = LibraryParams.Builder().setExtras(rootExtras).build()
+            val rootItem = MediaItem.Builder().setMediaId("root").setMediaMetadata(
+                MediaMetadata.Builder().setTitle("Lyria AI Music").setIsBrowsable(true).setIsPlayable(false).setFolderType(MediaMetadata.FOLDER_TYPE_MIXED).setMediaType(MediaMetadata.MEDIA_TYPE_FOLDER_MIXED).build()
+            ).build()
+            return Futures.immediateFuture(LibraryResult.ofItem(rootItem, libraryParams))
+        }
+
+        override fun onGetChildren(
+            session: MediaLibrarySession,
+            browser: MediaSession.ControllerInfo,
+            parentId: String,
+            page: Int,
+            pageSize: Int,
+            params: LibraryParams?
+        ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
+            val children = when (parentId) {
+                "root" -> buildRootCategories()
+                "radio_root" -> buildRadioStreams()
+                "playlists_root" -> buildUserPlaylists()
+                "podcasts_root" -> buildAiPodcasts()
+                "recent_tracks_root" -> buildRecentTracks()
+                else -> emptyList()
+            }
+            val fromIndex = (page * pageSize).coerceAtMost(children.size)
+            val toIndex = ((page + 1) * pageSize).coerceAtMost(children.size)
+            val paginatedChildren = if (fromIndex <= toIndex) children.subList(fromIndex, toIndex) else emptyList()
+            return Futures.immediateFuture(LibraryResult.ofItemList(ImmutableList.copyOf(paginatedChildren), params))
+        }
+
+        override fun onGetItem(session: MediaLibrarySession, browser: MediaSession.ControllerInfo, mediaId: String): ListenableFuture<LibraryResult<MediaItem>> {
+            val item = findMediaItemById(mediaId)
+            return if (item != null) Futures.immediateFuture(LibraryResult.ofItem(item, null))
+            else Futures.immediateFuture(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE))
+        }
+
+        override fun onAddMediaItems(mediaSession: MediaSession, controller: MediaSession.ControllerInfo, mediaItems: MutableList<MediaItem>): ListenableFuture<MutableList<MediaItem>> {
+            val resolvedItems = mediaItems.map { resolveMediaItemPlaybackUri(it) }.toMutableList()
+            return Futures.immediateFuture(resolvedItems)
+        }
     }
+
+    private fun buildRootCategories(): List<MediaItem> = listOf(
+        createFolderItem("radio_root", "AI Radio Streams", "Continuous AI audio streams", MediaMetadata.FOLDER_TYPE_TITLES),
+        createFolderItem("playlists_root", "Playlists", "Your AI playlists", MediaMetadata.FOLDER_TYPE_PLAYLISTS),
+        createFolderItem("podcasts_root", "AI Podcasts", "Tech deep dives", MediaMetadata.FOLDER_TYPE_ALBUMS),
+        createFolderItem("recent_tracks_root", "Recent Tracks", "Recently generated", MediaMetadata.FOLDER_TYPE_TITLES)
+    )
+
+    private fun fetchDynamicStreams(category: String): List<MediaItem> {
+        val result = mutableListOf<MediaItem>()
+        return try {
+            val task = com.google.firebase.functions.FirebaseFunctions.getInstance()
+                .getHttpsCallable("getDynamicStreams")
+                .call(mapOf("category" to category))
+            val response = kotlinx.coroutines.runBlocking { task.await() }
+            val dataList = response.data as? List<Map<String, String>> ?: emptyList()
+            if (dataList.isEmpty()) {
+                result.add(createPlayableItem("error_$category", "No Streams Found", "Generate some tracks first!", "", MediaMetadata.MEDIA_TYPE_MUSIC))
+            } else {
+                for (item in dataList) {
+                    val id = item["id"] ?: continue
+                    val title = item["title"] ?: "Unknown"
+                    val artist = item["artist"] ?: "Unknown"
+                    val url = item["url"] ?: ""
+                    result.add(createPlayableItem(id, title, artist, url, MediaMetadata.MEDIA_TYPE_MUSIC))
+                }
+            }
+            result
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to fetch dynamic streams for $category")
+            listOf(createPlayableItem("error_$category", "Stream Fetch Failed", "Network Error - Please Try Again", "", MediaMetadata.MEDIA_TYPE_MUSIC))
+        }
+    }
+
+    private fun buildRadioStreams(): List<MediaItem> = fetchDynamicStreams("radio")
+    private fun buildUserPlaylists(): List<MediaItem> = listOf(createFolderItem("playlist_favorites", "Favorites", "Your saved tracks", MediaMetadata.FOLDER_TYPE_TITLES))
+    private fun buildAiPodcasts(): List<MediaItem> = fetchDynamicStreams("podcasts")
+    private fun buildRecentTracks(): List<MediaItem> = fetchDynamicStreams("recent")
+
+    private fun createFolderItem(id: String, title: String, subtitle: String, folderType: Int): MediaItem = MediaItem.Builder().setMediaId(id).setMediaMetadata(
+        MediaMetadata.Builder().setTitle(title).setSubtitle(subtitle).setIsBrowsable(true).setIsPlayable(false).setFolderType(folderType).setMediaType(MediaMetadata.MEDIA_TYPE_FOLDER_MIXED).build()
+    ).build()
+
+    private fun createPlayableItem(id: String, title: String, artist: String, streamUrl: String, mediaType: Int): MediaItem = MediaItem.Builder().setMediaId(id).setUri(Uri.parse(streamUrl)).setMediaMetadata(
+        MediaMetadata.Builder().setTitle(title).setArtist(artist).setSubtitle(artist).setIsBrowsable(false).setIsPlayable(true).setMediaType(mediaType).build()
+    ).build()
+
+    private fun findMediaItemById(mediaId: String): MediaItem? = (buildRadioStreams() + buildAiPodcasts() + buildRecentTracks()).find { it.mediaId == mediaId }
+    private fun resolveMediaItemPlaybackUri(item: MediaItem): MediaItem = findMediaItemById(item.mediaId) ?: item
 }
 
 @OptIn(UnstableApi::class)

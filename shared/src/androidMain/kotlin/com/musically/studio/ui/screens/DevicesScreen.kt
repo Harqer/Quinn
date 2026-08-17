@@ -1,3 +1,8 @@
+/**
+ * @AtomicLevel: Template/Page
+ * @SemanticPurpose: Android Component for DevicesScreen.kt
+ */
+
 package com.musically.studio.ui.screens
 
 import android.content.Context

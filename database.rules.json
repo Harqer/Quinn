@@ -1,0 +1,19 @@
+{
+  "rules": {
+    "jam_sessions": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$roomId": {
+        ".validate": "newData.hasChildren(['roomId', 'hostId', 'status'])",
+        "status": {
+          ".validate": "newData.isString()"
+        },
+        "participants": {
+          "$uid": {
+            ".write": "auth.uid == $uid"
+          }
+        }
+      }
+    }
+  }
+}
