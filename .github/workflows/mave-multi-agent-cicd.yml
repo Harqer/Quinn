@@ -42,6 +42,9 @@ jobs:
         run: ./gradlew lint
 
       - name: Build Full APK
+        env:
+          MWDAT_APPLICATION_ID: ${{ secrets.MWDAT_APPLICATION_ID }}
+          MWDAT_CLIENT_TOKEN: ${{ secrets.MWDAT_CLIENT_TOKEN }}
         run: ./gradlew assembleDebug
 
       - name: Upload APK
