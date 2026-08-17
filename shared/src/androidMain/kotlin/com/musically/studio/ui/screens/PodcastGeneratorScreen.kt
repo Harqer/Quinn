@@ -140,16 +140,18 @@ fun PodcastGeneratorScreen(
                 ),
                 reverseLayout = true
             ) {
-                items(messages) { msg ->
-                    if (msg.isUser) {
-                        UserMessageBubble(msg.text)
-                    } else {
-                        AIMessageBubble(
-                            msg = msg,
-                            viewModel = viewModel,
-                            primaryColor = primaryElectricViolet,
-                            secondaryColor = secondaryNeonCyan
-                        )
+                items(messages, key = { it.hashCode() }) { msg ->
+                    Box(modifier = Modifier.animateItem()) {
+                        if (msg.isUser) {
+                            UserMessageBubble(msg.text)
+                        } else {
+                            AIMessageBubble(
+                                msg = msg,
+                                viewModel = viewModel,
+                                primaryColor = primaryElectricViolet,
+                                secondaryColor = secondaryNeonCyan
+                            )
+                        }
                     }
                 }
             }

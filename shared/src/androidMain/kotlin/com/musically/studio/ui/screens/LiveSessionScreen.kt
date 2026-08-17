@@ -134,7 +134,7 @@ fun LiveSessionScreen(
                             item { ThinkingBubble(text = thinkingText) }
                         }
                         items(messages, key = { it.hashCode() }) { message ->
-                            ChatBubble(message = message, viewModel = viewModel)
+                            ChatBubble(message = message, viewModel = viewModel, modifier = Modifier.animateItem())
                         }
                     }
                     } // Close PullToRefreshBox

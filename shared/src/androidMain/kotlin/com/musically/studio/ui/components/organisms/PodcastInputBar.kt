@@ -87,24 +87,35 @@ fun PodcastInputBar(
                         shape = RoundedCornerShape(50)
                     )
             ) {
-                Icon(
-                    if (isRecording) Icons.Default.Stop else Icons.Default.Mic,
-                    contentDescription = "Voice Input",
-                    tint = Color.White
-                )
+                androidx.compose.animation.AnimatedContent(
+                    targetState = isRecording,
+                    label = "MicIconAnim"
+                ) { recording ->
+                    Icon(
+                        if (recording) Icons.Default.Stop else Icons.Default.Mic,
+                        contentDescription = "Voice Input",
+                        tint = Color.White
+                    )
+                }
             }
             
-            if (promptText.isNotBlank()) {
-                Spacer(modifier = Modifier.width(8.dp))
-                IconButton(
-                    onClick = {
-                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                        onSend()
-                    },
-                    modifier = Modifier
-                        .background(surfaceColor, RoundedCornerShape(50))
-                ) {
-                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send", tint = secondaryNeonCyan)
+            androidx.compose.animation.AnimatedVisibility(
+                visible = promptText.isNotBlank(),
+                enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.scaleIn(),
+                exit = androidx.compose.animation.fadeOut() + androidx.compose.animation.scaleOut()
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    IconButton(
+                        onClick = {
+                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                            onSend()
+                        },
+                        modifier = Modifier
+                            .background(surfaceColor, RoundedCornerShape(50))
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send", tint = secondaryNeonCyan)
+                    }
                 }
             }
         }

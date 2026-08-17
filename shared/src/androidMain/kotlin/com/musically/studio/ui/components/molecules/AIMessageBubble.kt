@@ -68,70 +68,75 @@ fun AIMessageBubble(
                     realTrack = viewModel.getTrack(msg.trackId)
                 }
                 
-                if (realTrack == null) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(MaterialTheme.shapes.small)
-                            .background(com.musically.studio.ui.theme.MaveSurfaceVariant2)
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = secondaryColor,
-                            strokeWidth = 2.dp
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text("Generating track...", color = Color.Gray, style = MaterialTheme.typography.bodyMedium)
-                    }
-                } else {
-                    val displayTrack = realTrack!!
-                    val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
-                    val currentTrack by viewModel.currentPlayingTrack.collectAsStateWithLifecycle()
-                    val isThisTrackPlaying = isPlaying && currentTrack?.id == msg.trackId
-    
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(MaterialTheme.shapes.small)
-                            .background(com.musically.studio.ui.theme.MaveSurfaceVariant2)
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(onClick = { viewModel.playTrack(displayTrack) }) {
-                            Icon(
-                                if (isThisTrackPlaying) Icons.Default.Stop else Icons.Default.PlayArrow,
-                                contentDescription = "Play",
-                                tint = secondaryColor
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        
-                        val infiniteTransition = rememberInfiniteTransition(label = "waveform_anim")
+                androidx.compose.animation.AnimatedContent(
+                    targetState = realTrack == null,
+                    label = "TrackLoadingState"
+                ) { isLoading ->
+                    if (isLoading) {
+                        Spacer(modifier = Modifier.height(12.dp))
                         Row(
-                            modifier = Modifier.weight(1f).height(24.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(2.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.small)
+                                .background(com.musically.studio.ui.theme.MaveSurfaceVariant2)
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            repeat(20) { index ->
-                                val height by infiniteTransition.animateFloat(
-                                    initialValue = 4f,
-                                    targetValue = if (isThisTrackPlaying) ((index % 5) * 4 + 8).toFloat() else 4f,
-                                    animationSpec = infiniteRepeatable(
-                                        animation = tween(durationMillis = 300 + (index * 50), easing = FastOutSlowInEasing),
-                                        repeatMode = RepeatMode.Reverse
-                                    ),
-                                    label = "waveform_$index"
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = secondaryColor,
+                                strokeWidth = 2.dp
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text("Generating track...", color = Color.Gray, style = MaterialTheme.typography.bodyMedium)
+                        }
+                    } else {
+                        val displayTrack = realTrack!!
+                        val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
+                        val currentTrack by viewModel.currentPlayingTrack.collectAsStateWithLifecycle()
+                        val isThisTrackPlaying = isPlaying && currentTrack?.id == msg.trackId
+        
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.small)
+                                .background(com.musically.studio.ui.theme.MaveSurfaceVariant2)
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = { viewModel.playTrack(displayTrack) }) {
+                                Icon(
+                                    if (isThisTrackPlaying) Icons.Default.Stop else Icons.Default.PlayArrow,
+                                    contentDescription = "Play",
+                                    tint = secondaryColor
                                 )
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(height.dp)
-                                        .background(if (index < 8) primaryColor else Color.Gray, RoundedCornerShape(50))
-                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            
+                            val infiniteTransition = rememberInfiniteTransition(label = "waveform_anim")
+                            Row(
+                                modifier = Modifier.weight(1f).height(24.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(2.dp)
+                            ) {
+                                repeat(20) { index ->
+                                    val height by infiniteTransition.animateFloat(
+                                        initialValue = 4f,
+                                        targetValue = if (isThisTrackPlaying) ((index % 5) * 4 + 8).toFloat() else 4f,
+                                        animationSpec = infiniteRepeatable(
+                                            animation = tween(durationMillis = 300 + (index * 50), easing = FastOutSlowInEasing),
+                                            repeatMode = RepeatMode.Reverse
+                                        ),
+                                        label = "waveform_$index"
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(height.dp)
+                                            .background(if (index < 8) primaryColor else Color.Gray, RoundedCornerShape(50))
+                                    )
+                                }
                             }
                         }
                     }
