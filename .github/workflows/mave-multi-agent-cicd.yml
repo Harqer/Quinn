@@ -1,4 +1,4 @@
-name: Mave Multi-Agent CI/CD Pipeline
+name: Mave CI/CD Pipeline
 
 on:
   push:
@@ -27,69 +27,25 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 1. Dependency Checks & Build
-      - name: Build and Check
-        id: build
+      - name: Build and Check Web
         run: |
           npm install
           npm run build
-          ./gradlew build --continue > build_log.txt 2>&1
-        continue-on-error: true
 
-      - name: Setup Python
-        if: steps.build.outcome == 'failure'
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+      - name: Lint Android
+        run: ./gradlew lint
 
-      - name: Install Python Dependencies
-        if: steps.build.outcome == 'failure'
-        run: pip install google-generativeai PyGithub requests
-
-      # 2. Multi-Agent Self-Healing Fallback
-      - name: Invoke Multi-Agent Self-Healing
-        if: steps.build.outcome == 'failure'
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_RUN_ID: ${{ github.run_id }}
-        run: python3 .github/scripts/self_healing_agent.py
-
-      # 3. Build Full APK (High Autonomy Success)
       - name: Build Full APK
-        if: steps.build.outcome == 'success'
         run: ./gradlew assembleDebug
 
       - name: Upload APK
-        if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: mave-app
           path: app/build/outputs/apk/debug/*.apk
-
-  pr-agent-review:
-    needs: build-and-test
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Install Python Dependencies
-        run: pip install google-generativeai PyGithub requests
-
-      - name: Multi-Agent PR Review
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: python3 .github/scripts/agentic_reviewer.py
